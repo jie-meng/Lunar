@@ -1,0 +1,4 @@
+table.concat(t,[s])
+table.sort(t,[func])
+table.insert(t,[i],v)
+table.remove(t,i)

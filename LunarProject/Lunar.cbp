@@ -1,0 +1,103 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="Lunar" />
+		<Option makefile_is_custom="1" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="Debug/Lunar" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Debug/" />
+				<Option type="1" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release">
+				<Option output="Release/Lunar" prefix_auto="1" extension_auto="1" />
+				<Option object_output="Release/" />
+				<Option type="0" />
+				<Option compiler="gcc" />
+				<Compiler>
+					<Add option="-O2" />
+				</Compiler>
+				<Linker>
+					<Add option="-s" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add directory="E:/Programs/QtSDK/Desktop/Qt/4.7.4/mingw/include" />
+			<Add directory="E:/Programs/QtSDK/Desktop/Qt/4.7.4/mingw/include/QtGui" />
+		</Compiler>
+		<Linker>
+			<Add library="QtCore4" />
+			<Add library="QtGui4" />
+			<Add directory="E:/Programs/QtSDK/Desktop/Qt/4.7.4/mingw/lib" />
+		</Linker>
+		<Unit filename="Lunar.qrc" />
+		<Unit filename="Lunar.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
+		<Unit filename="src/gui/aboutdialog.cpp" />
+		<Unit filename="src/gui/aboutdialog.h" />
+		<Unit filename="src/gui/apiloader.cpp" />
+		<Unit filename="src/gui/apiloader.h" />
+		<Unit filename="src/gui/dockwidgetex.cpp" />
+		<Unit filename="src/gui/dockwidgetex.h" />
+		<Unit filename="src/gui/docview.cpp" />
+		<Unit filename="src/gui/docview.h" />
+		<Unit filename="src/gui/finddialog.cpp" />
+		<Unit filename="src/gui/finddialog.h" />
+		<Unit filename="src/gui/maintabwidget.cpp" />
+		<Unit filename="src/gui/maintabwidget.h" />
+		<Unit filename="src/gui/mainwindow.cpp" />
+		<Unit filename="src/gui/mainwindow.h" />
+		<Unit filename="src/gui/outputwidget.cpp" />
+		<Unit filename="src/gui/outputwidget.h" />
+		<Unit filename="src/luaexecutor.cpp" />
+		<Unit filename="src/luaexecutor.h" />
+		<Unit filename="src/lunarcommon.cpp" />
+		<Unit filename="src/lunarcommon.h" />
+		<Unit filename="src/main.cpp" />
+		<Unit filename="src/processmsgthread.cpp" />
+		<Unit filename="src/processmsgthread.h" />
+		<Unit filename="src/util/base.hpp" />
+		<Unit filename="src/util/base/base.hpp" />
+		<Unit filename="src/util/base/baseclass.hpp" />
+		<Unit filename="src/util/base/in.hpp" />
+		<Unit filename="src/util/base/memory.hpp" />
+		<Unit filename="src/util/base/out.cpp" />
+		<Unit filename="src/util/base/out.hpp" />
+		<Unit filename="src/util/cfg.cpp" />
+		<Unit filename="src/util/cfg.hpp" />
+		<Unit filename="src/util/collection.hpp" />
+		<Unit filename="src/util/file.cpp" />
+		<Unit filename="src/util/file.hpp" />
+		<Unit filename="src/util/lexicalcast.cpp" />
+		<Unit filename="src/util/lexicalcast.hpp" />
+		<Unit filename="src/util/net.cpp" />
+		<Unit filename="src/util/net.hpp" />
+		<Unit filename="src/util/process.cpp" />
+		<Unit filename="src/util/process.hpp" />
+		<Unit filename="src/util/regex.cpp" />
+		<Unit filename="src/util/regex.hpp" />
+		<Unit filename="src/util/regex/deelx.h" />
+		<Unit filename="src/util/string.cpp" />
+		<Unit filename="src/util/string.hpp" />
+		<Unit filename="src/util/thread.cpp" />
+		<Unit filename="src/util/thread.hpp" />
+		<Unit filename="src/util/time.cpp" />
+		<Unit filename="src/util/time.hpp" />
+		<Extensions>
+			<code_completion />
+			<envvars />
+			<debugger />
+			<lib_finder disable_auto="1" />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

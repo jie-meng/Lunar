@@ -1,0 +1,15 @@
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+DEFINES += _PLATFORM_WINDOWS_ \
+			_GUI_
+
+INCLUDEPATH +=  src
+
+LIBS += -lws2_32 \
+		-lShlwapi \
+        -lqscintilla2
+
+RC_FILE += Lunar.rc
