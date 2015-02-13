@@ -1,10 +1,11 @@
 # Lunar #
 A cross-platform Lua script extension and IDE
 
-## introduction ## 
-A Lua script extension and IDE
-* Luaexec: Lua script basic(lua 5.2.3) & extensions (file, memory, net, process, regex, thread)
+* Luaexec: Lua script basic(lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix)
 * Lunar: Lua IDE
+
+-------------------------------------------------
+
 
 ## enviromment ##
 * Qt5.3 (mingw 4.8.2)
