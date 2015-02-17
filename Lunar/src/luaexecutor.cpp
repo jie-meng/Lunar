@@ -99,7 +99,7 @@ bool LuaExecutor::executeInSysCmd(const std::string& args, const std::string& pa
 
 void LuaExecutor::output(const std::string& str)
 {
-    emit sendOutput(StdStringToQString(strTrim(str)));
+    emit sendOutput(StdStringToQString(str));
 }
 
 void LuaExecutor::input(const QString& in)

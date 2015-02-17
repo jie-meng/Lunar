@@ -200,7 +200,7 @@ bool DocView::DoSave()
 {
     emit UpdateTitle(this);
     std::string content = QStringToStdString(ptext_edit_->text());
-    content = util::strReplaceAll(content, "\r", "");
+    content = util::strReplaceAll(content, "\r\n", "\n");
     return util::writeTextFile(QStringToStdString(pathname_), content);
 }
 
