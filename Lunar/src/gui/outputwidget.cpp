@@ -5,6 +5,7 @@
 #include <QHBoxLayout>
 #include <QVBoxLayout>
 #include "lunarcommon.h"
+#include "outputtext.h"
 
 namespace gui
 {
@@ -53,7 +54,7 @@ void OutputWidget::init()
 
 void OutputWidget::initFields()
 {
-    poutput_ = new QTextEdit();
+    poutput_ = new OutputText();
     pinput_line_ = new QLineEdit();
     pinput_btn_ = new QPushButton("input");
 
