@@ -72,12 +72,14 @@ public:
     inline static size_t get_mainwindow_height() { return s_mainwindow_height_; }
     inline static void set_mainwindow_width(size_t width) { s_mainwindow_width_ = width; }
     inline static void set_mainwindow_height(size_t height) { s_mainwindow_height_ = height; }
-    inline static std::string getFileFilter() { return s_file_filter_; }
-    inline static std::string getRunner() { return s_runner_; }
-    inline static std::string getRunPath() { return s_run_path_; }
-    inline static void setRunPath(const std::string& path) { s_run_path_ = path; }
+    inline static std::string getLuaFileFilter() { return s_lua_file_filter_; }
+    inline static std::string getRunnerLua() { return s_runner_lua_; }
+    inline static std::string getRunnerOctave() { return s_runner_octave_; }
     inline static std::string getRunAdditionalArgs() { return s_run_additional_args_; }
     inline static void setRunAdditionalArgs(const std::string& args) { s_run_additional_args_ = args; }
+    inline static std::string getOctaveFileFilter() { return s_octave_file_filter_; }
+    inline static std::string getLuaApi() { return s_lua_api_; }
+    inline static std::string getOctaveApi() { return s_octave_api_; }
 private:
     static int s_argc_;
     static std::vector<std::string> s_argvec_;
@@ -89,10 +91,13 @@ private:
     static unsigned short s_process_sock_port_;
     static size_t s_mainwindow_width_;
     static size_t s_mainwindow_height_;
-    static std::string s_file_filter_;
-    static std::string s_runner_;
-    static std::string s_run_path_;
+    static std::string s_lua_file_filter_;
+    static std::string s_octave_file_filter_;
+    static std::string s_runner_lua_;
+    static std::string s_runner_octave_;
     static std::string s_run_additional_args_;
+    static std::string s_lua_api_;
+    static std::string s_octave_api_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

@@ -303,6 +303,20 @@ void QsciAPIs::add(const QString &entry)
     apis.append(entry);
 }
 
+// joshua add
+// Remove repeat a single API entry.
+void QsciAPIs::remove_repeat(const QString &entry)
+{
+	while(true)
+	{
+		int idx = apis.indexOf(entry);
+
+		if (idx >= 0)
+			apis.removeAt(idx);
+		else
+			break;
+	}
+}
 
 // Remove a single API entry.
 void QsciAPIs::remove(const QString &entry)
@@ -424,9 +438,9 @@ bool QsciAPIs::originStartsWith(const QString &path, const QString &wsep)
     return (!tail.isEmpty() && (tail.startsWith(wsep) || tail.at(0) == '('));
 }
 
-
+// joshua delete
 // Add auto-completion words to an existing list.
-void QsciAPIs::updateAutoCompletionList(const QStringList &context,
+/*void QsciAPIs::updateAutoCompletionList(const QStringList &context,
         QStringList &list)
 {
     QString path;
@@ -493,7 +507,139 @@ void QsciAPIs::updateAutoCompletionList(const QStringList &context,
         }
     }
 }
+*/
 
+//joshua modified (not effective)
+// Add auto-completion words to an existing list.
+void QsciAPIs::updateAutoCompletionList(const QStringList &context,
+        QStringList &list)
+{
+    QString path = context.join(".");
+    QStringList::const_iterator it = prep->raw_apis.begin();
+
+    QString pre = context.at(context.size()-1);
+
+    while (it != prep->raw_apis.end())
+    {
+        QString base = QsciAPIsPrepared::apiBaseName(*it);
+
+        if (!base.startsWith(path))
+        {
+            ++it;
+            continue;
+        }
+
+        //put suitable items into list
+        int start = path.length();
+        if(start < base.length())
+        {
+            int pos = base.indexOf(".", start, Qt::CaseInsensitive);
+
+            QString item = QObject::tr("");
+            if(pos - start >= 0)
+                item = pre + base.mid(start, pos-start);
+            else
+                item = pre + base.right(base.length() - start );
+			
+			if(is_api_tip_)
+			{
+				QString str_tip = "";
+				pos = base.lastIndexOf(".", start, Qt::CaseInsensitive);
+				if (pos > 0)
+				{
+					str_tip = " (" + base.left(pos) + ")";
+				}
+				item = item + str_tip;
+			}
+			
+            if (!list.contains(item))
+                    list << item;
+        }
+
+        ++it;
+    }
+
+   /* QString path;
+    QStringList new_context = positionOrigin(context, path);
+    //QMessageBox::information(NULL, QObject::tr("message"), context.join("#"));
+    //mj
+    QString context_path = context.join(".");
+    while(context_path.endsWith("."))
+    {
+        context_path = path.left(context_path.length()-1);
+    }
+
+    if (origin_len > 0)
+    {
+        const QString wsep = lexer()->autoCompletionWordSeparators().first();
+        // mj replace
+        //QStringList::const_iterator it = origin;
+        QStringList::const_iterator it = prep->raw_apis.begin();
+
+        unambiguous_context = path;
+
+        while (it != prep->raw_apis.end())
+        {
+            QString base = QsciAPIsPrepared::apiBaseName(*it);
+
+            if (!base.startsWith(path))
+            // mj replace
+            //   break;
+            {
+                ++it;
+                continue;
+            }
+
+            // Make sure we have something after the path.
+            if (base != path)
+            {
+                // Get the word we are interested in (ie. the one after the
+                // current origin in path).
+                QString w = base.mid(origin_len + wsep.length()).split(wsep).first();
+
+                // Append the space, we know the origin is unambiguous.
+                w.append(' ');
+
+                if (!list.contains(w))
+                    list << w;
+            }
+
+            ++it;
+        }
+    }
+    else
+    {
+        // At the moment we assume we will add words from multiple contexts.
+        unambiguous_context.truncate(0);
+
+        bool unambig = true;
+        QStringList with_context;
+
+        if (new_context.last().isEmpty())
+            lastCompleteWord(new_context[new_context.count() - 2], with_context, unambig);
+        else
+            lastPartialWord(new_context.last(), with_context, unambig);
+
+        for (int i = 0; i < with_context.count(); ++i)
+        {
+            // Remove any unambigious context.
+            QString noc = with_context[i];
+
+//mj delete
+//            if (unambig)
+//            {
+//                int op = noc.indexOf('(');
+//
+//                mj
+//                if (op >= 0)
+//                    noc.truncate(op);
+//            }
+
+            list << noc;
+        }
+    }
+    */
+}
 
 // Get the index list for a particular word if there is one.
 const QsciAPIs::WordIndexList *QsciAPIs::wordIndexOf(const QString &word) const
@@ -607,6 +753,9 @@ void QsciAPIs::autoCompletionSelected(const QString &selection)
      */
     prep->raw_apis.begin();
     origin_len = owords.length();
+	
+	//joshua add
+    //QMessageBox::information(NULL, QObject::tr("Message"), *origin);
 }
 
 
@@ -661,9 +810,9 @@ void QsciAPIs::addAPIEntries(const WordIndexList &wl, bool complete,
     }
 }
 
-
+//joshua delete
 // Return the call tip for a function.
-QStringList QsciAPIs::callTips(const QStringList &context, int commas,
+/*QStringList QsciAPIs::callTips(const QStringList &context, int commas,
         QsciScintilla::CallTipsStyle style,
         QList<int> &shifts)
 {
@@ -754,6 +903,167 @@ QStringList QsciAPIs::callTips(const QStringList &context, int commas,
             }
     }
 
+    return cts;
+}*/
+
+//joshua modify
+// Return the call tip for a function.
+QStringList QsciAPIs::callTips(const QStringList &context, int commas,
+        QsciScintilla::CallTipsStyle style,
+        QList<int> &shifts)
+{
+    //QString path;
+    //QStringList new_context = positionOrigin(context, path);
+    //QStringList wseps = lexer()->autoCompletionWordSeparators();
+    //QStringList cts;
+
+    //mj add
+    QStringList wseps = lexer()->autoCompletionWordSeparators();
+    QStringList cts;
+    QString path = context.join(".");
+    while(path.endsWith("."))
+    {
+        path = path.left(path.length()-1);
+    }
+    QStringList::const_iterator it = prep->raw_apis.begin();
+    QString prev;
+
+    // Work out the length of the context.
+    const QString &wsep = wseps.first();
+    QStringList strip = path.split(wsep);
+    strip.removeLast();
+    int ctstart = strip.join(wsep).length();
+
+    if (ctstart)
+        ctstart += wsep.length();
+
+    int shift;
+
+    if (style == QsciScintilla::CallTipsContext)
+    {
+        shift = ctstart;
+        ctstart = 0;
+    }
+    else
+        shift = 0;
+
+    // Make sure we only look at the functions we are interested in.
+    path.append('(');
+
+    while (it != prep->raw_apis.end())
+    {
+        if(!(*it).startsWith(path))
+        {
+            ++it;
+            continue;
+        }
+
+        QString w = (*it).mid(ctstart);
+
+        if (w != prev && enoughCommas(w, commas))
+        {
+            shifts << shift;
+            cts << w;
+            prev = w;
+        }
+
+        ++it;
+    }
+
+/*
+    if (origin_len > 0)
+    {
+        //mj replace
+        //QStringList::const_iterator it = origin;
+        QStringList::const_iterator it = prep->raw_apis.begin();
+        QString prev;
+
+        // Work out the length of the context.
+        const QString &wsep = wseps.first();
+        QStringList strip = path.split(wsep);
+        strip.removeLast();
+        int ctstart = strip.join(wsep).length();
+
+        if (ctstart)
+            ctstart += wsep.length();
+
+        int shift;
+
+        if (style == QsciScintilla::CallTipsContext)
+        {
+            shift = ctstart;
+            ctstart = 0;
+        }
+        else
+            shift = 0;
+
+        // Make sure we only look at the functions we are interested in.
+        path.append('(');
+
+        //mj replace
+		//while (it != prep->raw_apis.end() && (*it).startsWith(path))
+		while (it != prep->raw_apis.end())
+		{
+            //mj add
+		    if(!(*it).startsWith(path))
+            {
+                ++it;
+                continue;
+            }
+
+			QString w = (*it).mid(ctstart);
+
+			if (w != prev && enoughCommas(w, commas))
+			{
+				shifts << shift;
+				cts << w;
+				prev = w;
+			}
+
+			++it;
+		}
+    }
+    else
+    {
+        const QString &fname = new_context[new_context.count() - 2];
+
+        // Find everywhere the function name appears in the APIs.
+        const WordIndexList *wil = wordIndexOf(fname);
+
+        if (wil)
+            for (int i = 0; i < wil->count(); ++i)
+            {
+                const WordIndex &wi = (*wil)[i];
+                QStringList awords = prep->apiWords(wi.first, wseps, true);
+
+                // Check the word is the function name and not part of any
+                // context.
+                if (wi.second != awords.count() - 1)
+                    continue;
+
+                const QString &api = prep->raw_apis[wi.first];
+
+                int tail = api.indexOf('(');
+
+                if (tail < 0)
+                    continue;
+
+                if (!enoughCommas(api, commas))
+                    continue;
+
+                if (style == QsciScintilla::CallTipsNoContext)
+                {
+                    shifts << 0;
+                    cts << (fname + api.mid(tail));
+                }
+                else
+                {
+                    shifts << tail - fname.length();
+                    cts << api;
+                }
+            }
+    }
+    */
     return cts;
 }
 
@@ -969,4 +1279,11 @@ QStringList QsciAPIs::installedAPIFiles() const
         filenames << fi.absoluteFilePath();
 
     return filenames;
+}
+
+//! joshua add
+	//! e.g. if true, AutoCompletion list shows "funcname (lib.class)", otherwise "funcname"
+void QsciAPIs::setAutoCompletionApiTip(bool is_api_tip)
+{
+	is_api_tip_ = is_api_tip;
 }

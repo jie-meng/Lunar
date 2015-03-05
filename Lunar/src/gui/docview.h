@@ -6,7 +6,7 @@
 #include "util/base.hpp"
 
 class QsciAPIs;
-class QsciLexerLua;
+class QsciLexer;
 class QsciScintilla;
 
 namespace gui
@@ -18,6 +18,13 @@ class DocView : public QWidget
 {
     Q_OBJECT
 public:
+    enum FileType
+    {
+        Unknown,
+        Lua,
+        Octave
+    };
+
     explicit DocView(const QString& pathname, QWidget* parent = 0);
     virtual ~DocView();
     QsciScintilla* get_text_edit() const { return ptext_edit_; }
@@ -37,7 +44,7 @@ public:
               bool first_find,
 			  bool from_start
               );
-
+    inline FileType GetFileType() const { return file_type_; }
 Q_SIGNALS:
     void UpdateTitle(DocView*);
     void TextModified(DocView*);
@@ -54,16 +61,22 @@ private:
     void InitTextEdit();
     void InitConnections();
     void ParseRequireFiles(const std::string& filepath);
-    void SetLuaLexerAndPslApi();
+    void ClearLexerApi();
+    void SetLuaLexerApi();
+    void SetOctaveLexerApi();
+    void SetUnknownLexerApi();
+    bool TestFileFilter(const std::string& file_filter);
+    void ResetLexer();
     QString GetTitleFromPath(const QString& path) const;
     QString pathname_;
     QString title_;
     QsciScintilla* ptext_edit_;
     QsciAPIs* papis_;
-    QsciLexerLua* plexer_;
+    QsciLexer* plexer_;
     static int s_new_docview_sequence_;
     bool is_apis_preparing_;
     ApiLoader* papi_loader_;
+    FileType file_type_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };

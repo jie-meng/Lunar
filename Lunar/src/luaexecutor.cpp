@@ -6,8 +6,7 @@ using namespace std;
 using namespace util;
 
 LuaExecutor::LuaExecutor(QObject* parent) :
-    QObject(parent),
-    run_path_("")
+    QObject(parent)
 {
     //ctor
 }
@@ -15,32 +14,6 @@ LuaExecutor::LuaExecutor(QObject* parent) :
 LuaExecutor::~LuaExecutor()
 {
     //dtor
-}
-
-QString LuaExecutor::runPathQ()
-{
-    return run_path_;
-}
-
-std::string LuaExecutor::runPath()
-{
-    return QStringToStdString(run_path_);
-}
-
-bool LuaExecutor::setExecutor(const QString& executor_path)
-{
-    executor_path_ = "";
-
-    if(!isPathFile(QStringToStdString(executor_path)))
-        return false;
-
-    executor_path_ = executor_path;
-    return true;
-}
-
-void LuaExecutor::setRunPath(const QString& runPath)
-{
-    run_path_ = runPath;
 }
 
 bool LuaExecutor::isRunning()
@@ -53,44 +26,67 @@ void LuaExecutor::stop()
     process_.kill();
 }
 
-bool LuaExecutor::executeQ(const QString& args, const QString& path)
+std::string LuaExecutor::getScriptExecutor(const std::string& file)
 {
-    if ("" == executor_path_ || "" == args)
-        return false;
-
-    return process_.create(QStringToStdString(executor_path_ + " " + args),
-                           QStringToStdString(path),
-                           true,
-                           true,
-                           UtilBind(&LuaExecutor::output, this, _1));
+    if (isFileInFileFilter(file, LunarGlobal::getLuaFileFilter()))
+        return LunarGlobal::getRunnerLua();
+    else if (isFileInFileFilter(file, LunarGlobal::getOctaveFileFilter()))
+        return LunarGlobal::getRunnerOctave();
+    else
+        return "";
 }
 
-bool LuaExecutor::execute(const std::string& args, const std::string& path)
+bool LuaExecutor::isFileInFileFilter(const std::string& file, const std::string& file_filter)
 {
-    if ("" == executor_path_ || "" == args)
+    std::vector<std::string> filterVec;
+    util::strSplit(file_filter, ",", filterVec);
+    for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
+    {
+        if (util::strEndWith(file, std::string(".") + *it, false))
+            return true;
+    }
+
+    return false;
+}
+
+bool LuaExecutor::execute(const std::string& file, const std::string& args, const std::string& path)
+{
+    if ("" == file)
         return false;
 
-    return process_.create(QStringToStdString(executor_path_) + " " + args,
+    std::string executor = getScriptExecutor(file);
+    if ("" == executor)
+        return false;
+
+    std::string script = std::string("\"") + file + std::string("\"");
+
+    return process_.create(executor + " " + script + " " + args,
                            path,
                            true,
                            true,
                            UtilBind(&LuaExecutor::output, this, _1));
 }
 
-bool LuaExecutor::executeInSysCmd(const std::string& args, const std::string& path)
+bool LuaExecutor::executeInSysCmd(const std::string& file, const std::string& args, const std::string& path)
 {
-    if ("" == executor_path_ || "" == args)
+    if ("" == file)
         return false;
+
+    std::string executor = getScriptExecutor(file);
+    if ("" == executor)
+        return false;
+
+    std::string script = std::string("\"") + file + std::string("\"");
 
     if (path == currentPath())
     {
-        ::system((QStringToStdString(executor_path_) + " " + args).c_str());
+        ::system((executor + " " + script + " " + args).c_str());
     }
     else
     {
         string oldPath = currentPath();
         setCurrentPath(path);
-        ::system((QStringToStdString(executor_path_) + " " + args).c_str());
+        ::system((executor + " " + script + " " + args).c_str());
         setCurrentPath(oldPath);
     }
 

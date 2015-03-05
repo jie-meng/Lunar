@@ -11,7 +11,6 @@ namespace gui
 {
 
 const std::string ApiLoader::kApisExt = "api";
-const std::string ApiLoader::kApisRelativePath = "/apis";
 const std::string ApiLoader::kRegexFunction = "function\\s+(\\w+((\\.|:)\\w+)*\\s*\\(.*\\))";
 
 ////////////////////////////////////////////////////
@@ -31,13 +30,13 @@ ApiLoader::~ApiLoader()
 {
 }
 
-void ApiLoader::LoadFileApis()
+void ApiLoader::LoadFileApis(const std::string& api_path)
 {
     if(NULL == papis_)
         return;
 
     std::list<std::string> api_list;
-    util::findFilesInDirRecursively(LunarGlobal::get_app_path() + kApisRelativePath, api_list, kApisExt);
+    util::findFilesInDirRecursively(api_path, api_list, kApisExt);
     if (api_list.size()>0)
     {
         for (std::list<std::string>::iterator it = api_list.begin(); it != api_list.end(); ++it)
@@ -108,25 +107,23 @@ void ApiLoader::ParseCurrentTextApis()
     }
 }
 
-void ApiLoader::LoadFileObjApis()
-{
-    if(NULL == papis_)
-        return;
+//void ApiLoader::LoadFileObjApis()
+//{
+//    if(NULL == papis_)
+//        return;
 
-    ClassInfo* pclass_info = NULL;
-    if(class_map_.find("File") != class_map_.end())
-    {
-        pclass_info = class_map_["File"];
-        delete pclass_info;
-    }
+//    ClassInfo* pclass_info = NULL;
+//    if(class_map_.find("File") != class_map_.end())
+//    {
+//        pclass_info = class_map_["File"];
+//        delete pclass_info;
+//    }
 
-    pclass_info = new ClassInfo("File");
-    pclass_info->AddClassApi("read(a, b)");
-    pclass_info->AddClassApi("close()");
-    pclass_info->InsertTmpObj("shit");
-    pclass_info->InsertTmpObj("mabi");
-    class_map_["File"] = pclass_info;
-}
+//    pclass_info = new ClassInfo("File");
+//    pclass_info->AddClassApi("read(a, b)");
+//    pclass_info->AddClassApi("close()");
+//    class_map_["File"] = pclass_info;
+//}
 
 void ApiLoader::ParseCurrentTextObjApis()
 {

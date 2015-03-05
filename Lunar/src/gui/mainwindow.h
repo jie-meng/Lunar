@@ -68,8 +68,8 @@ private:
     void InitLuaExecutor();
     void InitRunner();
     void ProcessCmdParam();
-//    bool StartMsgRecvThread();
     void RunEx(bool run_in_syscmd);
+    std::string FormatFileFilter(const std::string& file_filter);
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;

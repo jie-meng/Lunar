@@ -60,10 +60,13 @@ QFont LunarGlobal::s_font_("Courier New", 10);
 unsigned short LunarGlobal::s_process_sock_port_ = 0;
 size_t LunarGlobal::s_mainwindow_width_ = 800;
 size_t LunarGlobal::s_mainwindow_height_ = 600;
-std::string LunarGlobal::s_file_filter_ = "lua";
-std::string LunarGlobal::s_runner_ = "luaexec.exe";
-std::string LunarGlobal::s_run_path_ = "";
+std::string LunarGlobal::s_lua_file_filter_ = "lua";
+std::string LunarGlobal::s_octave_file_filter_ = "m";
+std::string LunarGlobal::s_runner_lua_ = "luaexec";
+std::string LunarGlobal::s_runner_octave_ = "octave";
 std::string LunarGlobal::s_run_additional_args_ = "";
+std::string LunarGlobal::s_lua_api_ = "/api/lua";
+std::string LunarGlobal::s_octave_api_ = "/api/octave";
 
 LunarGlobal::LunarGlobal()
 {
@@ -103,13 +106,15 @@ void LunarGlobal::ReadCfg()
     std::string font_type = text_cfg.getValue("Font.Type", std::string("Courier New"));
     int font_size = text_cfg.getValue("Font.Size", 10);
     s_font_ = QFont(StdStringToQString(font_type), font_size);
-//    s_process_sock_port_ = text_cfg.getValue("Process.SockPort", 10092);
     s_mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
     s_mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
-    s_runner_ = text_cfg.getValue("Run.Runner", "luaexec.exe");
-    s_run_path_ = text_cfg.getValue("Run.Path", "");
+    s_runner_lua_ = text_cfg.getValue("Run.Runner.Lua", "luaexec");
+    s_runner_octave_ = text_cfg.getValue("Run.Runner.Octave", "octave");
     s_run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
-    s_file_filter_ = text_cfg.getValue("FileFilter", "lua");
+    s_lua_file_filter_ = text_cfg.getValue("FileFilter.Lua", "lua");
+    s_octave_file_filter_ = text_cfg.getValue("FileFilter.Octave", "m");
+    s_lua_api_ = text_cfg.getValue("Api.Lua", "/api/lua");
+    s_octave_api_ = text_cfg.getValue("Api.Octave", "/api/octave");
 }
 
 void LunarGlobal::WriteCfg()
@@ -120,13 +125,15 @@ void LunarGlobal::WriteCfg()
     text_cfg.setValue("Font.Size", get_font().pointSize());
     text_cfg.setValue("AutoCompletion.Threshold", s_autocompletion_threshold_);
     text_cfg.setValue("AutoCompletion.WordTip", s_autocompletion_wordtip_);
-//    text_cfg.setValue("Process.SockPort", s_process_sock_port_);
     text_cfg.setValue("MainWindow.Width", s_mainwindow_width_);
     text_cfg.setValue("MainWindow.Height", s_mainwindow_height_);
-    text_cfg.setValue("FileFilter", s_file_filter_);
-    text_cfg.setValue("Run.Runner", s_runner_);
-    text_cfg.setValue("Run.Path", s_run_path_);
+    text_cfg.setValue("FileFilter.Lua", s_lua_file_filter_);
+    text_cfg.setValue("FileFilter.Octave", s_octave_file_filter_);
+    text_cfg.setValue("Run.Runner.Lua", s_runner_lua_);
+    text_cfg.setValue("Run.Runner.Octave", s_runner_octave_);
     text_cfg.setValue("Run.Additional.Args", s_run_additional_args_);
+    text_cfg.setValue("Api.Lua", s_lua_api_);
+    text_cfg.setValue("Api.Octave", s_octave_api_);
 
     text_cfg.save();
 }

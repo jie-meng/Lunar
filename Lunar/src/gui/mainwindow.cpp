@@ -136,15 +136,22 @@ bool MainWindow::Init()
         std::string app_name = util::splitPathname(app_path).second;
         app_name = util::strToLower(app_name);
 
-        std::vector<std::string> filterVec;
-        util::strSplit(LunarGlobal::getFileFilter(), ",", filterVec);
-        for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
-            *it = std::string("*.") + util::strTrim(*it);
-
-        s_file_filter_ = std::string("Script Files(") + util::strJoin(filterVec, ";") + ");;All Files(*.*)";
+        s_file_filter_ = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ");;"
+                + "Octave Files(" + FormatFileFilter(LunarGlobal::getOctaveFileFilter()) + ");;"
+                + "All Files(*.*)";
     }
 
     return true;
+}
+
+std::string MainWindow::FormatFileFilter(const std::string& file_filter)
+{
+    std::vector<std::string> filterVec;
+    util::strSplit(file_filter, ",", filterVec);
+    for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
+        *it = std::string("*.") + util::strTrim(*it);
+
+    return util::strJoin(filterVec, ";");
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -543,7 +550,7 @@ void MainWindow::RunEx(bool run_in_syscmd)
     {
         string addtional_args = "";
         if ("" != LunarGlobal::getRunAdditionalArgs())
-            addtional_args = std::string(" ") + LunarGlobal::getRunAdditionalArgs();
+            addtional_args = LunarGlobal::getRunAdditionalArgs();
 
         string script = QStringToStdString(pdoc_view->get_pathname());
         if (script == "")
@@ -551,51 +558,41 @@ void MainWindow::RunEx(bool run_in_syscmd)
 
         pair<string, string> path_name = util::splitPathname(script);
 
-        //set run path
-        std::string runPath = (plua_executor_->runPath() != "") ?
-            plua_executor_->runPath() :
-            path_name.first;
-
+        std::string runPath = path_name.first;
         //for windows disk root, there gonna be an error when excute if path is "X:"
         if (strEndWith(runPath, ":"))
             runPath += "/";
-        script = std::string("\"") + script + std::string("\"");
 
         bool ret = false;
         if (run_in_syscmd)
         {
-            ret = plua_executor_->executeInSysCmd(script + addtional_args,
+            ret = plua_executor_->executeInSysCmd(script, addtional_args,
                                     runPath);
         }
         else
         {
-            ret = plua_executor_->execute(script + addtional_args,
+            ret = plua_executor_->execute(script, addtional_args,
                                     runPath);
         }
 
         if (!ret)
-            AddOutput("run failed");
+            AddOutput("Run failed");
     }
 }
 
 void MainWindow::InitRunner()
 {
-    string runner = strTrim(LunarGlobal::getRunner());
+    string runner = strTrim(LunarGlobal::getRunnerLua());
     if (!strContains(runner, "/") && !strContains(runner, "\\"))
     {
         //relative path
         runner = LunarGlobal::get_app_path() + "/" + runner;
     }
 
-    if (!util::isPathFile(runner))
-        prun_run_action_->setEnabled(false);
-    else
-        plua_executor_->setExecutor(StdStringToQString(runner));
-
-    if (!util::isPathDir(strTrim(LunarGlobal::getRunPath())))
-        LunarGlobal::setRunPath("");
-    else
-        plua_executor_->setRunPath(StdStringToQString(strTrim(LunarGlobal::getRunPath())));
+//    if (!util::isPathFile(runner))
+//        prun_run_action_->setEnabled(false);
+//    else
+//        plua_executor_->setExecutor(StdStringToQString(runner));
 }
 
 void MainWindow::SetStatusText(const QString& text)

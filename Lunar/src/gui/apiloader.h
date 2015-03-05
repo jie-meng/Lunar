@@ -28,8 +28,8 @@ public:
     explicit ApiLoader(QsciScintilla* ptext_edit, QsciAPIs* papis, QObject* parent);
     virtual ~ApiLoader();
 
-    void LoadFileApis();
-    void LoadFileObjApis();
+    void LoadFileApis(const std::string& api_path);
+    //void LoadFileObjApis();
     void Prepare();
 
     void ClearTmpApis();

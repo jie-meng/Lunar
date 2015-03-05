@@ -7,11 +7,12 @@
 #include <QMessageBox>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerlua.h>
-#include <Qsci/qsciapis.h>
+#include <Qsci/qscilexeroctave.h>
 #include "util/string.hpp"
 #include "util/file.hpp"
 #include "util/regex.hpp"
 #include "util/cfg.hpp"
+#include "lunarapi.h"
 #include "lunarcommon.h"
 #include "apiloader.h"
 #include "mainwindow.h"
@@ -27,7 +28,8 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     papis_(NULL),
     plexer_(NULL),
     is_apis_preparing_(false),
-    papi_loader_(NULL)
+    papi_loader_(NULL),
+    file_type_(Unknown)
 {
     //ctor
     ptext_edit_ = new QsciScintilla(parent);
@@ -43,24 +45,52 @@ DocView::DocView(const QString& pathname, QWidget* parent)
 DocView::~DocView()
 {
     //dtor
+    ClearLexerApi();
 }
 
-void DocView::SetLuaLexerAndPslApi()
+void DocView::ClearLexerApi()
 {
+    if (plexer_)
+        util::safeDelete(plexer_);
+    if (papi_loader_)
+        util::safeDelete(papi_loader_);
+}
+
+void DocView::SetUnknownLexerApi()
+{
+    ClearLexerApi();
+
+    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::get_autocompletion_threshold());
+    ptext_edit_->setFont(LunarGlobal::get_font());
+    if(LunarGlobal::get_autocompletion_wordtip())
+        ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
+    else
+        ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
+
+    ptext_edit_->setLexer(NULL);
+    ptext_edit_->setAutoCompletionCaseSensitivity(false);
+
+    file_type_ = Unknown;
+}
+
+void DocView::SetLuaLexerApi()
+{
+    ClearLexerApi();
+
     ptext_edit_->setAutoCompletionThreshold(LunarGlobal::get_autocompletion_threshold());
     plexer_ = new QsciLexerLua(ptext_edit_);
     plexer_->setFont(LunarGlobal::get_font());
 
-    papis_ = new QsciAPIs(plexer_);
+    papis_ = new LunarApi(plexer_);
     if(LunarGlobal::get_autocompletion_wordtip())
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
-        papis_->setAutoCompletionApiTip(true);
+//        papis_->setAutoCompletionApiTip(true);
     }
     else
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-        papis_->setAutoCompletionApiTip(false);
+//        papis_->setAutoCompletionApiTip(false);
     }
 
     plexer_->setAPIs(papis_);
@@ -69,10 +99,46 @@ void DocView::SetLuaLexerAndPslApi()
 
     //load APIs
     papi_loader_ = new ApiLoader(ptext_edit_, papis_, this);
-    papi_loader_->LoadFileApis();
+    papi_loader_->LoadFileApis(LunarGlobal::get_app_path() + LunarGlobal::getLuaApi());
     //not stable
     //papi_loader_->LoadFileObjApis();
     papi_loader_->Prepare();
+
+    file_type_ = Lua;
+}
+
+void DocView::SetOctaveLexerApi()
+{
+    ClearLexerApi();
+
+    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::get_autocompletion_threshold());
+    plexer_ = new QsciLexerOctave(ptext_edit_);
+    plexer_->setFont(LunarGlobal::get_font());
+
+    papis_ = new LunarApi(plexer_);
+    if(LunarGlobal::get_autocompletion_wordtip())
+    {
+        ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
+//        papis_->setAutoCompletionApiTip(true);
+    }
+    else
+    {
+        ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
+//        papis_->setAutoCompletionApiTip(false);
+    }
+
+    plexer_->setAPIs(papis_);
+    ptext_edit_->setLexer(plexer_);
+    ptext_edit_->setAutoCompletionCaseSensitivity(false);
+
+    //load APIs
+    papi_loader_ = new ApiLoader(ptext_edit_, papis_, this);
+    papi_loader_->LoadFileApis(LunarGlobal::get_app_path() + LunarGlobal::getOctaveApi());
+    //not stable
+    //papi_loader_->LoadFileObjApis();
+    papi_loader_->Prepare();
+
+    file_type_ = Octave;
 }
 
 void DocView::ApisPreparationFinished()
@@ -124,6 +190,16 @@ void DocView::InitGui()
     this->setLayout(pmain_layout);
 }
 
+void DocView::ResetLexer()
+{
+    if (TestFileFilter(LunarGlobal::getLuaFileFilter()))
+        SetLuaLexerApi();
+    else if (TestFileFilter((LunarGlobal::getOctaveFileFilter())))
+        SetOctaveLexerApi();
+    else
+        SetUnknownLexerApi();
+}
+
 void DocView::InitTextEdit()
 {
     ptext_edit_->setUtf8(true);
@@ -135,34 +211,29 @@ void DocView::InitTextEdit()
     if(tr("") != pathname_)
     {
         ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
-
-        std::string title = QStringToStdString(title_);
-        std::vector<std::string> filterVec;
-        util::strSplit(LunarGlobal::getFileFilter(), ",", filterVec);
-        for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
-        {
-
-            if (util::strEndWith(title, *it, false))
-            {
-                SetLuaLexerAndPslApi();
-                break;
-            }
-        }
-
-//        if (title_.endsWith(".lua", Qt::CaseInsensitive)
-//            || title_.endsWith(".psl", Qt::CaseInsensitive)
-//            || title_.endsWith(".script", Qt::CaseInsensitive))
-//        {
-//            SetLuaLexerAndPslApi();
-//        }
+        ResetLexer();
     }
     else
     {
         ptext_edit_->setText(tr(""));
-        SetLuaLexerAndPslApi();
+        SetUnknownLexerApi();
     }
     ptext_edit_->setMarginLineNumbers (0, true);
     ResetMarginLineNumberWidth();
+}
+
+bool DocView::TestFileFilter(const std::string& file_filter)
+{
+    std::string title = QStringToStdString(title_);
+    std::vector<std::string> filterVec;
+    util::strSplit(file_filter, ",", filterVec);
+    for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
+    {
+        if (util::strEndWith(title, std::string(".") + *it, false))
+            return true;
+    }
+
+    return false;
 }
 
 void DocView::ResetMarginLineNumberWidth()
@@ -177,8 +248,6 @@ void DocView::Init()
     InitGui();
     InitTextEdit();
     InitConnections();
-//    ptext_edit_->setFocus();
-//    ptext_edit_->setCursorPosition(0, 0);
 }
 
 void DocView::TextChanged()
@@ -201,6 +270,8 @@ bool DocView::DoSave()
     emit UpdateTitle(this);
     std::string content = QStringToStdString(ptext_edit_->text());
     content = util::strReplaceAll(content, "\r\n", "\n");
+    ResetLexer();
+
     return util::writeTextFile(QStringToStdString(pathname_), content);
 }
 

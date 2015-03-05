@@ -99,6 +99,12 @@ public:
     //! the current set.  Returns true if successful, otherwise false.
     bool load(const QString &filename);
 
+	//! joshua add
+    //! Remove the single raw API entry \a entry from the current set.
+    //!	if there is one or more repeat, remove all repeat apis
+    //! \sa add(), clear(), load()
+    void remove_repeat(const QString &entry);
+	
     //! Remove the single raw API entry \a entry from the current set.
     //!
     //! \sa add(), clear(), load()
@@ -163,7 +169,10 @@ public:
     //! Return a list of the installed raw API file names for the associated
     //! lexer.
     QStringList installedAPIFiles() const;
-
+	
+	//! joshua add
+	//! e.g. if true, AutoCompletion list shows "funcname (lib.class)", otherwise "funcname"
+	void setAutoCompletionApiTip(bool is_api_tip);
 signals:
     //! This signal is emitted when the conversion of raw API information to
     //! prepared API information has been cancelled.
@@ -202,6 +211,8 @@ private:
     QString unambiguous_context;
     QStringList apis;
     QsciAPIsPrepared *prep;
+	//joshua add
+	bool is_api_tip_;
 
     static bool enoughCommas(const QString &s, int commas);
 
