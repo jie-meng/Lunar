@@ -13,6 +13,7 @@
 #include "util/regex.hpp"
 #include "util/cfg.hpp"
 #include "lunarapi.h"
+#include "octaveapi.h"
 #include "lunarcommon.h"
 #include "apiloader.h"
 #include "mainwindow.h"
@@ -52,6 +53,8 @@ void DocView::ClearLexerApi()
 {
     if (plexer_)
         util::safeDelete(plexer_);
+    //papis_ would be delete together with plexer_
+
     if (papi_loader_)
         util::safeDelete(papi_loader_);
 }
@@ -115,7 +118,7 @@ void DocView::SetOctaveLexerApi()
     plexer_ = new QsciLexerOctave(ptext_edit_);
     plexer_->setFont(LunarGlobal::get_font());
 
-    papis_ = new LunarApi(plexer_);
+    papis_ = new OctaveApi(plexer_);
     if(LunarGlobal::get_autocompletion_wordtip())
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
@@ -149,7 +152,7 @@ void DocView::ApisPreparationFinished()
 void DocView::LinesChanged()
 {
     ResetMarginLineNumberWidth();
-    UpdateApis();
+    //UpdateApis();
 }
 
 void DocView::ParseRequireFiles(const std::string& filepath)
@@ -157,31 +160,31 @@ void DocView::ParseRequireFiles(const std::string& filepath)
     util::printLine(filepath);
 }
 
-void DocView::UpdateApisProc()
-{
+//void DocView::UpdateApisProc()
+//{
 
 //    //clear tmp apis
-    if (papi_loader_)
-    {
-        papi_loader_->ClearTmpApis();
-        papi_loader_->ParseCurrentTextApis();
-        //not stable
-        //papi_loader_->ParseCurrentTextObjApis();
-        papi_loader_->AppendTmpApis();
+//    if (papi_loader_)
+//    {
+//        papi_loader_->ClearTmpApis();
+//        papi_loader_->ParseCurrentTextApis();
+//        //not stable
+//        //papi_loader_->ParseCurrentTextObjApis();
+//        papi_loader_->AppendTmpApis();
 
-        //start prepare
-        papi_loader_->Prepare();
-    }
-}
+//        //start prepare
+//        papi_loader_->Prepare();
+//    }
+//}
 
-void DocView::UpdateApis()
-{
-    if(!is_apis_preparing_)
-    {
-        is_apis_preparing_ = true;
-        UpdateApisProc();
-    }
-}
+//void DocView::UpdateApis()
+//{
+//    if(!is_apis_preparing_)
+//    {
+//        is_apis_preparing_ = true;
+//        UpdateApisProc();
+//    }
+//}
 
 void DocView::InitGui()
 {

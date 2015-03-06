@@ -1,8 +1,0 @@
-regex.create(flag)
-regex.destroy(re)
-regex.compile(re, s)
-regex.match(re, s)
-regex.search(re, s)
-regex.getMatchedGroupCnt(re)
-regex.getMatchedGroupByIndex(re, idx)
-regex.getMatchedGroupByName(re, name)

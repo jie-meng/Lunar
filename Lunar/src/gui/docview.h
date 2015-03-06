@@ -5,7 +5,7 @@
 #include <QFont>
 #include "util/base.hpp"
 
-class QsciAPIs;
+class QsciAPIsEx;
 class QsciLexer;
 class QsciScintilla;
 
@@ -54,8 +54,8 @@ private Q_SLOTS:
     void LinesChanged();
     void ResetMarginLineNumberWidth();
 private:
-    void UpdateApisProc();
-    void UpdateApis();
+//    void UpdateApisProc();
+//    void UpdateApis();
     void Init();
     void InitGui();
     void InitTextEdit();
@@ -71,7 +71,7 @@ private:
     QString pathname_;
     QString title_;
     QsciScintilla* ptext_edit_;
-    QsciAPIs* papis_;
+    QsciAPIsEx* papis_;
     QsciLexer* plexer_;
     static int s_new_docview_sequence_;
     bool is_apis_preparing_;

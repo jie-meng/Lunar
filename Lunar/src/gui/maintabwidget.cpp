@@ -186,6 +186,7 @@ void MainTabWidget::TabClose(int index)
             if(ret == QMessageBox::Yes)
                 pdocview->SaveDoc();
             removeTab(index);
+            delete pdocview;
         }
         else
         {
@@ -194,7 +195,9 @@ void MainTabWidget::TabClose(int index)
     }
     else
     {
+        DocView* pdocview = dynamic_cast<DocView*>(widget(index));
         removeTab(index);
+        util::safeDelete(pdocview);
     }
 }
 

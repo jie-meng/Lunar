@@ -1,7 +1,0 @@
-io.close(file)
-io.flush()
-io.lines(filename)
-io.read(...)
-io.seek(whence, offset)
-io.setvbuf(mode, size)
-io.write(...)

@@ -1,16 +1,16 @@
-#ifndef LUNARAPI_H
-#define LUNARAPI_H
+#ifndef OCTAVEAPI_H
+#define OCTAVEAPI_H
 
 #include <QObject>
 #include "qsciapisex.h"
 
 class QsciLexer;
 
-class LunarApi : public QsciAPIsEx
+class OctaveApi : public QsciAPIsEx
 {
     Q_OBJECT
 public:
-    explicit LunarApi(QsciLexer *parent = 0);
+    explicit OctaveApi(QsciLexer *parent = 0);
     virtual void updateAutoCompletionList(const QStringList &context,
                 QStringList &list);
     virtual QStringList callTips(const QStringList &context, int commas,
@@ -22,4 +22,4 @@ public slots:
 
 };
 
-#endif // LUNARAPI_H
+#endif // OCTAVEAPI_H
