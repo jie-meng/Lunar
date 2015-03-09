@@ -15,7 +15,8 @@
 #include "lunarapi.h"
 #include "octaveapi.h"
 #include "lunarcommon.h"
-#include "apiloader.h"
+#include "apiloaderoctave.h"
+#include "apiloaderlua.h"
 #include "mainwindow.h"
 
 namespace gui
@@ -88,12 +89,10 @@ void DocView::SetLuaLexerApi()
     if(LunarGlobal::get_autocompletion_wordtip())
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
-//        papis_->setAutoCompletionApiTip(true);
     }
     else
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-//        papis_->setAutoCompletionApiTip(false);
     }
 
     plexer_->setAPIs(papis_);
@@ -101,10 +100,12 @@ void DocView::SetLuaLexerApi()
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
 
     //load APIs
-    papi_loader_ = new ApiLoader(ptext_edit_, papis_, this);
+    papi_loader_ = new ApiLoaderLua(QStringToStdString(pathname_), papis_, this);
     papi_loader_->LoadFileApis(LunarGlobal::get_app_path() + LunarGlobal::getLuaApi());
-    //not stable
-    //papi_loader_->LoadFileObjApis();
+    papi_loader_->ParseCurrentFileApi();
+    papi_loader_->AppendApiCurrentFile();
+    papi_loader_->ParseIncludeFileApi();
+    papi_loader_->AppendApiIncludeFile();
     papi_loader_->Prepare();
 
     file_type_ = Lua;
@@ -122,12 +123,10 @@ void DocView::SetOctaveLexerApi()
     if(LunarGlobal::get_autocompletion_wordtip())
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
-//        papis_->setAutoCompletionApiTip(true);
     }
     else
     {
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
-//        papis_->setAutoCompletionApiTip(false);
     }
 
     plexer_->setAPIs(papis_);
@@ -135,10 +134,12 @@ void DocView::SetOctaveLexerApi()
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
 
     //load APIs
-    papi_loader_ = new ApiLoader(ptext_edit_, papis_, this);
+    papi_loader_ = new ApiLoaderOctave(QStringToStdString(pathname_), papis_, this);
     papi_loader_->LoadFileApis(LunarGlobal::get_app_path() + LunarGlobal::getOctaveApi());
-    //not stable
-    //papi_loader_->LoadFileObjApis();
+    papi_loader_->ParseCurrentFileApi();
+    papi_loader_->AppendApiCurrentFile();
+    papi_loader_->ParseIncludeFileApi();
+    papi_loader_->AppendApiIncludeFile();
     papi_loader_->Prepare();
 
     file_type_ = Octave;
@@ -152,39 +153,7 @@ void DocView::ApisPreparationFinished()
 void DocView::LinesChanged()
 {
     ResetMarginLineNumberWidth();
-    //UpdateApis();
 }
-
-void DocView::ParseRequireFiles(const std::string& filepath)
-{
-    util::printLine(filepath);
-}
-
-//void DocView::UpdateApisProc()
-//{
-
-//    //clear tmp apis
-//    if (papi_loader_)
-//    {
-//        papi_loader_->ClearTmpApis();
-//        papi_loader_->ParseCurrentTextApis();
-//        //not stable
-//        //papi_loader_->ParseCurrentTextObjApis();
-//        papi_loader_->AppendTmpApis();
-
-//        //start prepare
-//        papi_loader_->Prepare();
-//    }
-//}
-
-//void DocView::UpdateApis()
-//{
-//    if(!is_apis_preparing_)
-//    {
-//        is_apis_preparing_ = true;
-//        UpdateApisProc();
-//    }
-//}
 
 void DocView::InitGui()
 {

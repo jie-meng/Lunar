@@ -40,7 +40,8 @@
 
 #include "Qsci/qscilexer.h"
 
-
+namespace gui
+{
 
 // The version number of the prepared API information format.
 const unsigned char PreparedDataFormatVersion = 0;
@@ -967,4 +968,6 @@ QStringList QsciAPIsEx::installedAPIFiles() const
         filenames << fi.absoluteFilePath();
 
     return filenames;
+}
+
 }

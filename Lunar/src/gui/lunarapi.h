@@ -6,6 +6,9 @@
 
 class QsciLexer;
 
+namespace gui
+{
+
 class LunarApi : public QsciAPIsEx
 {
     Q_OBJECT
@@ -21,5 +24,7 @@ signals:
 public slots:
 
 };
+
+}
 
 #endif // LUNARAPI_H

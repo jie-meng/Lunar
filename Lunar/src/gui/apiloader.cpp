@@ -1,4 +1,5 @@
 #include "apiloader.h"
+#include <QMessageBox>
 #include <Qsci/qsciscintilla.h>
 #include "qsciapisex.h"
 #include "util/file.hpp"
@@ -7,21 +8,24 @@
 #include "lunarcommon.h"
 #include "docview.h"
 
+using namespace std;
+using namespace util;
+
 namespace gui
 {
 
-const std::string ApiLoader::kApisExt = "api";
+const std::string kApisExt = "api";
 //const std::string ApiLoader::kRegexFunction = "function\\s+(\\w+((\\.|:)\\w+)*\\s*\\(.*\\))";
 
 ////////////////////////////////////////////////////
-// class name : CurTextTmpApiLoader
+// class name : ApiLoader
 // description :
 // author :
 // time : 2012-01-12-08.04
 ////////////////////////////////////////////////////
-ApiLoader::ApiLoader(QsciScintilla* ptext_edit, QsciAPIsEx* papis, QObject* parent)
+ApiLoader::ApiLoader(const std::string& file, QsciAPIsEx* papis, QObject* parent)
     : QObject(parent),
-    ptext_edit_(ptext_edit),
+    file_(file),
     papis_(papis)
 {
 }
@@ -52,31 +56,46 @@ void ApiLoader::Prepare()
     papis_->prepare();
 }
 
-//void ApiLoader::ClearTmpApis()
-//{
-//    if(NULL == papis_)
-//        return;
+void ApiLoader::ClearApiCurrentFile()
+{
+    if(NULL == papis_)
+        return;
 
-//    for (uint32_t i=0; i<tmp_apis_vec_.size(); i++)
-//    {
-//        papis_->remove(StdStringToQString(tmp_apis_vec_.at(i)));
-//    }
-//    tmp_apis_vec_.clear();
-//}
+    for (uint32_t i=0; i<current_file_apis_vec_.size(); i++)
+        papis_->remove(StdStringToQString(current_file_apis_vec_.at(i)));
+    current_file_apis_vec_.clear();
+}
 
-//void ApiLoader::AppendTmpApis()
-//{
-//    if(NULL == papis_)
-//        return;
+void ApiLoader::AppendApiCurrentFile()
+{
+    if(NULL == papis_)
+        return;
 
-//    for (uint32_t i=0; i<tmp_apis_vec_.size(); i++)
-//    {
-//        papis_->add(StdStringToQString(tmp_apis_vec_.at(i)));
-//    }
-//}
+    for (uint32_t i=0; i<current_file_apis_vec_.size(); i++)
+        papis_->add(StdStringToQString(current_file_apis_vec_.at(i)));
+}
 
-//void ApiLoader::ParseCurrentTextApis()
-//{
+void ApiLoader::ClearApiIncludeFile()
+{
+    if(NULL == papis_)
+        return;
+
+    for (uint32_t i=0; i<include_file_apis_vec_.size(); i++)
+        papis_->remove(StdStringToQString(include_file_apis_vec_.at(i)));
+    include_file_apis_vec_.clear();
+}
+
+void ApiLoader::AppendApiIncludeFile()
+{
+    if(NULL == papis_)
+        return;
+
+    for (uint32_t i=0; i<include_file_apis_vec_.size(); i++)
+        papis_->add(StdStringToQString(include_file_apis_vec_.at(i)));
+}
+
+void ApiLoader::ParseCurrentFileApi()
+{
 //    if(NULL == papis_)
 //        return;
 
@@ -104,36 +123,21 @@ void ApiLoader::Prepare()
 //            }
 //        }
 //    }
-//}
+}
 
-//void ApiLoader::ParseCurrentTextObjApis()
-//{
-//    if (NULL == papis_)
-//        return;
+void ApiLoader::ParseIncludeFileApi()
+{
 
-//    //travers classes
-//    std::map<std::string, ClassInfo*>::iterator pos;
-//    for (pos = class_map_.begin(); pos != class_map_.end(); ++pos)
-//    {
-//        ClassInfo* pclass_info = pos->second;
-//        if (NULL != pclass_info)
-//        {
-//            //travers tmp objs of one class
-//            std::set<std::string>::iterator it_tmp_obj;
-//            for (it_tmp_obj = pclass_info->tmp_obj_name_set_.begin();
-//                it_tmp_obj != pclass_info->tmp_obj_name_set_.end();
-//                 ++it_tmp_obj)
-//            {
-//                //add all class methods to a obj
-//                for (int i=0; i<pclass_info->GetClassApiCount(); i++)
-//                {
-//                    tmp_apis_vec_.push_back(*it_tmp_obj + "." + pclass_info->GetClassApi(i));
-//                    //util::PrintLine(*it_tmp_obj + "." + pclass_info->GetClassApi(i));
-//                }
-//            }
-//        }
-//    }
-//}
+}
+
+void ApiLoader::AddApiCurrentFile(const std::string& str)
+{
+    current_file_apis_vec_.push_back(str);
+}
+
+void ApiLoader::AddApiIncludeFile(const std::string& str)
+{
+    include_file_apis_vec_.push_back(str);
+}
 
 } // namespace gui
-

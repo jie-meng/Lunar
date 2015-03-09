@@ -78,12 +78,6 @@ void MainWindow::ProcessCmdParam()
     }
 }
 
-//bool MainWindow::StartMsgRecvThread()
-//{
-//    connect(&msg_recv_thread_, SIGNAL(OpenDoc(const QString&)), this, SLOT(OpenDoc(const QString&)));
-//    return msg_recv_thread_.Start();
-//}
-
 void MainWindow::InitBottomDockWidget()
 {
     pbottom_widget_ = new DockWidgetEx(tr("Output"), this);

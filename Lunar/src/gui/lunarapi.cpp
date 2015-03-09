@@ -21,6 +21,9 @@
 using namespace std;
 using namespace util;
 
+namespace gui
+{
+
 LunarApi::LunarApi(QsciLexer *parent) :
     QsciAPIsEx(parent)
 {
@@ -132,4 +135,6 @@ QStringList LunarApi::callTips(const QStringList &context, int commas,
     }
 
     return cts;
+}
+
 }

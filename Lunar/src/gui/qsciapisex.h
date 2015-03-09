@@ -41,10 +41,13 @@ extern "C++" {
 #include <Qsci/qsciglobal.h>
 #include <Qsci/qsciscintilla.h>
 
-struct QsciAPIsPrepared;
-class QsciAPIsWorker;
 class QsciLexer;
 
+namespace gui
+{
+
+struct QsciAPIsPrepared;
+class QsciAPIsWorker;
 
 //! \brief The QsciAPIs class provies an implementation of the textual API
 //! information used in call tips and for auto-completion.
@@ -246,5 +249,7 @@ struct QsciAPIsPrepared
 #ifdef __APPLE__
 }
 #endif
+
+}
 
 #endif

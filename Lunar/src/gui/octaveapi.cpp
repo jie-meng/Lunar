@@ -21,6 +21,9 @@
 using namespace std;
 using namespace util;
 
+namespace gui
+{
+
 OctaveApi::OctaveApi(QsciLexer *parent) :
     QsciAPIsEx(parent)
 {
@@ -37,4 +40,6 @@ QStringList OctaveApi::callTips(const QStringList &context, int commas,
         QList<int> &shifts)
 {
     return QsciAPIsEx::callTips(context, commas, style, shifts);
+}
+
 }

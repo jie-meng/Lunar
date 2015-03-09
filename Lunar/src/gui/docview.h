@@ -5,13 +5,13 @@
 #include <QFont>
 #include "util/base.hpp"
 
-class QsciAPIsEx;
 class QsciLexer;
 class QsciScintilla;
 
 namespace gui
 {
 
+class QsciAPIsEx;
 class ApiLoader;
 
 class DocView : public QWidget
@@ -54,13 +54,10 @@ private Q_SLOTS:
     void LinesChanged();
     void ResetMarginLineNumberWidth();
 private:
-//    void UpdateApisProc();
-//    void UpdateApis();
     void Init();
     void InitGui();
     void InitTextEdit();
     void InitConnections();
-    void ParseRequireFiles(const std::string& filepath);
     void ClearLexerApi();
     void SetLuaLexerApi();
     void SetOctaveLexerApi();

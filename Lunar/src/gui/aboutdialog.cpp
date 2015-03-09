@@ -28,7 +28,7 @@ void AboutDialog::Init()
 
 void AboutDialog::InitGui()
 {
-    plabel_version_ = new QLabel(tr("Version: 1.1.0.20150306"));
+    plabel_version_ = new QLabel(tr("Version: 1.1.1.20150309"));
     plabel_email_ = new QLabel(tr("Email: joshua.meng.xy@gmail.com"));
 
     QVBoxLayout* pcenter_layout = new QVBoxLayout;

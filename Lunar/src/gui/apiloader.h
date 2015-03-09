@@ -7,16 +7,14 @@
 #include <QtCore/QObject>
 #include "util/base.hpp"
 
-class QsciAPIsEx;
-class QsciScintilla;
-
 namespace gui
 {
 
+class QsciAPIsEx;
 class ClassInfo;
 
 ////////////////////////////////////////////////////
-// class name : CurTextApiLoader
+// class name : ApiLoader
 // description :
 // author :
 // time : 2012-01-12-08.01
@@ -25,57 +23,30 @@ class ApiLoader : public QObject
 {
     Q_OBJECT
 public:
-    explicit ApiLoader(QsciScintilla* ptext_edit, QsciAPIsEx* papis, QObject* parent);
+    explicit ApiLoader(const std::string& file, QsciAPIsEx* papis, QObject* parent);
     virtual ~ApiLoader();
 
     void LoadFileApis(const std::string& api_path);
     void Prepare();
 
-//    void ClearTmpApis();
-//    void AppendTmpApis();
-//    void ParseCurrentTextApis();
-//    void ParseCurrentTextObjApis();
-
-    static const std::string kApisExt;
-    static const std::string kApisRelativePath;
-    static const std::string kRegexFunction;
-
+    void ClearApiCurrentFile();
+    void AppendApiCurrentFile();
+    void ClearApiIncludeFile();
+    void AppendApiIncludeFile();
+    virtual void ParseCurrentFileApi();
+    virtual void ParseIncludeFileApi();
+protected:
+    void AddApiCurrentFile(const std::string& str);
+    void AddApiIncludeFile(const std::string& str);
+    inline std::string File() const { return file_; }
 private:
-    QsciScintilla* ptext_edit_;
     QsciAPIsEx* papis_;
-    //std::vector<std::string> tmp_apis_vec_;
-    //std::map<std::string, ClassInfo*> class_map_;
+    std::string file_;
+    std::vector<std::string> current_file_apis_vec_;
+    std::vector<std::string> include_file_apis_vec_;
 private:
     DISALLOW_COPY_AND_ASSIGN(ApiLoader)
 };
-
-////////////////////////////////////////////////////
-// class name : ClassInfo
-// description :
-// author :
-// time : 2012-01-12-14.08
-////////////////////////////////////////////////////
-//class ClassInfo
-//{
-//    friend class ApiLoader;
-//public:
-//    ClassInfo(const std::string& class_name) : class_name_(class_name) {}
-//    ~ClassInfo() {}
-//    std::string GetClassName() const { return class_name_; }
-//    void AddClassApi(const std::string& entry) { class_api_vec_.push_back(entry); }
-//    void InsertTmpObj(const std::string& obj_name) { tmp_obj_name_set_.insert(obj_name); }
-//    void ClearTmpObj() { tmp_obj_name_set_.clear(); }
-
-//    int GetClassApiCount() { return class_api_vec_.size(); }
-//    int GetTmpObjCount() { return tmp_obj_name_set_.size(); }
-//    std::string GetClassApi(int index) { return class_api_vec_.at(index); }
-//private:
-//    std::string class_name_;
-//    std::vector<std::string> class_api_vec_;
-//    std::set<std::string> tmp_obj_name_set_;
-//private:
-//    DISALLOW_COPY_AND_ASSIGN(ClassInfo)
-//};
 
 } // namespace gui
 
