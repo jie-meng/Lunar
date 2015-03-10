@@ -67,6 +67,7 @@ std::string LunarGlobal::s_runner_octave_ = "octave";
 std::string LunarGlobal::s_run_additional_args_ = "";
 std::string LunarGlobal::s_lua_api_ = "/api/lua";
 std::string LunarGlobal::s_octave_api_ = "/api/octave";
+std::string LunarGlobal::s_file_type_default_ = kFileTypeLua;
 
 LunarGlobal::LunarGlobal()
 {
@@ -113,6 +114,7 @@ void LunarGlobal::ReadCfg()
     s_run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
     s_lua_file_filter_ = text_cfg.getValue("FileFilter.Lua", "lua");
     s_octave_file_filter_ = text_cfg.getValue("FileFilter.Octave", "m");
+    s_file_type_default_ = text_cfg.getValue("FileFilter.DefaultType", kFileTypeLua);
     s_lua_api_ = text_cfg.getValue("Api.Lua", "/api/lua");
     s_octave_api_ = text_cfg.getValue("Api.Octave", "/api/octave");
 }
@@ -129,6 +131,7 @@ void LunarGlobal::WriteCfg()
     text_cfg.setValue("MainWindow.Height", s_mainwindow_height_);
     text_cfg.setValue("FileFilter.Lua", s_lua_file_filter_);
     text_cfg.setValue("FileFilter.Octave", s_octave_file_filter_);
+    text_cfg.setValue("FileFilter.DefaultType", s_file_type_default_);
     text_cfg.setValue("Run.Runner.Lua", s_runner_lua_);
     text_cfg.setValue("Run.Runner.Octave", s_runner_octave_);
     text_cfg.setValue("Run.Additional.Args", s_run_additional_args_);

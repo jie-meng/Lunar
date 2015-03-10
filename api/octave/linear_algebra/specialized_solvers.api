@@ -1,0 +1,4 @@
+bicg(A, b, ...)
+bicgstab(A, b, ...)
+cgs(A, b, ...)
+gmres(...)

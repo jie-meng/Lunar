@@ -1,0 +1,2 @@
+lsode(fcn, x_0, t, t_crit)
+lsode_options(opt, val)

@@ -1,0 +1,2 @@
+fputs(fid, string)
+puts(string)

@@ -1,0 +1,3 @@
+fscanf(fid, template, ...)
+scanf(template, ...)
+sscanf(string, template, ...)

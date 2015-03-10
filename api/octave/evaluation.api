@@ -1,0 +1,5 @@
+eval(try, catch)
+feval(name, ...)
+run("script")
+evalin(context, try, catch)
+assignin(context, varname, value)

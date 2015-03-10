@@ -1,0 +1,6 @@
+ismember(A, s, ...)
+union(a, b, ...)
+intersect(a, b)
+setdiff(a, b, ...)
+setxor(a, b, ...)
+powerset(a, ...)

@@ -1,0 +1,4 @@
+feof(fid)
+ferror(fid, "clear")
+fclear(fid)
+freport()

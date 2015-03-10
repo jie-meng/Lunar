@@ -1,0 +1,7 @@
+abs(z)
+arg(z)
+angle(z)
+conj(z)
+cplxpair(z, tol, dim)
+imag(z) 
+real(z)

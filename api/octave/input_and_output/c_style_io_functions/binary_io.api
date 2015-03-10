@@ -1,0 +1,2 @@
+fread(fid, size, precision, skip, arch)
+fwrite(fid, data, precision, skip, arch)

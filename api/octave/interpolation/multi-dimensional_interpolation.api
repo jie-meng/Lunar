@@ -1,0 +1,4 @@
+interp2(...)
+interp3(...)
+interpn(...)
+bicubic(x, y, z, xi, yi, extrapval)

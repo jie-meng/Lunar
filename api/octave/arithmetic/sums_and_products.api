@@ -1,0 +1,5 @@
+sum(x, dim)
+prod(x, dim)
+cumsum(x, dim)
+cumprod(x, dim)
+sumsq(x, dim)

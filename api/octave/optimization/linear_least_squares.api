@@ -1,0 +1,5 @@
+ols(y, x)
+gls(y, x, o)
+lsqnonneg(...)
+optimset(...)
+optimget(options, parname, default)

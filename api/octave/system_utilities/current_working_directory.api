@@ -1,0 +1,3 @@
+ls_command(new_val)
+dir(directory)
+pwd()

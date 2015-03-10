@@ -1,0 +1,3 @@
+fgetl(fid, len)
+fgets(fid, len)
+fskipl(fid, count)

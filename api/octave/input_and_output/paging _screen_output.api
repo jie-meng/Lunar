@@ -1,0 +1,5 @@
+PAGER(new_val, "local")
+PAGER_FLAGS(new_val, "local")
+page_screen_output(new_val, "local")
+page_output_immediately(new_val, "local")
+fflush(fid)

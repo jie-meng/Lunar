@@ -1,0 +1,6 @@
+conv(a, b, shape)
+convn(A, B, shape)
+deconv(y, a)
+conv2(..., shape)
+polygcd(b, a, tol)
+residue(...)

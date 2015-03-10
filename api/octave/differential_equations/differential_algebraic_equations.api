@@ -1,0 +1,6 @@
+daspk(fcn, x_0, xdot_0, t, t_crit)
+daspk_options(opt, val)
+dassl(fcn, x_0, xdot_0, t, t_crit)
+dassl_options(opt, val)
+dasrt(fcn, ...)
+dasrt_options(opt, val)

@@ -1,0 +1,3 @@
+polyder(...)
+polyint(p, k)
+polyaffine(f, mu)

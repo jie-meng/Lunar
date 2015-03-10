@@ -1,0 +1,7 @@
+process.create()
+process.destroy(ps)
+process.start(ps, cmdline, path, input, output, [file, func)
+process.kill(ps)
+process.input(ps, str)
+process.executeProcess(cmdline, path)
+process.executeProcessAsyn(cmdline, path)

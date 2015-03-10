@@ -1,0 +1,3 @@
+interp1(...)
+interpft(x, n, dim)
+spline(x, y, xi)

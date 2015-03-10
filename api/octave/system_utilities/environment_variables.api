@@ -1,0 +1,3 @@
+getenv(var)
+putenv(var, value)
+setenv(var, value)

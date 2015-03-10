@@ -1,0 +1,4 @@
+arrayfun(...)
+spfun(f, S)
+cellfun(...)
+structfun(...)

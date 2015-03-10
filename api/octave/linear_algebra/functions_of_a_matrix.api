@@ -1,0 +1,6 @@
+expm(A)
+logm(A, opt_iters)
+sqrtm(A)
+kron(A1, A2, ...)
+blkmm(A, B)
+syl(A, B, C)

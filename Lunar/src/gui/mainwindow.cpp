@@ -14,7 +14,7 @@
 #include <QMimeData>
 #include <QtCore/QUrl>
 #include <QtCore/QWaitCondition>
-#include <vector>
+#include <map>
 #include "util/file.hpp"
 #include "util/string.hpp"
 #include "util/time.hpp"
@@ -31,6 +31,7 @@ namespace gui
 
 using namespace std;
 using namespace util;
+
 std::string MainWindow::s_file_filter_= "Lua Files(*.lua);;All Files(*.*)";
 
 MainWindow::MainWindow(QWidget* parent)
@@ -118,9 +119,6 @@ bool MainWindow::Init()
     InitConnections();
     ProcessCmdParam();
 
-    //if(!StartMsgRecvThread())
-    //    return false;
-
     pmain_tabwidget_->setAcceptDrops(false);
     setAcceptDrops(true);
 
@@ -130,9 +128,23 @@ bool MainWindow::Init()
         std::string app_name = util::splitPathname(app_path).second;
         app_name = util::strToLower(app_name);
 
-        s_file_filter_ = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ");;"
-                + "Octave Files(" + FormatFileFilter(LunarGlobal::getOctaveFileFilter()) + ");;"
-                + "All Files(*.*)";
+        map<string, string> filter_map;
+        filter_map[kFileTypeLua] = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
+        filter_map[kFileTypeOctave] = std::string("Octave Files(") + FormatFileFilter(LunarGlobal::getOctaveFileFilter()) + ")";
+
+        vector<string> vec;
+        map<string, string>::iterator it = filter_map.find(LunarGlobal::getFileTypeDefault());
+        if (it != filter_map.end())
+        {
+            vec.push_back(it->second);
+            filter_map.erase(it);
+        }
+
+        for (map<string, string>::iterator it = filter_map.begin(); it != filter_map.end(); ++it)
+            vec.push_back(it->second);
+        vec.push_back("All Files(*.*)");
+
+        s_file_filter_ = strJoin(vec, ";;");
     }
 
     return true;

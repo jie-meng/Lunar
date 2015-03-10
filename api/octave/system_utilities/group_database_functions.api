@@ -1,0 +1,5 @@
+getgrent()
+getgrgid(gid)
+getgrnam(name)
+setgrent()
+endgrent()

@@ -1,0 +1,8 @@
+quad(...)
+quad_options(opt, val)
+quadv(...)
+quadl(f, a, b, tol, trace, p1, p2, ...)
+quadgk(...)
+quadcc(...)
+trapz(...)
+cumtrapz(...)

@@ -1,0 +1,5 @@
+cov(...)
+corr(x, y)
+spearman(x, y)
+kendall(x, y)
+logistic_regression(y, x, print, theta, beta)

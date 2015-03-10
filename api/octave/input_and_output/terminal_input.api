@@ -1,0 +1,4 @@
+input(prompt, "s")
+menu(title, opt1, ...)
+yes_or_no("prompt")
+kbhit()

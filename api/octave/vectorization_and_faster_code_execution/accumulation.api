@@ -1,0 +1,2 @@
+accumarray(subs, vals, ...)
+accumdim(subs, vals, dim, n, func, fillval)

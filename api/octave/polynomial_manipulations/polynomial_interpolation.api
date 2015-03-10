@@ -1,0 +1,8 @@
+polyfit(x, y, n)
+splinefit(...)
+mkpp(breaks, coefs, d)
+unmkpp(pp)
+ppval(pp, xi)
+ppder(pp, m)
+ppint(pp, c)
+ppjumps(pp)

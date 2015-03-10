@@ -1,0 +1,7 @@
+getpgrp()
+getpid()
+getppid()
+geteuid()
+getuid()
+getegid()
+getgid()

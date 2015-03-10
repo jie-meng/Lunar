@@ -1,0 +1,2 @@
+dblquad(f, xa, xb, ya, yb, tol, quadf, …)
+triplequad(f, xa, xb, ya, yb, za, zb, tol, quadf, …)

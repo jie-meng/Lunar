@@ -1,0 +1,3 @@
+disp(x)
+list_in_columns(arg, width, prefix)
+terminal_size()

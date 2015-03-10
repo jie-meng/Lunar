@@ -1,0 +1,3 @@
+fopen(name, mode, arch)
+fclose(fid)
+is_valid_file_id(fid)
