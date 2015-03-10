@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_save_action_(NULL),
     pfile_save_as_action_(NULL),
     pfile_save_all_action_(NULL),
+    pfile_close_action_(NULL),
+    pfile_dump_action_(NULL),
     pedit_find_action_(NULL),
     pedit_font_action_(NULL),
     prun_run_action_(NULL),
@@ -62,7 +64,6 @@ MainWindow::MainWindow(QWidget* parent)
 MainWindow::~MainWindow()
 {
     //dtor
-//    msg_recv_thread_.Stop();
 }
 
 void MainWindow::ProcessCmdParam()
@@ -221,6 +222,10 @@ void MainWindow::InitActions()
     pfile_save_all_action_ = new QAction(tr("Save all"), this);
     pfile_save_all_action_->setStatusTip(tr("Save all files."));
 
+    pfile_close_action_ = new QAction(tr("Close"), this);
+    pfile_close_action_->setStatusTip(tr("Close current file"));
+    pfile_close_action_->setShortcut(tr("ctrl+w"));
+
     pfile_dump_action_ = new QAction(tr("&Dump output"), this);
     pfile_dump_action_->setStatusTip(tr("Dump output."));
     pfile_dump_action_->setShortcut(Qt::Key_F12);
@@ -259,6 +264,7 @@ void MainWindow::InitMenubar()
     pfile_menu->addAction(pfile_save_action_);
     pfile_menu->addAction(pfile_save_as_action_);
     pfile_menu->addAction(pfile_save_all_action_);
+    pfile_menu->addAction(pfile_close_action_);
     pfile_menu->addAction(pfile_dump_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
@@ -314,6 +320,7 @@ void MainWindow::InitConnections()
     connect(pfile_save_action_, SIGNAL(triggered()), this, SLOT(FileSave()));
     connect(pfile_save_as_action_, SIGNAL(triggered()), this, SLOT(FileSaveAs()));
     connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(FileSaveAll()));
+    connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(FileClose()));
     connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(FileDump()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(EditFind()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(EditSetFont()));
@@ -366,6 +373,11 @@ void MainWindow::FileSaveAs()
 void MainWindow::FileSaveAll()
 {
     pmain_tabwidget_->SaveAllViewTabs();
+}
+
+void MainWindow::FileClose()
+{
+    pmain_tabwidget_->CloseCurDocViewTab();
 }
 
 void MainWindow::FileDump()
@@ -428,6 +440,7 @@ void MainWindow::ReplaceAll(const QString& str, const QString& replace_with_text
         }
 
     } while(found);
+
     LunarMsgBox(util::strFormat("%d occurrences were replaced.", i));
 }
 

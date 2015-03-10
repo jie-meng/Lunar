@@ -21,6 +21,7 @@ public:
     bool SaveCurDocViewTab();
     bool SaveAsCurDocViewTab();
     void SaveAllViewTabs();
+    void CloseCurDocViewTab();
     void SetDocViewFont();
     bool FindInCurTextEdit(const QString& expr,
                            bool re,

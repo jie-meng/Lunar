@@ -83,6 +83,11 @@ bool MainTabWidget::SaveAsCurDocViewTab()
         return false;
 }
 
+void MainTabWidget::CloseCurDocViewTab()
+{
+    TabClose(indexOf(currentWidget()));
+}
+
 void MainTabWidget::SetDocViewFont()
 {
     bool ok;
