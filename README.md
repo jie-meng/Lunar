@@ -1,8 +1,9 @@
 # Lunar #
 A cross-platform Lua script extension and IDE
+  
 
 * Luaexec: Lua script basic(lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix)
-* Lunar: Lua IDE
+* Lunar: Lua & Octave IDE
 
 -------------------------------------------------
 
@@ -27,3 +28,9 @@ luaexec qt_remake.lua
 
 * luaexec.exe must run with libstdc++-6.dll, libgcc_s_dw2-1.dll of mingw 4.8 
 * Lunar.exe must run with libstdc++-6.dll(mingw4.8), libgcc_s_dw2-1.dll(mingw4.8), Qt5Core.dll, Qt5Gui.dll, qscintilla2.dll.
+
+## notes ##
+
+2015.3.10
+
+Now Lunar support octave .m file. Set the path of octave cmdline application to the cfg parameter "Run.Runner.Octave", then you can run octave files in Lunar.
