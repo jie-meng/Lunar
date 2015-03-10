@@ -48,7 +48,7 @@ void ApiLoaderLua::ParseFileApi(const std::string& file, const std::string& dir)
         {
             string api = function_regex.getMatchedGroup("api");
             if (api != "")
-                AddApiCurrentFile(api);
+                AddApiCurrentFile(strReplace(api, ":", "."));
         }
         else if (include_regex.match(strTrim(lines[i])))
         {
