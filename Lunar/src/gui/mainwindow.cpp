@@ -223,7 +223,7 @@ void MainWindow::InitActions()
     pfile_save_all_action_->setStatusTip(tr("Save all files."));
 
     pfile_close_action_ = new QAction(tr("Close"), this);
-    pfile_close_action_->setStatusTip(tr("Close current file"));
+    pfile_close_action_->setStatusTip(tr("Close current file."));
     pfile_close_action_->setShortcut(tr("ctrl+w"));
 
     pfile_dump_action_ = new QAction(tr("&Dump output"), this);
