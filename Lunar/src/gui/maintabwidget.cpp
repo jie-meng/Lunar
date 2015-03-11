@@ -41,6 +41,7 @@ int MainTabWidget::GetTabIndex(const QString& pathname)
                 return i;
         }
     }
+
     return -1;
 }
 
@@ -216,6 +217,30 @@ bool MainTabWidget::HasUnsavedFiles()
         }
     }
     return false;
+}
+
+void MainTabWidget::GotoNextTabIndex()
+{
+    if (count() > 1)
+    {
+        int index = currentIndex() + 1;
+        if (index > count() -1)
+            return;
+
+        setCurrentIndex(index);
+    }
+}
+
+void MainTabWidget::GotoPrevTabIndex()
+{
+    if (count() > 1)
+    {
+        int index = currentIndex() - 1;
+        if (index < 0)
+            return;
+
+        setCurrentIndex(index);
+    }
 }
 
 } // namespace gui

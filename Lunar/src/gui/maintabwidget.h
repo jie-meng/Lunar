@@ -34,6 +34,8 @@ public:
                            );
     void ReplaceInCurTextEdit(const QString& replace_with_text);
     bool HasUnsavedFiles();
+    void GotoNextTabIndex();
+    void GotoPrevTabIndex();
 private Q_SLOTS:
     void UpdateTabTitleAndTip(DocView*);
     void TabTextModified(DocView*);

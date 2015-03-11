@@ -43,6 +43,8 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_save_all_action_(NULL),
     pfile_close_action_(NULL),
     pfile_dump_action_(NULL),
+    pfile_goto_next_action_(NULL),
+    pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
     pedit_font_action_(NULL),
     prun_run_action_(NULL),
@@ -230,6 +232,14 @@ void MainWindow::InitActions()
     pfile_dump_action_->setStatusTip(tr("Dump output."));
     pfile_dump_action_->setShortcut(Qt::Key_F12);
 
+    pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
+    pfile_goto_next_action_->setStatusTip(tr("Goto next document"));
+    pfile_goto_next_action_->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+
+    pfile_goto_prev_action_ = new QAction(tr("Goto prev"), this);
+    pfile_goto_prev_action_->setStatusTip(tr("Goto prev document"));
+    pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+
     pedit_find_action_ = new QAction(tr("&Find"), this);
     pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setStatusTip(tr("Find."));
@@ -266,6 +276,8 @@ void MainWindow::InitMenubar()
     pfile_menu->addAction(pfile_save_all_action_);
     pfile_menu->addAction(pfile_close_action_);
     pfile_menu->addAction(pfile_dump_action_);
+    pfile_menu->addAction(pfile_goto_next_action_);
+    pfile_menu->addAction(pfile_goto_prev_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_find_action_);
@@ -322,6 +334,8 @@ void MainWindow::InitConnections()
     connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(FileSaveAll()));
     connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(FileClose()));
     connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(FileDump()));
+    connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(FileGotoNext()));
+    connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(FileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(EditFind()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(EditSetFont()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(Run()));
@@ -383,6 +397,16 @@ void MainWindow::FileClose()
 void MainWindow::FileDump()
 {
     DumpOutput();
+}
+
+void MainWindow::FileGotoNext()
+{
+    pmain_tabwidget_->GotoNextTabIndex();
+}
+
+void MainWindow::FileGotoPrev()
+{
+    pmain_tabwidget_->GotoPrevTabIndex();
 }
 
 void MainWindow::EditFind()

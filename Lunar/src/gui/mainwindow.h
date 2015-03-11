@@ -42,6 +42,8 @@ private Q_SLOTS:
     void FileSaveAll();
     void FileClose();
     void FileDump();
+    void FileGotoNext();
+    void FileGotoPrev();
     void EditFind();
     void EditSetFont();
     void HelpAbout();
@@ -78,6 +80,8 @@ private:
     QAction* pfile_save_all_action_;
     QAction* pfile_close_action_;
     QAction* pfile_dump_action_;
+    QAction* pfile_goto_next_action_;
+    QAction* pfile_goto_prev_action_;
     QAction* pedit_find_action_;
     QAction* pedit_font_action_;
     QAction* prun_run_action_;
