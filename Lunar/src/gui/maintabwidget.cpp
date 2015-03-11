@@ -225,7 +225,7 @@ void MainTabWidget::GotoNextTabIndex()
     {
         int index = currentIndex() + 1;
         if (index > count() -1)
-            return;
+            index = 0;
 
         setCurrentIndex(index);
     }
@@ -237,7 +237,7 @@ void MainTabWidget::GotoPrevTabIndex()
     {
         int index = currentIndex() - 1;
         if (index < 0)
-            return;
+            index = count() - 1;
 
         setCurrentIndex(index);
     }
