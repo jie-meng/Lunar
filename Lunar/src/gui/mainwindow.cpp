@@ -16,8 +16,6 @@
 #include <QtCore/QWaitCondition>
 #include <map>
 #include "util/file.hpp"
-#include "util/string.hpp"
-#include "util/time.hpp"
 #include "lunarcommon.h"
 #include "maintabwidget.h"
 #include "finddialog.h"

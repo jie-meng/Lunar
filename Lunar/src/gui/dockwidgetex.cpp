@@ -1,5 +1,5 @@
 #include "dockwidgetex.h"
-#include <QMessageBox.h>
+#include <QMessageBox>
 
 namespace gui
 {

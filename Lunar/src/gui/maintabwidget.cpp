@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <QTextEdit>
 #include <QFontDialog>
-#include "util/string.hpp"
+#include "util/base.hpp"
 #include "lunarcommon.h"
 
 using namespace std;

@@ -15,7 +15,7 @@
 #include "Qsci/qscilexer.h"
 
 #include <vector>
-#include "util/string.hpp"
+#include "util/base.hpp"
 #include "lunarcommon.h"
 
 using namespace std;

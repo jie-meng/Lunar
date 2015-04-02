@@ -58,7 +58,15 @@ bool LuaExecutor::execute(const std::string& file, const std::string& args, cons
     if ("" == executor)
         return false;
 
+
+#ifdef _PLATFORM_WINDOWS_
     std::string script = std::string("\"") + file + std::string("\"");
+#endif
+#ifdef _PLATFORM_LINUX_
+    std::string script = file;
+#endif
+    QMessageBox::information(NULL, tr("Path"), StdStringToQString(executor + " " + script + " " + args));
+    QMessageBox::information(NULL, tr("Path"), StdStringToQString(path));
 
     return process_.create(executor + " " + script + " " + args,
                            path,
@@ -76,7 +84,12 @@ bool LuaExecutor::executeInSysCmd(const std::string& file, const std::string& ar
     if ("" == executor)
         return false;
 
+#ifdef _PLATFORM_WINDOWS_
     std::string script = std::string("\"") + file + std::string("\"");
+#endif
+#ifdef _PLATFORM_LINUX_
+    std::string script = file;
+#endif
 
     if (path == currentPath())
     {
