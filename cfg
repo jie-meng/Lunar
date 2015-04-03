@@ -1,0 +1,14 @@
+Api.Lua = /api/lua
+Api.Octave = /api/octave
+AutoCompletion.Threshold = 2
+AutoCompletion.WordTip = 1
+FileFilter.DefaultType = lua
+FileFilter.Lua = lua
+FileFilter.Octave = m
+Font.Size = 10
+Font.Type = Courier New
+MainWindow.Height = 600
+MainWindow.Width = 800
+Run.Additional.Args = 
+Run.Runner.Lua = luaexec
+Run.Runner.Octave = octave

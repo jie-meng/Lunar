@@ -1,6 +1,7 @@
 #include "process.hpp"
 #include <vector>
 #include "thread.hpp"
+#include "file.hpp"
 
 #ifdef _PLATFORM_WINDOWS_
 #include <windows.h>
@@ -17,6 +18,11 @@ namespace util
 const std::string kUtilProcessPipeKill = "{Util.Process.ReadOutput.Thread.Kill.Cmd}";
 
 #ifdef _PLATFORM_WINDOWS_
+
+std::string appPath()
+{
+    return "";
+}
 
 int executeProcess(const std::string& cmdline, const std::string& cur_path)
 {
@@ -256,6 +262,14 @@ struct Process::ProcessImpl
 
 #ifdef _PLATFORM_LINUX_
 
+std::string appPath()
+{
+    char buf[kBufSize];
+    std::string link = strFormat("/proc/%d/exe", getpid());
+    readlink(link.c_str(), buf, sizeof(buf));
+    return splitPathname(buf).first; 
+}
+
 int executeProcess(const std::string& cmdline, const std::string& cur_path)
 {
     pid_t pid = fork();
@@ -267,7 +281,7 @@ int executeProcess(const std::string& cmdline, const std::string& cur_path)
         {
             //extract params
             std::vector<std::string> params;
-            strSplit(cmdline, " ", params);
+            strSplitEx(cmdline, " ", "\"", "\"", params);
             if (params.empty())
                 exit(-1);
 
@@ -312,7 +326,7 @@ bool executeProcessAsyn(const std::string& cmdline, const std::string& cur_path)
         {
             //extract params
             std::vector<std::string> params;
-            strSplit(cmdline, " ", params);
+            strSplitEx(cmdline, " ", "\"", "\"", params);
             if (params.empty())
                 exit(-1);
 
@@ -376,13 +390,13 @@ struct Process::ProcessImpl
             return false;
         case 0:
             {
+
                 if(!processFunc(cmdline, cur_path, input, output))
                     exit(-1);
             }
             exit(0);
         default:
             {
-                msleep(500);
                 if (0 != waitpid(pid_, (int*)0, WNOHANG))
                     return false;
 
@@ -405,7 +419,7 @@ struct Process::ProcessImpl
     {
         //extract params
         std::vector<std::string> params;
-        strSplit(cmdline, " ", params);
+        strSplitEx(cmdline, " ", "\"", "\"", params);
         if (params.empty())
             return false;
 

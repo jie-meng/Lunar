@@ -3,6 +3,7 @@
 #include <vector>
 #include "util/file.hpp"
 #include "util/cfg.hpp"
+#include "util/process.hpp"
 
 static LogSocket s_logger;
 
@@ -88,6 +89,8 @@ void LunarGlobal::Init(int argc, char* argv[])
 
     s_app_path_ = util::splitPathname(s_argvec_.at(0)).first;
     s_app_name_ = util::splitPathname(s_argvec_.at(0)).second;
+
+    s_app_path_ = util::appPath();
 
     ReadCfg();
     WriteCfg();

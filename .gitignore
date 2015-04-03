@@ -36,3 +36,6 @@ Makefile*
 # CodeBlocks
 *.layout
 *.depend
+
+# vim
+tags

@@ -126,6 +126,8 @@ bool MainWindow::Init()
         std::string app_name = util::splitPathname(app_path).second;
         app_name = util::strToLower(app_name);
 
+//        QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
+
         map<string, string> filter_map;
         filter_map[kFileTypeLua] = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
         filter_map[kFileTypeOctave] = std::string("Octave Files(") + FormatFileFilter(LunarGlobal::getOctaveFileFilter()) + ")";
