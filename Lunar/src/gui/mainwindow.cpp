@@ -16,8 +16,6 @@
 #include <QtCore/QWaitCondition>
 #include <map>
 #include "util/file.hpp"
-#include "util/string.hpp"
-#include "util/time.hpp"
 #include "lunarcommon.h"
 #include "maintabwidget.h"
 #include "finddialog.h"
@@ -74,7 +72,7 @@ void MainWindow::ProcessCmdParam()
     {
         for (int i=1; i<LunarGlobal::get_arg_cnt(); i++)
         {
-            std::string filepath = LunarGlobal::get_arg(i);
+            std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::get_arg(i));
             if(util::isPathExists(filepath))
                 if(util::isPathFile(filepath))
                     pmain_tabwidget_->AddDocViewTab(StdStringToQString(filepath));
@@ -127,9 +125,10 @@ bool MainWindow::Init()
 
     if (LunarGlobal::get_arg_cnt()>0)
     {
-        std::string app_path = LunarGlobal::get_arg(0);
-        std::string app_name = util::splitPathname(app_path).second;
-        app_name = util::strToLower(app_name);
+        //std::string app_path = LunarGlobal::get_app_path();
+        //std::string app_name = LunarGlobal::get_app_name(); 
+        //app_name = util::strToLower(app_name);
+        //QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
 
         map<string, string> filter_map;
         filter_map[kFileTypeLua] = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
@@ -631,11 +630,6 @@ void MainWindow::InitRunner()
         //relative path
         runner = LunarGlobal::get_app_path() + "/" + runner;
     }
-
-//    if (!util::isPathFile(runner))
-//        prun_run_action_->setEnabled(false);
-//    else
-//        plua_executor_->setExecutor(StdStringToQString(runner));
 }
 
 void MainWindow::SetStatusText(const QString& text)

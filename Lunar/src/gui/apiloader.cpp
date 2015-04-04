@@ -3,7 +3,6 @@
 #include <Qsci/qsciscintilla.h>
 #include "qsciapisex.h"
 #include "util/file.hpp"
-#include "util/string.hpp"
 #include "util/regex.hpp"
 #include "lunarcommon.h"
 #include "docview.h"

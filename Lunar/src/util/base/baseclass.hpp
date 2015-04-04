@@ -1,6 +1,8 @@
 #ifndef UTIL_BASE_BASECLASS_HPP
 #define UTIL_BASE_BASECLASS_HPP
 
+#include <string>
+
 namespace util
 {
 
@@ -94,6 +96,34 @@ private:
     T out_;
 };
 
+//static check
+template<int> struct CompileTimeError;
+template<> struct CompileTimeError<true> {};
+#define STATIC_CHECK(expr, msg) \
+    { CompileTimeError<((expr) != 0)> ERROR_##msg; (void)ERROR_##msg; }
+
+////////////////////////////////////////////////////////////////////////////////
+// Exception
+////////////////////////////////////////////////////////////////////////////////
+class Exception : public std::exception
+{
+public:
+    explicit Exception(const std::string& message) throw() : name_("Exception"), message_(message)
+    {}
+    virtual ~Exception() throw() {}
+public:
+    inline std::string getName() const { return name_; }
+    inline std::string getMessage() const { return message_; }
+    virtual const char* what() const throw()
+    { name_message_ = name_ + " : " + message_; return name_message_.c_str(); }
+    virtual Exception* clone() const { return new Exception(getMessage()); }
+protected:
+    inline void setName(const std::string& name) { name_ = name; }
+private:
+    std::string name_;
+    std::string message_;
+    mutable std::string name_message_;
+};
 
 } // namespace util
 

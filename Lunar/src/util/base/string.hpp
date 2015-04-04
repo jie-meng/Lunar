@@ -1,7 +1,8 @@
 #ifndef UTIL_STRING_HPP
 #define UTIL_STRING_HPP
 
-#include "base.hpp"
+#include <cstring>
+#include <string>
 
 namespace util
 {
@@ -39,24 +40,24 @@ bool strIsEqual(const std::string& str_first, const std::string& str_second, boo
 template <typename ConstIterator>
 std::string strJoin(ConstIterator c_it_begin, ConstIterator c_it_end, const std::string& del)
 {
-    std::string strJoin = "";
+    std::string str_join = "";
     ConstIterator c_it;
     while(c_it_begin != c_it_end)
     {
-        strJoin += *c_it_begin + del;
+        str_join += *c_it_begin + del;
         ++c_it_begin;
     }
-    return strJoin.substr(0, strJoin.length() - 1);
+    return str_join.substr(0, str_join.length() - 1);
 }
 
 template <typename Coll>
 std::string strJoin(const Coll& coll, const std::string& del)
 {
-    std::string strJoin = "";
+    std::string str_join = "";
     typename Coll::const_iterator c_it;
     for (c_it = coll.begin(); c_it != coll.end(); ++c_it)
-        strJoin += *c_it + del;
-    return strJoin.substr(0, strJoin.length() - 1);
+        str_join += *c_it + del;
+    return str_join.substr(0, str_join.length() - 1);
 }
 
 template <typename Coll>
@@ -79,6 +80,71 @@ inline size_t strSplit(const std::string& str, const std::string& del, Coll& out
 
     if (start<str.length())
         out_coll.push_back(str.substr(start));
+
+    return out_coll.size();
+}
+
+template <typename Coll>
+inline size_t strSplitEx(const std::string& str, const std::string& del,
+                         const std::string& start_flag, const std::string& end_flag,
+                         Coll& out_coll, size_t limit = 0)
+{
+    if (start_flag == "" || start_flag == "")
+        return 0;
+
+    std::string::size_type start = 0;
+    std::string::size_type idx = 0;
+    std::string::size_type del_len = del.length();
+
+    idx = str.find(del, start);
+    bool scope_in = false;
+    while (std::string::npos != idx)
+    {
+        if (limit > 0 && out_coll.size() + 1 >= limit && !scope_in)
+            break;
+
+        std::string sub = str.substr(start, idx - start);
+
+        if (scope_in && !out_coll.empty())
+            out_coll[out_coll.size()-1] = out_coll[out_coll.size()-1] + del + sub;
+        else
+            out_coll.push_back(sub);
+
+        if (strStartWith(sub, start_flag))
+        {
+            if(!out_coll.empty())
+                out_coll[out_coll.size()-1] = strRight(out_coll[out_coll.size()-1], out_coll[out_coll.size()-1].length() - start_flag.length());
+
+            scope_in = true;
+        }
+
+        if (scope_in && strEndWith(sub, end_flag))
+        {
+            if(!out_coll.empty())
+                out_coll[out_coll.size()-1] = strLeft(out_coll[out_coll.size()-1], out_coll[out_coll.size()-1].length() - end_flag.length());
+
+            scope_in = false;
+        }
+
+        start = idx + del_len;
+        idx = str.find(del, start);
+    }
+
+    if (start<str.length())
+    {
+        std::string left_behind = str.substr(start);
+        if (scope_in)
+        {
+            if (strEndWith(left_behind, end_flag))
+                left_behind = strLeft(left_behind, left_behind.length() - end_flag.length());
+
+            out_coll[out_coll.size()-1] = out_coll[out_coll.size()-1] + del + left_behind;
+        }
+        else
+        {
+            out_coll.push_back(left_behind);
+        }
+    }
 
     return out_coll.size();
 }

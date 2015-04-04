@@ -1,8 +1,8 @@
 DEBUG_FOLDER = "debug"
 RELEASE_FOLDER = "release"
-MAKEFILE = "makefile"
-MAKEFILE_DEBUG = "makefile.debug"
-MAKEFILE_RELEASE = "makefile.release"
+MAKEFILE = "Makefile"
+MAKEFILE_DEBUG = "Makefile.debug"
+MAKEFILE_RELEASE = "Makefile.release"
 
 function rebuild(pro_file, append_to_pro_file, makefile)
     print("clear...")
@@ -20,14 +20,13 @@ function rebuild(pro_file, append_to_pro_file, makefile)
     print("qmake")
 	os.execute("qmake")
 	print("qmake successfully!")
-	print("mingw32-make")
-	os.execute("mingw32-make -f " .. makefile)    
+	print("make")
+	os.execute("make -f " .. makefile)    
 end
 
 -- main
 PRO = "Lunar.pro"
 ADDTOPRO = "build_config"
-MAKEFILE = "makefile.release"
 rebuild(PRO, ADDTOPRO, MAKEFILE)
 print("rebuild release finished!")
 

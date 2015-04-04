@@ -1,7 +1,7 @@
 #include "processmsgthread.h"
 #include "lunarcommon.h"
 #include "gui/mainwindow.h"
-#include "util/string.hpp"
+#include "util/base.hpp"
 
 ////////////////////////////////////////////////////
 // class name : MsgRecvThread

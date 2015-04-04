@@ -1,6 +1,5 @@
 #include "process.hpp"
 #include <vector>
-#include "string.hpp"
 #include "thread.hpp"
 
 #ifdef _PLATFORM_WINDOWS_
@@ -268,7 +267,7 @@ int executeProcess(const std::string& cmdline, const std::string& cur_path)
         {
             //extract params
             std::vector<std::string> params;
-            strSplit(cmdline, " ", params);
+            strSplitEx(cmdline, " ", "\"", "\"", params);
             if (params.empty())
                 exit(-1);
 
@@ -313,7 +312,7 @@ bool executeProcessAsyn(const std::string& cmdline, const std::string& cur_path)
         {
             //extract params
             std::vector<std::string> params;
-            strSplit(cmdline, " ", params);
+            strSplitEx(cmdline, " ", "\"", "\"", params);
             if (params.empty())
                 exit(-1);
 
@@ -377,13 +376,13 @@ struct Process::ProcessImpl
             return false;
         case 0:
             {
+
                 if(!processFunc(cmdline, cur_path, input, output))
                     exit(-1);
             }
             exit(0);
         default:
             {
-                msleep(500);
                 if (0 != waitpid(pid_, (int*)0, WNOHANG))
                     return false;
 
@@ -406,7 +405,7 @@ struct Process::ProcessImpl
     {
         //extract params
         std::vector<std::string> params;
-        strSplit(cmdline, " ", params);
+        strSplitEx(cmdline, " ", "\"", "\"", params);
         if (params.empty())
             return false;
 

@@ -8,7 +8,6 @@
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexerlua.h>
 #include <Qsci/qscilexeroctave.h>
-#include "util/string.hpp"
 #include "util/file.hpp"
 #include "util/regex.hpp"
 #include "util/cfg.hpp"
