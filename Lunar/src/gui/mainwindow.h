@@ -2,7 +2,6 @@
 #define GUI_MAINWINDOW_H
 
 #include <QMainWindow>
-//#include "processmsgthread.h"
 #include "util/base.hpp"
 
 class QAction;
@@ -88,7 +87,6 @@ private:
     OutputWidget* poutput_widget_;
     LuaExecutor* plua_executor_;
     static std::string s_file_filter_;
-//    MsgRecvThread msg_recv_thread_;
     DockWidgetEx* pbottom_widget_;
     bool output_widget_on_;
 private:

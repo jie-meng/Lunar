@@ -1,7 +1,6 @@
 #include "process.hpp"
 #include <vector>
 #include "thread.hpp"
-#include "file.hpp"
 
 #ifdef _PLATFORM_WINDOWS_
 #include <windows.h>
@@ -18,11 +17,6 @@ namespace util
 const std::string kUtilProcessPipeKill = "{Util.Process.ReadOutput.Thread.Kill.Cmd}";
 
 #ifdef _PLATFORM_WINDOWS_
-
-std::string appPath()
-{
-    return "";
-}
 
 int executeProcess(const std::string& cmdline, const std::string& cur_path)
 {
@@ -261,14 +255,6 @@ struct Process::ProcessImpl
 #endif // _PLATFORM_WINDOWS_
 
 #ifdef _PLATFORM_LINUX_
-
-std::string appPath()
-{
-    char buf[kBufSize];
-    std::string link = strFormat("/proc/%d/exe", getpid());
-    readlink(link.c_str(), buf, sizeof(buf));
-    return splitPathname(buf).first; 
-}
 
 int executeProcess(const std::string& cmdline, const std::string& cur_path)
 {

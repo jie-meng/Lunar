@@ -1,8 +1,8 @@
 DEBUG_FOLDER = "debug"
 RELEASE_FOLDER = "release"
-MAKEFILE = "makefile"
-MAKEFILE_DEBUG = "makefile.debug"
-MAKEFILE_RELEASE = "makefile.release"
+MAKEFILE = "Makefile"
+MAKEFILE_DEBUG = "Makefile.debug"
+MAKEFILE_RELEASE = "Makefile.release"
 
 function rebuild(pro_file, append_to_pro_file, makefile)
     print("clear...")
@@ -27,7 +27,6 @@ end
 -- main
 PRO = "Lunar.pro"
 ADDTOPRO = "build_config"
-MAKEFILE = "makefile.release"
 rebuild(PRO, ADDTOPRO, MAKEFILE)
 print("rebuild release finished!")
 
