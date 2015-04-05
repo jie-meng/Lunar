@@ -19,12 +19,6 @@ file.isPathEmpty(path)
 file.pathRemoveAll(path)
 file.pathRemove(path)
 file.mkDir(path)
-<<<<<<< HEAD
 file.findFilesInDir(path, [ext = ""])
 file.findPathInDir(path)
 file.findFilesInDirRecursively(path, [ext = ""])
-=======
-file.findFilesInDir(path, [ext = ""], [split = "\n"])
-file.findPathInDir(path, [split = "\n"])
-file.findFilesInDirRecursively(path, [ext = ""], [split = "\n"])
->>>>>>> linux

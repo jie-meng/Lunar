@@ -8,4 +8,4 @@ public:
     std::string parse(const std::string& extension_file);
 private:
     DISALLOW_COPY_AND_ASSIGN(Extension)
-}
+};

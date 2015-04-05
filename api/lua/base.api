@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 assert(v [, message])
 collectgarbage([opt [, arg]])
 dofile([filename])
@@ -26,20 +25,3 @@ type(v)
 unpack(list [, i [, j]])
 _VERSION
 xpcall(f, err)
-=======
-assert(s)
-collectgarbage(arg)
-dofile(filename)
-error(err_str)
-print(s)
-tonumber(s)
-tostring(d)
-type(t)
-sleep(s)
-msleep(ms)
-include(filename)
-run(filename)
-require(module)
-setmetatable(a, {__index = b})
-pairs(table)
->>>>>>> linux
