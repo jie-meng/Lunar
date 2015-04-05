@@ -15,8 +15,8 @@ public:
     virtual ~LuaExecutor();
     bool isRunning();
     void stop();
-    bool execute(const std::string& file, const std::string& args, const std::string& path = "");
-    bool executeInSysCmd(const std::string& file, const std::string& args, const std::string& path);
+    bool execute(const std::string& file, const std::string& args, const std::string& path, const std::string& executor = "");
+    bool executeInSysCmd(const std::string& file, const std::string& args, const std::string& path, const std::string& executor = "");
     void input(const QString& in);
 Q_SIGNALS:
     void sendOutput(const QString&);

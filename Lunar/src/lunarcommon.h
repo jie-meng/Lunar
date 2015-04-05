@@ -84,6 +84,8 @@ public:
     inline static std::string getLuaApi() { return s_lua_api_; }
     inline static std::string getOctaveApi() { return s_octave_api_; }
     inline static std::string getFileTypeDefault() { return s_file_type_default_; }
+    inline static std::string getExtensionFile() { return s_extension_file_; }
+    inline static std::string getExtensionFunc() { return s_extension_func_; }
 private:
     static int s_argc_;
     static std::vector<std::string> s_argvec_;
@@ -103,6 +105,8 @@ private:
     static std::string s_lua_api_;
     static std::string s_octave_api_;
     static std::string s_file_type_default_;
+    static std::string s_extension_file_;
+    static std::string s_extension_func_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

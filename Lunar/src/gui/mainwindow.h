@@ -69,6 +69,7 @@ private:
     void InitBottomDockWidget();
     void InitLuaExecutor();
     void InitRunner();
+    void InitExtension();
     void ProcessCmdParam();
     void RunEx(bool run_in_syscmd);
     std::string FormatFileFilter(const std::string& file_filter);

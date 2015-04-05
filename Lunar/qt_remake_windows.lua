@@ -26,8 +26,8 @@ end
 
 -- main
 PRO = "Lunar.pro"
-ADDTOPRO = "build_config"
-rebuild(PRO, ADDTOPRO, MAKEFILE)
+ADDTOPRO = "build_config_windows"
+rebuild(PRO, ADDTOPRO, MAKEFILE_RELEASE)
 print("rebuild release finished!")
 
 io.read()

@@ -1,5 +1,4 @@
 #include "mainwindow.h"
-
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
@@ -23,6 +22,7 @@
 #include "outputwidget.h"
 #include "luaexecutor.h"
 #include "dockwidgetex.h"
+#include "extension.h"
 
 namespace gui
 {
@@ -118,6 +118,7 @@ bool MainWindow::Init()
     InitLuaExecutor();
     InitRunner();
     InitConnections();
+    InitExtension();
     ProcessCmdParam();
 
     pmain_tabwidget_->setAcceptDrops(false);
@@ -126,7 +127,7 @@ bool MainWindow::Init()
     if (LunarGlobal::get_arg_cnt()>0)
     {
         //std::string app_path = LunarGlobal::get_app_path();
-        //std::string app_name = LunarGlobal::get_app_name(); 
+        //std::string app_name = LunarGlobal::get_app_name();
         //app_name = util::strToLower(app_name);
         //QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
 
@@ -609,12 +610,12 @@ void MainWindow::RunEx(bool run_in_syscmd)
         if (run_in_syscmd)
         {
             ret = plua_executor_->executeInSysCmd(script, addtional_args,
-                                    runPath);
+                                    runPath, pdoc_view->GetExecutor());
         }
         else
         {
             ret = plua_executor_->execute(script, addtional_args,
-                                    runPath);
+                                    runPath, pdoc_view->GetExecutor());
         }
 
         if (!ret)
@@ -630,6 +631,12 @@ void MainWindow::InitRunner()
         //relative path
         runner = LunarGlobal::get_app_path() + "/" + runner;
     }
+}
+
+void MainWindow::InitExtension()
+{
+    if (!Extension::getInstance().initLuaState())
+        LunarMsgBox(Extension::getInstance().errorInfo());
 }
 
 void MainWindow::SetStatusText(const QString& text)

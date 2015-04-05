@@ -7,6 +7,7 @@
 
 class QsciLexer;
 class QsciScintilla;
+class QsciAbstractAPIs;
 
 namespace gui
 {
@@ -21,8 +22,34 @@ public:
     enum FileType
     {
         Unknown,
+        Avs,
+        Bash,
+        Batch,
+        CMake,
+        CPP,
+        CSharp,
+        CSS,
+        D,
+        Diff,
+        Html,
+        Java,
+        JavaScript,
         Lua,
-        Octave
+        Makefile,
+        Matlab,
+        Octave,
+        Pascal,
+        Perl,
+        Properties,
+        Python,
+        Ruby,
+        Sql,
+        Tcl,
+        Tex,
+        Verilog,
+        Vhdl,
+        Xml,
+        Yaml
     };
 
     explicit DocView(const QString& pathname, QWidget* parent = 0);
@@ -45,6 +72,7 @@ public:
 			  bool from_start
               );
     inline FileType GetFileType() const { return file_type_; }
+    inline std::string GetExecutor() const { return executor_; }
 Q_SIGNALS:
     void UpdateTitle(DocView*);
     void TextModified(DocView*);
@@ -65,15 +93,18 @@ private:
     bool TestFileFilter(const std::string& file_filter);
     void ResetLexer();
     QString GetTitleFromPath(const QString& path) const;
+    QsciLexer* GetLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
+
     QString pathname_;
     QString title_;
     QsciScintilla* ptext_edit_;
-    QsciAPIsEx* papis_;
+    QsciAbstractAPIs* papis_;
     QsciLexer* plexer_;
     static int s_new_docview_sequence_;
     bool is_apis_preparing_;
     ApiLoader* papi_loader_;
     FileType file_type_;
+    std::string executor_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };

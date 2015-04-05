@@ -49,44 +49,50 @@ bool LuaExecutor::isFileInFileFilter(const std::string& file, const std::string&
     return false;
 }
 
-bool LuaExecutor::execute(const std::string& file, const std::string& args, const std::string& path)
+bool LuaExecutor::execute(const std::string& file,
+                          const std::string& args,
+                          const std::string& path,
+                          const std::string& executor)
 {
     if ("" == file)
         return false;
 
-    std::string executor = getScriptExecutor(file);
-    if ("" == executor)
+    std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+    if ("" == exec)
         return false;
 
     std::string script = std::string("\"") + file + std::string("\"");
 
-    return process_.create(executor + " " + script + " " + args,
+    return process_.create(exec + " " + script + " " + args,
                            path,
                            true,
                            true,
                            UtilBind(&LuaExecutor::output, this, _1));
 }
 
-bool LuaExecutor::executeInSysCmd(const std::string& file, const std::string& args, const std::string& path)
+bool LuaExecutor::executeInSysCmd(const std::string& file,
+                                  const std::string& args,
+                                  const std::string& path,
+                                  const std::string& executor)
 {
     if ("" == file)
         return false;
 
-    std::string executor = getScriptExecutor(file);
-    if ("" == executor)
+    std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+    if ("" == exec)
         return false;
 
     std::string script = std::string("\"") + file + std::string("\"");
 
     if (path == currentPath())
     {
-        ::system((executor + " " + script + " " + args).c_str());
+        ::system((exec + " " + script + " " + args).c_str());
     }
     else
     {
         string oldPath = currentPath();
         setCurrentPath(path);
-        ::system((executor + " " + script + " " + args).c_str());
+        ::system((exec + " " + script + " " + args).c_str());
         setCurrentPath(oldPath);
     }
 
