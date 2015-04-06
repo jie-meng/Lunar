@@ -9,10 +9,11 @@ public:
     bool initLuaState();
     inline std::string errorInfo() const { return error_information_; }
     inline bool isOk() const { return lua_state_ok_; }
-    bool parse(const std::string& filename,
+    bool parseFilename(const std::string& filename,
                std::string* pout_type,
                std::string* pout_api,
                std::string* pout_executor);
+    std::string fileFilter();
 private:
     util::LuaState lua_state_;
     bool lua_state_ok_;

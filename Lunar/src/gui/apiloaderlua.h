@@ -18,7 +18,7 @@ signals:
 public slots:
 
 private:
-    void parseFileApi(const std::string& file, const std::string& dir);
+    void parseFileApiRecursively(const std::string& file, const std::string& dir);
 };
 
 }

@@ -26,15 +26,15 @@ void LuaExecutor::stop()
     process_.kill();
 }
 
-std::string LuaExecutor::getScriptExecutor(const std::string& file)
-{
-    if (isFileInFileFilter(file, LunarGlobal::getInstance().getLuaFileFilter()))
-        return LunarGlobal::getInstance().getRunnerLua();
-    else if (isFileInFileFilter(file, LunarGlobal::getInstance().getOctaveFileFilter()))
-        return LunarGlobal::getInstance().getRunnerOctave();
-    else
-        return "";
-}
+//std::string LuaExecutor::getScriptExecutor(const std::string& file)
+//{
+//    if (isFileInFileFilter(file, LunarGlobal::getInstance().getLuaFileFilter()))
+//        return LunarGlobal::getInstance().getRunnerLua();
+//    else if (isFileInFileFilter(file, LunarGlobal::getInstance().getOctaveFileFilter()))
+//        return LunarGlobal::getInstance().getRunnerOctave();
+//    else
+//        return "";
+//}
 
 bool LuaExecutor::isFileInFileFilter(const std::string& file, const std::string& file_filter)
 {
@@ -57,7 +57,8 @@ bool LuaExecutor::execute(const std::string& file,
     if ("" == file)
         return false;
 
-    std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+//    std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+    std::string exec = executor;
     if ("" == exec)
         return false;
 
@@ -78,7 +79,8 @@ bool LuaExecutor::executeInSysCmd(const std::string& file,
     if ("" == file)
         return false;
 
-    std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+    //std::string exec = ("" == executor) ? getScriptExecutor(file) : executor;
+    std::string exec = executor;
     if ("" == exec)
         return false;
 

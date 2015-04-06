@@ -95,38 +95,10 @@ void ApiLoader::appendApiIncludeFile()
 
 void ApiLoader::parseCurrentFileApi()
 {
-//    if(NULL == papis_)
-//        return;
-
-//    util::Regex function_regex(kRegexFunction);
-//    std::string text = "";
-//    for (int i=0; i<ptext_edit_->lines(); i++)
-//    {
-//        text = QStringToStdString(ptext_edit_->text(i));
-
-//        if (function_regex.search(text))
-//        {
-//            if (function_regex.getMatchedGroupCnt()>1)
-//            {
-//                std::string api = function_regex.getMatchedGroup(1);
-//                api = util::strReplace(api, ":", ".");
-
-//                //remove space between function name and "()"
-//                std::vector<std::string> vec;
-//                util::strSplit(api, "(", vec);
-//                if(vec.size() == 2)
-//                {
-//                    api = util::strTrim(vec.at(0)) + "(" + vec.at(1);
-//                }
-//                tmp_apis_vec_.push_back(api);
-//            }
-//        }
-//    }
 }
 
 void ApiLoader::parseIncludeFileApi()
 {
-
 }
 
 void ApiLoader::addApiCurrentFile(const std::string& str)

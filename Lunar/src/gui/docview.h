@@ -4,10 +4,12 @@
 #include <QWidget>
 #include <QFont>
 #include "util/base.hpp"
+#include "filetype.h"
 
 class QsciLexer;
 class QsciScintilla;
 class QsciAbstractAPIs;
+class QsciAPIsEx;
 
 namespace gui
 {
@@ -19,39 +21,6 @@ class DocView : public QWidget
 {
     Q_OBJECT
 public:
-    enum FileType
-    {
-        Unknown,
-        Avs,
-        Bash,
-        Batch,
-        CMake,
-        CPP,
-        CSharp,
-        CSS,
-        D,
-        Diff,
-        Html,
-        Java,
-        JavaScript,
-        Lua,
-        Makefile,
-        Matlab,
-        Octave,
-        Pascal,
-        Perl,
-        Properties,
-        Python,
-        Ruby,
-        Sql,
-        Tcl,
-        Tex,
-        Verilog,
-        Vhdl,
-        Xml,
-        Yaml
-    };
-
     explicit DocView(const QString& pathname, QWidget* parent = 0);
     virtual ~DocView();
     QsciScintilla* getTextEdit() const { return ptext_edit_; }
@@ -87,9 +56,7 @@ private:
     void initTextEdit();
     void initConnections();
     void clearLexerApi();
-    void setLuaLexerApi();
-    void setOctaveLexerApi();
-    void setUnknownLexerApi();
+    void setLexerApi();
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
     QString getTitleFromPath(const QString& path) const;
@@ -98,7 +65,7 @@ private:
     QString pathname_;
     QString title_;
     QsciScintilla* ptext_edit_;
-    QsciAbstractAPIs* papis_;
+    QsciAPIsEx* papis_;
     QsciLexer* plexer_;
     static int s_new_docview_sequence_;
     bool is_apis_preparing_;

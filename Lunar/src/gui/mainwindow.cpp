@@ -1,4 +1,5 @@
 #include "mainwindow.h"
+#include <map>
 #include <QAction>
 #include <QMenu>
 #include <QMenuBar>
@@ -13,7 +14,6 @@
 #include <QMimeData>
 #include <QtCore/QUrl>
 #include <QtCore/QWaitCondition>
-#include <map>
 #include "util/file.hpp"
 #include "lunarcommon.h"
 #include "maintabwidget.h"
@@ -30,7 +30,7 @@ namespace gui
 using namespace std;
 using namespace util;
 
-std::string MainWindow::s_file_filter_= "Lua Files(*.lua);;All Files(*.*)";
+//std::string MainWindow::s_file_filter_= "Lua Files(*.lua);;All Files(*.*)";
 
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
@@ -58,7 +58,7 @@ MainWindow::MainWindow(QWidget* parent)
     output_widget_on_(false)
 {
     //ctor
-    //user call Init after ctor
+    //user call Init after ctor"Lua Files(*.lua);;All Files(*.*)"
 }
 
 MainWindow::~MainWindow()
@@ -116,7 +116,6 @@ bool MainWindow::init()
     initFindDialog();
     initBottomDockWidget();
     initLuaExecutor();
-    initRunner();
     initConnections();
     initExtension();
     processCmdParam();
@@ -124,43 +123,7 @@ bool MainWindow::init()
     pmain_tabwidget_->setAcceptDrops(false);
     setAcceptDrops(true);
 
-    if (LunarGlobal::getInstance().getArgCnt()>0)
-    {
-        //std::string app_path = LunarGlobal::getInstance().get_app_path();
-        //std::string app_name = LunarGlobal::get_app_name();
-        //app_name = util::strToLower(app_name);
-        //QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
-
-        map<string, string> filter_map;
-        filter_map[kFileTypeLua] = std::string("Lua Files(") + formatFileFilter(LunarGlobal::getInstance().getLuaFileFilter()) + ")";
-        filter_map[kFileTypeOctave] = std::string("Octave Files(") + formatFileFilter(LunarGlobal::getInstance().getOctaveFileFilter()) + ")";
-
-        vector<string> vec;
-        map<string, string>::iterator it = filter_map.find(LunarGlobal::getInstance().getFileTypeDefault());
-        if (it != filter_map.end())
-        {
-            vec.push_back(it->second);
-            filter_map.erase(it);
-        }
-
-        for (map<string, string>::iterator it = filter_map.begin(); it != filter_map.end(); ++it)
-            vec.push_back(it->second);
-        vec.push_back("All Files(*.*)");
-
-        s_file_filter_ = strJoin(vec, ";;");
-    }
-
     return true;
-}
-
-std::string MainWindow::formatFileFilter(const std::string& file_filter)
-{
-    std::vector<std::string> filterVec;
-    util::strSplit(file_filter, ",", filterVec);
-    for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
-        *it = std::string("*.") + util::strTrim(*it);
-
-    return util::strJoin(filterVec, ";");
 }
 
 void MainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -362,7 +325,7 @@ void MainWindow::fileNew()
 
 void MainWindow::fileOpen()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), ".", StdStringToQString(MainWindow::getFileFilter()));
+    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), ".", StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
     if(path.length() == 0)
     {
         //QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
@@ -623,20 +586,12 @@ void MainWindow::runEx(bool run_in_syscmd)
     }
 }
 
-void MainWindow::initRunner()
-{
-    string runner = strTrim(LunarGlobal::getInstance().getRunnerLua());
-    if (!strContains(runner, "/") && !strContains(runner, "\\"))
-    {
-        //relative path
-        runner = LunarGlobal::getInstance().getAppPath() + "/" + runner;
-    }
-}
-
 void MainWindow::initExtension()
 {
     if (!Extension::getInstance().initLuaState())
         LunarMsgBox(Extension::getInstance().errorInfo());
+
+    LunarGlobal::getInstance().parseExtensionFileFilter();
 }
 
 void MainWindow::setStatusText(const QString& text)

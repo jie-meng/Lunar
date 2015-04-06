@@ -24,7 +24,6 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     virtual ~MainWindow();
     bool init();
-    static std::string getFileFilter() { return s_file_filter_; }
 public Q_SLOTS:
     void openDoc(const QString& filepath);
     //output
@@ -67,11 +66,9 @@ private:
     void initFindDialog();
     void initBottomDockWidget();
     void initLuaExecutor();
-    void initRunner();
     void initExtension();
     void processCmdParam();
     void runEx(bool run_in_syscmd);
-    std::string formatFileFilter(const std::string& file_filter);
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;
@@ -92,7 +89,6 @@ private:
     FindDialog* pfind_dlg_;
     OutputWidget* poutput_widget_;
     LuaExecutor* plua_executor_;
-    static std::string s_file_filter_;
     DockWidgetEx* pbottom_widget_;
     bool output_widget_on_;
 private:

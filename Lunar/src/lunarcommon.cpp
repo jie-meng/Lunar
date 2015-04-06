@@ -4,6 +4,7 @@
 #include "util/file.hpp"
 #include "util/cfg.hpp"
 #include "util/process.hpp"
+#include "extension.h"
 
 using namespace std;
 using namespace util;
@@ -53,9 +54,10 @@ void LogSocket::SendLog(const std::string& log)
 // author :
 // time : 2012-01-19-09.19
 ////////////////////////////////////////////////////
-const string ks_cfg = "cfg";
+const string kCfg = "cfg";
 
-LunarGlobal::LunarGlobal()
+LunarGlobal::LunarGlobal() :
+    file_filter_("Lua Files(*.lua);;")
 {
 
 }
@@ -81,9 +83,37 @@ void LunarGlobal::init(int argc, char* argv[])
 
     if (!isPathFile(getAppPath() + "/" + getExtensionFile()))
     {
-        string str = "function parseFileType(filename)\n\nend";
+        string str =
+"function parseFileType(filename)\n\
+\n\
+\tlocal path, name = file.splitPathname(filename)\n\
+\n\
+\t-- Lunar extension\n\
+\tif name == \"extension\" then\n\
+\t\tif file.isPathFile(path .. \"/Lunar\") or file.isPathFile(path .. \"/Lunar.exe\") then\n\
+\t\t\treturn \"lua\", \"api/lua\"\n\
+\t\tend\n\
+\tend\n\
+\n\
+\t-- lua\n\
+\tif string.lower(file.fileExtension(name)) == \"lua\" then\n\
+\t\treturn \"lua\", \"api/lua\", \"luaexec\"\n\
+\tend\n\
+end\n\
+\n\
+function fileFilter()\n\
+\treturn \"Lua Files(*.lua);;\"\n\
+end\n";
         writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
     }
+}
+
+void LunarGlobal::parseExtensionFileFilter()
+{
+    string str = Extension::getInstance().fileFilter();
+    if ("" != str)
+        file_filter_ = str;
+    file_filter_ += "All Files(*.*)";
 }
 
 void LunarGlobal::quit()
@@ -93,7 +123,7 @@ void LunarGlobal::quit()
 
 void LunarGlobal::readCfg()
 {
-    TextCfg text_cfg(getAppPath() + "/" + ks_cfg);
+    TextCfg text_cfg(getAppPath() + "/" + kCfg);
 
     autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
     autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
@@ -102,20 +132,14 @@ void LunarGlobal::readCfg()
     font_ = QFont(StdStringToQString(font_type), font_size);
     mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
     mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
-    runner_lua_ = text_cfg.getValue("Run.Runner.Lua", "luaexec");
-    runner_octave_ = text_cfg.getValue("Run.Runner.Octave", "octave");
     run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
-    lua_file_filter_ = text_cfg.getValue("FileFilter.Lua", "lua");
-    octave_file_filter_ = text_cfg.getValue("FileFilter.Octave", "m");
-    file_type_default_ = text_cfg.getValue("FileFilter.DefaultType", kFileTypeLua);
-    lua_api_ = text_cfg.getValue("Api.Lua", "api/lua");
-    octave_api_ = text_cfg.getValue("Api.Octave", "api/octave");
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
+    extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
 }
 
 void LunarGlobal::writeCfg()
 {
-    TextCfg text_cfg(getAppPath() + "/" + ks_cfg);
+    TextCfg text_cfg(getAppPath() + "/" + kCfg);
 
     text_cfg.setValue("Font.Type", QStringToStdString(getFont().family()));
     text_cfg.setValue("Font.Size", getFont().pointSize());
@@ -123,15 +147,9 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("AutoCompletion.WordTip", autocompletion_wordtip_);
     text_cfg.setValue("MainWindow.Width", mainwindow_width_);
     text_cfg.setValue("MainWindow.Height", mainwindow_height_);
-    text_cfg.setValue("FileFilter.Lua", lua_file_filter_);
-    text_cfg.setValue("FileFilter.Octave", octave_file_filter_);
-    text_cfg.setValue("FileFilter.DefaultType", file_type_default_);
-    text_cfg.setValue("Run.Runner.Lua", runner_lua_);
-    text_cfg.setValue("Run.Runner.Octave", runner_octave_);
     text_cfg.setValue("Run.Additional.Args", run_additional_args_);
-    text_cfg.setValue("Api.Lua", lua_api_);
-    text_cfg.setValue("Api.Octave", octave_api_);
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
+    text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
 
     text_cfg.save();
 }

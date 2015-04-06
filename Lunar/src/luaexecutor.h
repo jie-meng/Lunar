@@ -23,7 +23,7 @@ Q_SIGNALS:
 private:
     void output(const std::string& str);
     bool isFileInFileFilter(const std::string& file, const std::string& file_filter);
-    std::string getScriptExecutor(const std::string& file);
+//    std::string getScriptExecutor(const std::string& file);
 private:
     util::Process process_;
 private:

@@ -42,7 +42,7 @@ bool Extension::initLuaState()
     return lua_state_ok_;
 }
 
-bool Extension::parse(const std::string& filename,
+bool Extension::parseFilename(const std::string& filename,
                std::string* pout_type,
                std::string* pout_api,
                std::string* pout_executor)
@@ -78,5 +78,38 @@ bool Extension::parse(const std::string& filename,
         luaPop(lua_state_.getState(), -1);
 
         return true;
+    }
+}
+
+std::string Extension::fileFilter()
+{
+    if (!lua_state_ok_)
+        return "";
+
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncFilefilter());
+
+    int err = luaCallFunc(lua_state_.getState(), 0, 1);
+    if (0 != err)
+    {
+        error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        luaPop(lua_state_.getState(), -1);
+
+        return "";
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+
+        if (ret_cnt > 0)
+        {
+            std::string result = luaGetString(lua_state_.getState(), 1);
+            error_information_ = "";
+            luaPop(lua_state_.getState(), -1);
+            return result;
+        }
+        else
+        {
+            return "";
+        }
     }
 }

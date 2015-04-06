@@ -51,8 +51,6 @@ class LunarGlobal
 {
 public:
     SINGLETON(LunarGlobal)
-    LunarGlobal();
-    ~LunarGlobal();
     void init(int argc, char* argv[]);
     void quit();
     void readCfg();
@@ -71,17 +69,16 @@ public:
     inline size_t getMainwindowHeight() const { return mainwindow_height_; }
     inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
-    inline std::string getLuaFileFilter() const { return lua_file_filter_; }
-    inline std::string getRunnerLua() const { return runner_lua_; }
-    inline std::string getRunnerOctave() const { return runner_octave_; }
     inline std::string getRunAdditionalArgs() const { return run_additional_args_; }
     inline void setRunAdditionalArgs(const std::string& args) { run_additional_args_ = args; }
-    inline std::string getOctaveFileFilter() const { return octave_file_filter_; }
-    inline std::string getLuaApi() const { return lua_api_; }
-    inline std::string getOctaveApi() const { return octave_api_; }
-    inline std::string getFileTypeDefault() const { return file_type_default_; }
     inline std::string getExtensionFile() const { return "extension"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
+    inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
+    inline std::string getFileFilter() const { return file_filter_; }
+    void parseExtensionFileFilter();
+private:
+    LunarGlobal();
+    ~LunarGlobal();
 private:
     int argc_;
     std::vector<std::string> argvec_;
@@ -93,15 +90,10 @@ private:
     unsigned short process_sock_port_;
     size_t mainwindow_width_;
     size_t mainwindow_height_;
-    std::string lua_file_filter_;
-    std::string octave_file_filter_;
-    std::string runner_lua_;
-    std::string runner_octave_;
     std::string run_additional_args_;
-    std::string lua_api_;
-    std::string octave_api_;
-    std::string file_type_default_;
     std::string extension_func_parsefiletype_;
+    std::string extension_func_filefilter_;
+    std::string file_filter_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

@@ -22,15 +22,14 @@ class OctaveFileFilter : public PathFilter
 public:
     virtual bool filter(const std::string& path)
     {
-        std::vector<std::string> filterVec;
-        util::strSplit(LunarGlobal::getInstance().getOctaveFileFilter(), ",", filterVec);
-        for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
-        {
-            if (util::strEndWith(path, std::string(".") + *it, false))
-                return true;
-        }
-
-        return false;
+//        std::vector<std::string> filterVec;
+//        util::strSplit(LunarGlobal::getInstance().getOctaveFileFilter(), ",", filterVec);
+//        for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
+//        {
+//            if (util::strEndWith(path, std::string(".") + *it, false))
+//                return true;
+//        }
+        return util::strEndWith(path, std::string(".m"), false);
     }
 };
 

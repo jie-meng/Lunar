@@ -14,6 +14,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-g" />
+					<Add directory="src/gui" />
 				</Compiler>
 			</Target>
 			<Target title="Release">
@@ -23,6 +24,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="src/gui" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -45,10 +47,13 @@
 		</Unit>
 		<Unit filename="src/extension.cpp" />
 		<Unit filename="src/extension.h" />
+		<Unit filename="src/filetype.h" />
 		<Unit filename="src/gui/aboutdialog.cpp" />
 		<Unit filename="src/gui/aboutdialog.h" />
 		<Unit filename="src/gui/apiloader.cpp" />
 		<Unit filename="src/gui/apiloader.h" />
+		<Unit filename="src/gui/apiloaderfactory.cpp" />
+		<Unit filename="src/gui/apiloaderfactory.h" />
 		<Unit filename="src/gui/apiloaderlua.cpp" />
 		<Unit filename="src/gui/apiloaderlua.h" />
 		<Unit filename="src/gui/apiloaderoctave.cpp" />
