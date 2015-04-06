@@ -15,8 +15,8 @@ class AboutDialog : public QDialog
 public:
     explicit AboutDialog(QWidget *parent = 0);
     virtual ~AboutDialog();
-    void Init();
-    void InitGui();
+    void init();
+    void initGui();
 private:
     QLabel *plabel_email_;
     QLabel *plabel_version_;

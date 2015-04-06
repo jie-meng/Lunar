@@ -10,7 +10,7 @@ static LogSocket s_logger;
 void InitLunarCommon(int argc, char* argv[])
 {
     util::setPrintFunc(UtilBind(&LogSocket::SendLog, &s_logger, _1));
-    LunarGlobal::Init(argc, argv);
+    LunarGlobal::init(argc, argv);
 }
 
 void LunarMsgBox(const std::string& str)
@@ -82,7 +82,7 @@ LunarGlobal::~LunarGlobal()
 
 }
 
-void LunarGlobal::Init(int argc, char* argv[])
+void LunarGlobal::init(int argc, char* argv[])
 {
     //input args process
     s_argc_ = argc;
@@ -93,18 +93,18 @@ void LunarGlobal::Init(int argc, char* argv[])
     s_app_path_ = util::splitPathname(path_name).first;
     s_app_name_ = util::splitPathname(path_name).second;
 
-    ReadCfg();
-    WriteCfg();
+    readCfg();
+    writeCfg();
 }
 
-void LunarGlobal::Quit()
+void LunarGlobal::quit()
 {
-    WriteCfg();
+    writeCfg();
 }
 
-void LunarGlobal::ReadCfg()
+void LunarGlobal::readCfg()
 {
-    util::TextCfg text_cfg(LunarGlobal::get_app_path() + "/" + LunarGlobal::ks_cfg);
+    util::TextCfg text_cfg(LunarGlobal::getAppPath() + "/" + LunarGlobal::ks_cfg);
 
     s_autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
     s_autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
@@ -125,12 +125,12 @@ void LunarGlobal::ReadCfg()
     s_extension_func_ = text_cfg.getValue("Extension.Func", "parse");
 }
 
-void LunarGlobal::WriteCfg()
+void LunarGlobal::writeCfg()
 {
-    util::TextCfg text_cfg(LunarGlobal::get_app_path() + "/" + LunarGlobal::ks_cfg);
+    util::TextCfg text_cfg(LunarGlobal::getAppPath() + "/" + LunarGlobal::ks_cfg);
 
-    text_cfg.setValue("Font.Type", QStringToStdString(get_font().family()));
-    text_cfg.setValue("Font.Size", get_font().pointSize());
+    text_cfg.setValue("Font.Type", QStringToStdString(getFont().family()));
+    text_cfg.setValue("Font.Size", getFont().pointSize());
     text_cfg.setValue("AutoCompletion.Threshold", s_autocompletion_threshold_);
     text_cfg.setValue("AutoCompletion.WordTip", s_autocompletion_wordtip_);
     text_cfg.setValue("MainWindow.Width", s_mainwindow_width_);

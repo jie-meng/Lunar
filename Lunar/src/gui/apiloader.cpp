@@ -33,7 +33,7 @@ ApiLoader::~ApiLoader()
 {
 }
 
-void ApiLoader::LoadFileApis(const std::string& api_path)
+void ApiLoader::loadFileApis(const std::string& api_path)
 {
     if(NULL == papis_)
         return;
@@ -47,7 +47,7 @@ void ApiLoader::LoadFileApis(const std::string& api_path)
     }
 }
 
-void ApiLoader::Prepare()
+void ApiLoader::prepare()
 {
     if(NULL == papis_)
         return;
@@ -55,7 +55,7 @@ void ApiLoader::Prepare()
     papis_->prepare();
 }
 
-void ApiLoader::ClearApiCurrentFile()
+void ApiLoader::clearApiCurrentFile()
 {
     if(NULL == papis_)
         return;
@@ -65,7 +65,7 @@ void ApiLoader::ClearApiCurrentFile()
     current_file_apis_vec_.clear();
 }
 
-void ApiLoader::AppendApiCurrentFile()
+void ApiLoader::appendApiCurrentFile()
 {
     if(NULL == papis_)
         return;
@@ -74,7 +74,7 @@ void ApiLoader::AppendApiCurrentFile()
         papis_->add(StdStringToQString(current_file_apis_vec_.at(i)));
 }
 
-void ApiLoader::ClearApiIncludeFile()
+void ApiLoader::clearApiIncludeFile()
 {
     if(NULL == papis_)
         return;
@@ -84,7 +84,7 @@ void ApiLoader::ClearApiIncludeFile()
     include_file_apis_vec_.clear();
 }
 
-void ApiLoader::AppendApiIncludeFile()
+void ApiLoader::appendApiIncludeFile()
 {
     if(NULL == papis_)
         return;
@@ -93,7 +93,7 @@ void ApiLoader::AppendApiIncludeFile()
         papis_->add(StdStringToQString(include_file_apis_vec_.at(i)));
 }
 
-void ApiLoader::ParseCurrentFileApi()
+void ApiLoader::parseCurrentFileApi()
 {
 //    if(NULL == papis_)
 //        return;
@@ -124,17 +124,17 @@ void ApiLoader::ParseCurrentFileApi()
 //    }
 }
 
-void ApiLoader::ParseIncludeFileApi()
+void ApiLoader::parseIncludeFileApi()
 {
 
 }
 
-void ApiLoader::AddApiCurrentFile(const std::string& str)
+void ApiLoader::addApiCurrentFile(const std::string& str)
 {
     current_file_apis_vec_.push_back(str);
 }
 
-void ApiLoader::AddApiIncludeFile(const std::string& str)
+void ApiLoader::addApiIncludeFile(const std::string& str)
 {
     include_file_apis_vec_.push_back(str);
 }

@@ -13,7 +13,7 @@ AboutDialog::AboutDialog(QWidget *parent)
     plabel_platform_(NULL)
 {
     //ctor
-    Init();
+    init();
 }
 
 AboutDialog::~AboutDialog()
@@ -21,12 +21,12 @@ AboutDialog::~AboutDialog()
     //dtor
 }
 
-void AboutDialog::Init()
+void AboutDialog::init()
 {
-    InitGui();
+    initGui();
 }
 
-void AboutDialog::InitGui()
+void AboutDialog::initGui()
 {
     plabel_version_ = new QLabel(tr("Version: 1.1.4.20150406"));
     plabel_email_ = new QLabel(tr("Email: joshua.meng.xy@gmail.com"));

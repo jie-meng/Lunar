@@ -40,10 +40,10 @@ ApiLoaderOctave::ApiLoaderOctave(const std::string& file, QsciAPIsEx* papis, QOb
 
 }
 
-void ApiLoaderOctave::ParseCurrentFileApi()
+void ApiLoaderOctave::parseCurrentFileApi()
 {
     Regex function_regex(kRegexFunctionOctave);
-    string text = readTextFile(File());
+    string text = readTextFile(file());
     vector<string> lines;
     text = strReplaceAll(text, "\r\n", "\n");
     strSplit(text, "\n", lines);
@@ -53,14 +53,14 @@ void ApiLoaderOctave::ParseCurrentFileApi()
         {
             string api = function_regex.getMatchedGroup("api");
             if (api != "")
-                AddApiCurrentFile(api);
+                addApiCurrentFile(api);
         }
     }
 }
 
-void ApiLoaderOctave::ParseIncludeFileApi()
+void ApiLoaderOctave::parseIncludeFileApi()
 {
-    pair<string, string> path_name = splitPathname(File());
+    pair<string, string> path_name = splitPathname(file());
     OctaveFileFilter octave_file_filter;
     list<string> ls;
     listFiles(path_name.first, ls, &octave_file_filter);
@@ -84,7 +84,7 @@ void ApiLoaderOctave::ParseIncludeFileApi()
                     if (param != "")
                     {
                         //QMessageBox::information(NULL, StdStringToQString(trim_line), StdStringToQString(fileBaseName(path_name.second) + param));
-                        AddApiIncludeFile(fileBaseName(splitPathname(*it).second) + param);
+                        addApiIncludeFile(fileBaseName(splitPathname(*it).second) + param);
                     }
                 }
                 else

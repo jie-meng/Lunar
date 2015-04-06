@@ -11,8 +11,8 @@ class ApiLoaderOctave : public ApiLoader
     Q_OBJECT
 public:
     explicit ApiLoaderOctave(const std::string& file, QsciAPIsEx* papis, QObject* parent);
-    virtual void ParseCurrentFileApi();
-    virtual void ParseIncludeFileApi();
+    virtual void parseCurrentFileApi();
+    virtual void parseIncludeFileApi();
 signals:
 
 public slots:

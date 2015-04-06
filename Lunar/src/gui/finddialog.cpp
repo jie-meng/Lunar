@@ -22,20 +22,20 @@ FindDialog::FindDialog(QWidget *parent)
     first_find_(true),
     find_text_(tr(""))
 {
-    Init();
+    init();
 }
 
 FindDialog::~FindDialog()
 {
 }
 
-void FindDialog::Init()
+void FindDialog::init()
 {
-    InitGui();
-    InitConnections();
+    initGui();
+    initConnections();
 }
 
-void FindDialog::InitGui()
+void FindDialog::initGui()
 {
     ptab_widget_ = new QTabWidget;
     pfind_tab_ = new FindTab;
@@ -64,28 +64,28 @@ void FindDialog::InitGui()
     setFixedWidth(sizeHint().width());
 }
 
-void FindDialog::InitConnections()
+void FindDialog::initConnections()
 {
     //self
-    connect(pcase_check_box_, SIGNAL(clicked()), this, SLOT(OptionsChanged()));
-    connect(pbackward_checkbox_, SIGNAL(clicked()), this, SLOT(OptionsChanged()));
-    connect(pwholeword_checkbox_, SIGNAL(clicked()), this, SLOT(OptionsChanged()));
-    connect(pwrap_around_checkbox_, SIGNAL(clicked()), this, SLOT(OptionsChanged()));
+    connect(pcase_check_box_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
+    connect(pbackward_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
+    connect(pwholeword_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
+    connect(pwrap_around_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
     connect(ptab_widget_, SIGNAL(currentChanged(int)), this, SLOT(TabChanged(int)));
 
     //findtab
-    connect(pfind_tab_, SIGNAL(OptionsChanged()), this, SLOT(OptionsChanged()));
-    connect(pfind_tab_, SIGNAL(CmdFind(const QString&)), this, SLOT(CmdFind(const QString&)));
-    connect(pfind_tab_, SIGNAL(FindTextChangeSignal(const QString&)), this, SLOT(TabFindTextChanged(const QString&)));
+    connect(pfind_tab_, SIGNAL(optionsChanged()), this, SLOT(optionsChanged()));
+    connect(pfind_tab_, SIGNAL(cmdFind(const QString&)), this, SLOT(cmdFind(const QString&)));
+    connect(pfind_tab_, SIGNAL(findTextChangeSignal(const QString&)), this, SLOT(tabFindTextChanged(const QString&)));
     //replacetab
-    connect(preplace_tab_, SIGNAL(OptionsChanged()), this, SLOT(OptionsChanged()));
-    connect(preplace_tab_, SIGNAL(CmdFind(const QString&)), this, SLOT(CmdFind(const QString&)));
-    connect(preplace_tab_, SIGNAL(CmdReplace(const QString&)), this, SLOT(CmdReplace(const QString&)));
-    connect(preplace_tab_, SIGNAL(CmdReplaceAll(const QString&, const QString&)), this, SLOT(CmdReplaceAll(const QString&, const QString&)));
-    connect(preplace_tab_, SIGNAL(FindTextChangeSignal(const QString&)), this, SLOT(TabFindTextChanged(const QString&)));
+    connect(preplace_tab_, SIGNAL(optionsChanged()), this, SLOT(optionsChanged()));
+    connect(preplace_tab_, SIGNAL(cmdFind(const QString&)), this, SLOT(cmdFind(const QString&)));
+    connect(preplace_tab_, SIGNAL(cmdReplace(const QString&)), this, SLOT(cmdReplace(const QString&)));
+    connect(preplace_tab_, SIGNAL(cmdReplaceAll(const QString&, const QString&)), this, SLOT(cmdReplaceAll(const QString&, const QString&)));
+    connect(preplace_tab_, SIGNAL(findTextChangeSignal(const QString&)), this, SLOT(tabFindTextChanged(const QString&)));
 }
 
-void FindDialog::CmdFind(const QString& text)
+void FindDialog::cmdFind(const QString& text)
 {
     Qt::CaseSensitivity cs = pcase_check_box_->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive;
     bool whole_word = pwholeword_checkbox_->isChecked() ? true : false;
@@ -93,7 +93,7 @@ void FindDialog::CmdFind(const QString& text)
     bool wrap = pwrap_around_checkbox_->isChecked() ? true : false;
     bool find_in_output = pfind_in_output_checkbox_->isChecked() ? true : false;
 
-    Q_EMIT Find(text, first_find_, cs, find_previous, whole_word, wrap, find_in_output);
+    Q_EMIT find(text, first_find_, cs, find_previous, whole_word, wrap, find_in_output);
     //make a flag
     first_find_ = false;
 }
@@ -102,44 +102,44 @@ void FindDialog::closeEvent(QCloseEvent* e)
 {
     QWidget::closeEvent(e);
 
-    OptionsChanged();
+    optionsChanged();
 }
 
-void FindDialog::OptionsChanged()
+void FindDialog::optionsChanged()
 {
     first_find_ = true;
 }
 
-void FindDialog::CmdReplace(const QString& replace_with_text)
+void FindDialog::cmdReplace(const QString& replace_with_text)
 {
     bool find_in_output = pfind_in_output_checkbox_->isChecked() ? true : false;
 
-    Q_EMIT Replace(replace_with_text, find_in_output);
+    Q_EMIT replace(replace_with_text, find_in_output);
 }
 
-void FindDialog::CmdReplaceAll(const QString& text, const QString& replace_with_text)
+void FindDialog::cmdReplaceAll(const QString& text, const QString& replace_with_text)
 {
     Qt::CaseSensitivity cs = pcase_check_box_->isChecked() ? Qt::CaseSensitive : Qt::CaseInsensitive;
     bool whole_word = pwholeword_checkbox_->isChecked() ? true : false;
     bool find_previous = pbackward_checkbox_->isChecked() ? true : false;
     bool find_in_output = pfind_in_output_checkbox_->isChecked() ? true : false;
 
-    Q_EMIT ReplaceAll(text, replace_with_text, cs, find_previous, whole_word, find_in_output);
+    Q_EMIT replaceAll(text, replace_with_text, cs, find_previous, whole_word, find_in_output);
 
-    OptionsChanged();
+    optionsChanged();
 }
 
-void FindDialog::TabChanged(int index)
+void FindDialog::tabChanged(int index)
 {
     switch (index)
     {
         case TabFind:
-            pfind_tab_->SetFindText(find_text_);
+            pfind_tab_->setFindText(find_text_);
             setWindowTitle(tr("Find"));
             break;
 
         case TabReplace:
-            preplace_tab_->SetFindText(find_text_);
+            preplace_tab_->setFindText(find_text_);
             setWindowTitle(tr("Replace"));
             break;
         default:
@@ -147,7 +147,7 @@ void FindDialog::TabChanged(int index)
     }
 }
 
-void FindDialog::TabFindTextChanged(const QString& text)
+void FindDialog::tabFindTextChanged(const QString& text)
 {
     find_text_ = text;
 }
@@ -161,7 +161,7 @@ void FindDialog::TabFindTextChanged(const QString& text)
 FindTab::FindTab(QWidget *parent)
     : QWidget(parent)
 {
-    Init();
+    init();
 }
 
 FindTab::~FindTab()
@@ -169,12 +169,12 @@ FindTab::~FindTab()
 
 }
 
-void FindTab::Init()
+void FindTab::init()
 {
-    InitGui();
-    InitConnections();
+    initGui();
+    initConnections();
 }
-void FindTab::InitGui()
+void FindTab::initGui()
 {
     plabel_find_ = new QLabel(tr("Find &what:"));
     pfind_edit_ = new QLineEdit;
@@ -205,22 +205,22 @@ void FindTab::InitGui()
     setLayout(mainLayout);
 }
 
-void FindTab::InitConnections()
+void FindTab::initConnections()
 {
-    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SIGNAL(FindTextChangeSignal(const QString&)));
-    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(FindTextChanged(const QString&)));
-    connect(pfind_button_, SIGNAL(clicked()), this, SLOT(FindClicked()));
+    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SIGNAL(findTextChangeSignal(const QString&)));
+    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(findTextChanged(const QString&)));
+    connect(pfind_button_, SIGNAL(clicked()), this, SLOT(findClicked()));
 }
 
-void FindTab::FindTextChanged(const QString &text)
+void FindTab::findTextChanged(const QString &text)
 {
     pfind_button_->setEnabled(!text.isEmpty());
-    Q_EMIT OptionsChanged();
+    Q_EMIT optionsChanged();
 }
 
-void FindTab::FindClicked()
+void FindTab::findClicked()
 {
-    Q_EMIT CmdFind(pfind_edit_->text());
+    Q_EMIT cmdFind(pfind_edit_->text());
 }
 
 ////////////////////////////////////////////////////
@@ -232,7 +232,7 @@ void FindTab::FindClicked()
 ReplaceTab::ReplaceTab(QWidget *parent)
     : QWidget(parent)
 {
-    Init();
+    init();
 }
 
 ReplaceTab::~ReplaceTab()
@@ -240,12 +240,12 @@ ReplaceTab::~ReplaceTab()
 
 }
 
-void ReplaceTab::Init()
+void ReplaceTab::init()
 {
-    InitGui();
-    InitConnections();
+    initGui();
+    initConnections();
 }
-void ReplaceTab::InitGui()
+void ReplaceTab::initGui()
 {
     plabel_find_ = new QLabel(tr("Find &what:"));
     pfind_edit_ = new QLineEdit;
@@ -295,38 +295,38 @@ void ReplaceTab::InitGui()
     setLayout(mainLayout);
 }
 
-void ReplaceTab::InitConnections()
+void ReplaceTab::initConnections()
 {
-    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SIGNAL(FindTextChangeSignal(const QString&)));
-    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(TextChanged()));
-    connect(preplace_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(TextChanged()));
-    connect(pfind_button_, SIGNAL(clicked()), this, SLOT(FindClicked()));
-    connect(preplace_button_, SIGNAL(clicked()), this, SLOT(ReplaceClicked()));
-    connect(preplace_all_button_, SIGNAL(clicked()), this, SLOT(ReplaceAllClicked()));
+    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SIGNAL(findTextChangeSignal(const QString&)));
+    connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(textChanged()));
+    connect(preplace_edit_, SIGNAL(textChanged(const QString&)), this, SLOT(textChanged()));
+    connect(pfind_button_, SIGNAL(clicked()), this, SLOT(findClicked()));
+    connect(preplace_button_, SIGNAL(clicked()), this, SLOT(replaceClicked()));
+    connect(preplace_all_button_, SIGNAL(clicked()), this, SLOT(replaceAllClicked()));
 }
 
-void ReplaceTab::TextChanged()
+void ReplaceTab::textChanged()
 {
     pfind_button_->setEnabled(!pfind_edit_->text().isEmpty());
     preplace_button_->setEnabled(!pfind_edit_->text().isEmpty());
     preplace_all_button_->setEnabled(!pfind_edit_->text().isEmpty());
-    Q_EMIT OptionsChanged();
+    Q_EMIT optionsChanged();
 }
 
-void ReplaceTab::FindClicked()
+void ReplaceTab::findClicked()
 {
-    Q_EMIT CmdFind(pfind_edit_->text());
+    Q_EMIT cmdFind(pfind_edit_->text());
 }
 
-void ReplaceTab::ReplaceClicked()
+void ReplaceTab::replaceClicked()
 {
-    Q_EMIT CmdReplace(preplace_edit_->text());
-    Q_EMIT CmdFind(pfind_edit_->text());
+    Q_EMIT cmdReplace(preplace_edit_->text());
+    Q_EMIT cmdFind(pfind_edit_->text());
 }
 
-void ReplaceTab::ReplaceAllClicked()
+void ReplaceTab::replaceAllClicked()
 {
-    Q_EMIT CmdReplaceAll(pfind_edit_->text(), preplace_edit_->text());
+    Q_EMIT cmdReplaceAll(pfind_edit_->text(), preplace_edit_->text());
 }
 
 } // namespace gui

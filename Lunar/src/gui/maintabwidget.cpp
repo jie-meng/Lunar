@@ -15,7 +15,7 @@ MainTabWidget::MainTabWidget(QWidget* parent)
     : QTabWidget(parent)
 {
     //ctor
-    Init();
+    init();
 }
 
 MainTabWidget::~MainTabWidget()
@@ -23,21 +23,21 @@ MainTabWidget::~MainTabWidget()
     //dtor
 }
 
-void MainTabWidget::Init()
+void MainTabWidget::init()
 {
     setTabsClosable(true);
     setMovable(true);
-    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(TabClose(int)));
+    connect(this, SIGNAL(tabCloseRequested(int)), this, SLOT(tabClose(int)));
 }
 
-int MainTabWidget::GetTabIndex(const QString& pathname)
+int MainTabWidget::getTabIndex(const QString& pathname)
 {
     for (int i=0; i<count(); ++i)
     {
         DocView* pdocview = dynamic_cast<DocView*>(widget(i));
         if(NULL != pdocview)
         {
-            if(pathname == pdocview->get_pathname())
+            if(pathname == pdocview->getPathname())
                 return i;
         }
     }
@@ -45,51 +45,51 @@ int MainTabWidget::GetTabIndex(const QString& pathname)
     return -1;
 }
 
-int MainTabWidget::AddDocViewTab(const QString& pathname)
+int MainTabWidget::addDocViewTab(const QString& pathname)
 {
     QString formatPathName = pathname;
     formatPathName.replace("\\", "/");
 
-    int tab_index = GetTabIndex(formatPathName);
+    int tab_index = getTabIndex(formatPathName);
     if (tab_index < 0 || "" == formatPathName)
     {
         //if does not exist, add a tab
         DocView* pdocview = new DocView(formatPathName);
-        tab_index = addTab(pdocview, pdocview->get_title());
+        tab_index = addTab(pdocview, pdocview->getTitle());
         setTabToolTip(tab_index, formatPathName);
 
-        connect(pdocview, SIGNAL(UpdateTitle(DocView*)), this, SLOT(UpdateTabTitleAndTip(DocView*)));
-        connect(pdocview, SIGNAL(TextModified(DocView*)), this, SLOT(TabTextModified(DocView*)));
+        connect(pdocview, SIGNAL(updateTitle(DocView*)), this, SLOT(updateTabTitleAndTip(DocView*)));
+        connect(pdocview, SIGNAL(textModified(DocView*)), this, SLOT(tabTextModified(DocView*)));
     }
 
     setCurrentIndex(tab_index);
     return tab_index;
 }
 
-bool MainTabWidget::SaveCurDocViewTab()
+bool MainTabWidget::saveCurDocViewTab()
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        return pdocview->SaveDoc();
+        return pdocview->saveDoc();
     else
         return false;
 }
 
-bool MainTabWidget::SaveAsCurDocViewTab()
+bool MainTabWidget::saveAsCurDocViewTab()
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        return pdocview->SaveAsDoc();
+        return pdocview->saveAsDoc();
     else
         return false;
 }
 
-void MainTabWidget::CloseCurDocViewTab()
+void MainTabWidget::closeCurDocViewTab()
 {
-    TabClose(indexOf(currentWidget()));
+    tabClose(indexOf(currentWidget()));
 }
 
-void MainTabWidget::SetDocViewFont()
+void MainTabWidget::setDocViewFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont("Courier New", 10), this);
@@ -98,12 +98,12 @@ void MainTabWidget::SetDocViewFont()
         {
             DocView* pdocview = dynamic_cast<DocView*>(widget(i));
             if(NULL != pdocview)
-                pdocview->SetEditTextFont(font);
+                pdocview->setEditTextFont(font);
         }
     }
 }
 
-bool MainTabWidget::FindInCurTextEdit(const QString& expr,
+bool MainTabWidget::findInCurTextEdit(const QString& expr,
                            bool re,
                            bool cs,
                            bool wo,
@@ -115,35 +115,35 @@ bool MainTabWidget::FindInCurTextEdit(const QString& expr,
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        return pdocview->Find(expr, re, cs, wo, wrap, forward, first_find, from_start);
+        return pdocview->find(expr, re, cs, wo, wrap, forward, first_find, from_start);
     else
         return false;
 }
 
-void MainTabWidget::ReplaceInCurTextEdit(const QString& replace_with_text)
+void MainTabWidget::replaceInCurTextEdit(const QString& replace_with_text)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        pdocview->Replace(replace_with_text);
+        pdocview->replace(replace_with_text);
 }
 
-void MainTabWidget::SaveAllViewTabs()
+void MainTabWidget::saveAllViewTabs()
 {
     for (int i=0; i<count(); i++)
     {
         DocView* pdocview = dynamic_cast<DocView*>(widget(i));
         if(NULL != pdocview)
-            pdocview->SaveDoc();
+            pdocview->saveDoc();
     }
 }
 
-void MainTabWidget::UpdateTabTitleAndTip(DocView* pdocview)
+void MainTabWidget::updateTabTitleAndTip(DocView* pdocview)
 {
     if (pdocview == currentWidget())
     {
         //change tab name
-        setTabText(indexOf(pdocview), pdocview->get_title());
-        setTabToolTip(indexOf(pdocview), pdocview->get_pathname());
+        setTabText(indexOf(pdocview), pdocview->getTitle());
+        setTabToolTip(indexOf(pdocview), pdocview->getPathname());
     }
     else
     {
@@ -152,20 +152,20 @@ void MainTabWidget::UpdateTabTitleAndTip(DocView* pdocview)
             if (pdocview == widget(i))
             {
                 //change tab name
-                setTabText(indexOf(pdocview), pdocview->get_title());
-                setTabToolTip(indexOf(pdocview), pdocview->get_pathname());
+                setTabText(indexOf(pdocview), pdocview->getTitle());
+                setTabToolTip(indexOf(pdocview), pdocview->getPathname());
                 break;
             }
         }
     }
 }
 
-void MainTabWidget::TabTextModified(DocView* pdocview)
+void MainTabWidget::tabTextModified(DocView* pdocview)
 {
     if (pdocview == currentWidget())
     {
         //change tab name
-        setTabText(indexOf(pdocview), "*" + pdocview->get_title());
+        setTabText(indexOf(pdocview), "*" + pdocview->getTitle());
     }
     else
     {
@@ -174,14 +174,14 @@ void MainTabWidget::TabTextModified(DocView* pdocview)
             if (pdocview == widget(i))
             {
                 //change tab name
-                setTabText(indexOf(pdocview), "*" + pdocview->get_title());
+                setTabText(indexOf(pdocview), "*" + pdocview->getTitle());
                 break;
             }
         }
     }
 }
 
-void MainTabWidget::TabClose(int index)
+void MainTabWidget::tabClose(int index)
 {
     if (tabText(index).startsWith("*"))
     {
@@ -190,7 +190,7 @@ void MainTabWidget::TabClose(int index)
         {
             int ret = QMessageBox::question(NULL, "question", "Save File?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if(ret == QMessageBox::Yes)
-                pdocview->SaveDoc();
+                pdocview->saveDoc();
             removeTab(index);
             delete pdocview;
         }
@@ -207,7 +207,7 @@ void MainTabWidget::TabClose(int index)
     }
 }
 
-bool MainTabWidget::HasUnsavedFiles()
+bool MainTabWidget::hasUnsavedFiles()
 {
     for (int i=0; i<count(); i++)
     {
@@ -219,7 +219,7 @@ bool MainTabWidget::HasUnsavedFiles()
     return false;
 }
 
-void MainTabWidget::GotoNextTabIndex()
+void MainTabWidget::gotoNextTabIndex()
 {
     if (count() > 1)
     {
@@ -231,7 +231,7 @@ void MainTabWidget::GotoNextTabIndex()
     }
 }
 
-void MainTabWidget::GotoPrevTabIndex()
+void MainTabWidget::gotoPrevTabIndex()
 {
     if (count() > 1)
     {

@@ -7,7 +7,6 @@
 class QAction;
 class QLabel;
 class QGraphicsView;
-class MsgRecvThread;
 class LuaExecutor;
 
 namespace gui
@@ -24,55 +23,55 @@ class MainWindow : public QMainWindow
 public:
     explicit MainWindow(QWidget* parent = 0);
     virtual ~MainWindow();
-    bool Init();
-    static std::string get_file_filter() { return s_file_filter_; }
+    bool init();
+    static std::string getFileFilter() { return s_file_filter_; }
 public Q_SLOTS:
-    void OpenDoc(const QString& filepath);
+    void openDoc(const QString& filepath);
     //output
-    void AddOutput(const QString& output);
-    void SendInput(const QString& input);
-    void DumpOutput();
-    void ClearOutput();
+    void addOutput(const QString& output);
+    void sendInput(const QString& input);
+    void dumpOutput();
+    void clearOutput();
 private Q_SLOTS:
-    void FileNew();
-    void FileOpen();
-    void FileSave();
-    void FileSaveAs();
-    void FileSaveAll();
-    void FileClose();
-    void FileDump();
-    void FileGotoNext();
-    void FileGotoPrev();
-    void EditFind();
-    void EditSetFont();
-    void HelpAbout();
-    bool Find(const QString& str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
-    void Replace(const QString&, bool find_in_output);
-    void ReplaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
-    void Run();
-    void RunInSysCmd();
-    void Stop();
-    void SetStatusText(const QString& text);
-    void OnBottomDockClose();
+    void fileNew();
+    void fileOpen();
+    void fileSave();
+    void fileSaveAs();
+    void fileSaveAll();
+    void fileClose();
+    void fileDump();
+    void fileGotoNext();
+    void fileGotoPrev();
+    void editFind();
+    void editSetFont();
+    void helpAbout();
+    bool find(const QString& str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
+    void replace(const QString&, bool find_in_output);
+    void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
+    void run();
+    void runInSysCmd();
+    void stop();
+    void setStatusText(const QString& text);
+    void onBottomDockClose();
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
     virtual void closeEvent(QCloseEvent* e);
 private:
-    void InitActions();
-    void InitMenubar();
-    void InitToolbar();
+    void initActions();
+    void initMenubar();
+    void initToolbar();
     void InitStatusBar();
     void InitMainWidget();
-    void InitConnections();
-    void InitFindDialog();
-    void InitBottomDockWidget();
-    void InitLuaExecutor();
-    void InitRunner();
-    void InitExtension();
-    void ProcessCmdParam();
-    void RunEx(bool run_in_syscmd);
-    std::string FormatFileFilter(const std::string& file_filter);
+    void initConnections();
+    void initFindDialog();
+    void initBottomDockWidget();
+    void initLuaExecutor();
+    void initRunner();
+    void initExtension();
+    void processCmdParam();
+    void runEx(bool run_in_syscmd);
+    std::string formatFileFilter(const std::string& file_filter);
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;

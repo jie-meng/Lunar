@@ -54,15 +54,15 @@ public:
 
     explicit DocView(const QString& pathname, QWidget* parent = 0);
     virtual ~DocView();
-    QsciScintilla* get_text_edit() const { return ptext_edit_; }
-    QString get_pathname() const { return pathname_; }
-    QString get_title() const { return title_; }
-    void SetEditTextFont(const QFont& font);
-    void Replace(const QString& replace_with_text);
-    bool SaveDoc();
-    bool SaveAsDoc();
-    bool DoSave();
-    bool Find(const QString& expr,
+    QsciScintilla* getTextEdit() const { return ptext_edit_; }
+    QString getPathname() const { return pathname_; }
+    QString getTitle() const { return title_; }
+    void setEditTextFont(const QFont& font);
+    void replace(const QString& replace_with_text);
+    bool saveDoc();
+    bool saveAsDoc();
+    bool doSave();
+    bool find(const QString& expr,
               bool re,
               bool cs,
               bool wo,
@@ -71,29 +71,29 @@ public:
               bool first_find,
 			  bool from_start
               );
-    inline FileType GetFileType() const { return file_type_; }
-    inline std::string GetExecutor() const { return executor_; }
+    inline FileType getFileType() const { return file_type_; }
+    inline std::string getExecutor() const { return executor_; }
 Q_SIGNALS:
-    void UpdateTitle(DocView*);
-    void TextModified(DocView*);
+    void updateTitle(DocView*);
+    void textModified(DocView*);
 private Q_SLOTS:
-    void TextChanged();
-    void ApisPreparationFinished();
-    void LinesChanged();
-    void ResetMarginLineNumberWidth();
+    void textChanged();
+    void apisPreparationFinished();
+    void linesChanged();
+    void resetMarginLineNumberWidth();
 private:
-    void Init();
-    void InitGui();
-    void InitTextEdit();
-    void InitConnections();
-    void ClearLexerApi();
-    void SetLuaLexerApi();
-    void SetOctaveLexerApi();
-    void SetUnknownLexerApi();
-    bool TestFileFilter(const std::string& file_filter);
-    void ResetLexer();
-    QString GetTitleFromPath(const QString& path) const;
-    QsciLexer* GetLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
+    void init();
+    void initGui();
+    void initTextEdit();
+    void initConnections();
+    void clearLexerApi();
+    void setLuaLexerApi();
+    void setOctaveLexerApi();
+    void setUnknownLexerApi();
+    bool testFileFilter(const std::string& file_filter);
+    void resetLexer();
+    QString getTitleFromPath(const QString& path) const;
+    QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
 
     QString pathname_;
     QString title_;

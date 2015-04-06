@@ -11,10 +11,10 @@ int main(int argc, char* argv[])
 
     QApplication a(argc, argv);
     gui::MainWindow main_window;
-    if (!main_window.Init())
+    if (!main_window.init())
         return 0;
 
-    main_window.resize(LunarGlobal::get_mainwindow_width(), LunarGlobal::get_mainwindow_height());
+    main_window.resize(LunarGlobal::getMainwindowWidth(), LunarGlobal::getMainwindowHeight());
     main_window.show();
 
     a.setWindowIcon(QIcon("res/app.ico"));

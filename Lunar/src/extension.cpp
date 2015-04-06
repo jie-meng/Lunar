@@ -18,17 +18,17 @@ Extension::~Extension()
 
 bool Extension::initLuaState()
 {
-    if (!isPathFile(LunarGlobal::get_app_path() + "/" + LunarGlobal::getExtensionFile()))
+    if (!isPathFile(LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile()))
     {
         error_information_ =
-            strFormat("Extension: extension file %s not exist", (LunarGlobal::get_app_path() + "/" + LunarGlobal::getExtensionFile()).c_str());
+            strFormat("Extension: extension file %s not exist", (LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile()).c_str());
         lua_state_ok_ = false;
         return false;
     }
 
     openUtilExtendLibs(lua_state_.getState());
 
-    int err = lua_state_.parseFile(LunarGlobal::get_app_path() + "/" + LunarGlobal::getExtensionFile());
+    int err = lua_state_.parseFile(LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile());
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());

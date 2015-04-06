@@ -11,14 +11,14 @@ class ApiLoaderLua : public ApiLoader
     Q_OBJECT
 public:
     explicit ApiLoaderLua(const std::string& file, QsciAPIsEx* papis, QObject* parent);
-    virtual void ParseCurrentFileApi();
-    virtual void ParseIncludeFileApi();
+    virtual void parseCurrentFileApi();
+    virtual void parseIncludeFileApi();
 signals:
 
 public slots:
 
 private:
-    void ParseFileApi(const std::string& file, const std::string& dir);
+    void parseFileApi(const std::string& file, const std::string& dir);
 };
 
 }

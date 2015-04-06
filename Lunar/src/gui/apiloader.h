@@ -26,19 +26,19 @@ public:
     explicit ApiLoader(const std::string& file, QsciAPIsEx* papis, QObject* parent);
     virtual ~ApiLoader();
 
-    void LoadFileApis(const std::string& api_path);
-    void Prepare();
+    void loadFileApis(const std::string& api_path);
+    void prepare();
 
-    void ClearApiCurrentFile();
-    void AppendApiCurrentFile();
-    void ClearApiIncludeFile();
-    void AppendApiIncludeFile();
-    virtual void ParseCurrentFileApi();
-    virtual void ParseIncludeFileApi();
+    void clearApiCurrentFile();
+    void appendApiCurrentFile();
+    void clearApiIncludeFile();
+    void appendApiIncludeFile();
+    virtual void parseCurrentFileApi();
+    virtual void parseIncludeFileApi();
 protected:
-    void AddApiCurrentFile(const std::string& str);
-    void AddApiIncludeFile(const std::string& str);
-    inline std::string File() const { return file_; }
+    void addApiCurrentFile(const std::string& str);
+    void addApiIncludeFile(const std::string& str);
+    inline std::string file() const { return file_; }
 private:
     QsciAPIsEx* papis_;
     std::string file_;

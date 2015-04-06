@@ -1,22 +1,19 @@
 #ifndef LUNAR_H
 #define LUNAR_H
 
+#include <vector>
 #include <QtCore/QString>
 #include <QtGui/QFont>
-#include <vector>
 #include "util/net.hpp"
-#include "processmsgthread.h"
 
 inline QString StdStringToQString(const std::string &s)
 {
     return QString(QString::fromLocal8Bit(s.c_str()));
-    //return QString::fromStdString(s);
 }
 
 inline std::string QStringToStdString(const QString &s)
 {
     return std::string((const char *)s.toLocal8Bit());
-    //return s.toStdString();
 }
 
 void InitLunarCommon(int argc, char* argv[]);
@@ -55,26 +52,26 @@ class LunarGlobal
 public:
     LunarGlobal();
     ~LunarGlobal();
-    void static ReadCfg();
-    void static WriteCfg();
+    void static readCfg();
+    void static writeCfg();
     static const std::string ks_cfg;
-    static void Init(int argc, char* argv[]);
-    static void Quit();
+    static void init(int argc, char* argv[]);
+    static void quit();
 
-    inline static std::string get_app_path() { return s_app_path_; }
-    inline static std::string get_app_name() { return s_app_name_; }
-    inline static int get_arg_cnt() { return s_argc_; }
-    inline static std::string get_arg(size_t index) { return s_argvec_.at(index); }
-    inline static int get_autocompletion_threshold() { return s_autocompletion_threshold_; }
-    inline static int get_autocompletion_wordtip() { return s_autocompletion_wordtip_; }
-    inline static QFont get_font() { return s_font_; }
-    inline static void set_font(const QFont& font) { s_font_ = font; }
-    inline static unsigned short get_process_sock_port() { return s_process_sock_port_; }
-    inline static void set_process_sock_port(unsigned short port) { s_process_sock_port_ = port; }
-    inline static size_t get_mainwindow_width() { return s_mainwindow_width_; }
-    inline static size_t get_mainwindow_height() { return s_mainwindow_height_; }
-    inline static void set_mainwindow_width(size_t width) { s_mainwindow_width_ = width; }
-    inline static void set_mainwindow_height(size_t height) { s_mainwindow_height_ = height; }
+    inline static std::string getAppPath() { return s_app_path_; }
+    inline static std::string getAppName() { return s_app_name_; }
+    inline static int getArgCnt() { return s_argc_; }
+    inline static std::string getArg(size_t index) { return s_argvec_.at(index); }
+    inline static int getAutocompletionThreshold() { return s_autocompletion_threshold_; }
+    inline static int getAutocompletionWordtip() { return s_autocompletion_wordtip_; }
+    inline static QFont getFont() { return s_font_; }
+    inline static void setFont(const QFont& font) { s_font_ = font; }
+    inline static unsigned short getProcessSockPort() { return s_process_sock_port_; }
+    inline static void setProcessSockPort(unsigned short port) { s_process_sock_port_ = port; }
+    inline static size_t getMainwindowWidth() { return s_mainwindow_width_; }
+    inline static size_t getMainwindowHeight() { return s_mainwindow_height_; }
+    inline static void setMainwindowWidth(size_t width) { s_mainwindow_width_ = width; }
+    inline static void setMainwindowHeight(size_t height) { s_mainwindow_height_ = height; }
     inline static std::string getLuaFileFilter() { return s_lua_file_filter_; }
     inline static std::string getRunnerLua() { return s_runner_lua_; }
     inline static std::string getRunnerOctave() { return s_runner_octave_; }

@@ -90,7 +90,7 @@ void OutputWidget::input()
     pinput_line_->clear();
 }
 
-bool OutputWidget::FindText(const QString& expr,
+bool OutputWidget::findText(const QString& expr,
                            bool re,
                            bool cs,
                            bool wo,

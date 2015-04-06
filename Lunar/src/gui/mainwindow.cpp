@@ -66,21 +66,21 @@ MainWindow::~MainWindow()
     //dtor
 }
 
-void MainWindow::ProcessCmdParam()
+void MainWindow::processCmdParam()
 {
-    if (LunarGlobal::get_arg_cnt()>1)
+    if (LunarGlobal::getArgCnt()>1)
     {
-        for (int i=1; i<LunarGlobal::get_arg_cnt(); i++)
+        for (int i=1; i<LunarGlobal::getArgCnt(); i++)
         {
-            std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::get_arg(i));
+            std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::getArg(i));
             if(util::isPathExists(filepath))
                 if(util::isPathFile(filepath))
-                    pmain_tabwidget_->AddDocViewTab(StdStringToQString(filepath));
+                    pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
         }
     }
 }
 
-void MainWindow::InitBottomDockWidget()
+void MainWindow::initBottomDockWidget()
 {
     pbottom_widget_ = new DockWidgetEx(tr("Output"), this);
 
@@ -90,41 +90,41 @@ void MainWindow::InitBottomDockWidget()
     pbottom_widget_->setAllowedAreas(Qt::BottomDockWidgetArea);
     addDockWidget(Qt::BottomDockWidgetArea, pbottom_widget_);
 
-    connect(pbottom_widget_, SIGNAL(onClose()), this, SLOT(OnBottomDockClose()));
+    connect(pbottom_widget_, SIGNAL(onClose()), this, SLOT(onBottomDockClose()));
 
     //hide at first
     pbottom_widget_->close();
 }
 
-void MainWindow::OnBottomDockClose()
+void MainWindow::onBottomDockClose()
 {
     output_widget_on_ = false;
 }
 
-void MainWindow::InitLuaExecutor()
+void MainWindow::initLuaExecutor()
 {
     plua_executor_ = new LuaExecutor(this);
 }
 
-bool MainWindow::Init()
+bool MainWindow::init()
 {
-    InitActions();
-    InitMenubar();
-    InitToolbar();
+    initActions();
+    initMenubar();
+    initToolbar();
     InitStatusBar();
     InitMainWidget();
-    InitFindDialog();
-    InitBottomDockWidget();
-    InitLuaExecutor();
-    InitRunner();
-    InitConnections();
-    InitExtension();
-    ProcessCmdParam();
+    initFindDialog();
+    initBottomDockWidget();
+    initLuaExecutor();
+    initRunner();
+    initConnections();
+    initExtension();
+    processCmdParam();
 
     pmain_tabwidget_->setAcceptDrops(false);
     setAcceptDrops(true);
 
-    if (LunarGlobal::get_arg_cnt()>0)
+    if (LunarGlobal::getArgCnt()>0)
     {
         //std::string app_path = LunarGlobal::get_app_path();
         //std::string app_name = LunarGlobal::get_app_name();
@@ -132,8 +132,8 @@ bool MainWindow::Init()
         //QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
 
         map<string, string> filter_map;
-        filter_map[kFileTypeLua] = std::string("Lua Files(") + FormatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
-        filter_map[kFileTypeOctave] = std::string("Octave Files(") + FormatFileFilter(LunarGlobal::getOctaveFileFilter()) + ")";
+        filter_map[kFileTypeLua] = std::string("Lua Files(") + formatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
+        filter_map[kFileTypeOctave] = std::string("Octave Files(") + formatFileFilter(LunarGlobal::getOctaveFileFilter()) + ")";
 
         vector<string> vec;
         map<string, string>::iterator it = filter_map.find(LunarGlobal::getFileTypeDefault());
@@ -153,7 +153,7 @@ bool MainWindow::Init()
     return true;
 }
 
-std::string MainWindow::FormatFileFilter(const std::string& file_filter)
+std::string MainWindow::formatFileFilter(const std::string& file_filter)
 {
     std::vector<std::string> filterVec;
     util::strSplit(file_filter, ",", filterVec);
@@ -181,13 +181,13 @@ void MainWindow::dropEvent(QDropEvent *event)
         QString fileName = it->toLocalFile();
         if (fileName.isEmpty())
             break;
-        pmain_tabwidget_->AddDocViewTab(fileName);
+        pmain_tabwidget_->addDocViewTab(fileName);
     }
 }
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
-    if(pmain_tabwidget_->HasUnsavedFiles())
+    if(pmain_tabwidget_->hasUnsavedFiles())
     {
        int ret = QMessageBox::question(this, "question", "Quit without save?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
        if(ret == QMessageBox::No)
@@ -196,12 +196,12 @@ void MainWindow::closeEvent(QCloseEvent* e)
        }
     }
 
-    LunarGlobal::set_mainwindow_width(this->width());
-    LunarGlobal::set_mainwindow_height(this->height());
-    LunarGlobal::Quit();
+    LunarGlobal::setMainwindowWidth(this->width());
+    LunarGlobal::setMainwindowHeight(this->height());
+    LunarGlobal::quit();
 }
 
-void MainWindow::InitActions()
+void MainWindow::initActions()
 {
     pfile_new_action_ = new QAction(tr("&New"), this);
     pfile_new_action_->setShortcut(QKeySequence::New);
@@ -266,7 +266,7 @@ void MainWindow::InitActions()
     phelp_about_action_->setStatusTip(tr("About."));
 }
 
-void MainWindow::InitMenubar()
+void MainWindow::initMenubar()
 {
     QMenu* pfile_menu = menuBar()->addMenu(tr("&File"));
     pfile_menu->addAction(pfile_new_action_);
@@ -292,7 +292,7 @@ void MainWindow::InitMenubar()
     phelp_menu->addAction(phelp_about_action_);
 }
 
-void MainWindow::InitToolbar()
+void MainWindow::initToolbar()
 {
     QToolBar* ptoolbar = addToolBar(tr("&File"));
     ptoolbar->addAction(pfile_new_action_);
@@ -320,110 +320,110 @@ void MainWindow::InitMainWidget()
 //        FileNew();
 }
 
-void MainWindow::InitFindDialog()
+void MainWindow::initFindDialog()
 {
     pfind_dlg_ = new FindDialog(this);
 }
 
-void MainWindow::InitConnections()
+void MainWindow::initConnections()
 {
-    connect(pfile_new_action_, SIGNAL(triggered()), this, SLOT(FileNew()));
-    connect(pfile_open_action_, SIGNAL(triggered()), this, SLOT(FileOpen()));
-    connect(pfile_save_action_, SIGNAL(triggered()), this, SLOT(FileSave()));
-    connect(pfile_save_as_action_, SIGNAL(triggered()), this, SLOT(FileSaveAs()));
-    connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(FileSaveAll()));
-    connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(FileClose()));
-    connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(FileDump()));
-    connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(FileGotoNext()));
-    connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(FileGotoPrev()));
-    connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(EditFind()));
-    connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(EditSetFont()));
-    connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(Run()));
-    connect(prun_run_syscmd_action_, SIGNAL(triggered()), this, SLOT(RunInSysCmd()));
-    connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(Stop()));
-    connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(HelpAbout()));
+    connect(pfile_new_action_, SIGNAL(triggered()), this, SLOT(fileNew()));
+    connect(pfile_open_action_, SIGNAL(triggered()), this, SLOT(fileOpen()));
+    connect(pfile_save_action_, SIGNAL(triggered()), this, SLOT(fileSave()));
+    connect(pfile_save_as_action_, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
+    connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(fileSaveAll()));
+    connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(fileClose()));
+    connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(fileDump()));
+    connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
+    connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
+    connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
+    connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
+    connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
+    connect(prun_run_syscmd_action_, SIGNAL(triggered()), this, SLOT(runInSysCmd()));
+    connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
+    connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(helpAbout()));
     //finddialog
-    connect(pfind_dlg_, SIGNAL(Find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)),
-            this, SLOT(Find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)));
-    connect(pfind_dlg_, SIGNAL(Replace(const QString&, bool)), this, SLOT(Replace(const QString&, bool)));
+    connect(pfind_dlg_, SIGNAL(find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)),
+            this, SLOT(find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)));
+    connect(pfind_dlg_, SIGNAL(replace(const QString&, bool)), this, SLOT(replace(const QString&, bool)));
     connect(pfind_dlg_, SIGNAL(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)),
             this, SLOT(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
     //luaexecutor
     connect(plua_executor_, SIGNAL(sendOutput(const QString&)),
-            this, SLOT(AddOutput(const QString&)));
+            this, SLOT(addOutput(const QString&)));
     connect(poutput_widget_, SIGNAL(sendInput(const QString&)),
-            this, SLOT(SendInput(const QString&)));
+            this, SLOT(sendInput(const QString&)));
 }
 
-void MainWindow::FileNew()
+void MainWindow::fileNew()
 {
-    pmain_tabwidget_->AddDocViewTab("");
+    pmain_tabwidget_->addDocViewTab("");
 }
 
-void MainWindow::FileOpen()
+void MainWindow::fileOpen()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), ".", StdStringToQString(MainWindow::get_file_filter()));
+    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), ".", StdStringToQString(MainWindow::getFileFilter()));
     if(path.length() == 0)
     {
         //QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
     }
     else
     {
-        pmain_tabwidget_->AddDocViewTab(path);
+        pmain_tabwidget_->addDocViewTab(path);
         //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
     }
 }
 
-void MainWindow::FileSave()
+void MainWindow::fileSave()
 {
-    pmain_tabwidget_->SaveCurDocViewTab();
+    pmain_tabwidget_->saveCurDocViewTab();
 }
 
-void MainWindow::FileSaveAs()
+void MainWindow::fileSaveAs()
 {
-    pmain_tabwidget_->SaveAsCurDocViewTab();
+    pmain_tabwidget_->saveAsCurDocViewTab();
 }
 
-void MainWindow::FileSaveAll()
+void MainWindow::fileSaveAll()
 {
-    pmain_tabwidget_->SaveAllViewTabs();
+    pmain_tabwidget_->saveAllViewTabs();
 }
 
-void MainWindow::FileClose()
+void MainWindow::fileClose()
 {
-    pmain_tabwidget_->CloseCurDocViewTab();
+    pmain_tabwidget_->closeCurDocViewTab();
 }
 
-void MainWindow::FileDump()
+void MainWindow::fileDump()
 {
-    DumpOutput();
+    dumpOutput();
 }
 
-void MainWindow::FileGotoNext()
+void MainWindow::fileGotoNext()
 {
-    pmain_tabwidget_->GotoNextTabIndex();
+    pmain_tabwidget_->gotoNextTabIndex();
 }
 
-void MainWindow::FileGotoPrev()
+void MainWindow::fileGotoPrev()
 {
-    pmain_tabwidget_->GotoPrevTabIndex();
+    pmain_tabwidget_->gotoPrevTabIndex();
 }
 
-void MainWindow::EditFind()
+void MainWindow::editFind()
 {
     pfind_dlg_->show();
 }
 
-void MainWindow::EditSetFont()
+void MainWindow::editSetFont()
 {
-    pmain_tabwidget_->SetDocViewFont();
+    pmain_tabwidget_->setDocViewFont();
 }
 
-bool MainWindow::Find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output)
+bool MainWindow::find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output)
 {
     if (find_in_output)
     {
-        bool found =  poutput_widget_->FindText(str, false, cs, whole_word, wrap, !find_previous, first_find);
+        bool found =  poutput_widget_->findText(str, false, cs, whole_word, wrap, !find_previous, first_find);
         if (!found)
             LunarMsgBoxQ("Can not find text : \"" + str + "\" in output");
 
@@ -431,7 +431,7 @@ bool MainWindow::Find(const QString &str, bool first_find, Qt::CaseSensitivity c
     }
     else
     {
-        bool found = pmain_tabwidget_->FindInCurTextEdit(str, false, cs, whole_word, wrap, !find_previous, first_find);
+        bool found = pmain_tabwidget_->findInCurTextEdit(str, false, cs, whole_word, wrap, !find_previous, first_find);
         if (!found)
             LunarMsgBoxQ("Can not find text : \"" + str + "\"");
 
@@ -439,15 +439,15 @@ bool MainWindow::Find(const QString &str, bool first_find, Qt::CaseSensitivity c
     }
 }
 
-void MainWindow::Replace(const QString& replace_with_text, bool find_in_output)
+void MainWindow::replace(const QString& replace_with_text, bool find_in_output)
 {
     if (find_in_output)
         return;
 
-    pmain_tabwidget_->ReplaceInCurTextEdit(replace_with_text);
+    pmain_tabwidget_->replaceInCurTextEdit(replace_with_text);
 }
 
-void MainWindow::ReplaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output)
+void MainWindow::replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output)
 {
     if (find_in_output)
         return;
@@ -456,10 +456,10 @@ void MainWindow::ReplaceAll(const QString& str, const QString& replace_with_text
     int i = 0;
     do
     {
-        found = pmain_tabwidget_->FindInCurTextEdit(str, false, cs, whole_word, false, !find_previous, !found, true);
+        found = pmain_tabwidget_->findInCurTextEdit(str, false, cs, whole_word, false, !find_previous, !found, true);
         if(found)
         {
-            Replace(replace_with_text, find_in_output);
+            replace(replace_with_text, find_in_output);
             i++;
         }
 
@@ -468,13 +468,13 @@ void MainWindow::ReplaceAll(const QString& str, const QString& replace_with_text
     LunarMsgBox(util::strFormat("%d occurrences were replaced.", i));
 }
 
-void MainWindow::HelpAbout()
+void MainWindow::helpAbout()
 {
     AboutDialog about_dlg;
     about_dlg.exec();
 }
 
-void MainWindow::OpenDoc(const QString& filepath)
+void MainWindow::openDoc(const QString& filepath)
 {
     std::string file_path = QStringToStdString(filepath);
 
@@ -489,25 +489,25 @@ void MainWindow::OpenDoc(const QString& filepath)
     if(util::isPathExists(file_path))
         if(util::isPathFile(file_path))
         {
-            pmain_tabwidget_->AddDocViewTab(filepath);
+            pmain_tabwidget_->addDocViewTab(filepath);
             if (this->isMinimized())
                 this->showNormal();
             this->activateWindow();
         }
 }
 
-void MainWindow::AddOutput(const QString& output)
+void MainWindow::addOutput(const QString& output)
 {
     poutput_widget_->append(output);
 }
 
-void MainWindow::DumpOutput()
+void MainWindow::dumpOutput()
 {
     DocView* pdoc_view = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
     if (!pdoc_view)
         return;
 
-    string script = QStringToStdString(pdoc_view->get_pathname());
+    string script = QStringToStdString(pdoc_view->getPathname());
     if (script == "")
         return;
 
@@ -537,27 +537,27 @@ void MainWindow::DumpOutput()
         LunarMsgBox(strFormat("Dump output %s failed.", name.c_str()));
 }
 
-void MainWindow::SendInput(const QString& input)
+void MainWindow::sendInput(const QString& input)
 {
     plua_executor_->input(input);
 }
 
-void MainWindow::ClearOutput()
+void MainWindow::clearOutput()
 {
     poutput_widget_->clear();
 }
 
-void MainWindow::Run()
+void MainWindow::run()
 {
-    RunEx(false);
+    runEx(false);
 }
 
-void MainWindow::RunInSysCmd()
+void MainWindow::runInSysCmd()
 {
-    RunEx(true);
+    runEx(true);
 }
 
-void MainWindow::Stop()
+void MainWindow::stop()
 {
     if (plua_executor_->isRunning())
     {
@@ -566,7 +566,7 @@ void MainWindow::Stop()
     }
 }
 
-void MainWindow::RunEx(bool run_in_syscmd)
+void MainWindow::runEx(bool run_in_syscmd)
 {
     if (plua_executor_->isRunning())
     {
@@ -587,7 +587,7 @@ void MainWindow::RunEx(bool run_in_syscmd)
         output_widget_on_ = true;
     }
 
-    ClearOutput();
+    clearOutput();
     DocView* pdoc_view = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
     if (pdoc_view)
     {
@@ -595,7 +595,7 @@ void MainWindow::RunEx(bool run_in_syscmd)
         if ("" != LunarGlobal::getRunAdditionalArgs())
             addtional_args = LunarGlobal::getRunAdditionalArgs();
 
-        string script = QStringToStdString(pdoc_view->get_pathname());
+        string script = QStringToStdString(pdoc_view->getPathname());
         if (script == "")
             return;
 
@@ -610,36 +610,36 @@ void MainWindow::RunEx(bool run_in_syscmd)
         if (run_in_syscmd)
         {
             ret = plua_executor_->executeInSysCmd(script, addtional_args,
-                                    runPath, pdoc_view->GetExecutor());
+                                    runPath, pdoc_view->getExecutor());
         }
         else
         {
             ret = plua_executor_->execute(script, addtional_args,
-                                    runPath, pdoc_view->GetExecutor());
+                                    runPath, pdoc_view->getExecutor());
         }
 
         if (!ret)
-            AddOutput("Run failed");
+            addOutput("Run failed");
     }
 }
 
-void MainWindow::InitRunner()
+void MainWindow::initRunner()
 {
     string runner = strTrim(LunarGlobal::getRunnerLua());
     if (!strContains(runner, "/") && !strContains(runner, "\\"))
     {
         //relative path
-        runner = LunarGlobal::get_app_path() + "/" + runner;
+        runner = LunarGlobal::getAppPath() + "/" + runner;
     }
 }
 
-void MainWindow::InitExtension()
+void MainWindow::initExtension()
 {
     if (!Extension::getInstance().initLuaState())
         LunarMsgBox(Extension::getInstance().errorInfo());
 }
 
-void MainWindow::SetStatusText(const QString& text)
+void MainWindow::setStatusText(const QString& text)
 {
     pstatus_text_->setText(text);
 }

@@ -21,8 +21,8 @@ public:
     void append(const QString& str);
     QString getOutput();
     void clear();
-    bool IsOutputActive();
-    bool FindText(const QString& expr,
+    bool isOutputActive();
+    bool findText(const QString& expr,
                                bool re,
                                bool cs,
                                bool wo,

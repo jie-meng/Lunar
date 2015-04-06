@@ -21,17 +21,17 @@ ApiLoaderLua::ApiLoaderLua(const std::string& file, QsciAPIsEx* papis, QObject* 
 {
 }
 
-void ApiLoaderLua::ParseCurrentFileApi()
+void ApiLoaderLua::parseCurrentFileApi()
 {
-    ParseFileApi(File(), splitPathname(File()).first);
+    parseFileApi(file(), splitPathname(file()).first);
 }
 
-void ApiLoaderLua::ParseIncludeFileApi()
+void ApiLoaderLua::parseIncludeFileApi()
 {
 
 }
 
-void ApiLoaderLua::ParseFileApi(const std::string& file, const std::string& dir)
+void ApiLoaderLua::parseFileApi(const std::string& file, const std::string& dir)
 {
     Regex function_regex(kRegexFunctionLua);
     Regex include_regex(kRegexIncludeLua);
@@ -47,7 +47,7 @@ void ApiLoaderLua::ParseFileApi(const std::string& file, const std::string& dir)
         {
             string api = function_regex.getMatchedGroup("api");
             if (api != "")
-                AddApiCurrentFile(strReplace(api, ":", "."));
+                addApiCurrentFile(strReplace(api, ":", "."));
         }
         else if (include_regex.match(strTrim(lines[i])))
         {
@@ -55,7 +55,7 @@ void ApiLoaderLua::ParseFileApi(const std::string& file, const std::string& dir)
             if (!isPathFile(file))
                 continue;
 
-            ParseFileApi(file, dir);
+            parseFileApi(file, dir);
         }
     }
 }

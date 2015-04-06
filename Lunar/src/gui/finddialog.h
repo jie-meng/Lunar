@@ -27,22 +27,22 @@ public:
     explicit FindDialog(QWidget *parent = 0);
     virtual ~FindDialog();
 Q_SIGNALS:
-    void Find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
-    void Replace(const QString& replace_with_text, bool find_in_output);
-    void ReplaceAll(const QString& text, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
+    void find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
+    void replace(const QString& replace_with_text, bool find_in_output);
+    void replaceAll(const QString& text, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
 protected:
     virtual void closeEvent(QCloseEvent* e);
 private Q_SLOTS:
-    void TabFindTextChanged(const QString& text);
-    void CmdFind(const QString& text);
-    void CmdReplace(const QString& replace_with_text);
-    void CmdReplaceAll(const QString& text, const QString& replace_with_text);
-    void OptionsChanged();
-    void TabChanged(int index);
+    void tabFindTextChanged(const QString& text);
+    void cmdFind(const QString& text);
+    void cmdReplace(const QString& replace_with_text);
+    void cmdReplaceAll(const QString& text, const QString& replace_with_text);
+    void optionsChanged();
+    void tabChanged(int index);
 private:
-    void Init();
-    void InitGui();
-    void InitConnections();
+    void init();
+    void initGui();
+    void initConnections();
 private:
     QTabWidget* ptab_widget_;
     QCheckBox* pcase_check_box_;
@@ -71,19 +71,19 @@ class FindTab : public QWidget
 public:
     explicit FindTab(QWidget *parent = 0);
     virtual ~FindTab();
-    QString GetFindText() { return  pfind_edit_->text(); }
-    void SetFindText(const QString& text) { pfind_edit_->setText(text); }
+    QString getFindText() { return  pfind_edit_->text(); }
+    void setFindText(const QString& text) { pfind_edit_->setText(text); }
 Q_SIGNALS:
-    void FindTextChangeSignal(const QString& text);
-    void CmdFind(const QString&);
-    void OptionsChanged();
+    void findTextChangeSignal(const QString& text);
+    void cmdFind(const QString&);
+    void optionsChanged();
 private Q_SLOTS:
-    void FindTextChanged(const QString&);
-    void FindClicked();
+    void findTextChanged(const QString&);
+    void findClicked();
 private:
-    void Init();
-    void InitGui();
-    void InitConnections();
+    void init();
+    void initGui();
+    void initConnections();
 private:
     QLabel *plabel_find_;
     QLineEdit *pfind_edit_;
@@ -105,23 +105,23 @@ class ReplaceTab : public QWidget
 public:
     explicit ReplaceTab(QWidget *parent = 0);
     virtual ~ReplaceTab();
-    QString GetFindText() { return  pfind_edit_->text(); }
-    void SetFindText(const QString& text) { pfind_edit_->setText(text); }
+    QString getFindText() { return  pfind_edit_->text(); }
+    void setFindText(const QString& text) { pfind_edit_->setText(text); }
 Q_SIGNALS:
-    void FindTextChangeSignal(const QString& text);
-    void CmdFind(const QString& text);
-    void OptionsChanged();
-    void CmdReplace(const QString& replace_with_text);
-    void CmdReplaceAll(const QString& text, const QString& replace_with_text);
+    void findTextChangeSignal(const QString& text);
+    void cmdFind(const QString& text);
+    void optionsChanged();
+    void cmdReplace(const QString& replace_with_text);
+    void cmdReplaceAll(const QString& text, const QString& replace_with_text);
 private Q_SLOTS:
-    void TextChanged();
-    void FindClicked();
-    void ReplaceClicked();
-    void ReplaceAllClicked();
+    void textChanged();
+    void findClicked();
+    void replaceClicked();
+    void replaceAllClicked();
 private:
-    void Init();
-    void InitGui();
-    void InitConnections();
+    void init();
+    void initGui();
+    void initConnections();
 private:
     QLabel *plabel_find_;
     QLabel *plabel_replace_;

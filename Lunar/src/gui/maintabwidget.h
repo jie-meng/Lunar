@@ -17,13 +17,13 @@ class MainTabWidget : public QTabWidget
 public:
     explicit MainTabWidget(QWidget* parent = 0);
     virtual ~MainTabWidget();
-    int AddDocViewTab(const QString& pathname);
-    bool SaveCurDocViewTab();
-    bool SaveAsCurDocViewTab();
-    void SaveAllViewTabs();
-    void CloseCurDocViewTab();
-    void SetDocViewFont();
-    bool FindInCurTextEdit(const QString& expr,
+    int addDocViewTab(const QString& pathname);
+    bool saveCurDocViewTab();
+    bool saveAsCurDocViewTab();
+    void saveAllViewTabs();
+    void closeCurDocViewTab();
+    void setDocViewFont();
+    bool findInCurTextEdit(const QString& expr,
                            bool re,
                            bool cs,
                            bool wo,
@@ -32,17 +32,17 @@ public:
                            bool first_find,
 						   bool from_start = false
                            );
-    void ReplaceInCurTextEdit(const QString& replace_with_text);
-    bool HasUnsavedFiles();
-    void GotoNextTabIndex();
-    void GotoPrevTabIndex();
+    void replaceInCurTextEdit(const QString& replace_with_text);
+    bool hasUnsavedFiles();
+    void gotoNextTabIndex();
+    void gotoPrevTabIndex();
 private Q_SLOTS:
-    void UpdateTabTitleAndTip(DocView*);
-    void TabTextModified(DocView*);
-    void TabClose(int index);
-    int GetTabIndex(const QString& pathname);
+    void updateTabTitleAndTip(DocView*);
+    void tabTextModified(DocView*);
+    void tabClose(int index);
+    int getTabIndex(const QString& pathname);
 private:
-    void Init();
+    void init();
 private:
     DISALLOW_COPY_AND_ASSIGN(MainTabWidget)
 };
