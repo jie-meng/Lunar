@@ -68,11 +68,11 @@ MainWindow::~MainWindow()
 
 void MainWindow::processCmdParam()
 {
-    if (LunarGlobal::getArgCnt()>1)
+    if (LunarGlobal::getInstance().getArgCnt()>1)
     {
-        for (int i=1; i<LunarGlobal::getArgCnt(); i++)
+        for (int i=1; i<LunarGlobal::getInstance().getArgCnt(); i++)
         {
-            std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::getArg(i));
+            std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::getInstance().getArg(i));
             if(util::isPathExists(filepath))
                 if(util::isPathFile(filepath))
                     pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
@@ -124,19 +124,19 @@ bool MainWindow::init()
     pmain_tabwidget_->setAcceptDrops(false);
     setAcceptDrops(true);
 
-    if (LunarGlobal::getArgCnt()>0)
+    if (LunarGlobal::getInstance().getArgCnt()>0)
     {
-        //std::string app_path = LunarGlobal::get_app_path();
+        //std::string app_path = LunarGlobal::getInstance().get_app_path();
         //std::string app_name = LunarGlobal::get_app_name();
         //app_name = util::strToLower(app_name);
         //QMessageBox::information(NULL, QObject::tr("path"), StdStringToQString(LunarGlobal::get_app_path()));
 
         map<string, string> filter_map;
-        filter_map[kFileTypeLua] = std::string("Lua Files(") + formatFileFilter(LunarGlobal::getLuaFileFilter()) + ")";
-        filter_map[kFileTypeOctave] = std::string("Octave Files(") + formatFileFilter(LunarGlobal::getOctaveFileFilter()) + ")";
+        filter_map[kFileTypeLua] = std::string("Lua Files(") + formatFileFilter(LunarGlobal::getInstance().getLuaFileFilter()) + ")";
+        filter_map[kFileTypeOctave] = std::string("Octave Files(") + formatFileFilter(LunarGlobal::getInstance().getOctaveFileFilter()) + ")";
 
         vector<string> vec;
-        map<string, string>::iterator it = filter_map.find(LunarGlobal::getFileTypeDefault());
+        map<string, string>::iterator it = filter_map.find(LunarGlobal::getInstance().getFileTypeDefault());
         if (it != filter_map.end())
         {
             vec.push_back(it->second);
@@ -196,9 +196,9 @@ void MainWindow::closeEvent(QCloseEvent* e)
        }
     }
 
-    LunarGlobal::setMainwindowWidth(this->width());
-    LunarGlobal::setMainwindowHeight(this->height());
-    LunarGlobal::quit();
+    LunarGlobal::getInstance().setMainwindowWidth(this->width());
+    LunarGlobal::getInstance().setMainwindowHeight(this->height());
+    LunarGlobal::getInstance().quit();
 }
 
 void MainWindow::initActions()
@@ -592,8 +592,8 @@ void MainWindow::runEx(bool run_in_syscmd)
     if (pdoc_view)
     {
         string addtional_args = "";
-        if ("" != LunarGlobal::getRunAdditionalArgs())
-            addtional_args = LunarGlobal::getRunAdditionalArgs();
+        if ("" != LunarGlobal::getInstance().getRunAdditionalArgs())
+            addtional_args = LunarGlobal::getInstance().getRunAdditionalArgs();
 
         string script = QStringToStdString(pdoc_view->getPathname());
         if (script == "")
@@ -625,11 +625,11 @@ void MainWindow::runEx(bool run_in_syscmd)
 
 void MainWindow::initRunner()
 {
-    string runner = strTrim(LunarGlobal::getRunnerLua());
+    string runner = strTrim(LunarGlobal::getInstance().getRunnerLua());
     if (!strContains(runner, "/") && !strContains(runner, "\\"))
     {
         //relative path
-        runner = LunarGlobal::getAppPath() + "/" + runner;
+        runner = LunarGlobal::getInstance().getAppPath() + "/" + runner;
     }
 }
 

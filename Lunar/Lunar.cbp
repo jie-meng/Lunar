@@ -246,12 +246,8 @@
 		<Unit filename="src/util/regex.cpp" />
 		<Unit filename="src/util/regex.hpp" />
 		<Unit filename="src/util/regex/deelx.h" />
-		<Unit filename="src/util/string.cpp" />
-		<Unit filename="src/util/string.hpp" />
 		<Unit filename="src/util/thread.cpp" />
 		<Unit filename="src/util/thread.hpp" />
-		<Unit filename="src/util/time.cpp" />
-		<Unit filename="src/util/time.hpp" />
 		<Unit filename="src/util/typeinfo.hpp" />
 		<Extensions>
 			<code_completion />

@@ -14,7 +14,7 @@ int main(int argc, char* argv[])
     if (!main_window.init())
         return 0;
 
-    main_window.resize(LunarGlobal::getMainwindowWidth(), LunarGlobal::getMainwindowHeight());
+    main_window.resize(LunarGlobal::getInstance().getMainwindowWidth(), LunarGlobal::getInstance().getMainwindowHeight());
     main_window.show();
 
     a.setWindowIcon(QIcon("res/app.ico"));

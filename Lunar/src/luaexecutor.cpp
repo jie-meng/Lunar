@@ -28,10 +28,10 @@ void LuaExecutor::stop()
 
 std::string LuaExecutor::getScriptExecutor(const std::string& file)
 {
-    if (isFileInFileFilter(file, LunarGlobal::getLuaFileFilter()))
-        return LunarGlobal::getRunnerLua();
-    else if (isFileInFileFilter(file, LunarGlobal::getOctaveFileFilter()))
-        return LunarGlobal::getRunnerOctave();
+    if (isFileInFileFilter(file, LunarGlobal::getInstance().getLuaFileFilter()))
+        return LunarGlobal::getInstance().getRunnerLua();
+    else if (isFileInFileFilter(file, LunarGlobal::getInstance().getOctaveFileFilter()))
+        return LunarGlobal::getInstance().getRunnerOctave();
     else
         return "";
 }

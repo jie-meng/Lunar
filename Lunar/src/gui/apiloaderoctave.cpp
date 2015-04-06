@@ -23,7 +23,7 @@ public:
     virtual bool filter(const std::string& path)
     {
         std::vector<std::string> filterVec;
-        util::strSplit(LunarGlobal::getOctaveFileFilter(), ",", filterVec);
+        util::strSplit(LunarGlobal::getInstance().getOctaveFileFilter(), ",", filterVec);
         for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
         {
             if (util::strEndWith(path, std::string(".") + *it, false))

@@ -8,6 +8,22 @@ if file.pathRemove("Makefile") then
     print("remove Makefile")
 end
 
+if file.pathRemove("Makefile.Debug") then
+    print("remove Makefile.Debug")
+end
+
+if file.pathRemove("Makefile.Release") then
+    print("remove Makefile.Release")
+end
+
+if file.pathRemove("object_script.Lunar.Debug") then
+    print("remove object_script.Lunar.Debug")
+end
+
+if file.pathRemove("object_script.Lunar.Release") then
+    print("remove object_script.Lunar.Release")
+end
+
 if file.pathRemove("qrc_Lunar.cpp") then
     print("remove qrc_Lunar.cpp")
 end

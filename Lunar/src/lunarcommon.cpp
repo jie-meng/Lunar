@@ -5,12 +5,15 @@
 #include "util/cfg.hpp"
 #include "util/process.hpp"
 
+using namespace std;
+using namespace util;
+
 static LogSocket s_logger;
 
 void InitLunarCommon(int argc, char* argv[])
 {
-    util::setPrintFunc(UtilBind(&LogSocket::SendLog, &s_logger, _1));
-    LunarGlobal::init(argc, argv);
+    setPrintFunc(UtilBind(&LogSocket::SendLog, &s_logger, _1));
+    LunarGlobal::getInstance().init(argc, argv);
 }
 
 void LunarMsgBox(const std::string& str)
@@ -50,27 +53,7 @@ void LogSocket::SendLog(const std::string& log)
 // author :
 // time : 2012-01-19-09.19
 ////////////////////////////////////////////////////
-int LunarGlobal::s_argc_ = 0;
-std::vector<std::string> LunarGlobal::s_argvec_;
-std::string LunarGlobal::s_app_path_ = "";
-std::string LunarGlobal::s_app_name_ = "";
-const std::string LunarGlobal::ks_cfg = "cfg";
-int LunarGlobal::s_autocompletion_threshold_ = 2;
-int LunarGlobal::s_autocompletion_wordtip_ = 1;
-QFont LunarGlobal::s_font_("Courier New", 10);
-unsigned short LunarGlobal::s_process_sock_port_ = 0;
-size_t LunarGlobal::s_mainwindow_width_ = 800;
-size_t LunarGlobal::s_mainwindow_height_ = 600;
-std::string LunarGlobal::s_lua_file_filter_ = "lua";
-std::string LunarGlobal::s_octave_file_filter_ = "m";
-std::string LunarGlobal::s_runner_lua_ = "luaexec";
-std::string LunarGlobal::s_runner_octave_ = "octave";
-std::string LunarGlobal::s_run_additional_args_ = "";
-std::string LunarGlobal::s_lua_api_ = "api/lua";
-std::string LunarGlobal::s_octave_api_ = "api/octave";
-std::string LunarGlobal::s_file_type_default_ = kFileTypeLua;
-std::string LunarGlobal::s_extension_file_ = "extension";
-std::string LunarGlobal::s_extension_func_ = "parse";
+const string ks_cfg = "cfg";
 
 LunarGlobal::LunarGlobal()
 {
@@ -85,16 +68,22 @@ LunarGlobal::~LunarGlobal()
 void LunarGlobal::init(int argc, char* argv[])
 {
     //input args process
-    s_argc_ = argc;
+    argc_ = argc;
     for (int i=0; i<argc; i++)
-        s_argvec_.push_back(std::string(argv[i]));
+        argvec_.push_back(string(argv[i]));
 
-    std::string path_name = util::appPath();
-    s_app_path_ = util::splitPathname(path_name).first;
-    s_app_name_ = util::splitPathname(path_name).second;
+    string path_name = appPath();
+    app_path_ = splitPathname(path_name).first;
+    app_name_ = splitPathname(path_name).second;
 
     readCfg();
     writeCfg();
+
+    if (!isPathFile(getAppPath() + "/" + getExtensionFile()))
+    {
+        string str = "function parseFileType(filename)\n\nend";
+        writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
+    }
 }
 
 void LunarGlobal::quit()
@@ -104,47 +93,45 @@ void LunarGlobal::quit()
 
 void LunarGlobal::readCfg()
 {
-    util::TextCfg text_cfg(LunarGlobal::getAppPath() + "/" + LunarGlobal::ks_cfg);
+    TextCfg text_cfg(getAppPath() + "/" + ks_cfg);
 
-    s_autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
-    s_autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
-    std::string font_type = text_cfg.getValue("Font.Type", std::string("Courier New"));
+    autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
+    autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
+    string font_type = text_cfg.getValue("Font.Type", string("Courier New"));
     int font_size = text_cfg.getValue("Font.Size", 10);
-    s_font_ = QFont(StdStringToQString(font_type), font_size);
-    s_mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
-    s_mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
-    s_runner_lua_ = text_cfg.getValue("Run.Runner.Lua", "luaexec");
-    s_runner_octave_ = text_cfg.getValue("Run.Runner.Octave", "octave");
-    s_run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
-    s_lua_file_filter_ = text_cfg.getValue("FileFilter.Lua", "lua");
-    s_octave_file_filter_ = text_cfg.getValue("FileFilter.Octave", "m");
-    s_file_type_default_ = text_cfg.getValue("FileFilter.DefaultType", kFileTypeLua);
-    s_lua_api_ = text_cfg.getValue("Api.Lua", "api/lua");
-    s_octave_api_ = text_cfg.getValue("Api.Octave", "api/octave");
-    s_extension_file_ = text_cfg.getValue("Extension.File", "extension");
-    s_extension_func_ = text_cfg.getValue("Extension.Func", "parse");
+    font_ = QFont(StdStringToQString(font_type), font_size);
+    mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
+    mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
+    runner_lua_ = text_cfg.getValue("Run.Runner.Lua", "luaexec");
+    runner_octave_ = text_cfg.getValue("Run.Runner.Octave", "octave");
+    run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
+    lua_file_filter_ = text_cfg.getValue("FileFilter.Lua", "lua");
+    octave_file_filter_ = text_cfg.getValue("FileFilter.Octave", "m");
+    file_type_default_ = text_cfg.getValue("FileFilter.DefaultType", kFileTypeLua);
+    lua_api_ = text_cfg.getValue("Api.Lua", "api/lua");
+    octave_api_ = text_cfg.getValue("Api.Octave", "api/octave");
+    extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
 }
 
 void LunarGlobal::writeCfg()
 {
-    util::TextCfg text_cfg(LunarGlobal::getAppPath() + "/" + LunarGlobal::ks_cfg);
+    TextCfg text_cfg(getAppPath() + "/" + ks_cfg);
 
     text_cfg.setValue("Font.Type", QStringToStdString(getFont().family()));
     text_cfg.setValue("Font.Size", getFont().pointSize());
-    text_cfg.setValue("AutoCompletion.Threshold", s_autocompletion_threshold_);
-    text_cfg.setValue("AutoCompletion.WordTip", s_autocompletion_wordtip_);
-    text_cfg.setValue("MainWindow.Width", s_mainwindow_width_);
-    text_cfg.setValue("MainWindow.Height", s_mainwindow_height_);
-    text_cfg.setValue("FileFilter.Lua", s_lua_file_filter_);
-    text_cfg.setValue("FileFilter.Octave", s_octave_file_filter_);
-    text_cfg.setValue("FileFilter.DefaultType", s_file_type_default_);
-    text_cfg.setValue("Run.Runner.Lua", s_runner_lua_);
-    text_cfg.setValue("Run.Runner.Octave", s_runner_octave_);
-    text_cfg.setValue("Run.Additional.Args", s_run_additional_args_);
-    text_cfg.setValue("Api.Lua", s_lua_api_);
-    text_cfg.setValue("Api.Octave", s_octave_api_);
-    text_cfg.setValue("Extension.File", s_extension_file_);
-    text_cfg.setValue("Extension.Func", s_extension_func_);
+    text_cfg.setValue("AutoCompletion.Threshold", autocompletion_threshold_);
+    text_cfg.setValue("AutoCompletion.WordTip", autocompletion_wordtip_);
+    text_cfg.setValue("MainWindow.Width", mainwindow_width_);
+    text_cfg.setValue("MainWindow.Height", mainwindow_height_);
+    text_cfg.setValue("FileFilter.Lua", lua_file_filter_);
+    text_cfg.setValue("FileFilter.Octave", octave_file_filter_);
+    text_cfg.setValue("FileFilter.DefaultType", file_type_default_);
+    text_cfg.setValue("Run.Runner.Lua", runner_lua_);
+    text_cfg.setValue("Run.Runner.Octave", runner_octave_);
+    text_cfg.setValue("Run.Additional.Args", run_additional_args_);
+    text_cfg.setValue("Api.Lua", lua_api_);
+    text_cfg.setValue("Api.Octave", octave_api_);
+    text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
 
     text_cfg.save();
 }

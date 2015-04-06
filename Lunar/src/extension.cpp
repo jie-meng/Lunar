@@ -18,17 +18,17 @@ Extension::~Extension()
 
 bool Extension::initLuaState()
 {
-    if (!isPathFile(LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile()))
+    if (!isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionFile()))
     {
         error_information_ =
-            strFormat("Extension: extension file %s not exist", (LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile()).c_str());
+            strFormat("Extension: extension file %s not exist", (LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionFile()).c_str());
         lua_state_ok_ = false;
         return false;
     }
 
     openUtilExtendLibs(lua_state_.getState());
 
-    int err = lua_state_.parseFile(LunarGlobal::getAppPath() + "/" + LunarGlobal::getExtensionFile());
+    int err = lua_state_.parseFile(LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionFile());
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -50,7 +50,7 @@ bool Extension::parse(const std::string& filename,
     if (!lua_state_ok_)
         return false;
 
-    luaGetGlobal(lua_state_.getState(), LunarGlobal::getExtensionFunc());
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncParseFileType());
     luaPushString(lua_state_.getState(), filename);
 
     int err = luaCallFunc(lua_state_.getState(), 1, 3);

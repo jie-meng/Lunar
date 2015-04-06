@@ -95,10 +95,10 @@ void DocView::setUnknownLexerApi()
 {
     clearLexerApi();
 
-    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getAutocompletionThreshold());
-    ptext_edit_->setFont(LunarGlobal::getFont());
+    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getInstance().getAutocompletionThreshold());
+    ptext_edit_->setFont(LunarGlobal::getInstance().getFont());
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
-    if(LunarGlobal::getAutocompletionWordtip())
+    if(LunarGlobal::getInstance().getAutocompletionWordtip())
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
     else
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
@@ -117,7 +117,7 @@ void DocView::setUnknownLexerApi()
             if (NULL != plexer_)
             {
                 ptext_edit_->setLexer(plexer_);
-                plexer_->setFont(LunarGlobal::getFont());
+                plexer_->setFont(LunarGlobal::getInstance().getFont());
                 if (NULL == plexer_->apis())
                 {
                     papis_ = new QsciAPIsEx(plexer_);
@@ -129,10 +129,10 @@ void DocView::setUnknownLexerApi()
                 }
                 ptext_edit_->setLexer(plexer_);
 
-                if (util::isPathDir(LunarGlobal::getAppPath() + "/" + api))
+                if (util::isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + api))
                 {
                     papi_loader_ = new ApiLoader(QStringToStdString(pathname_), (QsciAPIsEx*)papis_, this);
-                    papi_loader_->loadFileApis(LunarGlobal::getAppPath() + "/" + api);
+                    papi_loader_->loadFileApis(LunarGlobal::getInstance().getAppPath() + "/" + api);
                     papi_loader_->prepare();
                 }
 
@@ -159,22 +159,22 @@ void DocView::setLuaLexerApi()
 {
     clearLexerApi();
 
-    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getAutocompletionThreshold());
+    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getInstance().getAutocompletionThreshold());
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
-    if(LunarGlobal::getAutocompletionWordtip())
+    if(LunarGlobal::getInstance().getAutocompletionWordtip())
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
     else
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
 
     plexer_ = new QsciLexerLua(ptext_edit_);
-    plexer_->setFont(LunarGlobal::getFont());
+    plexer_->setFont(LunarGlobal::getInstance().getFont());
     papis_ = new LunarApi(plexer_);
     plexer_->setAPIs(papis_);
     ptext_edit_->setLexer(plexer_);
 
     //load APIs
     papi_loader_ = new ApiLoaderLua(QStringToStdString(pathname_), (QsciAPIsEx*)papis_, this);
-    papi_loader_->loadFileApis(LunarGlobal::getAppPath() + "/" + LunarGlobal::getLuaApi());
+    papi_loader_->loadFileApis(LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getLuaApi());
     papi_loader_->parseCurrentFileApi();
     papi_loader_->appendApiCurrentFile();
     papi_loader_->parseIncludeFileApi();
@@ -188,22 +188,22 @@ void DocView::setOctaveLexerApi()
 {
     clearLexerApi();
 
-    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getAutocompletionThreshold());
+    ptext_edit_->setAutoCompletionThreshold(LunarGlobal::getInstance().getAutocompletionThreshold());
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
-    if(LunarGlobal::getAutocompletionWordtip())
+    if(LunarGlobal::getInstance().getAutocompletionWordtip())
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAll);
     else
         ptext_edit_->setAutoCompletionSource(QsciScintilla::AcsAPIs);
 
     plexer_ = new QsciLexerOctave(ptext_edit_);
-    plexer_->setFont(LunarGlobal::getFont());
+    plexer_->setFont(LunarGlobal::getInstance().getFont());
     papis_ = new OctaveApi(plexer_);
     plexer_->setAPIs(papis_);
     ptext_edit_->setLexer(plexer_);
 
     //load APIs
     papi_loader_ = new ApiLoaderOctave(QStringToStdString(pathname_), (QsciAPIsEx*)papis_, this);
-    papi_loader_->loadFileApis(LunarGlobal::getAppPath() + "/" + LunarGlobal::getOctaveApi());
+    papi_loader_->loadFileApis(LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getOctaveApi());
     papi_loader_->parseCurrentFileApi();
     papi_loader_->appendApiCurrentFile();
     papi_loader_->parseIncludeFileApi();
@@ -232,9 +232,9 @@ void DocView::initGui()
 
 void DocView::resetLexer()
 {
-    if (testFileFilter(LunarGlobal::getLuaFileFilter()))
+    if (testFileFilter(LunarGlobal::getInstance().getLuaFileFilter()))
         setLuaLexerApi();
-    else if (testFileFilter((LunarGlobal::getOctaveFileFilter())))
+    else if (testFileFilter((LunarGlobal::getInstance().getOctaveFileFilter())))
         setOctaveLexerApi();
     else
         setUnknownLexerApi();
@@ -578,7 +578,7 @@ void DocView::replace(const QString& replace_with_text)
 
 void DocView::setEditTextFont(const QFont& font)
 {
-    LunarGlobal::setFont(font);
+    LunarGlobal::getInstance().setFont(font);
 
     if(plexer_)
         plexer_->setFont(font);

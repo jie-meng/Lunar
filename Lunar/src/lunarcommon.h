@@ -50,60 +50,58 @@ const std::string kFileTypeOctave = "octave";
 class LunarGlobal
 {
 public:
+    SINGLETON(LunarGlobal)
     LunarGlobal();
     ~LunarGlobal();
-    void static readCfg();
-    void static writeCfg();
-    static const std::string ks_cfg;
-    static void init(int argc, char* argv[]);
-    static void quit();
-
-    inline static std::string getAppPath() { return s_app_path_; }
-    inline static std::string getAppName() { return s_app_name_; }
-    inline static int getArgCnt() { return s_argc_; }
-    inline static std::string getArg(size_t index) { return s_argvec_.at(index); }
-    inline static int getAutocompletionThreshold() { return s_autocompletion_threshold_; }
-    inline static int getAutocompletionWordtip() { return s_autocompletion_wordtip_; }
-    inline static QFont getFont() { return s_font_; }
-    inline static void setFont(const QFont& font) { s_font_ = font; }
-    inline static unsigned short getProcessSockPort() { return s_process_sock_port_; }
-    inline static void setProcessSockPort(unsigned short port) { s_process_sock_port_ = port; }
-    inline static size_t getMainwindowWidth() { return s_mainwindow_width_; }
-    inline static size_t getMainwindowHeight() { return s_mainwindow_height_; }
-    inline static void setMainwindowWidth(size_t width) { s_mainwindow_width_ = width; }
-    inline static void setMainwindowHeight(size_t height) { s_mainwindow_height_ = height; }
-    inline static std::string getLuaFileFilter() { return s_lua_file_filter_; }
-    inline static std::string getRunnerLua() { return s_runner_lua_; }
-    inline static std::string getRunnerOctave() { return s_runner_octave_; }
-    inline static std::string getRunAdditionalArgs() { return s_run_additional_args_; }
-    inline static void setRunAdditionalArgs(const std::string& args) { s_run_additional_args_ = args; }
-    inline static std::string getOctaveFileFilter() { return s_octave_file_filter_; }
-    inline static std::string getLuaApi() { return s_lua_api_; }
-    inline static std::string getOctaveApi() { return s_octave_api_; }
-    inline static std::string getFileTypeDefault() { return s_file_type_default_; }
-    inline static std::string getExtensionFile() { return s_extension_file_; }
-    inline static std::string getExtensionFunc() { return s_extension_func_; }
+    void init(int argc, char* argv[]);
+    void quit();
+    void readCfg();
+    void writeCfg();
+    inline std::string getAppPath() const { return app_path_; }
+    inline std::string getAppName() const { return app_name_; }
+    inline int getArgCnt() const { return argc_; }
+    inline std::string getArg(size_t index) { return argvec_.at(index); }
+    inline int getAutocompletionThreshold() const { return autocompletion_threshold_; }
+    inline int getAutocompletionWordtip() const { return autocompletion_wordtip_; }
+    inline QFont getFont() const { return font_; }
+    inline void setFont(const QFont& font) { font_ = font; }
+    inline unsigned short getProcessSockPort() const { return process_sock_port_; }
+    inline void setProcessSockPort(unsigned short port) { process_sock_port_ = port; }
+    inline size_t getMainwindowWidth() const { return mainwindow_width_; }
+    inline size_t getMainwindowHeight() const { return mainwindow_height_; }
+    inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
+    inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
+    inline std::string getLuaFileFilter() const { return lua_file_filter_; }
+    inline std::string getRunnerLua() const { return runner_lua_; }
+    inline std::string getRunnerOctave() const { return runner_octave_; }
+    inline std::string getRunAdditionalArgs() const { return run_additional_args_; }
+    inline void setRunAdditionalArgs(const std::string& args) { run_additional_args_ = args; }
+    inline std::string getOctaveFileFilter() const { return octave_file_filter_; }
+    inline std::string getLuaApi() const { return lua_api_; }
+    inline std::string getOctaveApi() const { return octave_api_; }
+    inline std::string getFileTypeDefault() const { return file_type_default_; }
+    inline std::string getExtensionFile() const { return "extension"; }
+    inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
 private:
-    static int s_argc_;
-    static std::vector<std::string> s_argvec_;
-    static std::string s_app_path_;
-    static std::string s_app_name_;
-    static int s_autocompletion_threshold_;
-    static int s_autocompletion_wordtip_;
-    static QFont s_font_;
-    static unsigned short s_process_sock_port_;
-    static size_t s_mainwindow_width_;
-    static size_t s_mainwindow_height_;
-    static std::string s_lua_file_filter_;
-    static std::string s_octave_file_filter_;
-    static std::string s_runner_lua_;
-    static std::string s_runner_octave_;
-    static std::string s_run_additional_args_;
-    static std::string s_lua_api_;
-    static std::string s_octave_api_;
-    static std::string s_file_type_default_;
-    static std::string s_extension_file_;
-    static std::string s_extension_func_;
+    int argc_;
+    std::vector<std::string> argvec_;
+    std::string app_path_;
+    std::string app_name_;
+    int autocompletion_threshold_;
+    int autocompletion_wordtip_;
+    QFont font_;
+    unsigned short process_sock_port_;
+    size_t mainwindow_width_;
+    size_t mainwindow_height_;
+    std::string lua_file_filter_;
+    std::string octave_file_filter_;
+    std::string runner_lua_;
+    std::string runner_octave_;
+    std::string run_additional_args_;
+    std::string lua_api_;
+    std::string octave_api_;
+    std::string file_type_default_;
+    std::string extension_func_parsefiletype_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };
