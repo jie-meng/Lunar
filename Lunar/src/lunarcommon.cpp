@@ -102,7 +102,9 @@ void LunarGlobal::init(int argc, char* argv[])
 end\n\
 \n\
 function fileFilter()\n\
-\treturn \"Lua Files(*.lua);;\"\n\
+\tfilter = {}\n\
+\ttable.insert(filter, \"Lua Files(*.lua)\")\n\
+\treturn filter\n\
 end\n";
         writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
     }

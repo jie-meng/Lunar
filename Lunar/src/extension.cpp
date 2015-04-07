@@ -99,12 +99,26 @@ std::string Extension::fileFilter()
     else
     {
         int ret_cnt = luaGetTop(lua_state_.getState());
-
         if (ret_cnt > 0)
         {
-            std::string result = luaGetString(lua_state_.getState(), 1);
-            error_information_ = "";
-            luaPop(lua_state_.getState(), -1);
+            string result = "";
+
+            if(luaGetType(lua_state_.getState(), 1) == LuaTable)
+            {
+                vector< pair<any, any> > vec = luaGetTable(lua_state_.getState(), 1);
+                vector< pair<any, any> >::iterator it;
+                for (it=vec.begin(); it != vec.end(); ++it)
+                {
+                    result += it->second.toString() + ";;"; 
+                }
+            }
+            else if (luaGetType(lua_state_.getState(), 1) == LuaString)
+            {
+                result = luaGetString(lua_state_.getState(), 1);
+                error_information_ = "";
+                luaPop(lua_state_.getState(), -1);
+            }
+
             return result;
         }
         else
