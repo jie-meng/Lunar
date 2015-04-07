@@ -45,7 +45,9 @@ bool Extension::initLuaState()
 bool Extension::parseFilename(const std::string& filename,
                std::string* pout_type,
                std::string* pout_api,
-               std::string* pout_executor)
+               std::string* pout_executor,
+               std::string* pout_parse_supplement_api_script,
+               std::string* pout_parse_supplement_api_func)
 {
     if (!lua_state_ok_)
         return false;
@@ -53,7 +55,7 @@ bool Extension::parseFilename(const std::string& filename,
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncParseFileType());
     luaPushString(lua_state_.getState(), filename);
 
-    int err = luaCallFunc(lua_state_.getState(), 1, 3);
+    int err = luaCallFunc(lua_state_.getState(), 1, 5);
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -73,6 +75,12 @@ bool Extension::parseFilename(const std::string& filename,
 
         if (ret_cnt > 2 && pout_executor != NULL)
             *pout_executor = luaGetString(lua_state_.getState(), 3);
+
+        if (ret_cnt > 3 && pout_parse_supplement_api_script != NULL)
+            *pout_parse_supplement_api_script = luaGetString(lua_state_.getState(), 4);
+
+        if (ret_cnt > 4 && pout_parse_supplement_api_func != NULL)
+            *pout_parse_supplement_api_func = luaGetString(lua_state_.getState(), 5);
 
         error_information_ = "";
         luaPop(lua_state_.getState(), -1);

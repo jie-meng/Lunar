@@ -72,6 +72,7 @@ public:
     inline std::string getRunAdditionalArgs() const { return run_additional_args_; }
     inline void setRunAdditionalArgs(const std::string& args) { run_additional_args_ = args; }
     inline std::string getExtensionFile() const { return "extension"; }
+    inline std::string getPluginsDir() const { return getAppPath() + "/plugins"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
     inline std::string getFileFilter() const { return file_filter_; }

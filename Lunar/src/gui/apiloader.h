@@ -6,6 +6,7 @@
 #include <set>
 #include <QtCore/QObject>
 #include "util/base.hpp"
+#include "util/luaextend.hpp"
 
 namespace gui
 {
@@ -46,6 +47,31 @@ private:
     std::vector<std::string> include_file_apis_vec_;
 private:
     DISALLOW_COPY_AND_ASSIGN(ApiLoader)
+};
+
+class ApiLoaderEx
+{
+public:
+    ApiLoaderEx(const std::string& file,
+                QsciAPIsEx* papis);
+    ~ApiLoaderEx();
+
+    bool initLuaState(const std::string& parse_supplement_api_script);
+    void loadApi(const std::string& api_dirs);
+    void appendSupplementApi(const std::string& parse_supplement_api_script);
+    void clearSupplementApi();
+    void prepare();
+private:
+    bool parseSupplementApi(const std::string& parse_supplement_api_script);
+private:
+    QsciAPIsEx* papis_;
+    std::string file_;
+    std::vector<std::string> api_supplement_;
+    util::LuaState lua_state_;
+    bool lua_state_ok_;
+    std::string error_information_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(ApiLoaderEx)
 };
 
 } // namespace gui

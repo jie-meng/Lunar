@@ -12,7 +12,9 @@ public:
     bool parseFilename(const std::string& filename,
                std::string* pout_type,
                std::string* pout_api,
-               std::string* pout_executor);
+               std::string* pout_executor,
+               std::string* pout_parse_supplement_api_script = NULL,
+               std::string* pout_parse_supplement_api_func = NULL);
     std::string fileFilter();
 private:
     util::LuaState lua_state_;

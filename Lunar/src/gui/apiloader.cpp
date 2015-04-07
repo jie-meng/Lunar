@@ -111,4 +111,124 @@ void ApiLoader::addApiIncludeFile(const std::string& str)
     include_file_apis_vec_.push_back(str);
 }
 
+//ApiLoaderEx
+ApiLoaderEx::ApiLoaderEx(const std::string& file,
+                         QsciAPIsEx* papis) :
+    file_(file),
+    papis_(papis),
+    lua_state_ok_(false),
+    error_information_("")
+{
+    if (NULL == papis_)
+        throw new Exception("ApiLoaderEx: QsciAPIsEx* papis is NULL");
+}
+
+ApiLoaderEx::~ApiLoaderEx()
+{
+
+}
+
+bool ApiLoaderEx::initLuaState(const std::string& parse_supplement_api_script)
+{
+    if (!isPathFile(LunarGlobal::getInstance().getPluginsDir() + "/" + parse_supplement_api_script))
+    {
+        error_information_ =
+            strFormat("ApiLoaderEx.initLuaState: extension file %s not exist",
+                      (LunarGlobal::getInstance().getPluginsDir() + "/" + parse_supplement_api_script).c_str());
+        lua_state_ok_ = false;
+        return false;
+    }
+
+    openUtilExtendLibs(lua_state_.getState());
+
+    int err = lua_state_.parseFile(LunarGlobal::getInstance().getPluginsDir() + "/" + parse_supplement_api_script);
+    if (0 != err)
+    {
+        error_information_ = strFormat("ApiLoaderEx.initLuaState: %s", luaGetError(lua_state_.getState(), err).c_str());
+        lua_state_ok_ = false;
+    }
+    else
+    {
+        lua_state_ok_ = true;
+    }
+
+    return lua_state_ok_;
+}
+
+void ApiLoaderEx::loadApi(const std::string& api_dirs)
+{
+    vector<string> dirs;
+    strSplitEx(api_dirs, ",", "\"", "\"", dirs);
+    vector<string>::iterator it;
+    for (it = dirs.begin(); it != dirs.end(); ++it)
+    {
+        vector<string> api_vec;
+        findFilesInDirRecursively(*it, api_vec, kApisExt);
+        if (api_vec.size()>0)
+        {
+            for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
+                papis_->load(StdStringToQString(*it1));
+        }
+    }
+}
+
+void ApiLoaderEx::appendSupplementApi(const std::string& parse_supplement_api_script)
+{
+    if (!parseSupplementApi(parse_supplement_api_script))
+        return;
+
+    for (uint32_t i=0; i<api_supplement_.size(); i++)
+        papis_->add(StdStringToQString(api_supplement_[i]));
+}
+
+void ApiLoaderEx::clearSupplementApi()
+{
+    for (uint32_t i=0; i<api_supplement_.size(); i++)
+        papis_->remove(StdStringToQString(api_supplement_[i]));
+    api_supplement_.clear();
+}
+
+bool ApiLoaderEx::parseSupplementApi(const std::string& parse_supplement_api_script)
+{
+    if (!lua_state_ok_)
+        return false;
+
+    luaGetGlobal(lua_state_.getState(), "parseSupplementApi");
+    luaPushString(lua_state_.getState(), file_);
+
+    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    if (0 != err)
+    {
+        error_information_ = strFormat("ApiLoaderEx.parseSupplementApi: %s", luaGetError(lua_state_.getState(), err).c_str());
+        luaPop(lua_state_.getState(), -1);
+
+        return false;
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+
+        vector< pair<any, any> > vec;
+        if (ret_cnt > 0)
+            vec = luaGetTable(lua_state_.getState(), 1);
+
+        if (!vec.empty())
+        {
+            vector< pair<any, any> >::iterator it;
+            for (it = vec.begin(); it != vec.end(); ++it)
+                api_supplement_.push_back(it->second.toString());
+        }
+
+        error_information_ = "";
+        luaPop(lua_state_.getState(), -1);
+
+        return true;
+    }
+}
+
+void ApiLoaderEx::prepare()
+{
+    papis_->prepare();
+}
+
 } // namespace gui
