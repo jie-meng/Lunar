@@ -109,16 +109,16 @@ std::string Extension::fileFilter()
                 vector< pair<any, any> >::iterator it;
                 for (it=vec.begin(); it != vec.end(); ++it)
                 {
-                    result += it->second.toString() + ";;"; 
+                    result += it->second.toString() + ";;";
                 }
             }
             else if (luaGetType(lua_state_.getState(), 1) == LuaString)
             {
                 result = luaGetString(lua_state_.getState(), 1);
                 error_information_ = "";
-                luaPop(lua_state_.getState(), -1);
             }
 
+            luaPop(lua_state_.getState(), -1);
             return result;
         }
         else
