@@ -15,20 +15,21 @@ function parseSupplementApiCurrent(filename, apis)
     local re_func = regex.create(kRegexFunctionOctave)
     
     local f = io.open(filename, "r")
-    local line = f:read("*line")
-    while (line ~= nil) do
-        
-        if regex.match(re_func, line) then
-            local api = regex.getMatchedGroupByName(re_func, "api")
-            if api ~= "" then
-                table.insert(apis, api)
+    if f ~= nil then
+        local line = f:read("*line")
+        while (line ~= nil) do
+            
+            if regex.match(re_func, line) then
+                local api = regex.getMatchedGroupByName(re_func, "api")
+                if api ~= "" then
+                    table.insert(apis, api)
+                end
             end
+            
+            line = f:read("*line")
         end
-        
-        line = f:read("*line")
+        io.close(f)
     end
-    
-    io.close(f)
     
     regex.destroy(re_func)
 end

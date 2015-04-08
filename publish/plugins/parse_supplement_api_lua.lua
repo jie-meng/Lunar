@@ -17,26 +17,26 @@ function parseSupplementApiRecursively(filename, dir, apis)
     local re_inc = regex.create(kRegexIncludeLua)
     
     local f = io.open(filename, "r")
-    local line = f:read("*line")
-    while (line ~= nil) do
-        if regex.match(re_func, line) then
-            local api = regex.getMatchedGroupByName(re_func, "api")
-            if api ~= "" then
-                local api_format, _ = string.gsub(api, ":", ".")
-                table.insert(apis, api_format)
+    if f ~= nil then
+        local line = f:read("*line")
+        while (line ~= nil) do
+            if regex.match(re_func, line) then
+                local api = regex.getMatchedGroupByName(re_func, "api")
+                if api ~= "" then
+                    local api_format, _ = string.gsub(api, ":", ".")
+                    table.insert(apis, api_format)
+                end
+            elseif regex.match(re_inc, line) then
+                local file_include = dir .. "/" .. regex.getMatchedGroupByName(re_inc, "path")
+                
+                if file.isPathFile(file_include) then
+                    parseSupplementApiRecursively(file_include, dir, apis)
+                end
             end
-        elseif regex.match(re_inc, line) then
-            local file_include = dir .. "/" .. regex.getMatchedGroupByName(re_inc, "path")
-            
-            if file.isPathFile(file_include) then
-                parseSupplementApiRecursively(file_include, dir, apis)
-            end
+            line = f:read("*line")
         end
-        
-        line = f:read("*line")
+        io.close(f)
     end
-    
-    io.close(f)
     
     regex.destroy(re_func)
     regex.destroy(re_inc)
