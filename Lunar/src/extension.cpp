@@ -16,8 +16,19 @@ Extension::~Extension()
 {
 }
 
+bool Extension::init()
+{
+    if (!isPathDir(LunarGlobal::getInstance().getAppPath() + "/plugins"))
+        mkDir(LunarGlobal::getInstance().getAppPath() + "/plugins");
+
+    return initLuaState();
+}
+
 bool Extension::initLuaState()
 {
+    if (lua_state_ok_)
+        return true;
+
     if (!isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionFile()))
     {
         error_information_ =
@@ -44,6 +55,7 @@ bool Extension::initLuaState()
 
 bool Extension::parseFilename(const std::string& filename,
                std::string* pout_type,
+               size_t* pauto_complete_type_,
                std::string* pout_api,
                std::string* pout_executor,
                std::string* pout_parse_supplement_api_script,
@@ -55,7 +67,7 @@ bool Extension::parseFilename(const std::string& filename,
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncParseFileType());
     luaPushString(lua_state_.getState(), filename);
 
-    int err = luaCallFunc(lua_state_.getState(), 1, 5);
+    int err = luaCallFunc(lua_state_.getState(), 1, 6);
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -70,17 +82,20 @@ bool Extension::parseFilename(const std::string& filename,
         if (ret_cnt > 0 && pout_type != NULL)
             *pout_type = luaGetString(lua_state_.getState(), 1);
 
-        if (ret_cnt > 1 && pout_api != NULL)
-            *pout_api = luaGetString(lua_state_.getState(), 2);
+        if (ret_cnt > 1 && pauto_complete_type_ != NULL)
+            *pauto_complete_type_ = luaGetInteger(lua_state_.getState(), 2);
 
-        if (ret_cnt > 2 && pout_executor != NULL)
-            *pout_executor = luaGetString(lua_state_.getState(), 3);
+        if (ret_cnt > 2 && pout_api != NULL)
+            *pout_api = luaGetString(lua_state_.getState(), 3);
 
-        if (ret_cnt > 3 && pout_parse_supplement_api_script != NULL)
-            *pout_parse_supplement_api_script = luaGetString(lua_state_.getState(), 4);
+        if (ret_cnt > 3 && pout_executor != NULL)
+            *pout_executor = luaGetString(lua_state_.getState(), 4);
 
-        if (ret_cnt > 4 && pout_parse_supplement_api_func != NULL)
-            *pout_parse_supplement_api_func = luaGetString(lua_state_.getState(), 5);
+        if (ret_cnt > 4 && pout_parse_supplement_api_script != NULL)
+            *pout_parse_supplement_api_script = luaGetString(lua_state_.getState(), 5);
+
+        if (ret_cnt > 5 && pout_parse_supplement_api_func != NULL)
+            *pout_parse_supplement_api_func = luaGetString(lua_state_.getState(), 6);
 
         error_information_ = "";
         luaPop(lua_state_.getState(), -1);

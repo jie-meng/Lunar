@@ -52,12 +52,6 @@
 		<Unit filename="src/gui/aboutdialog.h" />
 		<Unit filename="src/gui/apiloader.cpp" />
 		<Unit filename="src/gui/apiloader.h" />
-		<Unit filename="src/gui/apiloaderfactory.cpp" />
-		<Unit filename="src/gui/apiloaderfactory.h" />
-		<Unit filename="src/gui/apiloaderlua.cpp" />
-		<Unit filename="src/gui/apiloaderlua.h" />
-		<Unit filename="src/gui/apiloaderoctave.cpp" />
-		<Unit filename="src/gui/apiloaderoctave.h" />
 		<Unit filename="src/gui/dockwidgetex.cpp" />
 		<Unit filename="src/gui/dockwidgetex.h" />
 		<Unit filename="src/gui/docview.cpp" />
@@ -70,8 +64,6 @@
 		<Unit filename="src/gui/maintabwidget.h" />
 		<Unit filename="src/gui/mainwindow.cpp" />
 		<Unit filename="src/gui/mainwindow.h" />
-		<Unit filename="src/gui/octaveapi.cpp" />
-		<Unit filename="src/gui/octaveapi.h" />
 		<Unit filename="src/gui/outputtext.cpp" />
 		<Unit filename="src/gui/outputtext.h" />
 		<Unit filename="src/gui/outputwidget.cpp" />

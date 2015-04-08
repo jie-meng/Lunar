@@ -588,7 +588,7 @@ void MainWindow::runEx(bool run_in_syscmd)
 
 void MainWindow::initExtension()
 {
-    if (!Extension::getInstance().initLuaState())
+    if (!Extension::getInstance().init())
         LunarMsgBox(Extension::getInstance().errorInfo());
 
     LunarGlobal::getInstance().parseExtensionFileFilter();

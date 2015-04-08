@@ -2,7 +2,6 @@
 #define GUI_APILOADER_H
 
 #include <vector>
-#include <map>
 #include <set>
 #include <QtCore/QObject>
 #include "util/base.hpp"
@@ -14,64 +13,30 @@ namespace gui
 class QsciAPIsEx;
 class ClassInfo;
 
-////////////////////////////////////////////////////
-// class name : ApiLoader
-// description :
-// author :
-// time : 2012-01-12-08.01
-////////////////////////////////////////////////////
-class ApiLoader : public QObject
-{
-    Q_OBJECT
-public:
-    explicit ApiLoader(const std::string& file, QsciAPIsEx* papis, QObject* parent);
-    virtual ~ApiLoader();
-
-    void loadFileApis(const std::string& api_path);
-    void prepare();
-
-    void clearApiCurrentFile();
-    void appendApiCurrentFile();
-    void clearApiIncludeFile();
-    void appendApiIncludeFile();
-    virtual void parseCurrentFileApi();
-    virtual void parseIncludeFileApi();
-protected:
-    void addApiCurrentFile(const std::string& str);
-    void addApiIncludeFile(const std::string& str);
-    inline std::string file() const { return file_; }
-private:
-    QsciAPIsEx* papis_;
-    std::string file_;
-    std::vector<std::string> current_file_apis_vec_;
-    std::vector<std::string> include_file_apis_vec_;
-private:
-    DISALLOW_COPY_AND_ASSIGN(ApiLoader)
-};
-
-class ApiLoaderEx
+class ApiLoader
 {
 public:
-    ApiLoaderEx(const std::string& file,
+    ApiLoader(const std::string& file,
                 QsciAPIsEx* papis);
-    ~ApiLoaderEx();
+    ~ApiLoader();
 
-    bool initLuaState(const std::string& parse_supplement_api_script);
     void loadApi(const std::string& api_dirs);
-    void appendSupplementApi(const std::string& parse_supplement_api_script);
+    bool appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
     void clearSupplementApi();
     void prepare();
+    inline std::string errorInformation() const { return error_information_; }
 private:
-    bool parseSupplementApi(const std::string& parse_supplement_api_script);
+    bool initLuaState(const std::string& parse_supplement_api_script);
+    bool parseSupplementApi(const std::string& parse_supplement_api_func);
 private:
     QsciAPIsEx* papis_;
     std::string file_;
-    std::vector<std::string> api_supplement_;
+    std::set<std::string> api_supplement_;
     util::LuaState lua_state_;
     bool lua_state_ok_;
     std::string error_information_;
 private:
-    DISALLOW_COPY_AND_ASSIGN(ApiLoaderEx)
+    DISALLOW_COPY_AND_ASSIGN(ApiLoader)
 };
 
 } // namespace gui

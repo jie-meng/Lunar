@@ -1,4 +1,4 @@
-regex.create(flag)
+regex.create(re, [flag = 0])
 regex.destroy(re)
 regex.compile(re, s)
 regex.match(re, s)

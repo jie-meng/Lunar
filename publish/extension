@@ -1,0 +1,33 @@
+function parseFileType(filename)
+
+	local path, name = file.splitPathname(filename)
+
+	-- Lunar extension
+	if name == "extension" then
+		if file.isPathFile(path .. "/Lunar") or file.isPathFile(path .. "/Lunar.exe") then
+			return "lua", 1, "api/lua/standard,api/lua/uextend.api,api/lua/uextend_file.api,api/lua/uextend_regex.api"
+		end
+	end
+
+	-- lua
+	if string.lower(file.fileExtension(name)) == "lua" then
+		return "lua", 1, "api/lua", "luaexec", "plugins/parse_supplement_api_lua.lua", "parseSupplementApi"
+	end
+    
+    -- octave
+	if string.lower(file.fileExtension(name)) == "m" then
+		return "octave", 0, "api/octave", "octave", "plugins/parse_supplement_api_octave.lua", "parseSupplementApi"
+	end
+    
+    -- cmake
+	if string.lower(name) == "cmakelists.txt" then
+		return "cmake", 0
+	end
+end
+
+function fileFilter()
+	filter = {}
+	table.insert(filter, "Lua Files(*.lua)")
+    table.insert(filter, "Octave Files(*.m)")
+	return filter
+end
