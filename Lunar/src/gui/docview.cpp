@@ -57,7 +57,9 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     is_apis_preparing_(false),
     papi_loader_(NULL),
     file_type_(Unknown),
-    executor_("")
+    executor_(""),
+    parse_supplement_api_script_(""),
+    parse_supplement_api_func_("")
 {
     //ctor
     ptext_edit_ = new QsciScintilla(parent);
@@ -86,6 +88,8 @@ void DocView::clearLexerApi()
         util::safeDelete(papi_loader_);
 
     executor_ = "";
+    parse_supplement_api_script_ = "";
+    parse_supplement_api_func_ = "";
     file_type_ = Unknown;
 }
 
@@ -108,10 +112,7 @@ void DocView::setLexerApi()
         std::string type = "";
         size_t auto_complete_type_ = 0;
         std::string api = "";
-        std::string executor = "";
-        std::string parse_supplement_api_script = "";
-        std::string parse_supplement_api_func = "";
-        if (Extension::getInstance().parseFilename(filename, &type, &auto_complete_type_, &api, &executor, &parse_supplement_api_script, &parse_supplement_api_func))
+        if (Extension::getInstance().parseFilename(filename, &type, &auto_complete_type_, &api, &executor_, &parse_supplement_api_script_, &parse_supplement_api_func_))
         {
             FileType filetype = Unknown;
             plexer_ = getLexerFromTypeName(type, &filetype);
@@ -129,15 +130,12 @@ void DocView::setLexerApi()
                 //api
                 papi_loader_ = new ApiLoader(QStringToStdString(pathname_), papis_);
                 papi_loader_->loadApi(api);
-                if ("" != parse_supplement_api_script && "" != parse_supplement_api_func)
+                if ("" != parse_supplement_api_script_ && "" != parse_supplement_api_func_)
                 {
-                    if (!papi_loader_->appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func))
+                    if (!papi_loader_->appendSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_))
                         LunarMsgBox(papi_loader_->errorInformation());
                 }
                 papi_loader_->prepare();
-
-                //set executor
-                executor_ = executor;
 
                 //parse success
                 file_type_ = filetype;
@@ -153,6 +151,20 @@ void DocView::setLexerApi()
     ptext_edit_->setLexer(NULL);
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
     file_type_ = Unknown;
+}
+
+void DocView::refreshSupplementApi()
+{
+    if (papi_loader_)
+    {
+        papi_loader_->clearSupplementApi();
+        if ("" != parse_supplement_api_script_ && "" != parse_supplement_api_func_)
+        {
+            if (!papi_loader_->appendSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_))
+                LunarMsgBox(papi_loader_->errorInformation());
+        }
+        papi_loader_->prepare();
+    }
 }
 
 void DocView::apisPreparationFinished()
@@ -239,20 +251,22 @@ void DocView::initConnections()
     //connect(papis_, SIGNAL(apiPreparationFinished()), this, SLOT(apisPreparationFinished()));
 }
 
-bool DocView::doSave()
+bool DocView::doSave(bool reset_lexer)
 {
     emit updateTitle(this);
     std::string content = QStringToStdString(ptext_edit_->text());
     content = util::strReplaceAll(content, "\r\n", "\n");
-    resetLexer();
-
+    if (reset_lexer)
+        resetLexer();
+    else
+        refreshSupplementApi();
     return util::writeTextFile(QStringToStdString(pathname_), content);
 }
 
 bool DocView::saveDoc()
 {
     if (tr("") != pathname_)
-        return doSave();
+        return doSave(false);
     else
         return saveAsDoc();
 }
@@ -271,7 +285,7 @@ bool DocView::saveAsDoc()
     {
         pathname_ = path;
         title_ = getTitleFromPath(pathname_);
-        return doSave();
+        return doSave(true);
     }
 }
 

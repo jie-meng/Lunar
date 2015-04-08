@@ -30,7 +30,7 @@ public:
     void replace(const QString& replace_with_text);
     bool saveDoc();
     bool saveAsDoc();
-    bool doSave();
+    bool doSave(bool reset_lexer);
     bool find(const QString& expr,
               bool re,
               bool cs,
@@ -59,6 +59,7 @@ private:
     void setLexerApi();
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
+    void refreshSupplementApi();
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
 
@@ -72,6 +73,8 @@ private:
     ApiLoader* papi_loader_;
     FileType file_type_;
     std::string executor_;
+    std::string parse_supplement_api_func_;
+    std::string parse_supplement_api_script_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };
