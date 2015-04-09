@@ -2,6 +2,7 @@
 #include <QMenu>
 #include <QAction>
 #include <QContextMenuEvent>
+#include <QPalette>
 
 namespace gui
 {
@@ -9,6 +10,11 @@ namespace gui
 OutputText::OutputText(QWidget *parent) :
     QTextEdit(parent)
 {
+    QPalette palette(this->palette());
+    palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::white));
+    palette.setColor(QPalette::Inactive, QPalette::Highlight, QColor(Qt::blue));
+
+    this->setPalette(palette);
 }
 
 void OutputText::contextMenuEvent(QContextMenuEvent *e)

@@ -64,6 +64,11 @@ void FindDialog::initGui()
     setFixedWidth(sizeHint().width());
 }
 
+void FindDialog::setFocusOnFindInput()
+{
+    pfind_tab_->setFocusOnFindInput();
+}
+
 void FindDialog::initConnections()
 {
     //self
@@ -203,6 +208,11 @@ void FindTab::initGui()
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addLayout(centerLayout);
     setLayout(mainLayout);
+}
+
+void FindTab::setFocusOnFindInput()
+{
+    pfind_edit_->setFocus();
 }
 
 void FindTab::initConnections()

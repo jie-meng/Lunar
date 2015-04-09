@@ -375,6 +375,7 @@ void MainWindow::fileGotoPrev()
 void MainWindow::editFind()
 {
     pfind_dlg_->show();
+    pfind_dlg_->setFocusOnFindInput();
 }
 
 void MainWindow::editSetFont()
