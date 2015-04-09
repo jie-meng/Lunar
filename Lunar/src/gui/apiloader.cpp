@@ -79,19 +79,23 @@ void ApiLoader::loadApi(const std::string& api_paths)
     vector<string>::iterator it;
     for (it = paths.begin(); it != paths.end(); ++it)
     {
-        if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + *it))
+        std::string path = strTrim(*it);
+
+        if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + path))
         {
             vector<string> api_vec;
-            findFilesInDirRecursively(*it, api_vec, kApisExt);
+            findFilesInDirRecursively(LunarGlobal::getInstance().getAppPath() + "/" + path,
+                                      api_vec,
+                                      kApisExt);
             if (api_vec.size()>0)
             {
                 for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
                     papis_->load(StdStringToQString(*it1));
             }
         }
-        else if (isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + *it))
+        else if (isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + path))
         {
-            papis_->load(StdStringToQString(*it));
+            papis_->load(StdStringToQString(LunarGlobal::getInstance().getAppPath() + "/" + path));
         }
     }
 }
