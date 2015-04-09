@@ -20,13 +20,13 @@ function parseSupplementApiRecursively(filename, dir, apis)
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
-            if regex.match(re_func, line) then
+            if regex.match(re_func, strTrim(line)) then
                 local api = regex.getMatchedGroupByName(re_func, "api")
                 if api ~= "" then
                     local api_format, _ = string.gsub(api, ":", ".")
                     table.insert(apis, api_format)
                 end
-            elseif regex.match(re_inc, line) then
+            elseif regex.match(re_inc, strTrim(line)) then
                 local file_include = dir .. "/" .. regex.getMatchedGroupByName(re_inc, "path")
                 
                 if file.isPathFile(file_include) then

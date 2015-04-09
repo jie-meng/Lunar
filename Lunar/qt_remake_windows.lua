@@ -20,8 +20,8 @@ function rebuild(pro_file, append_to_pro_file, makefile)
     print("qmake")
 	os.execute("qmake")
 	print("qmake successfully!")
-	print("make")
-	os.execute("make -f " .. makefile)    
+	print("mingw32-make")
+	os.execute("mingw32-make -f " .. makefile)    
 end
 
 -- main
