@@ -555,8 +555,8 @@ void MainWindow::runEx(bool run_in_syscmd)
     if (pdoc_view)
     {
         string addtional_args = "";
-        if ("" != LunarGlobal::getInstance().getRunAdditionalArgs())
-            addtional_args = LunarGlobal::getInstance().getRunAdditionalArgs();
+//        if ("" != LunarGlobal::getInstance().getRunAdditionalArgs())
+//            addtional_args = LunarGlobal::getInstance().getRunAdditionalArgs();
 
         string script = QStringToStdString(pdoc_view->getPathname());
         if (script == "")

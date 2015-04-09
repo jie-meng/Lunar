@@ -26,16 +26,6 @@ void LuaExecutor::stop()
     process_.kill();
 }
 
-//std::string LuaExecutor::getScriptExecutor(const std::string& file)
-//{
-//    if (isFileInFileFilter(file, LunarGlobal::getInstance().getLuaFileFilter()))
-//        return LunarGlobal::getInstance().getRunnerLua();
-//    else if (isFileInFileFilter(file, LunarGlobal::getInstance().getOctaveFileFilter()))
-//        return LunarGlobal::getInstance().getRunnerOctave();
-//    else
-//        return "";
-//}
-
 bool LuaExecutor::isFileInFileFilter(const std::string& file, const std::string& file_filter)
 {
     std::vector<std::string> filterVec;

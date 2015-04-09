@@ -69,8 +69,6 @@ public:
     inline size_t getMainwindowHeight() const { return mainwindow_height_; }
     inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
-    inline std::string getRunAdditionalArgs() const { return run_additional_args_; }
-    inline void setRunAdditionalArgs(const std::string& args) { run_additional_args_ = args; }
     inline std::string getExtensionFile() const { return "extension"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
@@ -90,7 +88,6 @@ private:
     unsigned short process_sock_port_;
     size_t mainwindow_width_;
     size_t mainwindow_height_;
-    std::string run_additional_args_;
     std::string extension_func_parsefiletype_;
     std::string extension_func_filefilter_;
     std::string file_filter_;

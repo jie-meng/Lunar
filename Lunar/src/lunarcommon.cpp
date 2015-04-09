@@ -134,7 +134,6 @@ void LunarGlobal::readCfg()
     font_ = QFont(StdStringToQString(font_type), font_size);
     mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
     mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
-    run_additional_args_ = text_cfg.getValue("Run.Additional.Args", "");
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
 }
@@ -149,7 +148,6 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("AutoCompletion.WordTip", autocompletion_wordtip_);
     text_cfg.setValue("MainWindow.Width", mainwindow_width_);
     text_cfg.setValue("MainWindow.Height", mainwindow_height_);
-    text_cfg.setValue("Run.Additional.Args", run_additional_args_);
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
 
