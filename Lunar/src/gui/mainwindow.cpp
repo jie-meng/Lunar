@@ -159,8 +159,11 @@ void MainWindow::closeEvent(QCloseEvent* e)
        }
     }
 
-    LunarGlobal::getInstance().setMainwindowWidth(this->width());
-    LunarGlobal::getInstance().setMainwindowHeight(this->height());
+    if (windowState() != Qt::WindowMaximized && windowState() != Qt::WindowFullScreen)
+    {
+        LunarGlobal::getInstance().setMainwindowWidth(this->width());
+        LunarGlobal::getInstance().setMainwindowHeight(this->height());
+    }
     LunarGlobal::getInstance().quit();
 }
 
