@@ -12,11 +12,15 @@
 #include <Qsci/qscilexerbatch.h>
 #include <Qsci/qscilexercmake.h>
 #include <Qsci/qscilexercpp.h>
+#include <Qsci/qscilexercoffeescript.h>
 #include <Qsci/qscilexercsharp.h>
 #include <Qsci/qscilexercss.h>
 #include <Qsci/qscilexerd.h>
 #include <Qsci/qscilexerdiff.h>
+#include <Qsci/qscilexerfortran.h>
+#include <Qsci/qscilexerfortran77.h>
 #include <Qsci/qscilexerhtml.h>
+#include <Qsci/qscilexeridl.h>
 #include <Qsci/qscilexerjava.h>
 #include <Qsci/qscilexerjavascript.h>
 #include <Qsci/qscilexerlua.h>
@@ -25,9 +29,13 @@
 #include <Qsci/qscilexeroctave.h>
 #include <Qsci/qscilexerpascal.h>
 #include <Qsci/qscilexerperl.h>
+#include <Qsci/qscilexerpo.h>
+#include <Qsci/qscilexerpostscript.h>
+#include <Qsci/qscilexerpov.h>
 #include <Qsci/qscilexerproperties.h>
 #include <Qsci/qscilexerpython.h>
 #include <Qsci/qscilexerruby.h>
+#include <Qsci/qscilexerspice.h>
 #include <Qsci/qscilexersql.h>
 #include <Qsci/qscilexertcl.h>
 #include <Qsci/qscilexertex.h>
@@ -206,6 +214,11 @@ void DocView::initTextEdit()
 
     ptext_edit_->setMarginLineNumbers (0, true);
     resetMarginLineNumberWidth();
+
+    //init keywords-set 3 to "", this is just temporary method for lua highlight selection text.
+    //ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
+    //disable lua lib keyword highlight
+    //ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)2, (const char*)"");
 }
 
 bool DocView::testFileFilter(const std::string& file_filter)
@@ -249,6 +262,7 @@ void DocView::initConnections()
     connect(getTextEdit(), SIGNAL(textChanged()), this, SLOT(textChanged()));
     connect(ptext_edit_, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
     //connect(papis_, SIGNAL(apiPreparationFinished()), this, SLOT(apisPreparationFinished()));
+    connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
 }
 
 bool DocView::doSave(bool reset_lexer)
@@ -325,6 +339,12 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
             *pout_filetype = CMake;
         return new QsciLexerCMake(ptext_edit_);
     }
+    else if (util::strAreEqual(name_trimed, "coffeescript", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = CoffeeSript;
+        return new QsciLexerCoffeeScript(ptext_edit_);
+    }
     else if (util::strAreEqual(name_trimed, "cpp", false))
     {
         if (NULL != pout_filetype)
@@ -355,11 +375,29 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
             *pout_filetype = Diff;
         return new QsciLexerDiff(ptext_edit_);
     }
+    else if (util::strAreEqual(name_trimed, "fortran", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Fortran;
+        return new QsciLexerFortran(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimed, "fortran77", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Fortran77;
+        return new QsciLexerFortran77(ptext_edit_);
+    }
     else if (util::strAreEqual(name_trimed, "html", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Html;
         return new QsciLexerHTML(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimed, "idl", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Idl;
+        return new QsciLexerIDL(ptext_edit_);
     }
     else if (util::strAreEqual(name_trimed, "java", false))
     {
@@ -409,6 +447,24 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
             *pout_filetype = Perl;
         return new QsciLexerPerl(ptext_edit_);
     }
+    else if (util::strAreEqual(name_trimed, "po", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Po;
+        return new QsciLexerPO(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimed, "postscript", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = PostScript;
+        return new QsciLexerPostScript(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimed, "pov", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Pov;
+        return new QsciLexerPOV(ptext_edit_);
+    }
     else if (util::strAreEqual(name_trimed, "properties", false))
     {
         if (NULL != pout_filetype)
@@ -426,6 +482,12 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
         if (NULL != pout_filetype)
             *pout_filetype = Ruby;
         return new QsciLexerRuby(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimed, "spice", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Spice;
+        return new QsciLexerSpice(ptext_edit_);
     }
     else if (util::strAreEqual(name_trimed, "sql", false))
     {
@@ -499,7 +561,10 @@ bool DocView::find(const QString& expr,
 
     if(first_find)
     {
-        found = ptext_edit_->findFirst(expr, re, cs, wo, wrap, forward, line, index);
+        if (ptext_edit_->hasSelectedText() && ptext_edit_->selectedText() != tr(""))
+            found = ptext_edit_->findFirstInSelection(expr, re, cs, wo, forward);
+        else
+            found = ptext_edit_->findFirst(expr, re, cs, wo, wrap, forward, line, index);
     }
     else
     {
@@ -524,6 +589,19 @@ void DocView::setEditTextFont(const QFont& font)
         ptext_edit_->setFont(font);
 
     resetMarginLineNumberWidth();
+}
+
+void DocView::selectionChanged()
+{
+//    if (ptext_edit_->hasSelectedText())
+//    {
+//        if (selected_text_ != ptext_edit_->selectedText())
+//        {
+//            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
+//            ptext_edit_->recolor(0);
+//            selected_text_ = ptext_edit_->selectedText();
+//        }
+//    }
 }
 
 } // namespace gui

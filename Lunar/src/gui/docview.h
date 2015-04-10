@@ -50,6 +50,7 @@ private Q_SLOTS:
     void apisPreparationFinished();
     void linesChanged();
     void resetMarginLineNumberWidth();
+    void selectionChanged();
 private:
     void init();
     void initGui();
@@ -65,6 +66,7 @@ private:
 
     QString pathname_;
     QString title_;
+    QString selected_text_;
     QsciScintilla* ptext_edit_;
     QsciAPIsEx* papis_;
     QsciLexer* plexer_;
