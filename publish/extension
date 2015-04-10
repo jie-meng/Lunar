@@ -9,25 +9,57 @@ function parseFileType(filename)
 		end
 	end
 
-	-- lua
 	if string.lower(file.fileExtension(name)) == "lua" then
 		return "lua", 1, "api/lua", "luaexec", "plugins/parse_supplement_api_lua.lua", "parseSupplementApi"
 	end
     
-    -- octave
 	if string.lower(file.fileExtension(name)) == "m" then
 		return "octave", 0, "api/octave", "octave", "plugins/parse_supplement_api_octave.lua", "parseSupplementApi"
 	end
     
-    -- cmake
+    if string.lower(file.fileExtension(name)) == "sh" then
+        return "bash", 0
+    end
+    
 	if string.lower(name) == "cmakelists.txt" then
 		return "cmake", 0
 	end
+    
+    if string.lower(file.fileExtension(name)) == "py" then
+        return "python", 0
+    end
+    
+    if string.lower(file.fileExtension(name)) == "tcl" then
+        return "tcl", 0
+    end
+    
+    if string.lower(file.fileExtension(name)) == "java" then
+        return "java", 0
+    end
+    
+    if string.lower(file.fileExtension(name)) == "cs" then
+        return "csharp", 0
+    end
+    
+    if string.lower(file.fileExtension(name)) == "c" or
+       string.lower(file.fileExtension(name)) == "h" or
+       string.lower(file.fileExtension(name)) == "cpp" or
+       string.lower(file.fileExtension(name)) == "hpp" or
+       string.lower(file.fileExtension(name)) == "cxx" or
+       string.lower(file.fileExtension(name)) == "hxx" then
+        return "cpp", 0
+    end
 end
 
 function fileFilter()
 	filter = {}
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Octave Files(*.m)")
+    table.insert(filter, "Bash Files(*.sh)")
+    table.insert(filter, "Python Files(*.py)")
+    table.insert(filter, "Tcl Files(*.tcl)")
+    table.insert(filter, "Java Files(*.java)")
+    table.insert(filter, "C# Files(*.csharp)")
+    table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
 	return filter
 end
