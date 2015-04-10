@@ -18,12 +18,16 @@ function parseFileType(filename)
 	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
-        return "bash", 0
+        return "bash", 0, "api/bash"
     end
     
 	if string.lower(name) == "cmakelists.txt" then
-		return "cmake", 0
+		return "cmake", 0, "api/cmake"
 	end
+    
+    if string.lower(file.fileExtension(name)) == "html" then
+        return "html", 0, "api/html"
+    end
     
     if string.lower(file.fileExtension(name)) == "py" then
         return "python", 0
@@ -56,6 +60,7 @@ function fileFilter()
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Bash Files(*.sh)")
+    table.insert(filter, "Html Files(*.html)")
     table.insert(filter, "Python Files(*.py)")
     table.insert(filter, "Tcl Files(*.tcl)")
     table.insert(filter, "Java Files(*.java)")
