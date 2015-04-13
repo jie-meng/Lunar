@@ -26,7 +26,7 @@ end
 
 -- main
 PRO = "Lunar.pro"
-ADDTOPRO = "build_config_linux"
+ADDTOPRO = "build_config_unix"
 rebuild(PRO, ADDTOPRO, MAKEFILE)
 print("rebuild release finished!")
 

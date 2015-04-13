@@ -5,11 +5,11 @@
 #ifdef _PLATFORM_WINDOWS_
 #include <windows.h>
 #endif // _PLATFORM_WINDOWS_
-#ifdef _PLATFORM_LINUX_
+#ifdef _PLATFORM_UNIX_
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#endif // _PLATFORM_LINUX_
+#endif // _PLATFORM_UNIX_
 
 namespace util
 {
@@ -254,7 +254,7 @@ struct Process::ProcessImpl
 
 #endif // _PLATFORM_WINDOWS_
 
-#ifdef _PLATFORM_LINUX_
+#ifdef _PLATFORM_UNIX_
 
 int executeProcess(const std::string& cmdline, const std::string& cur_path)
 {
@@ -517,7 +517,7 @@ struct Process::ProcessImpl
     OutputFunc output_func_;
 };
 
-#endif // _PLATFORM_LINUX_
+#endif // _PLATFORM_UNIX_
 
 Process::Process() :
     impl_(new ProcessImpl())

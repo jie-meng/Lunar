@@ -3,10 +3,10 @@ QT       += core gui
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
-DEFINES += _PLATFORM_LINUX_ \
+DEFINES += _PLATFORM_UNIX_ \
 			_GUI_
 
-INCLUDEPATH +=  src
+INCLUDEPATH += rc
 
 LIBS += -lpthread \
         -lqscintilla2
