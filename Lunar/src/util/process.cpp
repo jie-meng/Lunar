@@ -9,7 +9,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <sys/wait.h>
-#endif // _PLATFORM_UNIX_
+#endif // _PLATFORM_LINUX_
 
 namespace util
 {
@@ -84,9 +84,12 @@ struct Process::ProcessImpl
     ProcessImpl() :
         stdout_read_pipe_(NULL),
         stdout_write_pipe_(NULL),
+        stderr_read_pipe_(NULL),
+        stderr_write_pipe_(NULL),
         stdin_read_pipe_(NULL),
         stdin_write_pipe_(NULL),
         read_output_thread_(UtilBind(&ProcessImpl::readOutput, this)),
+        read_error_thread_(UtilBind(&ProcessImpl::readError, this)),
         output_func_(0)
     {
         memset(&pi_, 0, sizeof(pi_));
@@ -105,6 +108,9 @@ struct Process::ProcessImpl
         if (output)
         {
             if (!createPipe(stdout_read_pipe_, stdout_write_pipe_))
+                return false;
+
+            if (!createPipe(stderr_read_pipe_, stderr_write_pipe_))
                 return false;
         }
 
@@ -125,7 +131,10 @@ struct Process::ProcessImpl
         if (input)
             sui.hStdInput = stdin_read_pipe_;
         if (output)
+        {
             sui.hStdOutput = stdout_write_pipe_;
+            sui.hStdError = stderr_write_pipe_;
+        }
 
         char* path = NULL;
         if ("" != cur_path)
@@ -149,6 +158,7 @@ struct Process::ProcessImpl
         if (output)
         {
             read_output_thread_.start();
+            read_error_thread_.start();
         }
         return true;
     }
@@ -157,6 +167,7 @@ struct Process::ProcessImpl
     {
         DWORD write_cnt = 0;
         ::WriteFile(stdout_write_pipe_, kUtilProcessPipeKill.c_str(), kUtilProcessPipeKill.length(), &write_cnt, NULL);
+        ::WriteFile(stderr_write_pipe_, kUtilProcessPipeKill.c_str(), kUtilProcessPipeKill.length(), &write_cnt, NULL);
         //::FlushFileBuffers(stdout_write_pipe_);
     }
 
@@ -164,9 +175,11 @@ struct Process::ProcessImpl
     {
         sendQuitReadOutputCmd();
         closePipe(stdout_read_pipe_, stdout_write_pipe_);
+        closePipe(stderr_read_pipe_, stderr_write_pipe_);
         closePipe(stdin_read_pipe_, stdin_write_pipe_);
         closeProcess();
         read_output_thread_.join();
+        read_error_thread_.join();
         output_func_ = 0;
     }
 
@@ -193,6 +206,27 @@ struct Process::ProcessImpl
         {
             memset(buf, 0, sizeof(buf));
             if(!::ReadFile(stdout_read_pipe_, buf, sizeof(buf), &read, NULL))
+                break;
+            std::string read_str(buf);
+            if (strContains(read_str, kUtilProcessPipeKill))
+                break;
+
+            output_func_(read_str);
+        }
+    }
+
+    void readError()
+    {
+        if(!output_func_)
+            return;
+
+        DWORD read = 0;
+        char buf[kBufSize];
+
+        while (pi_.hProcess)
+        {
+            memset(buf, 0, sizeof(buf));
+            if(!::ReadFile(stderr_read_pipe_, buf, sizeof(buf), &read, NULL))
                 break;
             std::string read_str(buf);
             if (strContains(read_str, kUtilProcessPipeKill))
@@ -245,10 +279,13 @@ struct Process::ProcessImpl
 
     HANDLE stdout_read_pipe_;
     HANDLE stdout_write_pipe_;
+    HANDLE stderr_read_pipe_;
+    HANDLE stderr_write_pipe_;
     HANDLE stdin_read_pipe_;
     HANDLE stdin_write_pipe_;
     PROCESS_INFORMATION pi_;
     Thread read_output_thread_;
+    Thread read_error_thread_;
     OutputFunc output_func_;
 };
 
@@ -333,7 +370,6 @@ bool executeProcessAsyn(const std::string& cmdline, const std::string& cur_path)
         exit(0);
     default:
         {
-            msleep(500);
             return (0 != waitpid(pid, (int*)0, WNOHANG)) ? false : true;
         }
     }
@@ -344,10 +380,12 @@ struct Process::ProcessImpl
     ProcessImpl() :
         pid_(0),
         read_output_thread_(UtilBind(&ProcessImpl::readOutput, this)),
+        read_error_thread_(UtilBind(&ProcessImpl::readError, this)),
         output_func_(0)
     {
         memset(input_pipe_, 0, sizeof(input_pipe_));
         memset(output_pipe_, 0, sizeof(output_pipe_));
+        memset(error_pipe_, 0, sizeof(error_pipe_));
     }
 
     bool create(const std::string& cmdline, const std::string& cur_path, bool input, bool output, OutputFunc output_func)
@@ -366,6 +404,9 @@ struct Process::ProcessImpl
         if (output)
         {
             if (0 != pipe(output_pipe_))
+                return false;
+
+            if (0 != pipe(error_pipe_))
                 return false;
         }
 
@@ -395,6 +436,9 @@ struct Process::ProcessImpl
                 {
                     close(output_pipe_[1]);
                     read_output_thread_.start();
+
+                    close(error_pipe_[1]);
+                    read_error_thread_.start();
                 }
             }
             return true;
@@ -427,6 +471,10 @@ struct Process::ProcessImpl
             close(1);
             dup(output_pipe_[1]);
             closePipe(output_pipe_);
+
+            close(2);
+            dup(error_pipe_[1]);
+            closePipe(error_pipe_);
         }
 
         //exec
@@ -459,8 +507,10 @@ struct Process::ProcessImpl
     {
         closePipe(input_pipe_);
         closePipe(output_pipe_);
+        closePipe(error_pipe_);
         closeProcess();
         read_output_thread_.join();
+        read_error_thread_.join();
         output_func_ = 0;
     }
 
@@ -481,6 +531,26 @@ struct Process::ProcessImpl
         {
             memset(buf, 0, sizeof(buf));
             size_t len = ::read(output_pipe_[0], buf, sizeof(buf));
+            if (len <= 0)
+            {
+                break;
+            }
+
+            output_func_(std::string(buf));
+        }
+    }
+
+    void readError()
+    {
+        if (!output_func_)
+            return;
+
+        char buf[kBufSize] = {0};
+        while(true)
+        {
+    
+            memset(buf, 0, sizeof(buf));
+            size_t len = ::read(error_pipe_[0], buf, sizeof(buf));
             if (len <= 0)
             {
                 break;
@@ -513,11 +583,13 @@ struct Process::ProcessImpl
     pid_t pid_;
     int input_pipe_[2];
     int output_pipe_[2];
+    int error_pipe_[2];
     Thread read_output_thread_;
+    Thread read_error_thread_;
     OutputFunc output_func_;
 };
 
-#endif // _PLATFORM_UNIX_
+#endif // _PLATFORM_LINUX_
 
 Process::Process() :
     impl_(new ProcessImpl())
