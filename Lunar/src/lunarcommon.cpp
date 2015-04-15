@@ -129,7 +129,7 @@ void LunarGlobal::readCfg()
 
     autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
     autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
-    string font_type = text_cfg.getValue("Font.Type", string("Verdana"));
+    string font_type = text_cfg.getValue("Font.Type", string("Consolas"));
     int font_size = text_cfg.getValue("Font.Size", 10);
     font_ = QFont(StdStringToQString(font_type), font_size);
     mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);

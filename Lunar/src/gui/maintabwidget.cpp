@@ -92,7 +92,7 @@ void MainTabWidget::closeCurDocViewTab()
 void MainTabWidget::setDocViewFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont("Courier New", 10), this);
+    QFont font = QFontDialog::getFont(&ok, QFont("Consolas", 10), this);
     if ( ok ) {
         for (int i=0; i<count(); i++)
         {
