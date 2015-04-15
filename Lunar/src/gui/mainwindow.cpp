@@ -46,7 +46,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_find_action_(NULL),
     pedit_font_action_(NULL),
     prun_run_action_(NULL),
-    prun_run_syscmd_action_(NULL),
+    //prun_run_syscmd_action_(NULL),
     prun_stop_action_(NULL),
     phelp_about_action_(NULL),
     pstatus_text_(NULL),
@@ -218,15 +218,15 @@ void MainWindow::initActions()
     prun_run_action_->setIcon(QIcon(tr(":/res/run.png")));
     prun_run_action_->setShortcut(Qt::Key_F5);
 
-    prun_run_syscmd_action_ = new QAction(tr("Run in SysCmd"), this);
-    prun_run_syscmd_action_->setStatusTip(tr("Run in system cmd."));
-    prun_run_syscmd_action_->setIcon(QIcon(tr(":/res/run_syscmd.png")));
-    prun_run_syscmd_action_->setShortcut(tr("ctrl+F5"));
+//    prun_run_syscmd_action_ = new QAction(tr("Run in SysCmd"), this);
+//    prun_run_syscmd_action_->setStatusTip(tr("Run in system cmd."));
+//    prun_run_syscmd_action_->setIcon(QIcon(tr(":/res/run_syscmd.png")));
+//    prun_run_syscmd_action_->setShortcut(tr("ctrl+F5"));
 
     prun_stop_action_ = new QAction(tr("Stop"), this);
     prun_stop_action_->setStatusTip(tr("Stop."));
     prun_stop_action_->setIcon(QIcon(tr(":/res/stop.png")));
-    prun_stop_action_->setShortcut(Qt::Key_F7);
+    prun_stop_action_->setShortcut(Qt::Key_F8);
 
     phelp_about_action_ = new QAction(tr("&About"), this);
     phelp_about_action_->setStatusTip(tr("About."));
@@ -251,7 +251,7 @@ void MainWindow::initMenubar()
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
-    prun_menu->addAction(prun_run_syscmd_action_);
+//    prun_menu->addAction(prun_run_syscmd_action_);
     prun_menu->addAction(prun_stop_action_);
 
     QMenu* phelp_menu = menuBar()->addMenu(tr("&Help"));
@@ -305,7 +305,7 @@ void MainWindow::initConnections()
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
-    connect(prun_run_syscmd_action_, SIGNAL(triggered()), this, SLOT(runInSysCmd()));
+    //connect(prun_run_syscmd_action_, SIGNAL(triggered()), this, SLOT(runInSysCmd()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
     connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(helpAbout()));
     //finddialog
@@ -519,10 +519,10 @@ void MainWindow::run()
     runEx(false);
 }
 
-void MainWindow::runInSysCmd()
-{
-    runEx(true);
-}
+//void MainWindow::runInSysCmd()
+//{
+//    runEx(true);
+//}
 
 void MainWindow::stop()
 {

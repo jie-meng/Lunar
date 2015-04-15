@@ -48,7 +48,7 @@ private Q_SLOTS:
     void replace(const QString&, bool find_in_output);
     void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
     void run();
-    void runInSysCmd();
+    //void runInSysCmd();
     void stop();
     void setStatusText(const QString& text);
     void onBottomDockClose();
@@ -81,7 +81,7 @@ private:
     QAction* pedit_find_action_;
     QAction* pedit_font_action_;
     QAction* prun_run_action_;
-    QAction* prun_run_syscmd_action_;
+    //QAction* prun_run_syscmd_action_;
     QAction* prun_stop_action_;
     QAction* phelp_about_action_;
     QLabel* pstatus_text_;

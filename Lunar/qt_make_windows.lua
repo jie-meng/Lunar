@@ -6,5 +6,3 @@ if file.isPathExists(file.currentPath() .. "/release/Lunar.exe") == true then
 else
     print("make fail")
 end
-
-io.read()

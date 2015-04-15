@@ -29,5 +29,3 @@ PRO = "Lunar.pro"
 ADDTOPRO = "build_config_unix"
 rebuild(PRO, ADDTOPRO, MAKEFILE)
 print("rebuild release finished!")
-
-io.read()
