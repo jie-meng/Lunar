@@ -1,4 +1,5 @@
 #include "outputtext.h"
+#include <QApplication>
 #include <QMenu>
 #include <QAction>
 #include <QContextMenuEvent>
@@ -11,8 +12,8 @@ OutputText::OutputText(QWidget *parent) :
     QTextEdit(parent)
 {
     QPalette palette(this->palette());
-    palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(Qt::white));
-    palette.setColor(QPalette::Inactive, QPalette::Highlight, QColor(Qt::blue));
+    palette.setColor(QPalette::Inactive, QPalette::HighlightedText, QColor(QApplication::palette().highlightedText().color()));
+    palette.setColor(QPalette::Inactive, QPalette::Highlight, QColor(QApplication::palette().highlight().color()));
 
     this->setPalette(palette);
 }
