@@ -15,6 +15,7 @@ namespace gui
 class MainTabWidget;
 class FindDialog;
 class OutputWidget;
+class FileExplorerWidget;
 class DockWidgetEx;
 
 class MainWindow : public QMainWindow
@@ -43,6 +44,7 @@ private Q_SLOTS:
     void fileGotoPrev();
     void editFind();
     void editSetFont();
+    void viewFileExplorer();
     void helpAbout();
     bool find(const QString& str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
     void replace(const QString&, bool find_in_output);
@@ -52,6 +54,7 @@ private Q_SLOTS:
     void stop();
     void setStatusText(const QString& text);
     void onBottomDockClose();
+    void onLeftDockClose();
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
@@ -64,6 +67,7 @@ private:
     void InitMainWidget();
     void initConnections();
     void initFindDialog();
+    void initLeftDockWidget();
     void initBottomDockWidget();
     void initLuaExecutor();
     void initExtension();
@@ -80,6 +84,7 @@ private:
     QAction* pfile_goto_prev_action_;
     QAction* pedit_find_action_;
     QAction* pedit_font_action_;
+    QAction* pview_file_explorer_action_;
     QAction* prun_run_action_;
     //QAction* prun_run_syscmd_action_;
     QAction* prun_stop_action_;
@@ -87,9 +92,12 @@ private:
     QLabel* pstatus_text_;
     MainTabWidget* pmain_tabwidget_;
     FindDialog* pfind_dlg_;
+    FileExplorerWidget* pfile_explorer_widget_;
     OutputWidget* poutput_widget_;
     LuaExecutor* plua_executor_;
+    DockWidgetEx* pleft_widget_;
     DockWidgetEx* pbottom_widget_;
+    bool file_explorer_widget_on_;
     bool output_widget_on_;
 private:
     DISALLOW_COPY_AND_ASSIGN(MainWindow)

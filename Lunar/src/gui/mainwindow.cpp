@@ -19,6 +19,7 @@
 #include "maintabwidget.h"
 #include "finddialog.h"
 #include "aboutdialog.h"
+#include "fileexplorerwidget.h"
 #include "outputwidget.h"
 #include "luaexecutor.h"
 #include "dockwidgetex.h"
@@ -45,16 +46,19 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
     pedit_font_action_(NULL),
+    pview_file_explorer_action_(NULL),
     prun_run_action_(NULL),
-    //prun_run_syscmd_action_(NULL),
     prun_stop_action_(NULL),
     phelp_about_action_(NULL),
     pstatus_text_(NULL),
     pmain_tabwidget_(NULL),
     pfind_dlg_(NULL),
+    pfile_explorer_widget_(NULL),
     poutput_widget_(NULL),
     plua_executor_(NULL),
+    pleft_widget_(NULL),
     pbottom_widget_(NULL),
+    file_explorer_widget_on_(false),
     output_widget_on_(false)
 {
     //ctor
@@ -80,13 +84,25 @@ void MainWindow::processCmdParam()
     }
 }
 
+void MainWindow::initLeftDockWidget()
+{
+    pleft_widget_ = new DockWidgetEx(tr("File Explorer"), this);
+    pfile_explorer_widget_ = new FileExplorerWidget();
+    pleft_widget_->setWidget(pfile_explorer_widget_);
+    pleft_widget_->setAllowedAreas(Qt::LeftDockWidgetArea);
+    addDockWidget(Qt::LeftDockWidgetArea, pleft_widget_);
+
+    connect(pleft_widget_, SIGNAL(onClose()), this, SLOT(onLeftDockClose()));
+
+    //hide at first
+    pleft_widget_->close();
+}
+
 void MainWindow::initBottomDockWidget()
 {
     pbottom_widget_ = new DockWidgetEx(tr("Output"), this);
-
     poutput_widget_ = new OutputWidget();
     pbottom_widget_->setWidget(poutput_widget_);
-
     pbottom_widget_->setAllowedAreas(Qt::BottomDockWidgetArea);
     addDockWidget(Qt::BottomDockWidgetArea, pbottom_widget_);
 
@@ -94,6 +110,11 @@ void MainWindow::initBottomDockWidget()
 
     //hide at first
     pbottom_widget_->close();
+}
+
+void MainWindow::onLeftDockClose()
+{
+    file_explorer_widget_on_ = false;
 }
 
 void MainWindow::onBottomDockClose()
@@ -114,6 +135,7 @@ bool MainWindow::init()
     InitStatusBar();
     InitMainWidget();
     initFindDialog();
+    initLeftDockWidget();
     initBottomDockWidget();
     initLuaExecutor();
     initConnections();
@@ -213,15 +235,13 @@ void MainWindow::initActions()
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
 
+    pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
+    pview_file_explorer_action_->setStatusTip(tr("File Explorer"));
+
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
     prun_run_action_->setIcon(QIcon(tr(":/res/run.png")));
     prun_run_action_->setShortcut(Qt::Key_F5);
-
-//    prun_run_syscmd_action_ = new QAction(tr("Run in SysCmd"), this);
-//    prun_run_syscmd_action_->setStatusTip(tr("Run in system cmd."));
-//    prun_run_syscmd_action_->setIcon(QIcon(tr(":/res/run_syscmd.png")));
-//    prun_run_syscmd_action_->setShortcut(tr("ctrl+F5"));
 
     prun_stop_action_ = new QAction(tr("Stop"), this);
     prun_stop_action_->setStatusTip(tr("Stop."));
@@ -249,9 +269,11 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_font_action_);
 
+    QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
+    pview_menu->addAction(pview_file_explorer_action_);
+
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
-//    prun_menu->addAction(prun_run_syscmd_action_);
     prun_menu->addAction(prun_stop_action_);
 
     QMenu* phelp_menu = menuBar()->addMenu(tr("&Help"));
@@ -304,8 +326,8 @@ void MainWindow::initConnections()
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
+    connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
-    //connect(prun_run_syscmd_action_, SIGNAL(triggered()), this, SLOT(runInSysCmd()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
     connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(helpAbout()));
     //finddialog
@@ -314,6 +336,8 @@ void MainWindow::initConnections()
     connect(pfind_dlg_, SIGNAL(replace(const QString&, bool)), this, SLOT(replace(const QString&, bool)));
     connect(pfind_dlg_, SIGNAL(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)),
             this, SLOT(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
+    //file explorer
+    connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
     //luaexecutor
     connect(plua_executor_, SIGNAL(sendOutput(const QString&)),
             this, SLOT(addOutput(const QString&)));
@@ -384,6 +408,15 @@ void MainWindow::editFind()
 void MainWindow::editSetFont()
 {
     pmain_tabwidget_->setDocViewFont();
+}
+
+void MainWindow::viewFileExplorer()
+{
+    if (!file_explorer_widget_on_)
+    {
+        pleft_widget_->show();
+        file_explorer_widget_on_ = true;
+    }
 }
 
 bool MainWindow::find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output)
