@@ -16,12 +16,12 @@ function createCocosApis()
     end
     
     if #apis == 0 then
-        print("no api")
+        print("no api found")
         return
     end
     
     content = strJoin(apis, "\n")
-    file.writeTextFile("cocos2dx.api", content)
+    file.writeTextFile("cocos.api", content)
 end
 
 function parseApi(filename, apis)
@@ -47,4 +47,4 @@ function parseApi(filename, apis)
 end
 
 createCocosApis()
-print("create success")
+print("create api success")

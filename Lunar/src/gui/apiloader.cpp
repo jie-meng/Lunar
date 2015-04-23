@@ -80,8 +80,39 @@ void ApiLoader::loadApi(const std::string& api_paths)
     for (it = paths.begin(); it != paths.end(); ++it)
     {
         std::string path = strTrim(*it);
-
-        if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + path))
+        if (isPathDir(splitPathname(file_).first + "/" + path))
+        {
+            vector<string> api_vec;
+            findFilesInDirRecursively(splitPathname(file_).first + "/" + path,
+                                      api_vec,
+                                      kApisExt);
+            if (api_vec.size()>0)
+            {
+                for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
+                    papis_->load(StdStringToQString(*it1));
+            }
+        }
+        else if (isPathFile(splitPathname(file_).first + "/" + path))
+        {
+            papis_->load(StdStringToQString(splitPathname(file_).first + "/" + path));
+        }
+        else if (isPathDir(currentPath() + "/" + path))
+        {
+            vector<string> api_vec;
+            findFilesInDirRecursively(currentPath() + "/" + path,
+                                      api_vec,
+                                      kApisExt);
+            if (api_vec.size()>0)
+            {
+                for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
+                    papis_->load(StdStringToQString(*it1));
+            }
+        }
+        else if (isPathFile(currentPath() + "/" + path))
+        {
+            papis_->load(StdStringToQString(currentPath() + "/" + path));
+        }
+        else if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + path))
         {
             vector<string> api_vec;
             findFilesInDirRecursively(LunarGlobal::getInstance().getAppPath() + "/" + path,

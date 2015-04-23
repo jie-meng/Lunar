@@ -10,7 +10,7 @@ function parseFileType(filename)
 	end
 
     if string.lower(file.fileExtension(name)) == "lua" and file.isPathFile("./cocos_run.lua") then
-		return "lua", 1, "api/lua/standard,api/cocos2dx", "luaexec", "plugins/parse_supplement_api_cocos_lua.lua", "parseSupplementApi"
+		return "lua", 1, "cocos.api", "luaexec", "plugins/parse_supplement_api_cocos_lua.lua", "parseSupplementApi"
 	end
 
 	if string.lower(file.fileExtension(name)) == "lua" then
