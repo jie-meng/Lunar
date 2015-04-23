@@ -59,6 +59,7 @@ int DocView::s_new_docview_sequence_ = 0;
 
 DocView::DocView(const QString& pathname, QWidget* parent)
     : QWidget(parent),
+    save_dialog_init_dir_("."),
     pathname_(pathname),
     papis_(NULL),
     plexer_(NULL),
@@ -289,7 +290,7 @@ bool DocView::saveAsDoc()
 {
     //newed file
     QString title = "Save File : " + getTitle();
-    QString path = QFileDialog::getSaveFileName(this, title, ".", StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
+    QString path = QFileDialog::getSaveFileName(this, title, getSaveDialogInitDir(), StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
     if(path.length() == 0)
     {
         //do nothing

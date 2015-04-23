@@ -42,6 +42,8 @@ public:
               );
     inline FileType getFileType() const { return file_type_; }
     inline std::string getExecutor() const { return executor_; }
+    inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
+    inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
@@ -64,6 +66,7 @@ private:
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
 
+    QString save_dialog_init_dir_;
     QString pathname_;
     QString title_;
     QString selected_text_;

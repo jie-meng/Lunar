@@ -66,22 +66,47 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
     return tab_index;
 }
 
-bool MainTabWidget::saveCurDocViewTab()
+std::pair<bool, QString> MainTabWidget::saveCurDocViewTab(const QString& save_dialog_init_dir)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        return pdocview->saveDoc();
+    {
+        pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+        bool ret = pdocview->saveDoc();
+        return std::make_pair(ret, pdocview->getPathname());
+    }
     else
-        return false;
+    {
+        return std::make_pair(false, "");
+    }
 }
 
-bool MainTabWidget::saveAsCurDocViewTab()
+std::pair<bool, QString> MainTabWidget::saveAsCurDocViewTab(const QString& save_dialog_init_dir)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        return pdocview->saveAsDoc();
+    {
+        pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+        bool ret = pdocview->saveAsDoc();
+        return std::make_pair(ret, pdocview->getPathname());
+    }
     else
-        return false;
+    {
+        return std::make_pair(false, "");
+    }
+}
+
+void MainTabWidget::saveAllViewTabs(const QString& save_dialog_init_dir)
+{
+    for (int i=0; i<count(); i++)
+    {
+        DocView* pdocview = dynamic_cast<DocView*>(widget(i));
+        if(NULL != pdocview)
+        {
+            pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+            pdocview->saveDoc();
+        }
+    }
 }
 
 void MainTabWidget::closeCurDocViewTab()
@@ -125,16 +150,6 @@ void MainTabWidget::replaceInCurTextEdit(const QString& replace_with_text)
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
         pdocview->replace(replace_with_text);
-}
-
-void MainTabWidget::saveAllViewTabs()
-{
-    for (int i=0; i<count(); i++)
-    {
-        DocView* pdocview = dynamic_cast<DocView*>(widget(i));
-        if(NULL != pdocview)
-            pdocview->saveDoc();
-    }
 }
 
 void MainTabWidget::updateTabTitleAndTip(DocView* pdocview)

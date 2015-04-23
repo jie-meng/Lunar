@@ -214,11 +214,11 @@ void MainWindow::initActions()
 
     pfile_close_action_ = new QAction(tr("Close"), this);
     pfile_close_action_->setStatusTip(tr("Close current file."));
-    pfile_close_action_->setShortcut(tr("ctrl+w"));
+    pfile_close_action_->setShortcut(Qt::CTRL + Qt::Key_W);
 
-    pfile_dump_action_ = new QAction(tr("&Dump output"), this);
+    pfile_dump_action_ = new QAction(tr("Du&mp output"), this);
     pfile_dump_action_->setStatusTip(tr("Dump output."));
-    pfile_dump_action_->setShortcut(Qt::Key_F12);
+    pfile_dump_action_->setShortcut(Qt::CTRL + Qt::Key_M);
 
     pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
     pfile_goto_next_action_->setStatusTip(tr("Goto next document"));
@@ -236,7 +236,8 @@ void MainWindow::initActions()
     pedit_font_action_->setStatusTip(tr("Set font."));
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
-    pview_file_explorer_action_->setStatusTip(tr("File Explorer"));
+    pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
+    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
 
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
@@ -338,6 +339,8 @@ void MainWindow::initConnections()
             this, SLOT(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
     //file explorer
     connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
+    connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
+            connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
     //luaexecutor
     connect(plua_executor_, SIGNAL(sendOutput(const QString&)),
             this, SLOT(addOutput(const QString&)));
@@ -352,7 +355,7 @@ void MainWindow::fileNew()
 
 void MainWindow::fileOpen()
 {
-    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), ".", StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
+    QString path = QFileDialog::getOpenFileName(this, tr("Open File"), pfile_explorer_widget_->getCurrentSelectedDir(), StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
     if(path.length() == 0)
     {
         //QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
@@ -366,17 +369,22 @@ void MainWindow::fileOpen()
 
 void MainWindow::fileSave()
 {
-    pmain_tabwidget_->saveCurDocViewTab();
+    std::pair<bool, QString> ret = pmain_tabwidget_->saveCurDocViewTab(pfile_explorer_widget_->getCurrentSelectedDir());
+    if (ret.first)
+        Q_EMIT fileSaved(ret.second);
 }
 
 void MainWindow::fileSaveAs()
 {
-    pmain_tabwidget_->saveAsCurDocViewTab();
+    std::pair<bool, QString> ret = pmain_tabwidget_->saveAsCurDocViewTab(pfile_explorer_widget_->getCurrentSelectedDir());
+    if (ret.first)
+        Q_EMIT fileSaved(ret.second);
 }
 
 void MainWindow::fileSaveAll()
 {
-    pmain_tabwidget_->saveAllViewTabs();
+    pmain_tabwidget_->saveAllViewTabs(pfile_explorer_widget_->getCurrentSelectedDir());
+    Q_EMIT allFilesSaved();
 }
 
 void MainWindow::fileClose()
@@ -415,6 +423,7 @@ void MainWindow::viewFileExplorer()
     if (!file_explorer_widget_on_)
     {
         pleft_widget_->show();
+        pfile_explorer_widget_->loadFilesIfFirstTime();
         file_explorer_widget_on_ = true;
     }
 }

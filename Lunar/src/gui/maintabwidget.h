@@ -18,9 +18,9 @@ public:
     explicit MainTabWidget(QWidget* parent = 0);
     virtual ~MainTabWidget();
     int addDocViewTab(const QString& pathname);
-    bool saveCurDocViewTab();
-    bool saveAsCurDocViewTab();
-    void saveAllViewTabs();
+    std::pair<bool, QString> saveCurDocViewTab(const QString& save_dialog_init_dir = tr("."));
+    std::pair<bool, QString> saveAsCurDocViewTab(const QString& save_dialog_init_dir = tr("."));
+    void saveAllViewTabs(const QString& save_dialog_init_dir = tr("."));
     void closeCurDocViewTab();
     void setDocViewFont();
     bool findInCurTextEdit(const QString& expr,

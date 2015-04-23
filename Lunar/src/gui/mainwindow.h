@@ -25,6 +25,9 @@ public:
     explicit MainWindow(QWidget* parent = 0);
     virtual ~MainWindow();
     bool init();
+Q_SIGNALS:
+    void fileSaved(const QString&);
+    void allFilesSaved();
 public Q_SLOTS:
     void openDoc(const QString& filepath);
     //output

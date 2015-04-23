@@ -1,4 +1,5 @@
 #include "lunarapi.h"
+#include <vector>
 #include <stdlib.h>
 #include <qapplication.h>
 #include <qdatastream.h>
@@ -8,13 +9,9 @@
 #include <qmap.h>
 #include <qtextstream.h>
 #include <qthread.h>
-
 #include <QLibraryInfo>
 #include <QMessageBox>
-
 #include "Qsci/qscilexer.h"
-
-#include <vector>
 #include "util/base.hpp"
 #include "lunarcommon.h"
 
