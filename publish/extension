@@ -9,25 +9,25 @@ function parseFileType(filename)
 		end
 	end
 
+    if string.lower(file.fileExtension(name)) == "lua" and file.isPathFile("./cocos_run.lua") then
+		return "lua", 1, "api/lua/standard", "luaexec", "plugins/parse_supplement_api_cocos_lua.lua", "parseSupplementApi"
+	end
+
 	if string.lower(file.fileExtension(name)) == "lua" then
 		return "lua", 1, "api/lua", "luaexec", "plugins/parse_supplement_api_lua.lua", "parseSupplementApi"
 	end
     
 	if string.lower(file.fileExtension(name)) == "m" then
-		return "octave", 0, "api/octave", "octave", "plugins/parse_supplement_api_octave.lua", "parseSupplementApi"
+		return "octave", 0, "api/octave", "C:/Users/jmeng/programs/Octave-3.8.2/bin/octave.exe", "plugins/parse_supplement_api_octave.lua", "parseSupplementApi"
 	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
-        return "bash", 0, "api/bash"
+        return "bash", 0
     end
     
 	if string.lower(name) == "cmakelists.txt" then
-		return "cmake", 0, "api/cmake"
+		return "cmake", 0
 	end
-    
-    if string.lower(file.fileExtension(name)) == "html" then
-        return "html", 0, "api/html"
-    end
     
     if string.lower(file.fileExtension(name)) == "py" then
         return "python", 0
@@ -60,7 +60,6 @@ function fileFilter()
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Bash Files(*.sh)")
-    table.insert(filter, "Html Files(*.html)")
     table.insert(filter, "Python Files(*.py)")
     table.insert(filter, "Tcl Files(*.tcl)")
     table.insert(filter, "Java Files(*.java)")
