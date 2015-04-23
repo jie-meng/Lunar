@@ -1,0 +1,1 @@
+os.execute(file.currentPath() .. "/runtime/win32/LCocos.exe")

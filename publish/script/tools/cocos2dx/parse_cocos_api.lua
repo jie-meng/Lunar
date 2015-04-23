@@ -1,22 +1,27 @@
 kRegexFunctionLua = "function\\s+(?<api>(\\w+((\\.|:)\\w+)*\\s*\\(.*\\)))"
 
---apis = {}
-
-function parseSupplementApi(filename)
-    
-    --[[if (#apis > 0) then
-        return apis
-    end--]]
+function createCocosApis()
     
     local apis = {}
-  
-    t_app = file.findFilesInDirRecursively(file.currentPath() .. "/src/app", "lua")
     
-    for k, v in pairs(t_app) do
+    t1 = file.findFilesInDirRecursively(file.currentPath() .. "/src/cocos", "lua")
+    t2 = file.findFilesInDirRecursively(file.currentPath() .. "/src/package", "lua")
+    
+    for k, v in pairs(t1) do
         parseApi(v, apis)
     end
     
-    return apis
+    for k, v in pairs(t2) do
+        parseApi(v, apis)
+    end
+    
+    if #apis == 0 then
+        print("no api")
+        return
+    end
+    
+    content = strJoin(apis, "\n")
+    file.writeTextFile("cocos2dx.api", content)
 end
 
 function parseApi(filename, apis)
@@ -40,3 +45,6 @@ function parseApi(filename, apis)
     
     regex.destroy(re_func)
 end
+
+createCocosApis()
+print("create success")
