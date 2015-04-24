@@ -45,6 +45,14 @@ function parseFileType(filename)
         return "csharp", 0
     end
     
+    if string.lower(file.fileExtension(name)) == "html" then
+        return "xml", 0
+    end
+    
+    if string.lower(file.fileExtension(name)) == "html" then
+        return "xml", 0
+    end
+    
     if string.lower(file.fileExtension(name)) == "c" or
        string.lower(file.fileExtension(name)) == "h" or
        string.lower(file.fileExtension(name)) == "cpp" or
