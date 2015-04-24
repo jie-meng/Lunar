@@ -27,8 +27,10 @@ Makefile*
 *.Debug
 
 # dir
-/[Dd]ebug/
-/[Rr]elease/
+/[Dd]ebug
+/[Rr]elease
+/[Dd]ebug/*
+/[Rr]elease/*
 
 # QtCreator
 Lunar.pro

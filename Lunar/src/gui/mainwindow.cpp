@@ -342,8 +342,8 @@ void MainWindow::initConnections()
     connect(pfind_dlg_, SIGNAL(find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)),
             this, SLOT(find(const QString&, bool, Qt::CaseSensitivity, bool, bool, bool, bool)));
     connect(pfind_dlg_, SIGNAL(replace(const QString&, bool)), this, SLOT(replace(const QString&, bool)));
-    connect(pfind_dlg_, SIGNAL(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)),
-            this, SLOT(ReplaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
+    connect(pfind_dlg_, SIGNAL(replaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)),
+            this, SLOT(replaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
     //file explorer
     connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));

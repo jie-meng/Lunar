@@ -6,6 +6,7 @@
 #include <QTabBar>
 #include <QTabWidget>
 #include "finddialog.h"
+#include "lunarcommon.h"
 
 namespace gui
 {
