@@ -47,6 +47,8 @@ bool Extension::initLuaState()
     }
     else
     {
+        lua_state_.registerFunction("MessageBox", scriptMessage);
+        error_information_ = "";
         lua_state_ok_ = true;
     }
 
@@ -71,6 +73,7 @@ bool Extension::parseFilename(const std::string& filename,
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
         luaPop(lua_state_.getState(), -1);
 
         return false;
@@ -115,6 +118,7 @@ std::string Extension::fileFilter()
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
         luaPop(lua_state_.getState(), -1);
 
         return "";
@@ -146,7 +150,44 @@ std::string Extension::fileFilter()
         }
         else
         {
+            luaPop(lua_state_.getState(), -1);
             return "";
+        }
+    }
+}
+
+bool Extension::ignoreFile(const std::string& filename)
+{
+    if (!lua_state_ok_)
+        return false;
+
+    error_information_ = "";
+
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncIgnoreFile());
+    luaPushString(lua_state_.getState(), filename);
+
+    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    if (0 != err)
+    {
+        error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
+        luaPop(lua_state_.getState(), -1);
+
+        return false;
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+        if (ret_cnt > 0)
+        {
+            bool ret = luaGetBoolean(lua_state_.getState(), 1, false);
+            luaPop(lua_state_.getState(), -1);
+            return ret;
+        }
+        else
+        {
+            luaPop(lua_state_.getState(), -1);
+            return false;
         }
     }
 }

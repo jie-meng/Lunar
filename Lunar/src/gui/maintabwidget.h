@@ -22,6 +22,7 @@ public:
     std::pair<bool, QString> saveAsCurDocViewTab(const QString& save_dialog_init_dir = tr("."));
     void saveAllViewTabs(const QString& save_dialog_init_dir = tr("."));
     void closeCurDocViewTab();
+    void closeAllDocViewTabs();
     void setDocViewFont();
     bool findInCurTextEdit(const QString& expr,
                            bool re,

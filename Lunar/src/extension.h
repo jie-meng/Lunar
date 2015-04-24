@@ -17,6 +17,7 @@ public:
                std::string* pout_parse_supplement_api_script = NULL,
                std::string* pout_parse_supplement_api_func = NULL);
     std::string fileFilter();
+    bool ignoreFile(const std::string& filename);
 private:
     bool initLuaState();
 private:

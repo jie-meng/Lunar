@@ -42,6 +42,7 @@ private Q_SLOTS:
     void fileSaveAs();
     void fileSaveAll();
     void fileClose();
+    void fileCloseAll();
     void fileDump();
     void fileGotoNext();
     void fileGotoPrev();
@@ -82,6 +83,7 @@ private:
     QAction* pfile_save_as_action_;
     QAction* pfile_save_all_action_;
     QAction* pfile_close_action_;
+    QAction* pfile_close_all_action_;
     QAction* pfile_dump_action_;
     QAction* pfile_goto_next_action_;
     QAction* pfile_goto_prev_action_;

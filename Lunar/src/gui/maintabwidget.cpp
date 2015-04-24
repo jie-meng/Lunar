@@ -63,6 +63,11 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
     }
 
     setCurrentIndex(tab_index);
+
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if (pdocview)
+        pdocview->focusOnText();
+
     return tab_index;
 }
 
@@ -112,6 +117,14 @@ void MainTabWidget::saveAllViewTabs(const QString& save_dialog_init_dir)
 void MainTabWidget::closeCurDocViewTab()
 {
     tabClose(indexOf(currentWidget()));
+}
+
+void MainTabWidget::closeAllDocViewTabs()
+{
+    while (count() > 0)
+    {
+        tabClose(0);
+    }
 }
 
 void MainTabWidget::setDocViewFont()
@@ -203,7 +216,7 @@ void MainTabWidget::tabClose(int index)
         DocView* pdocview = dynamic_cast<DocView*>(widget(index));
         if(NULL != pdocview)
         {
-            int ret = QMessageBox::question(NULL, "question", "Save File?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
+            int ret = QMessageBox::question(NULL, "question", "Save File " + pdocview->getPathname() + "?", QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes);
             if(ret == QMessageBox::Yes)
                 pdocview->saveDoc();
             removeTab(index);

@@ -27,6 +27,13 @@ void LunarMsgBoxQ(const QString& str)
     QMessageBox::information(NULL, QObject::tr("Message"), str);
 }
 
+int scriptMessage(lua_State* plua_state)
+{
+    string message = luaGetString(plua_state, 1, "");
+    LunarMsgBox(message);
+    return 0;
+}
+
 ////////////////////////////////////////////////////
 // class name : LogSocket
 // description :
@@ -91,13 +98,13 @@ void LunarGlobal::init(int argc, char* argv[])
 \t-- Lunar extension\n\
 \tif name == \"extension\" then\n\
 \t\tif file.isPathFile(path .. \"/Lunar\") or file.isPathFile(path .. \"/Lunar.exe\") then\n\
-\t\t\treturn \"lua\", \"api/lua\"\n\
+\t\t\treturn \"lua\", \"apis/lua\"\n\
 \t\tend\n\
 \tend\n\
 \n\
 \t-- lua\n\
 \tif string.lower(file.fileExtension(name)) == \"lua\" then\n\
-\t\treturn \"lua\", \"api/lua\", \"luaexec\"\n\
+\t\treturn \"lua\", \"apis/lua\", \"luaexec\"\n\
 \tend\n\
 end\n\
 \n\
@@ -105,7 +112,24 @@ function fileFilter()\n\
 \tfilter = {}\n\
 \ttable.insert(filter, \"Lua Files(*.lua)\")\n\
 \treturn filter\n\
+end\n\
+\n\
+function ignoreFile(filename)\n\
+\tlocal ext = file.fileExtension(filename)\n\
+\tif ext == \"so\" or\n\
+\t\text == \"o\" or\n\
+\t\text == \"lib\" or\n\
+\t\text == \"dll\" or\n\
+\t\text == \"obj\" or\n\
+\t\text == \"exe\" or\n\
+\t\text == \"exp\" or\n\
+\t\text == \"bin\" then\n\
+\t\treturn true\n\
+\tend\n\
+\n\
+\treturn false\n\
 end\n";
+
         writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
     }
 }
@@ -136,6 +160,7 @@ void LunarGlobal::readCfg()
     mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
+    extension_func_ignore_file_ = text_cfg.getValue("Extension.Func.IgnoreFile", "ignoreFile");
 }
 
 void LunarGlobal::writeCfg()
@@ -150,6 +175,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("MainWindow.Height", mainwindow_height_);
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
+    text_cfg.setValue("Extension.Func.IgnoreFile", extension_func_ignore_file_);
 
     text_cfg.save();
 }

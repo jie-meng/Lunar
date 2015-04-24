@@ -16,8 +16,8 @@ class FileExplorerWidget : public QTreeWidget
     Q_OBJECT
 public:
     explicit FileExplorerWidget(QWidget *parent = 0);
+    virtual ~FileExplorerWidget();
     QString getCurrentSelectedDir();
-    void loadFilesIfFirstTime();
 signals:
     void openFile(const QString&);
 public slots:
@@ -29,16 +29,19 @@ protected:
 private:
     void init();
     void initConnections();
-    void loadPathFilesRecursively(const std::string& path, QTreeWidgetItem* pparent);
+    bool loadNode(QTreeWidgetItem* item);
+    QString getNodeAbsolutePath(QTreeWidgetItem* item);
+    QString getNodeRelativePath(QTreeWidgetItem* item);
 private Q_SLOTS:
-    void reloadFiles();
+    void loadRoot();
+    void newFolder();
+    void newFolderOk(const QString& folder_name);
     void deleteCurrentItem();
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
     void onItemReturn(QTreeWidgetItem *item, int column);
     void onDeleteItems(QTreeWidgetItem* item, int column);
-    QTreeWidgetItem* findDirItemWithFile(const QString& file);
+    QTreeWidgetItem* findDirNodeItemWithFile(const QString& file);
 private:
-    bool loaded_;
 };
 
 }

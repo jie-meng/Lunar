@@ -87,6 +87,11 @@ DocView::~DocView()
     clearLexerApi();
 }
 
+void DocView::focusOnText()
+{
+    ptext_edit_->setFocus();
+}
+
 void DocView::clearLexerApi()
 {
     if (plexer_)
