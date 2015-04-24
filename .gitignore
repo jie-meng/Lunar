@@ -25,6 +25,10 @@ Makefile*
 *.Release
 *.Debug
 
+# dir
+/[Dd]ebug/
+/[Rr]elease/
+
 # QtCreator
 
 *.autosave
