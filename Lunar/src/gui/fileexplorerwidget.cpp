@@ -1,4 +1,5 @@
 #include "fileexplorerwidget.h"
+#include <algorithm>
 #include <vector>
 #include <QTreeWidgetItem>
 #include <QIcon>
@@ -113,6 +114,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         vector<string> vec;
         DirFilter dir_filter;
         listFiles(str_path, vec, &dir_filter);
+        sort(vec.begin(), vec.end());        
         vector<string>::iterator it;
         for (it = vec.begin(); it != vec.end(); ++it)
         {
@@ -125,6 +127,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         vec.clear();
         FileFilter file_filter;
         listFiles(str_path, vec, &file_filter);
+        sort(vec.begin(), vec.end());        
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));

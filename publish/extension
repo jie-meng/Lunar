@@ -90,9 +90,17 @@ function ignoreFile(filename)
 		ext == "7z" or
 		ext == "rar" or
 		ext == "bmp" or
+        ext == "ico" or
 		ext == "png" or
 		ext == "jpg" or
 		ext == "jpeg" or
+        ext == "wav" or
+        ext == "ogg" or
+        ext == "mp3" or
+        ext == "wma" or
+        ext == "wmv" or
+        ext == "rmvb" or
+        ext == "avi" or
 		ext == "pdf" or
 		ext == "chm" or
 		ext == "doc" or
