@@ -60,6 +60,8 @@
 		<Unit filename="src/gui/fileexplorerwidget.h" />
 		<Unit filename="src/gui/finddialog.cpp" />
 		<Unit filename="src/gui/finddialog.h" />
+		<Unit filename="src/gui/inputwidget.cpp" />
+		<Unit filename="src/gui/inputwidget.h" />
 		<Unit filename="src/gui/lunarapi.cpp" />
 		<Unit filename="src/gui/lunarapi.h" />
 		<Unit filename="src/gui/maintabwidget.cpp" />
@@ -86,6 +88,8 @@
 		<Unit filename="src/util/base/memory.hpp" />
 		<Unit filename="src/util/base/out.cpp" />
 		<Unit filename="src/util/base/out.hpp" />
+		<Unit filename="src/util/base/platform.cpp" />
+		<Unit filename="src/util/base/platform.hpp" />
 		<Unit filename="src/util/base/string.cpp" />
 		<Unit filename="src/util/base/string.hpp" />
 		<Unit filename="src/util/base/time.cpp" />

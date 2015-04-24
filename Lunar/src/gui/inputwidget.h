@@ -13,7 +13,7 @@ class InputWidget : public QDialog
 {
     Q_OBJECT
 public:
-    explicit InputWidget(const QString& label, QDialog *parent = 0);
+    explicit InputWidget(const QString& label, const QString& text = tr(""), QDialog *parent = 0);
 
 signals:
     void inputOk(const QString&);
@@ -29,6 +29,7 @@ private:
     void initConnections();
 private:
     QString label_name_;
+    QString text_;
     QLabel* plabel_;
     QLineEdit* pinput_line_;
     QPushButton* pok_btn_;

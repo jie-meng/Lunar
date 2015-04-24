@@ -68,10 +68,15 @@ void FileExplorerWidget::contextMenuEvent(QContextMenuEvent *e)
     QAction *act_refresh = menu->addAction(tr("Refresh"));
     menu->addSeparator();
     QAction *act_new_folder = menu->addAction(tr("New Folder"));
+    QAction *act_rename = menu->addAction(tr("Rename"));
     QAction *act_delete = menu->addAction(tr("Delete"));
+
+    if (isPathDir(QStringToStdString(getNodeAbsolutePath(currentItem()))))
+        act_rename->setEnabled(false);
 
     connect(act_refresh, SIGNAL(triggered()),this,SLOT(loadRoot()));
     connect(act_new_folder, SIGNAL(triggered()), this, SLOT(newFolder()));
+    connect(act_rename, SIGNAL(triggered()),this,SLOT(renameCurrentItem()));
     connect(act_delete, SIGNAL(triggered()),this,SLOT(deleteCurrentItem()));
 
     menu->exec(e->globalPos());
@@ -280,12 +285,40 @@ void FileExplorerWidget::newFolderOk(const QString& folder_name)
     if (mkDir(QStringToStdString(path + "/" + folder_name)))
         loadNode(currentItem());
     else
-        LunarMsgBox(strFormat("Error: Folder %s already exists in %s.", QStringToStdString(folder_name).c_str(), QStringToStdString(path).c_str()));
+        LunarMsgBox(strFormat("Error: Folder \"%s\" already exists in %s.", QStringToStdString(folder_name).c_str(), QStringToStdString(path).c_str()));
 }
 
 void FileExplorerWidget::deleteCurrentItem()
 {
     onDeleteItems(currentItem(), currentColumn());
+}
+
+void FileExplorerWidget::renameCurrentItem()
+{
+    QString path = getNodeAbsolutePath(currentItem());
+    if (isPathFile(QStringToStdString(path)))
+    {
+        InputWidget inputwidget(QString(tr("Rename ") + currentItem()->text(0) + " to"),
+                                currentItem()->text(0));
+        connect(&inputwidget, SIGNAL(inputOk(const QString&)), this, SLOT(renameCurrentItemOk(const QString&)));
+        inputwidget.exec();
+    }
+}
+
+void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
+{
+    string str_name = QStringToStdString(new_name);
+    string str_path = QStringToStdString(getNodeAbsolutePath(currentItem()));
+    if (fileRename(str_path, splitPathname(str_path).first + "/" + str_name))
+    {
+        QTreeWidgetItem* parent = currentItem()->parent();
+        loadNode(parent);
+        parent->setExpanded(true);
+    }
+    else
+    {
+        LunarMsgBox("Error: Rename failed.");
+    }
 }
 
 void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)

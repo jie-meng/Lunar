@@ -4,13 +4,18 @@
 #include <QPushButton>
 #include <QHBoxLayout>
 #include <QVBoxLayout>
-#include "util/base.hpp"
+#include "util/file.hpp"
+#include "lunarcommon.h"
+
+using namespace std;
+using namespace util;
 
 namespace gui {
 
-InputWidget::InputWidget(const QString& label, QDialog *parent) :
+InputWidget::InputWidget(const QString& label, const QString& text, QDialog *parent) :
     QDialog(parent),
     label_name_(label),
+    text_(text),
     pinput_line_(NULL),
     pok_btn_(NULL),
     pcancel_btn_(NULL)
@@ -28,9 +33,16 @@ void InputWidget::init()
 void InputWidget::initFields()
 {
     plabel_ = new QLabel(label_name_);
-    pinput_line_ = new QLineEdit();
+    pinput_line_ = new QLineEdit(text_);
     pok_btn_ = new QPushButton("Ok");
     pcancel_btn_ = new QPushButton("Cancel");
+
+    if (pinput_line_->text().length() != 0)
+    {
+        string name = QStringToStdString(pinput_line_->text());
+        name = fileBaseName(name);
+        pinput_line_->setSelection(0, name.length());
+    }
 
     pok_btn_->setDefault(true);
 }
@@ -53,7 +65,6 @@ void InputWidget::initLayout()
 
 void InputWidget::initConnections()
 {
-    //connect(pinput_line_, SIGNAL(returnPressed()), this, SLOT(ok()));
     connect(pok_btn_, SIGNAL(clicked()), this, SLOT(ok()));
     connect(pcancel_btn_, SIGNAL(clicked()), this, SLOT(cancel()));
 }

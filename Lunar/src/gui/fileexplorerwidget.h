@@ -37,6 +37,8 @@ private Q_SLOTS:
     void newFolder();
     void newFolderOk(const QString& folder_name);
     void deleteCurrentItem();
+    void renameCurrentItem();
+    void renameCurrentItemOk(const QString& new_name);
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
     void onItemReturn(QTreeWidgetItem *item, int column);
     void onDeleteItems(QTreeWidgetItem* item, int column);
