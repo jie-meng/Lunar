@@ -599,15 +599,15 @@ void DocView::setEditTextFont(const QFont& font)
 
 void DocView::selectionChanged()
 {
-//    if (ptext_edit_->hasSelectedText())
-//    {
-//        if (selected_text_ != ptext_edit_->selectedText())
-//        {
-//            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
-//            ptext_edit_->recolor(0);
-//            selected_text_ = ptext_edit_->selectedText();
-//        }
-//    }
+    if (ptext_edit_->hasSelectedText())
+    {
+        if (selected_text_ != ptext_edit_->selectedText())
+        {
+            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
+            ptext_edit_->recolor(0);
+            selected_text_ = ptext_edit_->selectedText();
+        }
+    }
 }
 
 } // namespace gui
