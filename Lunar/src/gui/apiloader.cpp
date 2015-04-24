@@ -16,13 +16,6 @@ namespace gui
 const std::string kApisExt = "api";
 
 //ApiLoader
-int SupplementScriptMessage(lua_State* plua_state)
-{
-    string message = luaGetString(plua_state, 1, "");
-    LunarMsgBox(message);
-    return 0;
-}
-
 ApiLoader::ApiLoader(const std::string& file,
                          QsciAPIsEx* papis) :
     file_(file),
@@ -64,7 +57,7 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
     else
     {
 
-        lua_state_.registerFunction("MessageBox", SupplementScriptMessage);
+        lua_state_.registerFunction("MessageBox", scriptMessage);
         error_information_ = "";
         lua_state_ok_ = true;
     }

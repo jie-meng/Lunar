@@ -41,6 +41,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_save_as_action_(NULL),
     pfile_save_all_action_(NULL),
     pfile_close_action_(NULL),
+    pfile_close_all_action_(NULL),
     pfile_dump_action_(NULL),
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
@@ -216,6 +217,10 @@ void MainWindow::initActions()
     pfile_close_action_->setStatusTip(tr("Close current file."));
     pfile_close_action_->setShortcut(Qt::CTRL + Qt::Key_W);
 
+    pfile_close_all_action_ = new QAction(tr("Close all"), this);
+    pfile_close_all_action_->setStatusTip(tr("Close all files."));
+    pfile_close_all_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_W);
+
     pfile_dump_action_ = new QAction(tr("Du&mp output"), this);
     pfile_dump_action_->setStatusTip(tr("Dump output."));
     pfile_dump_action_->setShortcut(Qt::CTRL + Qt::Key_M);
@@ -262,6 +267,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_save_as_action_);
     pfile_menu->addAction(pfile_save_all_action_);
     pfile_menu->addAction(pfile_close_action_);
+    pfile_menu->addAction(pfile_close_all_action_);
     pfile_menu->addAction(pfile_dump_action_);
     pfile_menu->addAction(pfile_goto_next_action_);
     pfile_menu->addAction(pfile_goto_prev_action_);
@@ -322,6 +328,7 @@ void MainWindow::initConnections()
     connect(pfile_save_as_action_, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(fileSaveAll()));
     connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(fileClose()));
+    connect(pfile_close_all_action_, SIGNAL(triggered()), this, SLOT(fileCloseAll()));
     connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(fileDump()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
@@ -362,6 +369,9 @@ void MainWindow::fileOpen()
     }
     else
     {
+        if (Extension::getInstance().ignoreFile(QStringToStdString(path)))
+            return;
+
         pmain_tabwidget_->addDocViewTab(path);
         //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
     }
@@ -390,6 +400,11 @@ void MainWindow::fileSaveAll()
 void MainWindow::fileClose()
 {
     pmain_tabwidget_->closeCurDocViewTab();
+}
+
+void MainWindow::fileCloseAll()
+{
+    pmain_tabwidget_->closeAllDocViewTabs();
 }
 
 void MainWindow::fileDump()
@@ -423,9 +438,10 @@ void MainWindow::viewFileExplorer()
     if (!file_explorer_widget_on_)
     {
         pleft_widget_->show();
-        pfile_explorer_widget_->loadFilesIfFirstTime();
         file_explorer_widget_on_ = true;
     }
+
+    pfile_explorer_widget_->setFocus();
 }
 
 bool MainWindow::find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output)
@@ -496,13 +512,18 @@ void MainWindow::openDoc(const QString& filepath)
     }
 
     if(util::isPathExists(file_path))
+    {
         if(util::isPathFile(file_path))
         {
+            if (Extension::getInstance().ignoreFile(file_path))
+                return;
+
             pmain_tabwidget_->addDocViewTab(filepath);
             if (this->isMinimized())
                 this->showNormal();
             this->activateWindow();
         }
+    }
 }
 
 void MainWindow::addOutput(const QString& output)

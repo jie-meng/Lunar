@@ -6,6 +6,8 @@
 #include <QtGui/QFont>
 #include "util/net.hpp"
 
+struct lua_State;
+
 inline QString StdStringToQString(const std::string &s)
 {
     return QString(QString::fromLocal8Bit(s.c_str()));
@@ -19,6 +21,7 @@ inline std::string QStringToStdString(const QString &s)
 void InitLunarCommon(int argc, char* argv[]);
 void LunarMsgBox(const std::string& str);
 void LunarMsgBoxQ(const QString& str);
+int scriptMessage(lua_State* plua_state);
 
 ////////////////////////////////////////////////////
 // class name : LogSocket
@@ -37,9 +40,6 @@ private:
 private:
     DISALLOW_COPY_AND_ASSIGN(LogSocket)
 };
-
-const std::string kFileTypeLua = "lua";
-const std::string kFileTypeOctave = "octave";
 
 ////////////////////////////////////////////////////
 // class name : LunarGlobal
@@ -72,6 +72,7 @@ public:
     inline std::string getExtensionFile() const { return "extension"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
+    inline std::string getExtensionFuncIgnoreFile() const { return extension_func_ignore_file_; }
     inline std::string getFileFilter() const { return file_filter_; }
     void parseExtensionFileFilter();
 private:
@@ -90,6 +91,7 @@ private:
     size_t mainwindow_height_;
     std::string extension_func_parsefiletype_;
     std::string extension_func_filefilter_;
+    std::string extension_func_ignore_file_;
     std::string file_filter_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)

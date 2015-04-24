@@ -23,6 +23,7 @@ class DocView : public QWidget
 public:
     explicit DocView(const QString& pathname, QWidget* parent = 0);
     virtual ~DocView();
+    void focusOnText();
     QsciScintilla* getTextEdit() const { return ptext_edit_; }
     QString getPathname() const { return pathname_; }
     QString getTitle() const { return title_; }
