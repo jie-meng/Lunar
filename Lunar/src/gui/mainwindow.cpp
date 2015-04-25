@@ -234,8 +234,8 @@ void MainWindow::initActions()
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
 
     pedit_find_action_ = new QAction(tr("&Find"), this);
-    pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setStatusTip(tr("Find."));
+    pedit_find_action_->setShortcut(QKeySequence::Find);
 
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
@@ -289,12 +289,22 @@ void MainWindow::initMenubar()
 
 void MainWindow::initToolbar()
 {
-    QToolBar* ptoolbar = addToolBar(tr("&File"));
+    QToolBar* ptoolbar = addToolBar(tr("Tools"));
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
     ptoolbar->addAction(pfile_save_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
+    if (util::strContains(util::platformInfo(), "unix"))
+    {
+        ptoolbar->addAction(pedit_find_action_);
+        ptoolbar->addAction(pview_file_explorer_action_);
+        ptoolbar->addAction(pfile_goto_prev_action_);
+        ptoolbar->addAction(pfile_goto_next_action_);
+        ptoolbar->addAction(pfile_close_action_);
+        ptoolbar->addAction(pfile_close_all_action_);
+        ptoolbar->addAction(pfile_dump_action_);
+    }
 }
 
 void MainWindow::InitStatusBar()
