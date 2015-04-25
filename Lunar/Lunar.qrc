@@ -7,8 +7,14 @@
     <file>res/paste.png</file>
     <file>res/save.png</file>
     <file>res/run.png</file>
-    <file>res/run_syscmd.png</file>
     <file>res/stop.png</file>
+    <file>res/find.png</file>
+    <file>res/prev.png</file>
+    <file>res/next.png</file>
+    <file>res/close.png</file>
+    <file>res/close_all.png</file>
+    <file>res/file_explorer.png</file>
+    <file>res/dump.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>

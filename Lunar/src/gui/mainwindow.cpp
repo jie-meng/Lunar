@@ -216,26 +216,32 @@ void MainWindow::initActions()
     pfile_close_action_ = new QAction(tr("Close"), this);
     pfile_close_action_->setStatusTip(tr("Close current file."));
     pfile_close_action_->setShortcut(Qt::CTRL + Qt::Key_W);
+    pfile_close_action_->setIcon(QIcon(tr(":/res/close.png")));
 
     pfile_close_all_action_ = new QAction(tr("Close all"), this);
     pfile_close_all_action_->setStatusTip(tr("Close all files."));
     pfile_close_all_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_W);
+    pfile_close_all_action_->setIcon(QIcon(tr(":/res/close_all.png")));
 
     pfile_dump_action_ = new QAction(tr("Du&mp output"), this);
     pfile_dump_action_->setStatusTip(tr("Dump output."));
     pfile_dump_action_->setShortcut(Qt::CTRL + Qt::Key_M);
+    pfile_dump_action_->setIcon(QIcon(tr(":/res/dump.png")));
 
     pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
     pfile_goto_next_action_->setStatusTip(tr("Goto next document"));
     pfile_goto_next_action_->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+    pfile_goto_next_action_->setIcon(QIcon(tr(":/res/next.png")));
 
     pfile_goto_prev_action_ = new QAction(tr("Goto prev"), this);
     pfile_goto_prev_action_->setStatusTip(tr("Goto prev document"));
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+    pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
     pedit_find_action_ = new QAction(tr("&Find"), this);
     pedit_find_action_->setStatusTip(tr("Find."));
     pedit_find_action_->setShortcut(QKeySequence::Find);
+    pedit_find_action_->setIcon(QIcon(tr(":/res/find.png")));
 
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
@@ -243,6 +249,7 @@ void MainWindow::initActions()
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
+    pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
 
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
@@ -295,16 +302,13 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_save_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
-    if (util::strContains(util::platformInfo(), "unix"))
-    {
-        ptoolbar->addAction(pedit_find_action_);
-        ptoolbar->addAction(pview_file_explorer_action_);
-        ptoolbar->addAction(pfile_goto_prev_action_);
-        ptoolbar->addAction(pfile_goto_next_action_);
-        ptoolbar->addAction(pfile_close_action_);
-        ptoolbar->addAction(pfile_close_all_action_);
-        ptoolbar->addAction(pfile_dump_action_);
-    }
+    ptoolbar->addAction(pedit_find_action_);
+    ptoolbar->addAction(pview_file_explorer_action_);
+    ptoolbar->addAction(pfile_goto_prev_action_);
+    ptoolbar->addAction(pfile_goto_next_action_);
+    ptoolbar->addAction(pfile_close_action_);
+    ptoolbar->addAction(pfile_close_all_action_);
+    ptoolbar->addAction(pfile_dump_action_);
 }
 
 void MainWindow::InitStatusBar()
