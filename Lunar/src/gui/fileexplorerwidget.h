@@ -29,7 +29,10 @@ protected:
 private:
     void init();
     void initConnections();
+    //load both folders and files
     bool loadNode(QTreeWidgetItem* item);
+    //load only files
+    bool loadNodeFiles(QTreeWidgetItem* item);
     QString getNodeAbsolutePath(QTreeWidgetItem* item);
     QString getNodeRelativePath(QTreeWidgetItem* item);
 private Q_SLOTS:

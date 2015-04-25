@@ -148,6 +148,53 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
     }
 }
 
+
+bool FileExplorerWidget::loadNodeFiles(QTreeWidgetItem* item)
+{
+    QString path = getNodeAbsolutePath(item);
+    if (path.length() == 0)
+        return false;
+    string str_path = QStringToStdString(path);
+
+    if (isPathDir(str_path))
+    {
+        //delete all file nodes, leave folder nodes there
+        while (item->childCount() > 0)
+        {
+            QTreeWidgetItem* child = item->child(item->childCount()-1);
+            string child_path = QStringToStdString(getNodeAbsolutePath(child));
+            if (!isPathDir(child_path))
+            {
+                item->removeChild(child);
+                delete child;
+            }
+            else
+            {
+                break;
+            }
+        }
+
+        //reload file nodes
+        vector<string> vec;
+        FileFilter file_filter;
+        listFiles(str_path, vec, &file_filter);
+        sort(vec.begin(), vec.end());        
+        vector<string>::iterator it;
+        for (it = vec.begin(); it != vec.end(); ++it)
+        {
+            QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
+            new_child->setIcon(0, QIcon(tr(":/res/new.png")));
+            item->addChild(new_child);
+        }
+
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 QString FileExplorerWidget::getNodeAbsolutePath(QTreeWidgetItem* item)
 {
     if (NULL == item)
@@ -312,7 +359,7 @@ void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
     if (fileRename(str_path, splitPathname(str_path).first + "/" + str_name))
     {
         QTreeWidgetItem* parent = currentItem()->parent();
-        loadNode(parent);
+        loadNodeFiles(parent);
         parent->setExpanded(true);
     }
     else
@@ -378,7 +425,7 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
 void FileExplorerWidget::onFileSaved(const QString& file)
 {
     QTreeWidgetItem* pnode = findDirNodeItemWithFile(file);
-    loadNode(pnode);
+    loadNodeFiles(pnode);
     if (pnode)
         pnode->setExpanded(true);
 }
@@ -399,7 +446,13 @@ QTreeWidgetItem* FileExplorerWidget::findDirNodeItemWithFile(const QString& file
     if (proot == NULL)
         return NULL;
 
-    string relative_dir = strReplace(path_name.first, currentPath() + "/", "");
+    string relative_dir = strReplace(path_name.first, currentPath(), "");
+    if (relative_dir.length() == 0)
+        return proot; 
+
+    if (strStartWith(relative_dir, "/"))
+        relative_dir = strRight(relative_dir, relative_dir.length()-1);
+
     vector<string> vec;
     strSplit(relative_dir, "/", vec);
     QTreeWidgetItem* pnode = proot;
@@ -414,11 +467,18 @@ QTreeWidgetItem* FileExplorerWidget::findDirNodeItemWithFile(const QString& file
                 {
                     pnode = pnode->child(j);
                     found = true;
+                    break;
                 }
             }
 
-            if (!found)
+            if (found)
+                continue;
+            else
                 return NULL;
+        }
+        else
+        {
+            return NULL;
         }
     }
 
