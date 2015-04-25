@@ -79,6 +79,8 @@ Q_SIGNALS:
     void findTextChangeSignal(const QString& text);
     void cmdFind(const QString&);
     void optionsChanged();
+protected:
+    virtual void showEvent(QShowEvent* e);
 private Q_SLOTS:
     void findTextChanged(const QString&);
     void findClicked();
@@ -86,6 +88,7 @@ private:
     void init();
     void initGui();
     void initConnections();
+    void setFindTextSelected();
 private:
     QLabel *plabel_find_;
     QLineEdit *pfind_edit_;

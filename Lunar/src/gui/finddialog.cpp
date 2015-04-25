@@ -216,6 +216,18 @@ void FindTab::setFocusOnFindInput()
     pfind_edit_->setFocus();
 }
 
+void FindTab::setFindTextSelected()
+{
+    if (pfind_edit_->text().length() != 0)
+        pfind_edit_->setSelection(0, pfind_edit_->text().length());
+}
+
+void FindTab::showEvent(QShowEvent* e)
+{
+    QWidget::showEvent(e);
+    setFindTextSelected();
+}
+
 void FindTab::initConnections()
 {
     connect(pfind_edit_, SIGNAL(textChanged(const QString&)), this, SIGNAL(findTextChangeSignal(const QString&)));
