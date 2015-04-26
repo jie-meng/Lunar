@@ -119,7 +119,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         vector<string> vec;
         DirFilter dir_filter;
         listFiles(str_path, vec, &dir_filter);
-        sort(vec.begin(), vec.end());        
+        sort(vec.begin(), vec.end());
         vector<string>::iterator it;
         for (it = vec.begin(); it != vec.end(); ++it)
         {
@@ -132,7 +132,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         vec.clear();
         FileFilter file_filter;
         listFiles(str_path, vec, &file_filter);
-        sort(vec.begin(), vec.end());        
+        sort(vec.begin(), vec.end());
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
@@ -178,7 +178,7 @@ bool FileExplorerWidget::loadNodeFiles(QTreeWidgetItem* item)
         vector<string> vec;
         FileFilter file_filter;
         listFiles(str_path, vec, &file_filter);
-        sort(vec.begin(), vec.end());        
+        sort(vec.begin(), vec.end());
         vector<string>::iterator it;
         for (it = vec.begin(); it != vec.end(); ++it)
         {
@@ -360,7 +360,6 @@ void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
     {
         QTreeWidgetItem* parent = currentItem()->parent();
         loadNodeFiles(parent);
-        parent->setExpanded(true);
     }
     else
     {
@@ -426,8 +425,6 @@ void FileExplorerWidget::onFileSaved(const QString& file)
 {
     QTreeWidgetItem* pnode = findDirNodeItemWithFile(file);
     loadNodeFiles(pnode);
-    if (pnode)
-        pnode->setExpanded(true);
 }
 
 void FileExplorerWidget::onAllFilesSaved()
@@ -448,7 +445,7 @@ QTreeWidgetItem* FileExplorerWidget::findDirNodeItemWithFile(const QString& file
 
     string relative_dir = strReplace(path_name.first, currentPath(), "");
     if (relative_dir.length() == 0)
-        return proot; 
+        return proot;
 
     if (strStartWith(relative_dir, "/"))
         relative_dir = strRight(relative_dir, relative_dir.length()-1);
