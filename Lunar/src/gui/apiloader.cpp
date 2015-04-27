@@ -57,7 +57,7 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
     else
     {
 
-        lua_state_.registerFunction("MessageBox", scriptMessage);
+        lua_state_.registerFunction("messageBox", scriptMessage);
         error_information_ = "";
         lua_state_ok_ = true;
     }
