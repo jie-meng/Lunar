@@ -1,4 +1,3 @@
-include(file)
 run(file)
 sleep(s)
 msleep(ms)
