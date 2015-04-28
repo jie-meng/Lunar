@@ -1,7 +1,7 @@
-kRegexFunctionLua = "function\\s+(?<api>(\\w+((\\.|:)\\w+)*\\s*\\(.*\\)))"
-kRegexIncludeLua = "include\\(\"(?<path>.+)\"\\)"
-kRegexRequireLua = "(?<module>\\w+)\\s*=\\s*require\\(\"(?<path>.+)\"\\)"
-kRegexReturnModuleLua = "return\\s+(?<module>\\w+)"
+kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
+kRegexIncludeLua = [[include[\(\s]\s*\"(?<path>.+)\"\)?]]
+kRegexRequireLua = [[(?<module>\w+)\s*=\s*require[\(\s]\s*\"(?<path>.+)\"\)?]]
+kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
 function parseSupplementApi(filename)
     
@@ -31,7 +31,6 @@ function parseSupplementApiRecursively(filename, dir, apis)
                 end
             elseif regex.match(re_inc, strTrim(line)) then
                 local file_include = dir .. "/" .. regex.getMatchedGroupByName(re_inc, "path")
-                
                 if file.isPathFile(file_include) then
                     parseSupplementApiRecursively(file_include, dir, apis)
                 end

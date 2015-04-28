@@ -1,6 +1,4 @@
-kRegexFunctionLua = "function\\s+(?<api>(\\w+((\\.|:)\\w+)*\\s*\\(.*\\)))"
-
---apis = {}
+kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
 
 function parseSupplementApi(filename)
     
