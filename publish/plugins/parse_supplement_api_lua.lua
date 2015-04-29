@@ -8,10 +8,8 @@ function parseSupplementApi(filename)
     local re_require = regex.create(kRegexRequireLua)
     local re_return_module = regex.create(kRegexReturnModuleLua)
     
-    local dir, name = file.splitPathname(filename)
-    local apis = {}
-    
-    parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_return_module)
+    local apis = {}    
+    parseSupplementApiMain(filename, file.currentPath(), apis, re_func, re_require, re_return_module)
     
     regex.destroy(re_func)
     regex.destroy(re_require)
