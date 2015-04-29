@@ -1,4 +1,4 @@
-ImageProcess = {}
+local ImageProcess = {}
 
 function ImageProcess.appendImages(output, vertical, ...)
     local args = {...}
@@ -34,3 +34,5 @@ end
 ImageProcess.appendAllImagesInPath("shit.png",  false, "./icons")
 print("ok")
 --]]
+
+return ImageProcess
