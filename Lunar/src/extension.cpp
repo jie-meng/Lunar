@@ -1,5 +1,7 @@
 #include "extension.h"
+#include <vector>
 #include "util/file.hpp"
+#include "util/lexicalcast.hpp"
 #include "util/luaextend.hpp"
 #include "lunarcommon.h"
 
@@ -69,7 +71,7 @@ bool Extension::parseFilename(const std::string& filename,
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncParseFileType());
     luaPushString(lua_state_.getState(), filename);
 
-    int err = luaCallFunc(lua_state_.getState(), 1, 6);
+    int err = luaCallFunc(lua_state_.getState(), 1, 1);
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -80,25 +82,31 @@ bool Extension::parseFilename(const std::string& filename,
     }
     else
     {
-        int ret_cnt = luaGetTop(lua_state_.getState());
+        if (luaGetTop(lua_state_.getState()) > 0 && luaGetType(lua_state_.getState(), 1) == LuaTable)
+        {
+            std::vector< pair<any, any> > vec = luaGetTable(lua_state_.getState(), 1);
+            std::map<string, string> tb;
+            for (size_t i = 0; i<vec.size(); ++i)
+                tb[vec[i].first.toString()] = vec[i].second.toString();
 
-        if (ret_cnt > 0 && pout_type != NULL)
-            *pout_type = luaGetString(lua_state_.getState(), 1);
+            if (pout_type != NULL && tb.find("type") != tb.end())
+                *pout_type = tb["type"];
 
-        if (ret_cnt > 1 && pauto_complete_type_ != NULL)
-            *pauto_complete_type_ = luaGetInteger(lua_state_.getState(), 2);
+            if (pauto_complete_type_ != NULL && tb.find("auto_complete_type") != tb.end())
+                *pauto_complete_type_ = lexicalCastDefault<size_t>(tb["auto_complete_type"], 0);
 
-        if (ret_cnt > 2 && pout_api != NULL)
-            *pout_api = luaGetString(lua_state_.getState(), 3);
+            if (pout_api != NULL && tb.find("api") != tb.end())
+                *pout_api = tb["api"];
 
-        if (ret_cnt > 3 && pout_executor != NULL)
-            *pout_executor = luaGetString(lua_state_.getState(), 4);
+            if (pout_executor != NULL && tb.find("executor") != tb.end())
+                *pout_executor = tb["executor"];
 
-        if (ret_cnt > 4 && pout_parse_supplement_api_script != NULL)
-            *pout_parse_supplement_api_script = luaGetString(lua_state_.getState(), 5);
+            if (pout_parse_supplement_api_script != NULL && tb.find("parse_supplement_api_script") != tb.end())
+                *pout_parse_supplement_api_script = tb["parse_supplement_api_script"];
 
-        if (ret_cnt > 5 && pout_parse_supplement_api_func != NULL)
-            *pout_parse_supplement_api_func = luaGetString(lua_state_.getState(), 6);
+            if (pout_parse_supplement_api_func != NULL && tb.find("parse_supplement_api_func") != tb.end())
+                *pout_parse_supplement_api_func = tb["parse_supplement_api_func"];
+        }
 
         error_information_ = "";
         luaPop(lua_state_.getState(), -1);

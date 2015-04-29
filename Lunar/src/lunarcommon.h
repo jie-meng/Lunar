@@ -69,7 +69,7 @@ public:
     inline size_t getMainwindowHeight() const { return mainwindow_height_; }
     inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
-    inline std::string getExtensionFile() const { return "extension"; }
+    inline std::string getExtensionFile() const { return "extension.lua"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
     inline std::string getExtensionFuncIgnoreFile() const { return extension_func_ignore_file_; }

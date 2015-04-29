@@ -96,15 +96,15 @@ void LunarGlobal::init(int argc, char* argv[])
 \tlocal path, name = file.splitPathname(filename)\n\
 \n\
 \t-- Lunar extension\n\
-\tif name == \"extension\" then\n\
+\tif name == \"extension.lua\" then\n\
 \t\tif file.isPathFile(path .. \"/Lunar\") or file.isPathFile(path .. \"/Lunar.exe\") then\n\
-\t\t\treturn \"lua\", \"apis/lua\"\n\
+\t\t\treturn { type = \"lua\", auto_complete_type = 1, api = \"apis/lua\" }\n\
 \t\tend\n\
 \tend\n\
 \n\
 \t-- lua\n\
 \tif string.lower(file.fileExtension(name)) == \"lua\" then\n\
-\t\treturn \"lua\", \"apis/lua\", \"luaexec\"\n\
+\t\treturn { type = \"lua\", auto_complete_type = 1, api = \"apis/lua\", executor = \"luaexec\" }\n\
 \tend\n\
 end\n\
 \n\

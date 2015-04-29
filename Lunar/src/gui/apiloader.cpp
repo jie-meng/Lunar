@@ -67,6 +67,9 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
 
 void ApiLoader::loadApi(const std::string& api_paths)
 {
+    if (api_paths.length() == 0)
+        return;
+
     vector<string> paths;
     strSplitEx(api_paths, ",", "\"", "\"", paths);
     vector<string>::iterator it;
