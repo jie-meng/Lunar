@@ -25,5 +25,5 @@ function processPath(path)
     end
 end
 
-processPath("D:/tools/Lunar/api/html")
+processPath("C:/Users/jmeng/tools/Lunar/apis/cpp")
 print("ok")
