@@ -90,7 +90,8 @@ function parseFileType(filename)
        string.lower(file.fileExtension(name)) == "hxx" then
         return 
             { 
-                type = "cpp", 
+                type = "cpp",
+                api = "apis/cpp",
                 auto_complete_type = 1,
                 parse_supplement_api_script = "plugins/parse_supplement_api_cpp.lua", 
                 parse_supplement_api_func = "parseSupplementApi"
