@@ -54,7 +54,7 @@ function parseFileType(filename)
         return { type = "bash" }
     end
     
-	if string.lower(name) == "cmakelists.txt" then
+	if string.lower(name) == "cmakelists.txt" or string.lower(file.fileExtension(name)) == "cmake" then
 		return { type = "cmake" }
 	end
     
