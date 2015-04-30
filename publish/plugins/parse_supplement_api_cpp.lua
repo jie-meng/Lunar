@@ -20,7 +20,7 @@ function parseSupplementApi(filename)
         
     local includes = {}
     local apis = {}    
-    parseSupplementApiInFile(filename, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+    parseSupplementApiInFile(filename, true, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
     
     regex.destroy(re_method)
     regex.destroy(re_class_method)
@@ -56,7 +56,7 @@ function addClassInstance(class, obj, apis)
     end
 end
 
-function parseSupplementApiInFile(filename, includes, apis,  re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+function parseSupplementApiInFile(filename, first_file, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
 
     for _, v in ipairs(includes) do
         if v == filename then
@@ -79,7 +79,7 @@ function parseSupplementApiInFile(filename, includes, apis,  re_method, re_class
                 table.insert(class_areas,  regex.getMatchedGroupByName(re_class_begin, "name"))
             elseif regex.match(re_class_end, strTrim(line)) then
                 table.remove(class_areas)
-            elseif regex.match(re_class_instance_on_stack, strTrim(line)) then
+            --[[elseif first_file and regex.match(re_class_instance_on_stack, strTrim(line)) then
                 local str = strTrim(line)
                 if (not strStartWith(str, "return ")) and
                    (not strStartWith(str, "char ")) and
@@ -98,15 +98,15 @@ function parseSupplementApiInFile(filename, includes, apis,  re_method, re_class
                    (not strStartWith(str, "unsigned ")) then                   
                    addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_stack, "class"), regex.getMatchedGroupByName(re_class_instance_on_stack, "obj"), apis)
                 end
-            elseif regex.match(re_class_instance_on_heap, strTrim(line)) then
-                addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)
+            elseif first_file and regex.match(re_class_instance_on_heap, strTrim(line)) then
+                addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)--]]
             elseif regex.match(re_include, strTrim(line)) then
                 
                 local inc_dir = file.splitPathname(filename)
                 local inc_file = inc_dir .. "/" .. regex.getMatchedGroupByName(re_include, "file")
                 
                 if file.isPathFile(inc_file) then
-                    parseSupplementApiInFile(inc_file, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+                    parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
                 else
                     
                     local inc_dir_cfg = file.currentPath() .. "/" .. kIncludeDirCfgFileName
@@ -117,7 +117,7 @@ function parseSupplementApiInFile(filename, includes, apis,  re_method, re_class
                             while (inc_line ~= nil) do
                                 inc_file = strTrim(inc_line) .. "/" .. regex.getMatchedGroupByName(re_include, "file")
                                 if file.isPathFile(inc_file) then
-                                    parseSupplementApiInFile(inc_file, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+                                    parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
                                     break
                                 end
                                 inc_line = inc_dir_f:read("*line")
