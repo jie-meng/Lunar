@@ -76,7 +76,7 @@ private:
     void initLuaExecutor();
     void initExtension();
     void processCmdParam();
-    void runEx(bool run_in_syscmd);
+    void runEx();
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;

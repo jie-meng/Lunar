@@ -67,6 +67,7 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     papi_loader_(NULL),
     file_type_(Unknown),
     executor_(""),
+    execute_file_(""),
     parse_supplement_api_script_(""),
     parse_supplement_api_func_("")
 {
@@ -126,7 +127,7 @@ void DocView::setLexerApi()
         std::string type = "";
         size_t auto_complete_type_ = 0;
         std::string api = "";
-        if (Extension::getInstance().parseFilename(filename, &type, &auto_complete_type_, &api, &executor_, &parse_supplement_api_script_, &parse_supplement_api_func_))
+        if (Extension::getInstance().parseFilename(filename, &type, &auto_complete_type_, &api, &executor_, &execute_file_, &parse_supplement_api_script_, &parse_supplement_api_func_))
         {
             FileType filetype = Unknown;
             plexer_ = getLexerFromTypeName(type, &filetype);

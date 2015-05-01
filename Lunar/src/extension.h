@@ -14,6 +14,7 @@ public:
                size_t* pauto_complete_type_,
                std::string* pout_api,
                std::string* pout_executor,
+               std::string* pout_execute_file,
                std::string* pout_parse_supplement_api_script = NULL,
                std::string* pout_parse_supplement_api_func = NULL);
     std::string fileFilter();

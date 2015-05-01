@@ -43,6 +43,7 @@ public:
               );
     inline FileType getFileType() const { return file_type_; }
     inline std::string getExecutor() const { return executor_; }
+    inline std::string getExecuteFile() const { return execute_file_; }
     inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
     inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
 Q_SIGNALS:
@@ -79,6 +80,7 @@ private:
     ApiLoader* papi_loader_;
     FileType file_type_;
     std::string executor_;
+    std::string execute_file_;
     std::string parse_supplement_api_func_;
     std::string parse_supplement_api_script_;
 private:

@@ -62,6 +62,7 @@ bool Extension::parseFilename(const std::string& filename,
                size_t* pauto_complete_type_,
                std::string* pout_api,
                std::string* pout_executor,
+               std::string* pout_execute_file,
                std::string* pout_parse_supplement_api_script,
                std::string* pout_parse_supplement_api_func)
 {
@@ -100,6 +101,9 @@ bool Extension::parseFilename(const std::string& filename,
 
             if (pout_executor != NULL && tb.find("executor") != tb.end())
                 *pout_executor = tb["executor"];
+
+            if (pout_execute_file != NULL && tb.find("execute_file") != tb.end())
+                *pout_execute_file = tb["execute_file"];
 
             if (pout_parse_supplement_api_script != NULL && tb.find("parse_supplement_api_script") != tb.end())
                 *pout_parse_supplement_api_script = tb["parse_supplement_api_script"];

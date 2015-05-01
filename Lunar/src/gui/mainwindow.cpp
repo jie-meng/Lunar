@@ -593,13 +593,8 @@ void MainWindow::clearOutput()
 
 void MainWindow::run()
 {
-    runEx(false);
+    runEx();
 }
-
-//void MainWindow::runInSysCmd()
-//{
-//    runEx(true);
-//}
 
 void MainWindow::stop()
 {
@@ -610,7 +605,7 @@ void MainWindow::stop()
     }
 }
 
-void MainWindow::runEx(bool run_in_syscmd)
+void MainWindow::runEx()
 {
     if (plua_executor_->isRunning())
     {
@@ -636,8 +631,6 @@ void MainWindow::runEx(bool run_in_syscmd)
     if (pdoc_view)
     {
         string addtional_args = "";
-//        if ("" != LunarGlobal::getInstance().getRunAdditionalArgs())
-//            addtional_args = LunarGlobal::getInstance().getRunAdditionalArgs();
 
         string script = QStringToStdString(pdoc_view->getPathname());
         if (script == "")
@@ -650,17 +643,14 @@ void MainWindow::runEx(bool run_in_syscmd)
         if (strEndWith(runPath, ":"))
             runPath += "/";
 
-        bool ret = false;
-        if (run_in_syscmd)
+        if (pdoc_view->getExecuteFile() != "")
         {
-            ret = plua_executor_->executeInSysCmd(script, addtional_args,
-                                    runPath, pdoc_view->getExecutor());
+            script = pdoc_view->getExecuteFile();
+            runPath = splitPathname(pdoc_view->getExecuteFile()).first;
         }
-        else
-        {
-            ret = plua_executor_->execute(script, addtional_args,
+
+        bool ret = plua_executor_->execute(script, addtional_args,
                                     runPath, pdoc_view->getExecutor());
-        }
 
         if (!ret)
             addOutput("Run failed");
