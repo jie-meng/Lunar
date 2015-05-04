@@ -18,8 +18,8 @@ const std::string kApisExt = "api";
 //ApiLoader
 ApiLoader::ApiLoader(const std::string& file,
                          QsciAPIsEx* papis) :
-    file_(file),
     papis_(papis),
+	file_(file),
     lua_state_ok_(false),
     error_information_("")
 {

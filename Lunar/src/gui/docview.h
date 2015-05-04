@@ -81,8 +81,8 @@ private:
     FileType file_type_;
     std::string executor_;
     std::string execute_file_;
-    std::string parse_supplement_api_func_;
     std::string parse_supplement_api_script_;
+	std::string parse_supplement_api_func_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };
