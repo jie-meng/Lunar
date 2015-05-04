@@ -77,7 +77,7 @@ void FindDialog::initConnections()
     connect(pbackward_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
     connect(pwholeword_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
     connect(pwrap_around_checkbox_, SIGNAL(clicked()), this, SLOT(optionsChanged()));
-    connect(ptab_widget_, SIGNAL(currentChanged(int)), this, SLOT(TabChanged(int)));
+    connect(ptab_widget_, SIGNAL(currentChanged(int)), this, SLOT(tabChanged(int)));
 
     //findtab
     connect(pfind_tab_, SIGNAL(optionsChanged()), this, SLOT(optionsChanged()));
