@@ -99,7 +99,7 @@ function parseSupplementApiInFile(filename, first_file, includes, apis, re_metho
                    addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_stack, "class"), regex.getMatchedGroupByName(re_class_instance_on_stack, "obj"), apis)
                 end
             elseif first_file and regex.match(re_class_instance_on_heap, strTrim(line)) then
-                addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)--]]
+                addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)
             elseif regex.match(re_include, strTrim(line)) then
                 
                 local inc_dir = file.splitPathname(filename)
@@ -125,7 +125,7 @@ function parseSupplementApiInFile(filename, first_file, includes, apis, re_metho
                             io.close(inc_dir_f)
                         end
                     end
-                end
+                end--]]
             end
             line = f:read("*line")
         end
