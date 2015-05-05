@@ -33,6 +33,7 @@ Q_SIGNALS:
     void replaceAll(const QString& text, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
 protected:
     virtual void closeEvent(QCloseEvent* e);
+    virtual void showEvent(QShowEvent* e);
 private Q_SLOTS:
     void tabFindTextChanged(const QString& text);
     void cmdFind(const QString& text);

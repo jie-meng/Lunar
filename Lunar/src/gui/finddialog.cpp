@@ -106,9 +106,14 @@ void FindDialog::cmdFind(const QString& text)
 
 void FindDialog::closeEvent(QCloseEvent* e)
 {
-    QWidget::closeEvent(e);
-
     optionsChanged();
+    QWidget::closeEvent(e);
+}
+
+void FindDialog::showEvent(QShowEvent* e)
+{
+    optionsChanged();
+    QWidget::showEvent(e);
 }
 
 void FindDialog::optionsChanged()
