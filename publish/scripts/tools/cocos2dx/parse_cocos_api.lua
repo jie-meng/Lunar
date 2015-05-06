@@ -63,9 +63,9 @@ function ApiModule:AddParamToFunc(param)
     end
 end
 
-function ApiModule:EndFunc()
+function ApiModule:EndFunc(return_obj, return_type)
     if self.tmp_function_ then
-        table.insert(self.functions_, self.tmp_function_ .. ")")
+        table.insert(self.functions_, self.tmp_function_ .. ") -- return " .. return_obj .. " " .. return_type)
         self.tmp_function_ = nil
         return true
     else
@@ -154,7 +154,7 @@ function parseAutoApi(v)
     local pattern_parent_module = [[--%s*@parent_module%s+(%w+)]]
     local pattern_function = [[--%s*@function%s+%[.+%]%s+(%w+)]]
     local pattern_param = [[--%s*@param%s+#(.+)]]
-    local pattern_return = [[--%s*@(return)]]
+    local pattern_return = [[--%s*@return%s+.+%s+(%w+)%s+%(return%s+value:%s+(.+)%)]]
     
     local api_module = ApiModule:new()
     
@@ -175,8 +175,9 @@ function parseAutoApi(v)
                     break
                 end
                 
-                if string.find(strTrim(line), pattern_return) then
-                    api_module:EndFunc()
+                local test_return_obj, test_return_type = string.match(strTrim(line), pattern_return)
+                if test_return_obj and test_return_type then
+                    api_module:EndFunc(test_return_obj, test_return_type)
                     break
                 end 
                 

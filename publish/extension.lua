@@ -74,7 +74,8 @@ function parseFileType(filename)
         return { type = "csharp" }
     end
     
-    if string.lower(file.fileExtension(name)) == "xml" then
+    if string.lower(file.fileExtension(name)) == "xml" or
+       string.lower(file.fileExtension(name)) == "tmx" then
         return { type = "xml" }
     end
     
