@@ -79,10 +79,12 @@ function createCocosApis()
     
     local apis = {}
     
-    t1 = file.findFilesInDirRecursively(file.currentPath() .. "/src/cocos", "lua")
-    t2 = file.findFilesInDirRecursively(file.currentPath() .. "/src/package", "lua")
-    t3 = file.findFilesInDirRecursively(file.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/auto/api", "lua")
+    local t1 = file.findFilesInDirRecursively(file.currentPath() .. "/src/cocos", "lua")
+    local t2 = file.findFilesInDirRecursively(file.currentPath() .. "/src/package", "lua")
+    local t3 = file.findFilesInDirRecursively(file.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/auto/api", "lua")
+    local t4 = file.findFilesInDirRecursively(file.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/manual", "cpp")
     
+    -- lua api
     for k, v in pairs(t1) do
         print("parse file " .. v)
         parseApi(v, apis)
@@ -93,11 +95,10 @@ function createCocosApis()
         parseApi(v, apis)
     end
     
+    -- auto api
     for k, v in pairs(t3) do
-        
         print("parse file " .. v)
-        
-        local api_module = parseAutoApi(v, apis)
+        local api_module = parseAutoApi(v)
         local functions = api_module:getFunctions()
         local prefix = ""
         if api_module:getName() then
@@ -110,6 +111,15 @@ function createCocosApis()
         for _, v in pairs(functions) do
             table.insert(apis, prefix .. v)
             --print(prefix .. v)
+        end
+    end
+    
+    -- manual api
+    for k, v in ipairs(t4) do
+        print("parse file " .. v)
+        local api_file = parseManualApi(v)
+        for _, vx in ipairs(api_file) do
+            table.insert(apis, vx)
         end
     end
     
@@ -147,7 +157,7 @@ function parseApi(filename, apis)
     regex.destroy(re_func)
 end
 
-function parseAutoApi(v)
+function parseAutoApi(filename)
     
     local pattern_module = [[--%s*@module%s+(%w+)]]
     local pattern_extend = [[--%s*@extend%s+(%w+)]]
@@ -158,7 +168,7 @@ function parseAutoApi(v)
     
     local api_module = ApiModule:new()
     
-    local f = io.open(v, "r")
+    local f = io.open(filename, "r")
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
@@ -210,5 +220,67 @@ function parseAutoApi(v)
     return api_module
 end
 
+function parseManualApi(filename)
+    
+    local pattern_class = [[lua_pushstring%s*%(%s*.+%s*,%s*"(%w+)%.(%w+)"%s*%)]]
+    local pattern_pushstring = [[lua_pushstring%s*%(%s*.+%s*,%s*"(%w+)"%s*%)]]
+    local pattern_tolua_function = [[tolua_function%s*%(%s*.+%s*,%s*"(%w+)"%s*,%s*.+%s*%)%s*]]
+    
+    local tb = {}
+    
+    local f = io.open(filename, "r")
+    if f ~= nil then
+        local prefix_class = nil
+        local push_string = nil
+    
+        local line = f:read("*line")
+        while (line ~= nil) do
+            repeat
+                local tolua_function = string.match(strTrim(line), pattern_tolua_function)
+                if tolua_function ~= nil and prefix_class ~= nil  then
+                    table.insert(tb, prefix_class .. "." .. tolua_function .. "(?)")
+                    push_string = nil    
+                    break
+                end
+                
+                local str = string.match(strTrim(line), pattern_pushstring)
+                if str ~= nil then
+                    push_string = str    
+                    break
+                end
+                
+                if strStartWith(strTrim(line), "lua_pushcfunction") then
+                    if prefix_class ~= nil and push_string ~= nil then
+                        table.insert(tb, prefix_class .. "." .. push_string .. "(?)")
+                        push_string = nil
+                    end
+                    break
+                end
+                
+                if strStartWith(strTrim(line), "lua_pop") then
+                    prefix_class = nil
+                    push_string = nil
+                    break
+                end
+                
+                local prefix, class = string.match(strTrim(line), pattern_class)
+                if prefix ~= nil and class ~= nil then
+                    prefix_class = prefix .. "." .. class
+                    push_string = nil
+                    break
+                end
+                
+                push_string = nil
+            until true
+            
+            line = f:read("*line")
+        end
+        io.close(f)
+    end
+    
+    return tb
+end
+
+-- main
 createCocosApis()
-print("create api success")
+print("create api finished")
