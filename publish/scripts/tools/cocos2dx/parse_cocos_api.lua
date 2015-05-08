@@ -231,6 +231,8 @@ function parseManualApi(filename)
     local pattern_class = [[lua_pushstring%s*%(%s*.+%s*,%s*"([%w_]+)%.([%w_]+)"%s*%)]]
     local pattern_pushstring = [[lua_pushstring%s*%(%s*.+%s*,%s*"([%w_]+)"%s*%)]]
     local pattern_tolua_function = [[tolua_function%s*%(%s*.+%s*,%s*"([%w_]+)"%s*,%s*.+%s*%)%s*]]
+    local pattern_tolua_begin_module = [[tolua_beginmodule%s*%(%s*.+%s*,%s*"([%w_]+)"%s*%)]]
+    local pattern_tolua_end_module = [[tolua_endmodule%s*%(%s*.+%s*%)]]
     
     local tb = {}
     
@@ -238,25 +240,31 @@ function parseManualApi(filename)
     if f ~= nil then
         local prefix_class = nil
         local push_string = nil
+        local begin_modules = {}
     
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
                 local tolua_function = string.match(strTrim(line), pattern_tolua_function)
-                if tolua_function ~= nil and prefix_class ~= nil  then
+                if #begin_modules > 0 and tolua_function then
+                    table.insert(tb, strJoin(begin_modules, ".") .. "." .. tolua_function .. "(?)")
+                    push_string = nil
+                    break
+                end
+                if tolua_function and prefix_class then
                     table.insert(tb, prefix_class .. "." .. tolua_function .. "(?)")
-                    push_string = nil    
+                    push_string = nil
                     break
                 end
                 
                 local str = string.match(strTrim(line), pattern_pushstring)
-                if str ~= nil then
+                if str then
                     push_string = str    
                     break
                 end
                 
                 if strStartWith(strTrim(line), "lua_pushcfunction") then
-                    if prefix_class ~= nil and push_string ~= nil then
+                    if prefix_class and push_string then
                         table.insert(tb, prefix_class .. "." .. push_string .. "(?)")
                         push_string = nil
                     end
@@ -270,10 +278,20 @@ function parseManualApi(filename)
                 end
                 
                 local prefix, class = string.match(strTrim(line), pattern_class)
-                if prefix ~= nil and class ~= nil then
+                if prefix and class then
                     prefix_class = prefix .. "." .. class
                     push_string = nil
                     break
+                end
+                
+                local bm = string.match(strTrim(line), pattern_tolua_begin_module)
+                if bm then
+                    table.insert(begin_modules, bm)
+                end
+                
+                local em = string.match(strTrim(line), pattern_tolua_end_module)
+                if em then
+                    table.remove(begin_modules)
                 end
                 
                 push_string = nil
