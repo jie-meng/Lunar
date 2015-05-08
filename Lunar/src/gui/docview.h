@@ -3,7 +3,8 @@
 
 #include <QWidget>
 #include <QFont>
-#include "util/base.hpp"
+#include <map>
+#include "util/lexicalcast.hpp"
 #include "filetype.h"
 
 class QsciLexer;
@@ -41,9 +42,9 @@ public:
               bool first_find,
 			  bool from_start
               );
+    void commentSelection();
     inline FileType getFileType() const { return file_type_; }
     inline std::string getExecutor() const { return executor_; }
-    inline std::string getExecuteFile() const { return execute_file_; }
     inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
     inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
 Q_SIGNALS:
@@ -64,9 +65,20 @@ private:
     void setLexerApi();
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
-    void refreshSupplementApi();
+    void refreshSupplementApi();    
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
+    size_t getStartSpaceCount(const std::string& str);
+
+    template<typename T>
+    static inline T getValueFromMap(const std::map<std::string, std::string>& from_map, const std::string& key, T default_value)
+    {
+        std::map<std::string, std::string>::const_iterator it = from_map.find(key);
+        if (it == from_map.end())
+            return default_value;
+        else
+            return util::lexicalCastDefault<T>(it->second, default_value);
+    }
 
     QString save_dialog_init_dir_;
     QString pathname_;
@@ -80,9 +92,9 @@ private:
     ApiLoader* papi_loader_;
     FileType file_type_;
     std::string executor_;
-    std::string execute_file_;
     std::string parse_supplement_api_script_;
 	std::string parse_supplement_api_func_;
+    std::string comment_line_symbol_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };

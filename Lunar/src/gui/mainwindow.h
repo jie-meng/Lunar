@@ -48,6 +48,7 @@ private Q_SLOTS:
     void fileGotoPrev();
     void editFind();
     void editSetFont();
+    void editComment();
     void viewFileExplorer();
     void helpAbout();
     bool find(const QString& str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
@@ -89,6 +90,7 @@ private:
     QAction* pfile_goto_prev_action_;
     QAction* pedit_find_action_;
     QAction* pedit_font_action_;
+    QAction* pedit_comment_action_;
     QAction* pview_file_explorer_action_;
     QAction* prun_run_action_;
     //QAction* prun_run_syscmd_action_;

@@ -57,14 +57,7 @@ bool Extension::initLuaState()
     return lua_state_ok_;
 }
 
-bool Extension::parseFilename(const std::string& filename,
-               std::string* pout_type,
-               size_t* pauto_complete_type_,
-               std::string* pout_api,
-               std::string* pout_executor,
-               std::string* pout_execute_file,
-               std::string* pout_parse_supplement_api_script,
-               std::string* pout_parse_supplement_api_func)
+bool Extension::parseFilename(const std::string& filename, std::map<std::string, std::string>& out_map)
 {
     if (!lua_state_ok_)
         return false;
@@ -86,30 +79,8 @@ bool Extension::parseFilename(const std::string& filename,
         if (luaGetTop(lua_state_.getState()) > 0 && luaGetType(lua_state_.getState(), 1) == LuaTable)
         {
             std::vector< pair<any, any> > vec = luaGetTable(lua_state_.getState(), 1);
-            std::map<string, string> tb;
             for (size_t i = 0; i<vec.size(); ++i)
-                tb[vec[i].first.toString()] = vec[i].second.toString();
-
-            if (pout_type != NULL && tb.find("type") != tb.end())
-                *pout_type = tb["type"];
-
-            if (pauto_complete_type_ != NULL && tb.find("auto_complete_type") != tb.end())
-                *pauto_complete_type_ = lexicalCastDefault<size_t>(tb["auto_complete_type"], 0);
-
-            if (pout_api != NULL && tb.find("api") != tb.end())
-                *pout_api = tb["api"];
-
-            if (pout_executor != NULL && tb.find("executor") != tb.end())
-                *pout_executor = tb["executor"];
-
-            if (pout_execute_file != NULL && tb.find("execute_file") != tb.end())
-                *pout_execute_file = tb["execute_file"];
-
-            if (pout_parse_supplement_api_script != NULL && tb.find("parse_supplement_api_script") != tb.end())
-                *pout_parse_supplement_api_script = tb["parse_supplement_api_script"];
-
-            if (pout_parse_supplement_api_func != NULL && tb.find("parse_supplement_api_func") != tb.end())
-                *pout_parse_supplement_api_func = tb["parse_supplement_api_func"];
+                out_map[vec[i].first.toString()] = vec[i].second.toString();
         }
 
         error_information_ = "";

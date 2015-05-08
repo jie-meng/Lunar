@@ -271,5 +271,12 @@ void MainTabWidget::gotoPrevTabIndex()
     }
 }
 
+void MainTabWidget::currentDocComment()
+{
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if(NULL != pdocview)
+        pdocview->commentSelection();
+}
+
 } // namespace gui
 

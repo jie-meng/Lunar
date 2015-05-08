@@ -37,6 +37,7 @@ public:
     bool hasUnsavedFiles();
     void gotoNextTabIndex();
     void gotoPrevTabIndex();
+    void currentDocComment();
 private Q_SLOTS:
     void updateTabTitleAndTip(DocView*);
     void tabTextModified(DocView*);

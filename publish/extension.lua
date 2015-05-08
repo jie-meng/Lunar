@@ -9,7 +9,8 @@ function parseFileType(filename)
                 {
                     type = "lua", 
                     auto_complete_type = 1, 
-                    api = "apis/lua/standard,apis/lua/uextend.api,apis/lua/uextend_file.api,apis/lua/uextend_regex.api" 
+                    api = "apis/lua/standard,apis/lua/uextend.api,apis/lua/uextend_file.api,apis/lua/uextend_regex.api" ,
+                    comment_line = "--"
                 }
 		end
 	end
@@ -22,7 +23,8 @@ function parseFileType(filename)
                 api = "apis/lua/standard,cocos.api", 
                 executor = "luaexec", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_cocos_lua.lua", 
-                parse_supplement_api_func = "parseSupplementApi"
+                parse_supplement_api_func = "parseSupplementApi",
+                comment_line = "--"
             }
 	end
 
@@ -34,7 +36,8 @@ function parseFileType(filename)
                 api = "apis/lua", 
                 executor = "luaexec", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_lua.lua", 
-                parse_supplement_api_func = "parseSupplementApi"
+                parse_supplement_api_func = "parseSupplementApi",
+                comment_line = "--"
             }
 	end
     
@@ -51,27 +54,27 @@ function parseFileType(filename)
 	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
-        return { type = "bash" }
+        return { type = "bash", comment_line = "#" }
     end
     
 	if string.lower(name) == "cmakelists.txt" or string.lower(file.fileExtension(name)) == "cmake" then
-		return { type = "cmake" }
+		return { type = "cmake", comment_line = "#" }
 	end
     
     if string.lower(file.fileExtension(name)) == "py" then
-        return { type = "python" }
+        return { type = "python", comment_line = "#" }
     end
     
     if string.lower(file.fileExtension(name)) == "tcl" then
-        return { type = "tcl" }
+        return { type = "tcl", comment_line = "#" }
     end
     
     if string.lower(file.fileExtension(name)) == "java" then
-        return { type = "java" }
+        return { type = "java", comment_line = "//" }
     end
     
     if string.lower(file.fileExtension(name)) == "cs" then
-        return { type = "csharp" }
+        return { type = "csharp", comment_line = "//" }
     end
     
     if string.lower(file.fileExtension(name)) == "xml" or
@@ -93,7 +96,8 @@ function parseFileType(filename)
             { 
                 type = "cpp",
                 api = "apis/cpp",
-                auto_complete_type = 1
+                auto_complete_type = 1,
+                comment_line = "//"
             }
     end
 end

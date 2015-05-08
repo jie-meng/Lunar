@@ -15,6 +15,7 @@
     <file>res/close_all.png</file>
     <file>res/file_explorer.png</file>
     <file>res/dump.png</file>
+	<file>res/comment.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>

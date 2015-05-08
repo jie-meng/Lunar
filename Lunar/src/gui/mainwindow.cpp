@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
     pedit_font_action_(NULL),
+    pedit_comment_action_(NULL),
     pview_file_explorer_action_(NULL),
     prun_run_action_(NULL),
     prun_stop_action_(NULL),
@@ -246,6 +247,11 @@ void MainWindow::initActions()
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
 
+    pedit_comment_action_ = new QAction(tr("Comment"), this);
+    pedit_comment_action_->setStatusTip(tr("Comment current selection."));
+    pedit_comment_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Slash);
+	pedit_comment_action_->setIcon(QIcon(tr(":/res/comment.png")));
+
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
@@ -282,6 +288,7 @@ void MainWindow::initMenubar()
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_font_action_);
+    pedit_menu->addAction(pedit_comment_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -300,6 +307,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
     ptoolbar->addAction(pfile_save_action_);
+	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
@@ -348,6 +356,7 @@ void MainWindow::initConnections()
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
+    connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
@@ -445,6 +454,11 @@ void MainWindow::editFind()
 void MainWindow::editSetFont()
 {
     pmain_tabwidget_->setDocViewFont();
+}
+
+void MainWindow::editComment()
+{
+    pmain_tabwidget_->currentDocComment();
 }
 
 void MainWindow::viewFileExplorer()
@@ -642,12 +656,6 @@ void MainWindow::runEx()
         //for windows disk root, there gonna be an error when excute if path is "X:"
         if (strEndWith(runPath, ":"))
             runPath += "/";
-
-        if (pdoc_view->getExecuteFile() != "")
-        {
-            script = pdoc_view->getExecuteFile();
-            runPath = splitPathname(pdoc_view->getExecuteFile()).first;
-        }
 
         bool ret = plua_executor_->execute(script, addtional_args,
                                     runPath, pdoc_view->getExecutor());

@@ -1,4 +1,5 @@
 #include "docview.h"
+#include <vector>
 #include <fstream>
 #include <QtCore/QThread>
 #include <QtCore/QDir>
@@ -52,6 +53,9 @@
 #include "mainwindow.h"
 #include "apiloader.h"
 
+using namespace std;
+using namespace util;
+
 namespace gui
 {
 
@@ -67,9 +71,9 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     papi_loader_(NULL),
     file_type_(Unknown),
     executor_(""),
-    execute_file_(""),
     parse_supplement_api_script_(""),
-    parse_supplement_api_func_("")
+    parse_supplement_api_func_(""),
+    comment_line_symbol_("")
 {
     //ctor
     ptext_edit_ = new QsciScintilla(parent);
@@ -124,13 +128,17 @@ void DocView::setLexerApi()
     if (Extension::getInstance().isOk())
     {
         std::string filename = QStringToStdString(pathname_);
-        std::string type = "";
-        size_t auto_complete_type_ = 0;
-        std::string api = "";
-        if (Extension::getInstance().parseFilename(filename, &type, &auto_complete_type_, &api, &executor_, &execute_file_, &parse_supplement_api_script_, &parse_supplement_api_func_))
+        map<string, string> dict;
+        if (Extension::getInstance().parseFilename(filename, dict))
         {
+            size_t auto_complete_type_ = getValueFromMap<size_t>(dict, "auto_complete_type", 0);
+            executor_ = getValueFromMap<string>(dict, "executor", "");
+            parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
+            parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
+            comment_line_symbol_ = getValueFromMap<string>(dict, "comment_line", "");
+
             FileType filetype = Unknown;
-            plexer_ = getLexerFromTypeName(type, &filetype);
+            plexer_ = getLexerFromTypeName(getValueFromMap<string>(dict, "type", ""), &filetype);
             if (NULL != plexer_)
             {
                 ptext_edit_->setLexer(plexer_);
@@ -144,7 +152,7 @@ void DocView::setLexerApi()
 
                 //api
                 papi_loader_ = new ApiLoader(QStringToStdString(pathname_), papis_);
-                papi_loader_->loadApi(api);
+                papi_loader_->loadApi(getValueFromMap<string>(dict, "api", ""));
                 if ("" != parse_supplement_api_script_ && "" != parse_supplement_api_func_)
                 {
                     if (!papi_loader_->appendSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_))
@@ -584,6 +592,87 @@ bool DocView::find(const QString& expr,
 void DocView::replace(const QString& replace_with_text)
 {
     ptext_edit_->replace(replace_with_text);
+}
+
+size_t DocView::getStartSpaceCount(const std::string& str)
+{
+    return str.length() - strTrimLeft(str).length();
+}
+
+void DocView::commentSelection()
+{
+    if (strTrim(comment_line_symbol_).length() == 0)
+        return;
+
+    if (ptext_edit_->selectedText().length() == 0)
+    {
+        int line;
+        int index;
+        ptext_edit_->getCursorPosition(&line, &index);
+
+        //empty line
+        if (strTrim(QStringToStdString(ptext_edit_->text(line))).length() == 0)
+            return;
+
+        int len = ptext_edit_->lineLength(line)-1 > 0 ? ptext_edit_->lineLength(line)-1 : 0;
+        ptext_edit_->setSelection(line, 0, line, len);
+    }
+
+    int line_from = 0;
+    int index_from = 0;
+    int line_to = 0;
+    int index_to = 0;
+    ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
+    ptext_edit_->setSelection(line_from, 0, line_to, ptext_edit_->lineLength(line_to)-1 > 0 ? ptext_edit_->lineLength(line_to)-1 : 0);
+
+    string str = QStringToStdString(ptext_edit_->selectedText());
+    vector<string> vec;
+    util::strSplit(str, "\n", vec);
+
+    //check is commented
+    bool is_commented = true;
+    size_t minium_start_space_count = 0;
+    for (size_t i=0; i<vec.size(); ++i)
+    {
+        if (strTrim(vec[i]).length() != 0 && !strStartWith(strTrimLeft(vec[i]), comment_line_symbol_))
+            is_commented = false;
+
+        if (i == 0)
+        {
+            minium_start_space_count = getStartSpaceCount(vec[i]);
+        }
+        else
+        {
+            size_t count = getStartSpaceCount(vec[i]);
+            if (minium_start_space_count > count)
+                minium_start_space_count = count;
+        }
+    }
+
+    string space_prefix = "";
+    for (size_t i=0; i<minium_start_space_count; ++i)
+    {
+        space_prefix.push_back(' ');
+    }
+
+    //do comment or uncomment
+    for (size_t i=0; i<vec.size(); ++i)
+    {
+        if (strTrim(vec[i]).length() != 0)
+        {
+            if (is_commented)
+            {
+                vec[i] = strReplace(vec[i], comment_line_symbol_, "");
+            }
+            else
+            {
+                vec[i] = strReplace(vec[i], space_prefix, space_prefix + comment_line_symbol_);
+            }
+        }
+    }
+    string rep_text = strJoin(vec, "\n");
+    ptext_edit_->findFirstInSelection(ptext_edit_->selectedText(), false, true, false);
+    replace(StdStringToQString(rep_text));
 }
 
 void DocView::setEditTextFont(const QFont& font)
