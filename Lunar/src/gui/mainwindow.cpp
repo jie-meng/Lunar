@@ -306,11 +306,11 @@ void MainWindow::initToolbar()
     QToolBar* ptoolbar = addToolBar(tr("Tools"));
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
-    ptoolbar->addAction(pfile_save_action_);
-	ptoolbar->addAction(pedit_comment_action_);
+    ptoolbar->addAction(pfile_save_action_);	
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
+	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
