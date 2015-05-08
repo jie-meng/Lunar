@@ -1,6 +1,6 @@
-kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
-kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require[\(\s]\s*\"(?<path>.+)\"\)?]]
-kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
+local kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
+local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require[\(\s]\s*\"(?<path>.+)\"\)?]]
+local kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
 function parseSupplementApi(filename)
     

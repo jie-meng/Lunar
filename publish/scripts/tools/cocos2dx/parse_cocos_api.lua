@@ -136,35 +136,41 @@ end
 
 function parseApi(filename, apis)
     
-    local kRegexFunctionLua = "function\\s+(?<api>(\\w+((\\.|:)\\w+)*\\s*\\(.*\\)))"
-    local re_func = regex.create(kRegexFunctionLua)
+    local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*(%(.*%))]]
+    local pattern_function_lua = [[function%s+([%w_]+)%s*(%(.*%))]]
     local f = io.open(filename, "r")
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
-            if regex.match(re_func, strTrim(line)) then
-                local api = regex.getMatchedGroupByName(re_func, "api")
-                if api ~= "" then
-                    local api_format, _ = string.gsub(api, ":", ".")
-                    table.insert(apis, api_format)
+            repeat
+                local tb, func, param = string.match(strTrim(line), pattern_tb_function_lua)
+                if tb and func and param then
+                    table.insert(apis, string.format("%s.%s%s", tb, func, param))
+                    break
                 end
-            end
+                
+                func, param = string.match(strTrim(line), pattern_function_lua)
+                if func and param then
+                    table.insert(apis, string.format("%s%s", func, param))
+                    break
+                end
+            
+            until true
+            
             line = f:read("*line")
         end
         io.close(f)
     end
-    
-    regex.destroy(re_func)
 end
 
 function parseAutoApi(filename)
     
-    local pattern_module = [[--%s*@module%s+(%w+)]]
-    local pattern_extend = [[--%s*@extend%s+(%w+)]]
-    local pattern_parent_module = [[--%s*@parent_module%s+(%w+)]]
-    local pattern_function = [[--%s*@function%s+%[.+%]%s+(%w+)]]
+    local pattern_module = [[--%s*@module%s+([%w_]+)]]
+    local pattern_extend = [[--%s*@extend%s+([%w_]+)]]
+    local pattern_parent_module = [[--%s*@parent_module%s+([%w_]+)]]
+    local pattern_function = [[--%s*@function%s+%[.+%]%s+([%w_]+)]]
     local pattern_param = [[--%s*@param%s+#(.+)]]
-    local pattern_return = [[--%s*@return%s+.+%s+(%w+)%s+%(return%s+value:%s+(.+)%)]]
+    local pattern_return = [[--%s*@return%s+.+%s+([%w_]+)%s+%(return%s+value:%s+(.+)%)]]
     
     local api_module = ApiModule:new()
     
@@ -222,9 +228,9 @@ end
 
 function parseManualApi(filename)
     
-    local pattern_class = [[lua_pushstring%s*%(%s*.+%s*,%s*"(%w+)%.(%w+)"%s*%)]]
-    local pattern_pushstring = [[lua_pushstring%s*%(%s*.+%s*,%s*"(%w+)"%s*%)]]
-    local pattern_tolua_function = [[tolua_function%s*%(%s*.+%s*,%s*"(%w+)"%s*,%s*.+%s*%)%s*]]
+    local pattern_class = [[lua_pushstring%s*%(%s*.+%s*,%s*"([%w_]+)%.([%w_]+)"%s*%)]]
+    local pattern_pushstring = [[lua_pushstring%s*%(%s*.+%s*,%s*"([%w_]+)"%s*%)]]
+    local pattern_tolua_function = [[tolua_function%s*%(%s*.+%s*,%s*"([%w_]+)"%s*,%s*.+%s*%)%s*]]
     
     local tb = {}
     

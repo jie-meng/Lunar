@@ -1,10 +1,7 @@
-kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
+local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*(%(.*%))]]
+local pattern_function_lua = [[function%s+([%w_]+)%s*(%(.*%))]]
 
 function parseSupplementApi(filename)
-    
-    --[[if (#apis > 0) then
-        return apis
-    end--]]
     
     local apis = {}
   
@@ -19,22 +16,26 @@ end
 
 function parseApi(filename, apis)
     
-    local re_func = regex.create(kRegexFunctionLua)
     local f = io.open(filename, "r")
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
-            if regex.match(re_func, strTrim(line)) then
-                local api = regex.getMatchedGroupByName(re_func, "api")
-                if api ~= "" then
-                    local api_format, _ = string.gsub(api, ":", ".")
-                    table.insert(apis, api_format)
+            repeat
+                local tb, func, param = string.match(strTrim(line), pattern_tb_function_lua)
+                if tb and func and param then
+                    table.insert(apis, string.format("%s.%s%s", tb, func, param))
+                    break
                 end
-            end
+                
+                func, param = string.match(strTrim(line), pattern_function_lua)
+                if func and param then
+                    table.insert(apis, string.format("%s%s", func, param))
+                    break
+                end
+            
+            until true
             line = f:read("*line")
         end
         io.close(f)
     end
-    
-    regex.destroy(re_func)
 end

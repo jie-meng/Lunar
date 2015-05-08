@@ -1,10 +1,10 @@
-kRegexMethod = [[(?<return_type>\w+)\s+(?<method>\w+)\s*(?<param>\(.*\)))]]
-kRegexClassMethod = [[(?<return_type>\w+)\s+(?<class>\w+)::(?<method>\w+)\s*(?<param>\(.*\)))]]
-kRegexClassBegin = "((class)|(struct)|(enum))\\s+(?<name>\\w+)"
-kRegexClassEnd = [[};]]
-kRegexClassInstanceOnStack = [[(?<class>\w+)\s+(?<obj>\w+)\s*;]]
-kRegexClassInstanceOnHeap = [[\w+((\*\s+)|(\s+\*)|(\s+\*\s+)|(\s+))(?<obj>\w+)\s+=\s+new\s+(?<class>\w+)\(.*\)\s*;]]
-kRegexInclude = [[#include\s+"(?<file>.+)"]]
+local kRegexMethod = [[(?<return_type>\w+)\s+(?<method>\w+)\s*(?<param>\(.*\)))]]
+local kRegexClassMethod = [[(?<return_type>\w+)\s+(?<class>\w+)::(?<method>\w+)\s*(?<param>\(.*\)))]]
+local kRegexClassBegin = "((class)|(struct)|(enum))\\s+(?<name>\\w+)"
+local kRegexClassEnd = [[};]]
+local kRegexClassInstanceOnStack = [[(?<class>\w+)\s+(?<obj>\w+)\s*;]]
+local kRegexClassInstanceOnHeap = [[\w+((\*\s+)|(\s+\*)|(\s+\*\s+)|(\s+))(?<obj>\w+)\s+=\s+new\s+(?<class>\w+)\(.*\)\s*;]]
+local kRegexInclude = [[#include\s+"(?<file>.+)"]]
 
 kIncludeDirCfgFileName = "inc_dirs"
 

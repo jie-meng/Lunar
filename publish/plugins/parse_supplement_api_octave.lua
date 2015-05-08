@@ -1,4 +1,4 @@
-kRegexFunctionOctave = [[function\s+((\[.*\]\s*=)|(\w+\s*=))?\s*(?<api>\w+\s*(?<param>\(.*\)))]]
+local kRegexFunctionOctave = [[function\s+((\[.*\]\s*=)|(\w+\s*=))?\s*(?<api>\w+\s*(?<param>\(.*\)))]]
 
 function parseSupplementApi(filename)
     
