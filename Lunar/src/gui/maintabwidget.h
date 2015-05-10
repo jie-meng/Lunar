@@ -38,6 +38,9 @@ public:
     void gotoNextTabIndex();
     void gotoPrevTabIndex();
     void currentDocComment();
+    QString getCurrentDocSelectedText() const;
+    QString getCurrentDocPathname() const;
+    void currentDocGotoLine(int line);
 private Q_SLOTS:
     void updateTabTitleAndTip(DocView*);
     void tabTextModified(DocView*);

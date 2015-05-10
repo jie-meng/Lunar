@@ -23,7 +23,9 @@
 #include "outputwidget.h"
 #include "luaexecutor.h"
 #include "dockwidgetex.h"
+#include "searchresultswidget.h"
 #include "extension.h"
+#include "searchinputwidget.h"
 
 namespace gui
 {
@@ -46,6 +48,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
+    pedit_search_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
     pview_file_explorer_action_(NULL),
@@ -60,6 +63,8 @@ MainWindow::MainWindow(QWidget* parent)
     plua_executor_(NULL),
     pleft_widget_(NULL),
     pbottom_widget_(NULL),
+    pbottom_tab_widget_(NULL),
+    psearch_results_widget_(NULL),
     file_explorer_widget_on_(false),
     output_widget_on_(false)
 {
@@ -88,7 +93,7 @@ void MainWindow::processCmdParam()
 
 void MainWindow::initLeftDockWidget()
 {
-    pleft_widget_ = new DockWidgetEx(tr("File Explorer"), this);
+    pleft_widget_ = new DockWidgetEx(tr(""), this);
     pfile_explorer_widget_ = new FileExplorerWidget();
     pleft_widget_->setWidget(pfile_explorer_widget_);
     pleft_widget_->setAllowedAreas(Qt::LeftDockWidgetArea);
@@ -102,9 +107,14 @@ void MainWindow::initLeftDockWidget()
 
 void MainWindow::initBottomDockWidget()
 {
-    pbottom_widget_ = new DockWidgetEx(tr("Output"), this);
+    pbottom_widget_ = new DockWidgetEx(tr(""), this);
+    pbottom_tab_widget_ = new QTabWidget;
+    //pbottom_tab_widget_->setTabPosition(QTabWidget::South);
+    pbottom_widget_->setWidget(pbottom_tab_widget_);
     poutput_widget_ = new OutputWidget();
-    pbottom_widget_->setWidget(poutput_widget_);
+    pbottom_tab_widget_->addTab(poutput_widget_, tr("Output"));
+    psearch_results_widget_ = new SearchResultsWidget;
+    pbottom_tab_widget_->addTab(psearch_results_widget_, tr("Search Resuts"));
     pbottom_widget_->setAllowedAreas(Qt::BottomDockWidgetArea);
     addDockWidget(Qt::BottomDockWidgetArea, pbottom_widget_);
 
@@ -230,12 +240,12 @@ void MainWindow::initActions()
     pfile_dump_action_->setIcon(QIcon(tr(":/res/dump.png")));
 
     pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
-    pfile_goto_next_action_->setStatusTip(tr("Goto next document"));
+    pfile_goto_next_action_->setStatusTip(tr("Goto next document."));
     pfile_goto_next_action_->setShortcut(Qt::CTRL + Qt::Key_PageDown);
     pfile_goto_next_action_->setIcon(QIcon(tr(":/res/next.png")));
 
     pfile_goto_prev_action_ = new QAction(tr("Goto prev"), this);
-    pfile_goto_prev_action_->setStatusTip(tr("Goto prev document"));
+    pfile_goto_prev_action_->setStatusTip(tr("Goto prev document."));
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
@@ -243,6 +253,11 @@ void MainWindow::initActions()
     pedit_find_action_->setStatusTip(tr("Find."));
     pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setIcon(QIcon(tr(":/res/find.png")));
+
+    pedit_search_action_ = new QAction(tr("Searc&h"), this);
+    pedit_search_action_->setStatusTip(tr("Search in files."));
+    pedit_search_action_->setShortcut(Qt::CTRL + Qt::Key_H);
+    pedit_search_action_->setIcon(QIcon(tr(":/res/search.png")));
 
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
@@ -287,6 +302,7 @@ void MainWindow::initMenubar()
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_find_action_);
+    pedit_menu->addAction(pedit_search_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
 
@@ -310,6 +326,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
+    ptoolbar->addAction(pedit_search_action_);
 	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
@@ -332,9 +349,6 @@ void MainWindow::InitMainWidget()
 {
     pmain_tabwidget_ = new gui::MainTabWidget(this);
     setCentralWidget(pmain_tabwidget_);
-
-//    if(LunarGlobal::get_arg_cnt() == 1)
-//        FileNew();
 }
 
 void MainWindow::initFindDialog()
@@ -355,6 +369,7 @@ void MainWindow::initConnections()
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
+    connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
@@ -371,6 +386,8 @@ void MainWindow::initConnections()
     connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
             connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
+    //search results
+    connect(psearch_results_widget_, SIGNAL(gotoSearchResult(QString,int)), this, SLOT(gotoSearchResult(QString,int)));
     //luaexecutor
     connect(plua_executor_, SIGNAL(sendOutput(const QString&)),
             this, SLOT(addOutput(const QString&)));
@@ -451,6 +468,49 @@ void MainWindow::editFind()
     pfind_dlg_->setFocusOnFindInput();
 }
 
+void MainWindow::editSearch()
+{
+    QString text;
+    QString file_filter;
+    QString dir = StdStringToQString(currentPath());
+    if (pfile_explorer_widget_)
+        dir = pfile_explorer_widget_->getCurrentSelectedDir();
+
+    QString str = pmain_tabwidget_->getCurrentDocSelectedText();
+    text = StdStringToQString(strTrim(QStringToStdString(str)));
+    QString pathname = pmain_tabwidget_->getCurrentDocPathname();
+
+    file_filter = StdStringToQString(fileExtension(QStringToStdString(pathname)));
+
+    SearchInputWidget inputwidget(QString(dir), text, file_filter);
+    connect(&inputwidget, SIGNAL(inputOk(const QString&, const QString&, const QString&, bool, bool)),
+            this, SLOT(searchTextInPath(const QString&, const QString&, const QString&, bool, bool)));
+    inputwidget.exec();
+}
+
+void MainWindow::searchTextInPath(
+                                  const QString& dir,
+                                  const QString& text,
+                                  const QString& file_filter,
+                                  bool case_sensitive,
+                                  bool use_regex)
+{
+    psearch_results_widget_->searchInPath(dir, text, file_filter, case_sensitive, use_regex);
+
+    if (!output_widget_on_)
+    {
+        pbottom_widget_->show();
+        output_widget_on_ = true;
+    }
+    pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
+}
+
+void MainWindow::gotoSearchResult(const QString& file, int line)
+{
+    openDoc(StdStringToQString(currentPath())+ "/" + file);
+    pmain_tabwidget_->currentDocGotoLine(line);
+}
+
 void MainWindow::editSetFont()
 {
     pmain_tabwidget_->setDocViewFont();
@@ -513,7 +573,7 @@ void MainWindow::replaceAll(const QString& str, const QString& replace_with_text
         if(found)
         {
             replace(replace_with_text, find_in_output);
-            i++;
+            ++i;
         }
 
     } while(found);
@@ -639,6 +699,7 @@ void MainWindow::runEx()
         pbottom_widget_->show();
         output_widget_on_ = true;
     }
+    pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
 
     clearOutput();
     DocView* pdoc_view = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());

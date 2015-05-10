@@ -675,6 +675,23 @@ void DocView::commentSelection()
     replace(StdStringToQString(rep_text));
 }
 
+QString DocView::getSelectedText() const
+{
+    if (ptext_edit_)
+        return ptext_edit_->selectedText();
+    else
+        return tr("");
+}
+
+void DocView::gotoLine(int line)
+{
+    if (ptext_edit_)
+    {
+        if (line-1 >=0 && line-1<ptext_edit_->lines())
+            ptext_edit_->setCursorPosition(line-1, 0);
+    }
+}
+
 void DocView::setEditTextFont(const QFont& font)
 {
     LunarGlobal::getInstance().setFont(font);

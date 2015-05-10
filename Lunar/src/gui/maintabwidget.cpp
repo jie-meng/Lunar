@@ -278,5 +278,30 @@ void MainTabWidget::currentDocComment()
         pdocview->commentSelection();
 }
 
+QString MainTabWidget::getCurrentDocSelectedText() const
+{
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if(NULL != pdocview)
+        return pdocview->getSelectedText();
+    else
+        return tr("");
+}
+
+QString MainTabWidget::getCurrentDocPathname() const
+{
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if(NULL != pdocview)
+        return pdocview->getPathname();
+    else
+        return tr("");
+}
+
+void MainTabWidget::currentDocGotoLine(int line)
+{
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if(NULL != pdocview)
+        pdocview->gotoLine(line);
+}
+
 } // namespace gui
 

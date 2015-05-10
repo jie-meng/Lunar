@@ -33,7 +33,7 @@ void FileExplorerWidget::init()
 {
     //init gui
     setColumnCount(1);
-    setHeaderLabels(QStringList(""));
+    setHeaderLabels(QStringList(tr("File Explorer")));
 
     initConnections();
     loadRoot();

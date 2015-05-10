@@ -25,6 +25,9 @@ Makefile*
 *-build-*
 *.Release
 *.Debug
+libqscintilla2.so.12
+libqscintilla2.so.12.0
+libqscintilla2.so.12.0.0
 
 # dir
 /[Dd]ebug

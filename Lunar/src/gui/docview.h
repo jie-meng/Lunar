@@ -43,10 +43,12 @@ public:
 			  bool from_start
               );
     void commentSelection();
+    QString getSelectedText() const;
     inline FileType getFileType() const { return file_type_; }
     inline std::string getExecutor() const { return executor_; }
     inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
     inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
+    void gotoLine(int line);
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);

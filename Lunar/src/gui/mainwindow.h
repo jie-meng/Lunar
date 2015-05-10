@@ -8,6 +8,7 @@ class QAction;
 class QLabel;
 class QGraphicsView;
 class LuaExecutor;
+class QTabWidget;
 
 namespace gui
 {
@@ -17,6 +18,7 @@ class FindDialog;
 class OutputWidget;
 class FileExplorerWidget;
 class DockWidgetEx;
+class SearchResultsWidget;
 
 class MainWindow : public QMainWindow
 {
@@ -47,6 +49,7 @@ private Q_SLOTS:
     void fileGotoNext();
     void fileGotoPrev();
     void editFind();
+    void editSearch();
     void editSetFont();
     void editComment();
     void viewFileExplorer();
@@ -55,11 +58,16 @@ private Q_SLOTS:
     void replace(const QString&, bool find_in_output);
     void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
     void run();
-    //void runInSysCmd();
     void stop();
     void setStatusText(const QString& text);
     void onBottomDockClose();
     void onLeftDockClose();
+    void searchTextInPath(const QString& dir,
+                          const QString& text,
+                          const QString& file_filter,
+                          bool case_sensitive,
+                          bool use_regex);
+    void gotoSearchResult(const QString& file, int line);
 protected:
     virtual void dragEnterEvent(QDragEnterEvent *event);
     virtual void dropEvent(QDropEvent *event);
@@ -89,11 +97,11 @@ private:
     QAction* pfile_goto_next_action_;
     QAction* pfile_goto_prev_action_;
     QAction* pedit_find_action_;
+    QAction* pedit_search_action_;
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
     QAction* pview_file_explorer_action_;
     QAction* prun_run_action_;
-    //QAction* prun_run_syscmd_action_;
     QAction* prun_stop_action_;
     QAction* phelp_about_action_;
     QLabel* pstatus_text_;
@@ -104,6 +112,8 @@ private:
     LuaExecutor* plua_executor_;
     DockWidgetEx* pleft_widget_;
     DockWidgetEx* pbottom_widget_;
+    QTabWidget* pbottom_tab_widget_;
+    SearchResultsWidget* psearch_results_widget_;
     bool file_explorer_widget_on_;
     bool output_widget_on_;
 private:
