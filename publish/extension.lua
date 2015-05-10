@@ -49,7 +49,7 @@ function parseFileType(filename)
                 api = "apis/octave", 
                 executor = "C:/Users/jmeng/programs/Octave-3.8.2/bin/octave.exe", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_octave.lua", 
-                parse_supplement_api_func = "parseSupplementApi"
+                parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "%"
             }
 	end
