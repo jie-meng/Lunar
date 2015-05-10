@@ -2,7 +2,7 @@
 #include <fstream>
 #include <algorithm>
 #include <QKeyEvent>
-#include "lexicalcast.hpp"
+#include "util/lexicalcast.hpp"
 #include "lunarcommon.h"
 #include "extension.h"
 
