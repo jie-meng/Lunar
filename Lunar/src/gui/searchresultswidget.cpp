@@ -12,6 +12,7 @@ using namespace util;
 namespace gui
 {
 
+//SearchFileFilter
 class SearchFileFilter : public PathFilter
 {
 public:
@@ -41,57 +42,54 @@ private:
     vector<string> vec_;
 };
 
-SearchResultsWidget::SearchResultsWidget(QWidget *parent) : QTreeWidget(parent)
+//SearchThread
+SearchThread::SearchThread(QObject *parent) : QThread(parent)
 {
-    setColumnCount(2);
-    setColumnWidth(0, 200);
-    setColumnWidth(1, 50);
-
-    QStringList list;
-    list.append("File");
-    list.append("Line");
-    list.append("Text");
-    setHeaderLabels(list);
-
-    initConnections();
 }
 
-SearchResultsWidget::~SearchResultsWidget()
+void SearchThread::start(const QString& path,
+           const QString& text,
+           const QString& exts,
+           bool case_sensitive,
+           bool use_regexp)
 {
+    path_ = path;
+    text_ = text;
+    exts_ = exts;
+    case_sensitive_ = case_sensitive;
+    use_regexp_ = use_regexp;
 
+    QThread::start();
 }
 
-void SearchResultsWidget::searchInPath(const QString& path,
-                                       const QString& text,
-                                       const QString& exts,
-                                       bool case_sensitive,
-                                       bool use_regexp)
+SearchThread::~SearchThread()
 {
-    //clear all items
-    clear();
+}
 
+void SearchThread::run()
+{
     //for efficiency, set regex as an object of SearchResultsWidget instead of create on stack whenever use
-    if (use_regexp)
+    if (use_regexp_)
     {
-        Regex::RegexFlag flag = case_sensitive ? Regex::NoFlag : Regex::IgnoreCase;
-        regex_.compile(QStringToStdString(text), flag);
+        Regex::RegexFlag flag = case_sensitive_ ? Regex::NoFlag : Regex::IgnoreCase;
+        regex_.compile(QStringToStdString(text_), flag);
     }
 
-    string str_path = QStringToStdString(path);
-    string str_text = QStringToStdString(text);
+    string str_path = QStringToStdString(path_);
+    string str_text = QStringToStdString(text_);
 
     if (isPathFile(str_path))
     {
-        searchInFile(str_path, str_text, case_sensitive, use_regexp);
+        searchInFile(str_path, str_text, case_sensitive_, use_regexp_);
     }
     else if (isPathDir(str_path))
     {
-        SearchFileFilter sff(QStringToStdString(exts));
-        searchInDirectory(str_path, &sff, str_text, case_sensitive, use_regexp);
+        SearchFileFilter sff(QStringToStdString(exts_));
+        searchInDirectory(str_path, &sff, str_text, case_sensitive_, use_regexp_);
     }
 }
 
-void SearchResultsWidget::searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp)
+void SearchThread::searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp)
 {
     std::ifstream ifs(file.c_str());
     if (ifs.is_open())
@@ -116,19 +114,14 @@ void SearchResultsWidget::searchInFile(const std::string& file, const std::strin
 
             if (match)
             {
-                QStringList list;
-                list.append(StdStringToQString(strReplace(file, currentPath() + "/", "")));
-                list.append(StdStringToQString(toString(idx)));
-                list.append(StdStringToQString(strTrim(line)));
-                QTreeWidgetItem* pnode = new QTreeWidgetItem((QTreeWidget*)0, list);
-                addTopLevelItem(pnode);
+                Q_EMIT found(StdStringToQString(strReplace(file, currentPath() + "/", "")), StdStringToQString(toString(idx)), StdStringToQString(strTrim(line)));
             }
         }
         ifs.close();
     }
 }
 
-void SearchResultsWidget::searchInDirectory(const std::string& dir, PathFilter* path_filter, const std::string& text, bool case_sensitive, bool use_regexp)
+void SearchThread::searchInDirectory(const std::string& dir, PathFilter* path_filter, const std::string& text, bool case_sensitive, bool use_regexp)
 {
     vector<string> vec;
     listFiles(dir, vec, path_filter);
@@ -150,6 +143,43 @@ void SearchResultsWidget::searchInDirectory(const std::string& dir, PathFilter* 
     }
 }
 
+SearchResultsWidget::SearchResultsWidget(QWidget *parent) :
+    QTreeWidget(parent)
+{
+    setColumnCount(2);
+    setColumnWidth(0, 200);
+    setColumnWidth(1, 50);
+
+    QStringList list;
+    list.append("File");
+    list.append("Line");
+    list.append("Text");
+    setHeaderLabels(list);
+
+    initConnections();
+}
+
+SearchResultsWidget::~SearchResultsWidget()
+{
+}
+
+void SearchResultsWidget::searchInPath(const QString& path,
+                                       const QString& text,
+                                       const QString& exts,
+                                       bool case_sensitive,
+                                       bool use_regexp)
+{
+    if (search_thread_.isRunning())
+    {
+        LunarMsgBoxQ("Search is running.");
+        return;
+    }
+
+    //clear all items
+    clear();
+    search_thread_.start(path, text, exts, case_sensitive, use_regexp);
+}
+
 void SearchResultsWidget::keyPressEvent(QKeyEvent *event)
 {
     switch (event->key())
@@ -167,6 +197,17 @@ void SearchResultsWidget::keyPressEvent(QKeyEvent *event)
 void SearchResultsWidget::initConnections()
 {
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(onItemDoubleClicked(QTreeWidgetItem *, int)));
+    connect(&search_thread_, SIGNAL(found(const QString&, const QString&, const QString&)), this, SLOT(onAddItem(const QString&, const QString&, const QString&)));
+}
+
+void SearchResultsWidget::onAddItem(const QString& file, const QString& line, const QString& text)
+{
+    QStringList list;
+    list.append(file);
+    list.append(line);
+    list.append(text);
+    QTreeWidgetItem* pnode = new QTreeWidgetItem((QTreeWidget*)0, list);
+    addTopLevelItem(pnode);
 }
 
 void SearchResultsWidget::onItemReturn(QTreeWidgetItem *item, int column)
