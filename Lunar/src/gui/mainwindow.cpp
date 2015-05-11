@@ -93,7 +93,7 @@ void MainWindow::processCmdParam()
 
 void MainWindow::initLeftDockWidget()
 {
-    pleft_widget_ = new DockWidgetEx(tr(""), this);
+    pleft_widget_ = new DockWidgetEx(tr("Management"), this);
     pfile_explorer_widget_ = new FileExplorerWidget();
     pleft_widget_->setWidget(pfile_explorer_widget_);
     pleft_widget_->setAllowedAreas(Qt::LeftDockWidgetArea);
@@ -107,7 +107,7 @@ void MainWindow::initLeftDockWidget()
 
 void MainWindow::initBottomDockWidget()
 {
-    pbottom_widget_ = new DockWidgetEx(tr(""), this);
+    pbottom_widget_ = new DockWidgetEx(tr("Logs and others"), this);
     pbottom_tab_widget_ = new QTabWidget;
     //pbottom_tab_widget_->setTabPosition(QTabWidget::South);
     pbottom_widget_->setWidget(pbottom_tab_widget_);
@@ -322,7 +322,7 @@ void MainWindow::initToolbar()
     QToolBar* ptoolbar = addToolBar(tr("Tools"));
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
-    ptoolbar->addAction(pfile_save_action_);	
+    ptoolbar->addAction(pfile_save_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);

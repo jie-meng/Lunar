@@ -74,6 +74,10 @@
 		<Unit filename="src/gui/outputwidget.h" />
 		<Unit filename="src/gui/qsciapisex.cpp" />
 		<Unit filename="src/gui/qsciapisex.h" />
+		<Unit filename="src/gui/searchinputwidget.cpp" />
+		<Unit filename="src/gui/searchinputwidget.h" />
+		<Unit filename="src/gui/searchresultswidget.cpp" />
+		<Unit filename="src/gui/searchresultswidget.h" />
 		<Unit filename="src/luaexecutor.cpp" />
 		<Unit filename="src/luaexecutor.h" />
 		<Unit filename="src/lunarcommon.cpp" />
