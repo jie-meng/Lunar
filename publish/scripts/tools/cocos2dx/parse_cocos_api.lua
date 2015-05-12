@@ -65,7 +65,7 @@ end
 
 function ApiModule:EndFunc(return_obj, return_type)
     if self.tmp_function_ then
-        table.insert(self.functions_, self.tmp_function_ .. ") -- return " .. return_obj .. " " .. return_type)
+        table.insert(self.functions_, self.tmp_function_ .. ") -> " .. return_obj .. " " .. return_type)
         self.tmp_function_ = nil
         return true
     else
