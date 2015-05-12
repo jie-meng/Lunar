@@ -13,11 +13,93 @@ using namespace util;
 namespace gui
 {
 
+ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
+    QThread(parent),
+    papi_loader_(papi_loader),
+    load_api_type_(Unknown),
+    loading_(false)
+{
+    connect(this, SIGNAL(loadFinish()), this, SLOT(onLoadFinish()));
+}
+
+ApiLoadThread::~ApiLoadThread()
+{
+
+}
+
+void ApiLoadThread::startLoadCommonApi(const std::string& api_dirs)
+{
+    if (isRunning() || loading_)
+        return;
+
+    if (papi_loader_)
+    {
+        load_api_type_ = CommonApi;
+        api_dirs_ = api_dirs;
+
+        QThread::start();
+    }
+}
+
+void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+{
+    if (isRunning() || loading_)
+        return;
+
+    if (papi_loader_)
+    {
+        load_api_type_ = SupplementApi;
+        parse_supplement_api_script_ = parse_supplement_api_script;
+        parse_supplement_api_func_ = parse_supplement_api_func;
+
+        QThread::start();
+    }
+}
+
+void ApiLoadThread::run()
+{
+    if (papi_loader_)
+    {
+        if (CommonApi == load_api_type_)
+        {
+            loading_ = true;
+
+            papi_loader_->loadCommonApi(api_dirs_);
+
+            api_dirs_ = "";
+            load_api_type_ = Unknown;
+
+            Q_EMIT loadFinish();
+        }
+        else if (SupplementApi == load_api_type_)
+        {
+            loading_ = true;
+
+            papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_);
+
+            parse_supplement_api_script_ = "";
+            parse_supplement_api_func_ = "";
+            load_api_type_ = Unknown;
+
+            Q_EMIT loadFinish();
+        }
+    }
+}
+
+void ApiLoadThread::onLoadFinish()
+{
+    if (papi_loader_)
+        papi_loader_->prepare();
+
+    loading_ = false;
+}
+
 const std::string kApisExt = "api";
 
 //ApiLoader
-ApiLoader::ApiLoader(const std::string& file,
-                         QsciAPIsEx* papis) :
+ApiLoader::ApiLoader(QsciAPIsEx* papis,
+                     const std::string& file) :
+    api_load_thread_(this),
     papis_(papis),
 	file_(file),
     lua_state_ok_(false),
@@ -65,7 +147,7 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
     return lua_state_ok_;
 }
 
-void ApiLoader::loadApi(const std::string& api_paths)
+void ApiLoader::loadCommonApi(const std::string& api_paths)
 {
     if (api_paths.length() == 0)
         return;
@@ -124,6 +206,26 @@ void ApiLoader::loadApi(const std::string& api_paths)
         {
             papis_->load(StdStringToQString(LunarGlobal::getInstance().getAppPath() + "/" + path));
         }
+    }
+}
+
+void ApiLoader::loadCommonApiAsync(const std::string& api_dirs)
+{
+    api_load_thread_.startLoadCommonApi(api_dirs);
+}
+
+void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+{
+    api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func);
+}
+
+void ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+{
+    clearSupplementApi();
+    if ("" != parse_supplement_api_script && "" != parse_supplement_api_func)
+    {
+        if (!appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func))
+            LunarMsgBox(errorInformation());
     }
 }
 

@@ -23,9 +23,10 @@ public:
                const QString& exts,
                bool case_sensitive,
                bool use_regexp);
-    virtual void run();
 signals:
     void found(const QString&, const QString&, const QString&);
+protected:
+    virtual void run();
 private:
     void searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp);
     void searchInDirectory(const std::string& dir, util::PathFilter* path_filter, const std::string& text, bool case_sensitive, bool use_regexp);

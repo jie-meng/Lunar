@@ -151,14 +151,9 @@ void DocView::setLexerApi()
                 ptext_edit_->setLexer(plexer_);
 
                 //api
-                papi_loader_ = new ApiLoader(QStringToStdString(pathname_), papis_);
-                papi_loader_->loadApi(getValueFromMap<string>(dict, "api", ""));
-                if ("" != parse_supplement_api_script_ && "" != parse_supplement_api_func_)
-                {
-                    if (!papi_loader_->appendSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_))
-                        LunarMsgBox(papi_loader_->errorInformation());
-                }
-                papi_loader_->prepare();
+                papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
+                papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
+                papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
 
                 //parse success
                 file_type_ = filetype;
@@ -179,15 +174,7 @@ void DocView::setLexerApi()
 void DocView::refreshSupplementApi()
 {
     if (papi_loader_)
-    {
-        papi_loader_->clearSupplementApi();
-        if ("" != parse_supplement_api_script_ && "" != parse_supplement_api_func_)
-        {
-            if (!papi_loader_->appendSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_))
-                LunarMsgBox(papi_loader_->errorInformation());
-        }
-        papi_loader_->prepare();
-    }
+        papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
 }
 
 void DocView::apisPreparationFinished()

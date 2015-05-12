@@ -4,11 +4,45 @@
 #include <vector>
 #include <set>
 #include <QtCore/QObject>
+#include <QThread>
 #include "util/base.hpp"
 #include "util/luaextend.hpp"
 
 namespace gui
 {
+
+class ApiLoader;
+
+class ApiLoadThread : public QThread
+{
+    Q_OBJECT
+
+    enum LoadApiType
+    {
+        Unknown,
+        CommonApi,
+        SupplementApi
+    };
+
+public:
+    ApiLoadThread(ApiLoader* papi_loader, QObject *parent = 0);
+    virtual ~ApiLoadThread();
+    void startLoadCommonApi(const std::string& api_dirs);
+    void startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
+signals:
+    void loadFinish();
+protected:
+    virtual void run();
+private slots:
+    void onLoadFinish();
+private:
+    std::string api_dirs_;
+    std::string parse_supplement_api_script_;
+    std::string parse_supplement_api_func_;
+    ApiLoader* papi_loader_;
+    LoadApiType load_api_type_;
+    bool loading_;
+};
 
 class QsciAPIsEx;
 class ClassInfo;
@@ -16,19 +50,25 @@ class ClassInfo;
 class ApiLoader
 {
 public:
-    ApiLoader(const std::string& file,
-                QsciAPIsEx* papis);
+    friend class ApiLoadThread;
+
+    ApiLoader(QsciAPIsEx* papis,
+              const std::string& file);
     ~ApiLoader();
 
-    void loadApi(const std::string& api_dirs);
-    bool appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
-    void clearSupplementApi();
-    void prepare();
+    void loadCommonApiAsync(const std::string& api_dirs);
+    void loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
     inline std::string errorInformation() const { return error_information_; }
 private:
     bool initLuaState(const std::string& parse_supplement_api_script);
+    void loadCommonApi(const std::string& api_dirs);
+    void refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
     bool parseSupplementApi(const std::string& parse_supplement_api_func);
+    bool appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
+    void clearSupplementApi();
+    void prepare();
 private:
+    ApiLoadThread api_load_thread_;
     QsciAPIsEx* papis_;
     std::string file_;
     std::set<std::string> api_supplement_;
