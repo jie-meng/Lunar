@@ -68,7 +68,7 @@ function parseFileType(filename)
                 type = "python",
                 auto_complete_type = 1,
                 api = "apis/python",
-                executor = "python",
+                executor = "python -u",
                 comment_line = "#"
             }
     end
