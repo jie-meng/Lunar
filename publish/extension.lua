@@ -63,7 +63,14 @@ function parseFileType(filename)
 	end
     
     if string.lower(file.fileExtension(name)) == "py" then
-        return { type = "python", comment_line = "#" }
+        return 
+            { 
+                type = "python",
+                auto_complete_type = 1,
+                api = "apis/python",
+                executor = "python",
+                comment_line = "#"
+            }
     end
     
     if string.lower(file.fileExtension(name)) == "tcl" then
@@ -79,6 +86,7 @@ function parseFileType(filename)
     end
     
     if string.lower(file.fileExtension(name)) == "xml" or
+       string.lower(file.fileExtension(name)) == "axml" or
        string.lower(file.fileExtension(name)) == "tmx" then
         return { type = "xml" }
     end
