@@ -142,8 +142,9 @@ function parseSupplementApiInFile(filename, apis, classes)
                 local param_init = string.match(line, pattern_func_init)
                 if param_init then
                     if #class_scope_stack > 0 then
-                        table.insert(apis, string.format("%s(%s)", getCurrentScopeFullName(class_scope_stack), removeSelfFromParams(param_init)))
-                        --sendLog(string.format("%s(%s)", getCurrentScopeFullName(class_scope_stack), removeSelfFromParams(param_init)))
+                        --local current_class = getCurrentClassInScopeStack(class_scope_stack)
+                        --current_class:addFunction(string.format("%s(%s)", current_class, removeSelfFromParams(param_init)))
+                        table.insert(apis, string.format("%s(%s)", current_class:getName(), removeSelfFromParams(param_init)))
                     end
                     break
                 end
@@ -151,7 +152,6 @@ function parseSupplementApiInFile(filename, apis, classes)
                 local func, param = string.match(line, pattern_func)
                 if func and param then
                     if #class_scope_stack > 0 then
-                        --sendLog(string.format("%s.%s(%s)", getCurrentScopeFullName(class_scope_stack), func, removeSelfFromParams(param)))
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
                         current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
                     else
