@@ -50,6 +50,7 @@ bool Extension::initLuaState()
     else
     {
         lua_state_.registerFunction("messageBox", scriptMessage);
+        lua_state_.registerFunction("sendLog", sendLog);
         error_information_ = "";
         lua_state_ok_ = true;
     }

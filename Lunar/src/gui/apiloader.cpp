@@ -19,7 +19,7 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     load_api_type_(Unknown),
     loading_(false)
 {
-    connect(this, SIGNAL(loadFinish()), this, SLOT(onLoadFinish()));
+    connect(this, SIGNAL(loadFinish(bool, const QString&)), this, SLOT(onLoadFinish(bool, const QString&)));
 }
 
 ApiLoadThread::~ApiLoadThread()
@@ -69,27 +69,33 @@ void ApiLoadThread::run()
             api_dirs_ = "";
             load_api_type_ = Unknown;
 
-            Q_EMIT loadFinish();
+            Q_EMIT loadFinish(true, tr(""));
         }
         else if (SupplementApi == load_api_type_)
         {
             loading_ = true;
 
-            papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_);
-
+            std::pair<bool, string> ret = papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_);
             parse_supplement_api_script_ = "";
             parse_supplement_api_func_ = "";
             load_api_type_ = Unknown;
 
-            Q_EMIT loadFinish();
+            Q_EMIT loadFinish(ret.first, StdStringToQString(ret.second));
         }
     }
 }
 
-void ApiLoadThread::onLoadFinish()
+void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
 {
-    if (papi_loader_)
+    if (result)
+    {
+        if (papi_loader_)
         papi_loader_->prepare();
+    }
+    else
+    {
+        LunarMsgBoxQ(error_info);
+    }
 
     loading_ = false;
 }
@@ -140,6 +146,7 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
     {
 
         lua_state_.registerFunction("messageBox", scriptMessage);
+        lua_state_.registerFunction("sendLog", sendLog);
         error_information_ = "";
         lua_state_ok_ = true;
     }
@@ -219,14 +226,16 @@ void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_s
     api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func);
 }
 
-void ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
 {
     clearSupplementApi();
     if ("" != parse_supplement_api_script && "" != parse_supplement_api_func)
     {
         if (!appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func))
-            LunarMsgBox(errorInformation());
+            return std::make_pair(false, errorInformation());
     }
+
+    return std::make_pair(true, "");
 }
 
 bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)

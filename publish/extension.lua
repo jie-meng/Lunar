@@ -69,6 +69,8 @@ function parseFileType(filename)
                 auto_complete_type = 1,
                 api = "apis/python",
                 executor = "python -u",
+                parse_supplement_api_script = "plugins/parse_supplement_api_python.lua", 
+                parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "#"
             }
     end
@@ -129,6 +131,7 @@ end
 function ignoreFile(filename)
 	local ext = file.fileExtension(filename)
 	if ext == "so" or 
+        ext == "pyc" or
 		ext == "o" or
 		ext == "lib" or
 		ext == "dll" or

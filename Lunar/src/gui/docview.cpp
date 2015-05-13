@@ -153,7 +153,8 @@ void DocView::setLexerApi()
                 //api
                 papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
                 papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
-                papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
+                //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
+                //papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
 
                 //parse success
                 file_type_ = filetype;

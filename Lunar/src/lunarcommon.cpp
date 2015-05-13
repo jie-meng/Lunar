@@ -9,11 +9,11 @@
 using namespace std;
 using namespace util;
 
-static LogSocket s_logger;
+//static LogSocket s_logger;
 
 void InitLunarCommon(int argc, char* argv[])
 {
-    setPrintFunc(UtilBind(&LogSocket::SendLog, &s_logger, _1));
+    //setPrintFunc(UtilBind(&LogSocket::sendLog, &s_logger, _1));
     LunarGlobal::getInstance().init(argc, argv);
 }
 
@@ -34,6 +34,15 @@ int scriptMessage(lua_State* plua_state)
     return 0;
 }
 
+int sendLog(lua_State* plua_state)
+{
+    string log = luaGetString(plua_state, 1, "");
+    string ip = luaGetString(plua_state, 2, "127.0.0.1");
+    unsigned short port = (unsigned short)luaGetInteger(plua_state, 3, 9966);
+    LogSocket::getInstance().sendLog(log, ip, port);
+    return 0;
+}
+
 ////////////////////////////////////////////////////
 // class name : LogSocket
 // description :
@@ -45,14 +54,9 @@ LogSocket::LogSocket() :
 {
 }
 
-LogSocket::~LogSocket()
+void LogSocket::sendLog(const std::string& log, const std::string& ip, unsigned short port)
 {
-
-}
-
-void LogSocket::SendLog(const std::string& log)
-{
-    log_sock_.sendTo(log.c_str(), log.length(), "127.0.0.1", 9966);
+    log_sock_.sendTo(log.c_str(), log.length(), ip, port);
 }
 
 ////////////////////////////////////////////////////

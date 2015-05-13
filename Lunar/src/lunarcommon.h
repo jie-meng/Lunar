@@ -1,6 +1,7 @@
 #ifndef LUNAR_H
 #define LUNAR_H
 
+#include <string>
 #include <vector>
 #include <QtCore/QString>
 #include <QtGui/QFont>
@@ -22,6 +23,7 @@ void InitLunarCommon(int argc, char* argv[]);
 void LunarMsgBox(const std::string& str);
 void LunarMsgBoxQ(const QString& str);
 int scriptMessage(lua_State* plua_state);
+int sendLog(lua_State* plua_state);
 
 ////////////////////////////////////////////////////
 // class name : LogSocket
@@ -32,9 +34,10 @@ int scriptMessage(lua_State* plua_state);
 class LogSocket
 {
 public:
+    SINGLETON(LogSocket)
+    void sendLog(const std::string& log, const std::string& ip, unsigned short port);
+private:
     LogSocket();
-    ~LogSocket();
-    void SendLog(const std::string& log);
 private:
     util::DgramSocket log_sock_;
 private:

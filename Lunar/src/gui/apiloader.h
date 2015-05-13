@@ -30,11 +30,11 @@ public:
     void startLoadCommonApi(const std::string& api_dirs);
     void startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
 signals:
-    void loadFinish();
+    void loadFinish(bool, const QString&);
 protected:
     virtual void run();
 private slots:
-    void onLoadFinish();
+    void onLoadFinish(bool result, const QString& error_info);
 private:
     std::string api_dirs_;
     std::string parse_supplement_api_script_;
@@ -62,7 +62,7 @@ public:
 private:
     bool initLuaState(const std::string& parse_supplement_api_script);
     void loadCommonApi(const std::string& api_dirs);
-    void refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
+    std::pair<bool, std::string> refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
     bool parseSupplementApi(const std::string& parse_supplement_api_func);
     bool appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func);
     void clearSupplementApi();
