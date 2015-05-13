@@ -21,17 +21,17 @@ function parseApi(filename, apis)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strStartWith(strTrim(line), "--") then
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "--") then
                     break
                 end
             
-                local tb, func, param = string.match(strTrim(line), pattern_tb_function_lua)
+                local tb, func, param = string.match(line, pattern_tb_function_lua)
                 if tb and func and param then
                     table.insert(apis, string.format("%s.%s%s", tb, func, param))
                     break
                 end
                 
-                func, param = string.match(strTrim(line), pattern_function_lua)
+                func, param = string.match(line, pattern_function_lua)
                 if func and param then
                     table.insert(apis, string.format("%s%s", func, param))
                     break

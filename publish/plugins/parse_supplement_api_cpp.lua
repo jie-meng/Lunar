@@ -71,14 +71,14 @@ function parseSupplementApiInFile(filename, first_file, includes, apis, re_metho
         while (line ~= nil) do
         
             repeat
-                if strStartWith(strTrim(line), "//") then
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "//") then
                     break
                 end
         
-                if regex.search(re_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
+                if regex.search(re_method, line) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
                     local method = addAreas(class_areas, regex.getMatchedGroupByName(re_method, "method") .. regex.getMatchedGroupByName(re_method, "param"))
                     table.insert(apis, method)
-                elseif regex.search(re_class_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
+                elseif regex.search(re_class_method, line) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
                     local method = addAreas(class_areas, regex.getMatchedGroupByName(re_class_method, "class") .. "." .. regex.getMatchedGroupByName(re_class_method, "method") .. regex.getMatchedGroupByName(re_class_method, "param"))
                     table.insert(apis, method)
                 elseif regex.match(re_class_begin, strTrim(line)) then

@@ -25,17 +25,22 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strStartWith(strTrim(line), "--") then
+                local line_format = strTrim(line)
+                
+                if line_format == "" or strStartWith(line_format, "--") then
                     break
                 end
             
-                if regex.match(re_func, strTrim(line)) then
+                if regex.match(re_func, line_format) then
                     local api = regex.getMatchedGroupByName(re_func, "api")
                     if api ~= "" then
                         local api_format, _ = string.gsub(api, ":", ".")
                         table.insert(apis, api_format)
                     end
-                elseif regex.match(re_require, strTrim(line)) then
+                    break
+                end    
+                
+                if regex.match(re_require, line_format) then
                     parseSupplementApiRequire(
                         dir,
                         regex.getMatchedGroupByName(re_require, "module"), 
@@ -44,6 +49,7 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
                         re_func,
                         re_require,
                         re_return_module)
+                    break
                 end
             until true
             
@@ -73,21 +79,26 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strStartWith(strTrim(line), "--") then
+                local line_format = strTrim(line)
+                
+                if line_format == "" or strStartWith(line_format, "--") then
                     break
                 end
                 
-                if string.len(strTrim(line)) ~= 0 then
-                    return_module = ""
-                end
+                return_module = ""
                 
-                if regex.match(re_func, strTrim(line)) then
+                if regex.match(re_func, line_format) then
+                    
+                
                     local api = regex.getMatchedGroupByName(re_func, "api")
                     if api ~= "" then
                         local api_format, _ = string.gsub(api, ":", ".")
                         table.insert(tmp_t, api_format)
                     end
-                elseif regex.match(re_require, strTrim(line)) and (not strStartWith(strTrim(line), "local")) then
+                    break
+                end   
+                 
+                if regex.match(re_require, line_format) and (not strStartWith(line_format, "local")) then
                     --local require in required file usually not return, just using locally, so ignore them.
                     parseSupplementApiRequire(
                         dir,
@@ -97,8 +108,12 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                         re_func,
                         re_require,
                         re_return_module)
-                elseif regex.match(re_return_module, strTrim(line)) then
+                    break
+                end
+                
+                if regex.match(re_return_module, line_format) then
                     return_module = regex.getMatchedGroupByName(re_return_module, "module")
+                    break
                 end
             until true
             

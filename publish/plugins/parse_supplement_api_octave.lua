@@ -19,7 +19,7 @@ function parseSupplementApiCurrent(filename, apis)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strStartWith(strTrim(line), "%") or strStartWith(strTrim(line), "#") then
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "%") or strStartWith(strTrimLeft(line), "#") then
                     break
                 end
             
@@ -28,6 +28,7 @@ function parseSupplementApiCurrent(filename, apis)
                     if api ~= "" then
                         table.insert(apis, api)
                     end
+                    break
                 end            
             until true
             
@@ -49,21 +50,26 @@ function parseSupplementApiInPath(filename, apis)
         local f = io.open(value, "r")
         local line = f:read("*line")
         while (line ~= nil) do
+            local break_while = false
+            
             repeat
-                if strStartWith(strTrim(line), "%") or strStartWith(strTrim(line), "#") then
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "%") or strStartWith(strTrimLeft(line), "#") then
                     break
-                end        
+                end
                 
                 if regex.match(re_func, strTrim(line)) then
                     local param = regex.getMatchedGroupByName(re_func, "param")
                     if param ~= "" then
                         table.insert(apis, file.fileBaseName(value) .. param)
-                        break
-                    else
-                        break
                     end
+                    break_while = true
+                    break
                 end
             until true
+            
+            if break_while then
+                break
+            end
             line = f:read("*line")
         end
         

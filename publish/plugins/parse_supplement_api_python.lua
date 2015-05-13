@@ -130,7 +130,7 @@ function parseSupplementApiInFile(filename, apis, classes)
         while (line ~= nil) do
             
             repeat
-                if strStartWith(strTrim(line), "#") then
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
                 end
             
@@ -146,8 +146,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                 local param_init = string.match(line, pattern_func_init)
                 if param_init then
                     if #class_scope_stack > 0 then
-                        --local current_class = getCurrentClassInScopeStack(class_scope_stack)
-                        --current_class:addFunction(string.format("%s(%s)", current_class, removeSelfFromParams(param_init)))
+                        --put constructor directly to apis
                         table.insert(apis, string.format("%s(%s)", current_class:getName(), removeSelfFromParams(param_init)))
                     end
                     break
@@ -160,7 +159,6 @@ function parseSupplementApiInFile(filename, apis, classes)
                         current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
                     else
                         table.insert(apis, string.format("%s(%s)", func, param))
-                        --sendLog(string.format("%s(%s)", func, param))
                     end
                     break
                 end
@@ -180,9 +178,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                     c:setName(class_name2)
                     c:setIndent(getStartSpaceCount(line))
                     local t_extends = strSplit(extends, ",")
-                    --sendLog("name: " .. class_name2)
                     for i, v in ipairs(t_extends) do
-                        --sendLog(strTrim(v))
                         c:addExtends(strTrim(v))
                     end
                     table.insert(class_scope_stack, c)
