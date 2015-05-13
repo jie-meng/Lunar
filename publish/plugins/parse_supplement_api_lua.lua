@@ -24,22 +24,29 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
-            if regex.match(re_func, strTrim(line)) then
-                local api = regex.getMatchedGroupByName(re_func, "api")
-                if api ~= "" then
-                    local api_format, _ = string.gsub(api, ":", ".")
-                    table.insert(apis, api_format)
+            repeat
+                if strStartWith(strTrim(line), "--") then
+                    break
                 end
-            elseif regex.match(re_require, strTrim(line)) then
-                parseSupplementApiRequire(
-                    dir,
-                    regex.getMatchedGroupByName(re_require, "module"), 
-                    regex.getMatchedGroupByName(re_require, "path"), 
-                    apis,
-                    re_func,
-                    re_require,
-                    re_return_module)
-            end
+            
+                if regex.match(re_func, strTrim(line)) then
+                    local api = regex.getMatchedGroupByName(re_func, "api")
+                    if api ~= "" then
+                        local api_format, _ = string.gsub(api, ":", ".")
+                        table.insert(apis, api_format)
+                    end
+                elseif regex.match(re_require, strTrim(line)) then
+                    parseSupplementApiRequire(
+                        dir,
+                        regex.getMatchedGroupByName(re_require, "module"), 
+                        regex.getMatchedGroupByName(re_require, "path"), 
+                        apis,
+                        re_func,
+                        re_require,
+                        re_return_module)
+                end
+            until true
+            
             line = f:read("*line")
         end
         io.close(f)
@@ -65,30 +72,35 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         
         local line = f:read("*line")
         while (line ~= nil) do
-            
-            if string.len(strTrim(line)) ~= 0 then
-                return_module = ""
-            end
-            
-            if regex.match(re_func, strTrim(line)) then
-                local api = regex.getMatchedGroupByName(re_func, "api")
-                if api ~= "" then
-                    local api_format, _ = string.gsub(api, ":", ".")
-                    table.insert(tmp_t, api_format)
+            repeat
+                if strStartWith(strTrim(line), "--") then
+                    break
                 end
-            elseif regex.match(re_require, strTrim(line)) and (not strStartWith(strTrim(line), "local")) then
-                --local require in required file usually not return, just using locally, so ignore them.
-                parseSupplementApiRequire(
-                    dir,
-                    regex.getMatchedGroupByName(re_require, "module"), 
-                    regex.getMatchedGroupByName(re_require, "path"), 
-                    api_t,
-                    re_func,
-                    re_require,
-                    re_return_module)
-            elseif regex.match(re_return_module, strTrim(line)) then
-                return_module = regex.getMatchedGroupByName(re_return_module, "module")
-            end
+                
+                if string.len(strTrim(line)) ~= 0 then
+                    return_module = ""
+                end
+                
+                if regex.match(re_func, strTrim(line)) then
+                    local api = regex.getMatchedGroupByName(re_func, "api")
+                    if api ~= "" then
+                        local api_format, _ = string.gsub(api, ":", ".")
+                        table.insert(tmp_t, api_format)
+                    end
+                elseif regex.match(re_require, strTrim(line)) and (not strStartWith(strTrim(line), "local")) then
+                    --local require in required file usually not return, just using locally, so ignore them.
+                    parseSupplementApiRequire(
+                        dir,
+                        regex.getMatchedGroupByName(re_require, "module"), 
+                        regex.getMatchedGroupByName(re_require, "path"), 
+                        api_t,
+                        re_func,
+                        re_require,
+                        re_return_module)
+                elseif regex.match(re_return_module, strTrim(line)) then
+                    return_module = regex.getMatchedGroupByName(re_return_module, "module")
+                end
+            until true
             
             --next line
             line = f:read("*line")

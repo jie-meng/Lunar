@@ -130,6 +130,10 @@ function parseSupplementApiInFile(filename, apis, classes)
         while (line ~= nil) do
             
             repeat
+                if strStartWith(strTrim(line), "#") then
+                    break
+                end
+            
                 local current_class = getCurrentClassInScopeStack(class_scope_stack)
                 if current_class then
                     if getStartSpaceCount(line) == current_class:getIndent() then

@@ -69,64 +69,72 @@ function parseSupplementApiInFile(filename, first_file, includes, apis, re_metho
     if f ~= nil then
         local line = f:read("*line")
         while (line ~= nil) do
-            if regex.search(re_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
-                local method = addAreas(class_areas, regex.getMatchedGroupByName(re_method, "method") .. regex.getMatchedGroupByName(re_method, "param"))
-                table.insert(apis, method)
-            elseif regex.search(re_class_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
-                local method = addAreas(class_areas, regex.getMatchedGroupByName(re_class_method, "class") .. "." .. regex.getMatchedGroupByName(re_class_method, "method") .. regex.getMatchedGroupByName(re_class_method, "param"))
-                table.insert(apis, method)
-            elseif regex.match(re_class_begin, strTrim(line)) then
-                table.insert(class_areas,  regex.getMatchedGroupByName(re_class_begin, "name"))
-            elseif regex.match(re_class_end, strTrim(line)) then
-                table.remove(class_areas)
-            --[[elseif first_file and regex.match(re_class_instance_on_stack, strTrim(line)) then
-                local str = strTrim(line)
-                if (not strStartWith(str, "return ")) and
-                   (not strStartWith(str, "char ")) and
-                   (not strStartWith(str, "byte ")) and
-                   (not strStartWith(str, "short ")) and
-                   (not strStartWith(str, "int ")) and
-                   (not strStartWith(str, "long ")) and
-                   (not strStartWith(str, "size_t ")) and
-                   (not strStartWith(str, "bool ")) and
-                   (not strStartWith(str, "delete ")) and
-                   (not strStartWith(str, "uint8 ")) and
-                   (not strStartWith(str, "uint16 ")) and
-                   (not strStartWith(str, "uint32 ")) and
-                   (not strStartWith(str, "uint64 ")) and
-                   (not strStartWith(str, "signed ")) and
-                   (not strStartWith(str, "unsigned ")) then                   
-                   addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_stack, "class"), regex.getMatchedGroupByName(re_class_instance_on_stack, "obj"), apis)
+        
+            repeat
+                if strStartWith(strTrim(line), "//") then
+                    break
                 end
-            elseif first_file and regex.match(re_class_instance_on_heap, strTrim(line)) then
-                addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)
-            elseif regex.match(re_include, strTrim(line)) then
-                
-                local inc_dir = file.splitPathname(filename)
-                local inc_file = inc_dir .. "/" .. regex.getMatchedGroupByName(re_include, "file")
-                
-                if file.isPathFile(inc_file) then
-                    parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
-                else
+        
+                if regex.search(re_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
+                    local method = addAreas(class_areas, regex.getMatchedGroupByName(re_method, "method") .. regex.getMatchedGroupByName(re_method, "param"))
+                    table.insert(apis, method)
+                elseif regex.search(re_class_method, strTrim(line)) and regex.getMatchedGroupByName(re_method, "return_type") ~= "new" then
+                    local method = addAreas(class_areas, regex.getMatchedGroupByName(re_class_method, "class") .. "." .. regex.getMatchedGroupByName(re_class_method, "method") .. regex.getMatchedGroupByName(re_class_method, "param"))
+                    table.insert(apis, method)
+                elseif regex.match(re_class_begin, strTrim(line)) then
+                    table.insert(class_areas,  regex.getMatchedGroupByName(re_class_begin, "name"))
+                elseif regex.match(re_class_end, strTrim(line)) then
+                    table.remove(class_areas)
+                --elseif first_file and regex.match(re_class_instance_on_stack, strTrim(line)) then
+                --    local str = strTrim(line)
+                --    if (not strStartWith(str, "return ")) and
+                --       (not strStartWith(str, "char ")) and
+                --       (not strStartWith(str, "byte ")) and
+                --       (not strStartWith(str, "short ")) and
+                --       (not strStartWith(str, "int ")) and
+                --       (not strStartWith(str, "long ")) and
+                --       (not strStartWith(str, "size_t ")) and
+                --       (not strStartWith(str, "bool ")) and
+                --       (not strStartWith(str, "delete ")) and
+                --       (not strStartWith(str, "uint8 ")) and
+                --       (not strStartWith(str, "uint16 ")) and
+                --       (not strStartWith(str, "uint32 ")) and
+                --       (not strStartWith(str, "uint64 ")) and
+                --       (not strStartWith(str, "signed ")) and
+                --       (not strStartWith(str, "unsigned ")) then                   
+                --       addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_stack, "class"), regex.getMatchedGroupByName(re_class_instance_on_stack, "obj"), apis)
+                --    end
+                --elseif first_file and regex.match(re_class_instance_on_heap, strTrim(line)) then
+                --    addClassInstance(regex.getMatchedGroupByName(re_class_instance_on_heap, "class"), regex.getMatchedGroupByName(re_class_instance_on_heap, "obj"), apis)
+                --elseif regex.match(re_include, strTrim(line)) then
                     
-                    local inc_dir_cfg = file.currentPath() .. "/" .. kIncludeDirCfgFileName
-                    if file.isPathFile(inc_dir_cfg) then
-                        local inc_dir_f = io.open(inc_dir_cfg, "r")
-                        if inc_dir_f ~= nil then
-                            local inc_line = inc_dir_f:read("*line")
-                            while (inc_line ~= nil) do
-                                inc_file = strTrim(inc_line) .. "/" .. regex.getMatchedGroupByName(re_include, "file")
-                                if file.isPathFile(inc_file) then
-                                    parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
-                                    break
-                                end
-                                inc_line = inc_dir_f:read("*line")
-                            end
-                            io.close(inc_dir_f)
-                        end
-                    end
-                end--]]
-            end
+                --    local inc_dir = file.splitPathname(filename)
+                --    local inc_file = inc_dir .. "/" .. regex.getMatchedGroupByName(re_include, "file")
+                    
+                --    if file.isPathFile(inc_file) then
+                --        parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+                --    else
+                        
+                --        local inc_dir_cfg = file.currentPath() .. "/" .. kIncludeDirCfgFileName
+                --        if file.isPathFile(inc_dir_cfg) then
+                --            local inc_dir_f = io.open(inc_dir_cfg, "r")
+                --            if inc_dir_f ~= nil then
+                --                local inc_line = inc_dir_f:read("*line")
+                --                while (inc_line ~= nil) do
+                --                    inc_file = strTrim(inc_line) .. "/" .. regex.getMatchedGroupByName(re_include, "file")
+                --                    if file.isPathFile(inc_file) then
+                --                        parseSupplementApiInFile(inc_file, false, includes, apis, re_method, re_class_method, re_class_begin, re_class_end, re_class_instance_on_stack, re_class_instance_on_heap, re_include)
+                --                        break
+                --                    end
+                --                    inc_line = inc_dir_f:read("*line")
+                --                end
+                --                io.close(inc_dir_f)
+                --            end
+                --        end
+                --    end
+                end
+            until true    
+            
             line = f:read("*line")
         end
         io.close(f)
