@@ -165,6 +165,7 @@ void LunarGlobal::readCfg()
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
     extension_func_ignore_file_ = text_cfg.getValue("Extension.Func.IgnoreFile", "ignoreFile");
+    log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
 }
 
 void LunarGlobal::writeCfg()
@@ -180,6 +181,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
     text_cfg.setValue("Extension.Func.IgnoreFile", extension_func_ignore_file_);
+    text_cfg.setValue("Log.SockPort", log_sock_port_);
 
     text_cfg.save();
 }

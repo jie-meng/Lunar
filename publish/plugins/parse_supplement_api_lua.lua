@@ -2,7 +2,7 @@ local kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
 local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require[\(\s]\s*\"(?<path>.+)\"\)?]]
 local kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
-function parseSupplementApi(filename)
+function parseSupplementApi(filename, cursor_line)
     
     local re_func = regex.create(kRegexFunctionLua)
     local re_require = regex.create(kRegexRequireLua)

@@ -1,7 +1,7 @@
 local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*(%(.*%))]]
 local pattern_function_lua = [[function%s+([%w_]+)%s*(%(.*%))]]
 
-function parseSupplementApi(filename)
+function parseSupplementApi(filename, cursor_line)
     
     local apis = {}
   

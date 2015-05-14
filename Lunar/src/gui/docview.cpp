@@ -174,8 +174,13 @@ void DocView::setLexerApi()
 
 void DocView::refreshSupplementApi()
 {
-    if (papi_loader_)
-        papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
+    if (papi_loader_ && ptext_edit_)
+    {
+        int line = 0;
+        int index = 0;
+        ptext_edit_->getCursorPosition(&line, &index);
+        papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_, line);
+    }
 }
 
 void DocView::apisPreparationFinished()
@@ -265,7 +270,8 @@ void DocView::initConnections()
     connect(getTextEdit(), SIGNAL(textChanged()), this, SLOT(textChanged()));
     connect(ptext_edit_, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
     //connect(papis_, SIGNAL(apiPreparationFinished()), this, SLOT(apisPreparationFinished()));
-    connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+    //connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+    //connect(ptext_edit_, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(cursorPositionChanged(int, int)))
 }
 
 bool DocView::doSave(bool reset_lexer)

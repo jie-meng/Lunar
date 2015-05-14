@@ -1,6 +1,6 @@
 local kRegexFunctionOctave = [[function\s+((\[.*\]\s*=)|(\w+\s*=))?\s*(?<api>\w+\s*(?<param>\(.*\)))]]
 
-function parseSupplementApi(filename)
+function parseSupplementApi(filename, cursor_line)
     
     local apis = {}
     

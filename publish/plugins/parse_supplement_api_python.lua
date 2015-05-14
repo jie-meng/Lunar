@@ -2,8 +2,8 @@
 
 local Class = {
     name_ = nil,
+    indent_ = nil,
     extends_ = {},
-    indent_ = 0,
     functions_ = {}
 }
 
@@ -16,6 +16,22 @@ function Class:new(o)
     o.functions_ = {}
     
     return o
+end
+
+function Class:clone()
+    local c = Class:new()
+    c:setName(self.name_)
+    c:setIndent(self.indent_)
+    
+    for i, v in ipairs(self.extends_) do
+        c:addExtend(v)
+    end
+    
+    for i, v in ipairs(self.functions_) do
+        c:addFunction(v)
+    end
+    
+    return c
 end
 
 function Class:getName()
@@ -34,7 +50,7 @@ function Class:setName(name)
     self.name_ = name
 end
 
-function Class:addExtends(super_class)
+function Class:addExtend(super_class)
     table.insert(self.extends_, super_class)
 end
 
@@ -102,7 +118,7 @@ local pattern_func_init = [[def%s+__init__%s*%((.*)%)%s*:]]
 local pattern_class = [[class%s+([%w_]+)%s*:]]
 local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
 
-function parseSupplementApi(filename)
+function parseSupplementApi(filename, cursor_line)
 
     local apis = {}
     local classes = {}
@@ -114,7 +130,23 @@ function parseSupplementApi(filename)
         parseSupplementApiInFile(v, apis, classes)
     end
     
-    processClassInherits(apis, classes)
+    -- process class inherits
+    local classes_processed = processClassInherits(classes)
+    for k, v in pairs(classes_processed) do
+        for i, f in ipairs(v:getFunctions()) do
+            --sendLog(string.format("%s.%s", k, f))
+            table.insert(apis, string.format("%s.%s", k, f))
+        end
+    end
+    
+    -- process current file objects
+    local objects = processCurrentFileObjects(filename, cursor_line,classes_processed)
+    for k, v in pairs(objects) do
+        for i, f in ipairs(v:getFunctions()) do
+            --sendLog(string.format("Add object function: %s.%s", k, f))
+            table.insert(apis, string.format("%s.%s", k, f))
+        end
+    end
     
     return apis
 end
@@ -179,7 +211,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                     c:setIndent(getStartSpaceCount(line))
                     local t_extends = strSplit(extends, ",")
                     for i, v in ipairs(t_extends) do
-                        c:addExtends(strTrim(v))
+                        c:addExtend(strTrim(v))
                     end
                     table.insert(class_scope_stack, c)
                     break
@@ -201,7 +233,7 @@ function parseSupplementApiInFile(filename, apis, classes)
     end
 end
 
-function processClassInherits(apis, classes)
+function processClassInherits(classes)
     
     local classes_processed = {}
     
@@ -244,10 +276,40 @@ function processClassInherits(apis, classes)
         end
     end -- while
     
-    for k, v in pairs(classes_processed) do
-        for i, f in ipairs(v:getFunctions()) do
-            --sendLog(string.format("%s.%s", k, f))
-            table.insert(apis, string.format("%s.%s", k, f))
+    return classes_processed
+end
+
+local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_]+)%s*%(]]
+
+function processCurrentFileObjects(filename, cursor_line, processed_class)
+    
+    local objects = {}
+    local f = io.open(filename, "r")
+    if f ~= nil then
+        
+        local line = f:read("*line")
+        local current_line = 0
+        while (line ~= nil and current_line < cursor_line) do
+            repeat
+                --sendLog(string.format("line: %d text: %s", current_line+1, line))
+            
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                    break
+                end
+                
+                local left, right = string.match(line, pattern_object_assignment)
+                if left and right and left ~= right then
+                    if processed_class[right] then
+                        objects[left] = processed_class[right]:clone()
+                    end
+                    break
+                end
+            until true
+            line = f:read("*line")
+            current_line = current_line + 1
         end
+        io.close(f)
     end
+    
+    return objects
 end

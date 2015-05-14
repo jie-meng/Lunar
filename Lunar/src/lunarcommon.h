@@ -77,6 +77,7 @@ public:
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
     inline std::string getExtensionFuncIgnoreFile() const { return extension_func_ignore_file_; }
     inline std::string getFileFilter() const { return file_filter_; }
+    inline unsigned short getLogSockPort() const { return log_sock_port_; }
     void parseExtensionFileFilter();
 private:
     LunarGlobal();
@@ -96,6 +97,7 @@ private:
     std::string extension_func_filefilter_;
     std::string extension_func_ignore_file_;
     std::string file_filter_;
+    unsigned short log_sock_port_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

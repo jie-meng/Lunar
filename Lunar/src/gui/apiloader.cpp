@@ -1,5 +1,8 @@
 #include "apiloader.h"
+#include <iterator>
+#include <algorithm>
 #include <QMessageBox>
+#include <QMutexLocker>
 #include <Qsci/qsciscintilla.h>
 #include "qsciapisex.h"
 #include "util/file.hpp"
@@ -15,6 +18,10 @@ namespace gui
 
 ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     QThread(parent),
+    api_dirs_(""),
+    parse_supplement_api_script_(""),
+    parse_supplement_api_func_(""),
+    cursor_line_(0),
     papi_loader_(papi_loader),
     load_api_type_(Unknown),
     loading_(false)
@@ -41,7 +48,7 @@ void ApiLoadThread::startLoadCommonApi(const std::string& api_dirs)
     }
 }
 
-void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
 {
     if (isRunning() || loading_)
         return;
@@ -51,6 +58,7 @@ void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplemen
         load_api_type_ = SupplementApi;
         parse_supplement_api_script_ = parse_supplement_api_script;
         parse_supplement_api_func_ = parse_supplement_api_func;
+        cursor_line_ = cursor_line;
 
         QThread::start();
     }
@@ -58,6 +66,8 @@ void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplemen
 
 void ApiLoadThread::run()
 {
+    QMutexLocker mutex_locker(&mutex_);
+
     if (papi_loader_)
     {
         if (CommonApi == load_api_type_)
@@ -75,9 +85,10 @@ void ApiLoadThread::run()
         {
             loading_ = true;
 
-            std::pair<bool, string> ret = papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_);
+            std::pair<bool, string> ret = papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_, cursor_line_);
             parse_supplement_api_script_ = "";
             parse_supplement_api_func_ = "";
+            cursor_line_ = 0;
             load_api_type_ = Unknown;
 
             Q_EMIT loadFinish(ret.first, StdStringToQString(ret.second));
@@ -221,55 +232,67 @@ void ApiLoader::loadCommonApiAsync(const std::string& api_dirs)
     api_load_thread_.startLoadCommonApi(api_dirs);
 }
 
-void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
 {
-    api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func);
+    api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line);
 }
 
-std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
 {
     clearSupplementApi();
+
     if ("" != parse_supplement_api_script && "" != parse_supplement_api_func)
     {
-        if (!appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func))
-            return std::make_pair(false, errorInformation());
-    }
+        bool ret = appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line);
+        if (ret)
+        {
+            set_difference(api_supplement_last_.begin(), api_supplement_last_.end(), api_supplement_.begin(), api_supplement_.end(), back_inserter(remove_apis_));
+            set_difference(api_supplement_.begin(), api_supplement_.end(), api_supplement_last_.begin(), api_supplement_last_.end(), back_inserter(append_apis_));
+            return std::make_pair(true, "");
+        }
+        else
+        {
+            //fail then only clear old supplement apis and return failed
+            std::set<std::string>::iterator set_it;
+            for (set_it = api_supplement_last_.begin(); set_it != api_supplement_last_.end(); ++set_it)
+                remove_apis_.push_back(*set_it);
 
-    return std::make_pair(true, "");
+            return std::make_pair(false, errorInformation());
+        }
+    }
+    else
+    {
+       //success if not supplement script or func, just return ok
+       return std::make_pair(true, "");
+    }
 }
 
-bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func)
+bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
 {
     if (!initLuaState(parse_supplement_api_script))
         return false;
 
-    if (!parseSupplementApi(parse_supplement_api_func))
-        return false;
-
-    set<string>::iterator it;
-    for (it = api_supplement_.begin(); it != api_supplement_.end(); ++it)
-        papis_->add(StdStringToQString(*it));
-
-    return true;
+    return parseSupplementApi(parse_supplement_api_func, cursor_line);
 }
 
 void ApiLoader::clearSupplementApi()
 {
-    set<string>::iterator it;
-    for (it = api_supplement_.begin(); it != api_supplement_.end(); ++it)
-        papis_->remove(StdStringToQString(*it));
+    remove_apis_.clear();
+    append_apis_.clear();
+    api_supplement_last_ = api_supplement_;
     api_supplement_.clear();
 }
 
-bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func)
+bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func, int cursor_line)
 {
     if (!lua_state_ok_)
         return false;
 
     luaGetGlobal(lua_state_.getState(), parse_supplement_api_func);
     luaPushString(lua_state_.getState(), file_);
+    luaPushInteger(lua_state_.getState(), cursor_line);
 
-    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    int err = luaCallFunc(lua_state_.getState(), 2, 1);
     if (0 != err)
     {
         error_information_ = strFormat("ApiLoader.parseSupplementApi: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -301,7 +324,23 @@ bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func)
 
 void ApiLoader::prepare()
 {
-    papis_->prepare();
+    vector<string>::iterator it;
+    bool change = false;
+    for (it = remove_apis_.begin(); it != remove_apis_.end(); ++it)
+    {
+        LogSocket::getInstance().sendLog(strFormat("remove api: %s", (*it).c_str()), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+        papis_->remove(StdStringToQString(*it));
+        change = true;
+    }
+    for (it = append_apis_.begin(); it != append_apis_.end(); ++it)
+    {
+        LogSocket::getInstance().sendLog(strFormat("add api: %s", (*it).c_str()), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+        papis_->add(StdStringToQString(*it));
+        change = true;
+    }
+
+    if (change)
+        papis_->prepare();
 }
 
 } // namespace gui

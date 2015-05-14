@@ -8,7 +8,7 @@ local kRegexInclude = [[#include\s+"(?<file>.+)"]]
 
 kIncludeDirCfgFileName = "inc_dirs"
 
-function parseSupplementApi(filename)
+function parseSupplementApi(filename, cursor_line)
 
     local re_method = regex.create(kRegexMethod)
     local re_class_method = regex.create(kRegexClassMethod)
