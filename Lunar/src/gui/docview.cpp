@@ -73,7 +73,8 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     executor_(""),
     parse_supplement_api_script_(""),
     parse_supplement_api_func_(""),
-    comment_line_symbol_("")
+    comment_line_symbol_(""),
+    selection_match_indicator_(0)
 {
     //ctor
     ptext_edit_ = new QsciScintilla(parent);
@@ -212,6 +213,9 @@ void DocView::initTextEdit()
     ptext_edit_->setIndentationsUseTabs(false);
     ptext_edit_->setIndentationWidth(4);
     ptext_edit_->setTabWidth(4);
+    ptext_edit_->indicatorDefine(QsciScintilla::RoundBoxIndicator, selection_match_indicator_);
+    ptext_edit_->setIndicatorForegroundColor(QColor(251, 220, 0, 120));
+    //ptext_edit_->setIndicatorOutlineColor(QColor(0, 0, 0));
 
     if(tr("") != pathname_)
         ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
@@ -222,11 +226,6 @@ void DocView::initTextEdit()
 
     ptext_edit_->setMarginLineNumbers (0, true);
     resetMarginLineNumberWidth();
-
-    //init keywords-set 3 to "", this is just temporary method for lua highlight selection text.
-    //ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
-    //disable lua lib keyword highlight
-    //ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)2, (const char*)"");
 }
 
 bool DocView::testFileFilter(const std::string& file_filter)
@@ -270,7 +269,7 @@ void DocView::initConnections()
     connect(getTextEdit(), SIGNAL(textChanged()), this, SLOT(textChanged()));
     connect(ptext_edit_, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
     //connect(papis_, SIGNAL(apiPreparationFinished()), this, SLOT(apisPreparationFinished()));
-    //connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
+    connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
     //connect(ptext_edit_, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(cursorPositionChanged(int, int)))
 }
 
@@ -708,15 +707,35 @@ void DocView::setEditTextFont(const QFont& font)
 
 void DocView::selectionChanged()
 {
-//    if (ptext_edit_->hasSelectedText())
-//    {
-//        if (selected_text_ != ptext_edit_->selectedText())
-//        {
-//            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETKEYWORDS, (unsigned long)3, QStringToStdString(ptext_edit_->selectedText()).c_str());
-//            ptext_edit_->recolor(0);
-//            selected_text_ = ptext_edit_->selectedText();
-//        }
-//    }
+    ptext_edit_->clearIndicatorRange(0, 0, ptext_edit_->lines()-1, ptext_edit_->lineLength(ptext_edit_->lines()-1), selection_match_indicator_);
+
+    if (ptext_edit_->hasSelectedText())
+    {
+        int line_from = 0;
+        int index_from = 0;
+        int line_to = 0;
+        int index_to = 0;
+        ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
+
+        string selection = QStringToStdString(ptext_edit_->selectedText());
+        if (!strContains(selection, "\n"))
+        {
+            string text = QStringToStdString(ptext_edit_->text());
+            text = strReplaceAll(text, "\r\n", "\n");
+            vector<string> vec;
+            strSplit(text, "\n", vec);
+            for (size_t i=0; i<vec.size(); ++i)
+            {
+                std::string::size_type pos = 0;
+                while ((pos = vec[i].find(selection, pos)) != std::string::npos)
+                {
+                    if (line_from != (int)i || line_to != (int)i || index_from != (int)pos || index_to != (int)(pos + selection.length()))
+                        ptext_edit_->fillIndicatorRange(i, pos, i ,pos + selection.length(), selection_match_indicator_);
+                    pos += selection.length();
+                }
+            }
+        }
+    }
 }
 
 } // namespace gui
