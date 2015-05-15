@@ -56,7 +56,8 @@ LogSocket::LogSocket() :
 
 void LogSocket::sendLog(const std::string& log, const std::string& ip, unsigned short port)
 {
-    log_sock_.sendTo(log.c_str(), log.length(), ip, port);
+    if (LunarGlobal::getInstance().isLogEnable())
+        log_sock_.sendTo(log.c_str(), log.length(), ip, port);
 }
 
 ////////////////////////////////////////////////////
@@ -166,6 +167,7 @@ void LunarGlobal::readCfg()
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
     extension_func_ignore_file_ = text_cfg.getValue("Extension.Func.IgnoreFile", "ignoreFile");
     log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
+    is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
 }
 
 void LunarGlobal::writeCfg()
@@ -182,6 +184,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
     text_cfg.setValue("Extension.Func.IgnoreFile", extension_func_ignore_file_);
     text_cfg.setValue("Log.SockPort", log_sock_port_);
+    text_cfg.setValue("Log.Enable", is_log_enable_);
 
     text_cfg.save();
 }
