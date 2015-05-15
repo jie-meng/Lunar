@@ -49,9 +49,11 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
+    pedit_goto_search_results_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
     pview_file_explorer_action_(NULL),
+    pview_close_docks_action_(NULL),
     prun_run_action_(NULL),
     prun_stop_action_(NULL),
     phelp_about_action_(NULL),
@@ -259,8 +261,14 @@ void MainWindow::initActions()
     pedit_search_action_->setShortcut(Qt::CTRL + Qt::Key_H);
     pedit_search_action_->setIcon(QIcon(tr(":/res/search.png")));
 
+    pedit_goto_search_results_action_ = new QAction(tr("Search &results"), this);
+    pedit_goto_search_results_action_->setStatusTip((tr("Go to search results.")));
+    pedit_goto_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
+    pedit_goto_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
+
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
+    pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
 
     pedit_comment_action_ = new QAction(tr("Comment"), this);
     pedit_comment_action_->setStatusTip(tr("Comment current selection."));
@@ -271,6 +279,11 @@ void MainWindow::initActions()
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
+
+    pview_close_docks_action_ = new QAction(tr("Close docks"), this);
+    pview_close_docks_action_->setStatusTip(tr("Close dock views."));
+    pview_close_docks_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
+    pview_close_docks_action_->setIcon(QIcon(tr(":/res/close_docks.png")));
 
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
@@ -284,6 +297,7 @@ void MainWindow::initActions()
 
     phelp_about_action_ = new QAction(tr("&About"), this);
     phelp_about_action_->setStatusTip(tr("About."));
+    phelp_about_action_->setIcon(QIcon(tr(":/res/about.png")));
 }
 
 void MainWindow::initMenubar()
@@ -303,11 +317,13 @@ void MainWindow::initMenubar()
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_search_action_);
+    pedit_menu->addAction(pedit_goto_search_results_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
+    pview_menu->addAction(pview_close_docks_action_);
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
@@ -327,8 +343,10 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
+    ptoolbar->addAction(pedit_goto_search_results_action_);
 	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
+    ptoolbar->addAction(pview_close_docks_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(pfile_close_action_);
@@ -370,9 +388,11 @@ void MainWindow::initConnections()
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
+    connect(pedit_goto_search_results_action_, SIGNAL(triggered()), this, SLOT(editGotoSearchResultsWidget()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
+    connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
     connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(helpAbout()));
@@ -488,6 +508,17 @@ void MainWindow::editSearch()
     inputwidget.exec();
 }
 
+void MainWindow::editGotoSearchResultsWidget()
+{
+    if (!output_widget_on_)
+    {
+        pbottom_widget_->show();
+        output_widget_on_ = true;
+    }
+    pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
+    psearch_results_widget_->setFocus();
+}
+
 void MainWindow::searchTextInPath(
                                   const QString& dir,
                                   const QString& text,
@@ -530,6 +561,15 @@ void MainWindow::viewFileExplorer()
     }
 
     pfile_explorer_widget_->setFocus();
+}
+
+void MainWindow::viewCloseDocks()
+{
+    if (pleft_widget_ && file_explorer_widget_on_)
+        pleft_widget_->close();
+
+    if (pbottom_widget_ && output_widget_on_)
+        pbottom_widget_->close();
 }
 
 bool MainWindow::find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output)
