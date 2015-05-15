@@ -49,11 +49,11 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_prev_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
-    pedit_goto_search_results_action_(NULL),
-    pedit_goto_documents_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
     pview_file_explorer_action_(NULL),
+    pview_search_results_action_(NULL),
+    pview_documents_action_(NULL),
     pview_close_docks_action_(NULL),
     prun_run_action_(NULL),
     prun_stop_action_(NULL),
@@ -256,16 +256,6 @@ void MainWindow::initActions()
     pedit_search_action_->setShortcut(Qt::CTRL + Qt::Key_H);
     pedit_search_action_->setIcon(QIcon(tr(":/res/search.png")));
 
-    pedit_goto_search_results_action_ = new QAction(tr("Search &results"), this);
-    pedit_goto_search_results_action_->setStatusTip((tr("Go to search results.")));
-    pedit_goto_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
-    pedit_goto_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
-
-    pedit_goto_documents_action_ = new QAction(tr("Doc&uments"), this);
-    pedit_goto_documents_action_->setStatusTip((tr("Go to documents edit.")));
-    pedit_goto_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
-    pedit_goto_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
-
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
     pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
@@ -279,6 +269,16 @@ void MainWindow::initActions()
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
+
+    pview_search_results_action_ = new QAction(tr("Search &results"), this);
+    pview_search_results_action_->setStatusTip((tr("Go to search results.")));
+    pview_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
+    pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
+
+    pview_documents_action_ = new QAction(tr("Doc&uments"), this);
+    pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
+    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
+    pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
     pview_close_docks_action_ = new QAction(tr("Close docks"), this);
     pview_close_docks_action_->setStatusTip(tr("Close dock views."));
@@ -317,13 +317,13 @@ void MainWindow::initMenubar()
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_search_action_);
-    pedit_menu->addAction(pedit_goto_search_results_action_);
-    pedit_menu->addAction(pedit_goto_documents_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
+    pview_menu->addAction(pview_search_results_action_);
+    pview_menu->addAction(pview_documents_action_);
     pview_menu->addAction(pview_close_docks_action_);
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
@@ -344,10 +344,10 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
-    ptoolbar->addAction(pedit_goto_search_results_action_);
-    ptoolbar->addAction(pedit_goto_documents_action_);
 	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
+    ptoolbar->addAction(pview_search_results_action_);
+    ptoolbar->addAction(pview_documents_action_);
     ptoolbar->addAction(pview_close_docks_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
@@ -390,11 +390,11 @@ void MainWindow::initConnections()
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
-    connect(pedit_goto_search_results_action_, SIGNAL(triggered()), this, SLOT(editGotoSearchResultsWidget()));
-    connect(pedit_goto_documents_action_, SIGNAL(triggered()), this, SLOT(editGotoDocuments()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
+    connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
+    connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
     connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
@@ -511,20 +511,6 @@ void MainWindow::editSearch()
     inputwidget.exec();
 }
 
-void MainWindow::editGotoSearchResultsWidget()
-{
-    if (pbottom_widget_->isHidden())
-        pbottom_widget_->show();
-    pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
-    psearch_results_widget_->setFocus();
-}
-
-void MainWindow::editGotoDocuments()
-{
-    if (pmain_tabwidget_)
-        pmain_tabwidget_->focusOnCurrentDoc();
-}
-
 void MainWindow::searchTextInPath(
                                   const QString& dir,
                                   const QString& text,
@@ -563,6 +549,20 @@ void MainWindow::viewFileExplorer()
         pleft_widget_->show();
 
     pfile_explorer_widget_->setFocus();
+}
+
+void MainWindow::viewSearchResultsWidget()
+{
+    if (pbottom_widget_->isHidden())
+        pbottom_widget_->show();
+    pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
+    psearch_results_widget_->setFocus();
+}
+
+void MainWindow::viewDocuments()
+{
+    if (pmain_tabwidget_)
+        pmain_tabwidget_->focusOnCurrentDoc();
 }
 
 void MainWindow::viewCloseDocks()

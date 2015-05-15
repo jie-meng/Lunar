@@ -50,11 +50,11 @@ private Q_SLOTS:
     void fileGotoPrev();
     void editFind();
     void editSearch();
-    void editGotoSearchResultsWidget();
-    void editGotoDocuments();
     void editSetFont();
     void editComment();
     void viewFileExplorer();
+    void viewSearchResultsWidget();
+    void viewDocuments();
     void viewCloseDocks();
     void helpAbout();
     bool find(const QString& str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
@@ -99,11 +99,11 @@ private:
     QAction* pfile_goto_prev_action_;
     QAction* pedit_find_action_;
     QAction* pedit_search_action_;
-    QAction* pedit_goto_search_results_action_;
-    QAction* pedit_goto_documents_action_;
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
     QAction* pview_file_explorer_action_;
+    QAction* pview_search_results_action_;
+    QAction* pview_documents_action_;
     QAction* pview_close_docks_action_;
     QAction* prun_run_action_;
     QAction* prun_stop_action_;
