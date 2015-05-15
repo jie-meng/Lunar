@@ -51,6 +51,7 @@ private Q_SLOTS:
     void editFind();
     void editSearch();
     void editGotoSearchResultsWidget();
+    void editGotoDocuments();
     void editSetFont();
     void editComment();
     void viewFileExplorer();
@@ -101,6 +102,7 @@ private:
     QAction* pedit_find_action_;
     QAction* pedit_search_action_;
     QAction* pedit_goto_search_results_action_;
+    QAction* pedit_goto_documents_action_;
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
     QAction* pview_file_explorer_action_;

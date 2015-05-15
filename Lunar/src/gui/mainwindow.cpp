@@ -50,6 +50,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
     pedit_goto_search_results_action_(NULL),
+    pedit_goto_documents_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
     pview_file_explorer_action_(NULL),
@@ -266,6 +267,11 @@ void MainWindow::initActions()
     pedit_goto_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
     pedit_goto_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
 
+    pedit_goto_documents_action_ = new QAction(tr("Doc&uments"), this);
+    pedit_goto_documents_action_->setStatusTip((tr("Go to documents edit.")));
+    pedit_goto_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
+    pedit_goto_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
+
     pedit_font_action_ = new QAction(tr("Font"), this);
     pedit_font_action_->setStatusTip(tr("Set font."));
     pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
@@ -318,6 +324,7 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_search_action_);
     pedit_menu->addAction(pedit_goto_search_results_action_);
+    pedit_menu->addAction(pedit_goto_documents_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
 
@@ -344,6 +351,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
     ptoolbar->addAction(pedit_goto_search_results_action_);
+    ptoolbar->addAction(pedit_goto_documents_action_);
 	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pview_close_docks_action_);
@@ -389,6 +397,7 @@ void MainWindow::initConnections()
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
     connect(pedit_goto_search_results_action_, SIGNAL(triggered()), this, SLOT(editGotoSearchResultsWidget()));
+    connect(pedit_goto_documents_action_, SIGNAL(triggered()), this, SLOT(editGotoDocuments()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
@@ -519,6 +528,12 @@ void MainWindow::editGotoSearchResultsWidget()
     psearch_results_widget_->setFocus();
 }
 
+void MainWindow::editGotoDocuments()
+{
+    if (pmain_tabwidget_)
+        pmain_tabwidget_->focusOnCurrentDoc();
+}
+
 void MainWindow::searchTextInPath(
                                   const QString& dir,
                                   const QString& text,
@@ -534,6 +549,7 @@ void MainWindow::searchTextInPath(
         output_widget_on_ = true;
     }
     pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
+    psearch_results_widget_->setFocus();
 }
 
 void MainWindow::gotoSearchResult(const QString& file, int line)

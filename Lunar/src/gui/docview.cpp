@@ -686,6 +686,12 @@ void DocView::gotoLine(int line)
     }
 }
 
+void DocView::focusOnEdit()
+{
+    if (ptext_edit_)
+        ptext_edit_->setFocus();
+}
+
 void DocView::setEditTextFont(const QFont& font)
 {
     LunarGlobal::getInstance().setFont(font);

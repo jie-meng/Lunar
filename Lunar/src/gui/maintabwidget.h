@@ -41,6 +41,7 @@ public:
     QString getCurrentDocSelectedText() const;
     QString getCurrentDocPathname() const;
     void currentDocGotoLine(int line);
+    void focusOnCurrentDoc();
 private Q_SLOTS:
     void updateTabTitleAndTip(DocView*);
     void tabTextModified(DocView*);

@@ -303,5 +303,12 @@ void MainTabWidget::currentDocGotoLine(int line)
         pdocview->gotoLine(line);
 }
 
+void MainTabWidget::focusOnCurrentDoc()
+{
+    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
+    if(NULL != pdocview)
+        pdocview->focusOnEdit();
+}
+
 } // namespace gui
 

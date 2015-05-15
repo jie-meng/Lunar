@@ -49,6 +49,7 @@ public:
     inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
     inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
     void gotoLine(int line);
+    void focusOnEdit();
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
