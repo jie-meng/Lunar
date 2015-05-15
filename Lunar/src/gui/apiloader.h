@@ -45,6 +45,8 @@ private:
     ApiLoader* papi_loader_;
     LoadApiType load_api_type_;
     bool loading_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(ApiLoadThread)
 };
 
 class QsciAPIsEx;

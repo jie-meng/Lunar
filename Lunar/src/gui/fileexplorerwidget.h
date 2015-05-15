@@ -4,6 +4,7 @@
 #include <string>
 #include <QList>
 #include <QTreeWidget>
+#include "lunarcommon.h"
 
 class QTreeWidgetItem;
 class QContextMenuEvent;
@@ -47,6 +48,7 @@ private Q_SLOTS:
     void onDeleteItems(QTreeWidgetItem* item, int column);
     QTreeWidgetItem* findDirNodeItemWithFile(const QString& file);
 private:
+    DISALLOW_COPY_AND_ASSIGN(FileExplorerWidget)
 };
 
 }

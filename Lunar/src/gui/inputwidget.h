@@ -2,6 +2,7 @@
 #define INPUTWIDGET_H
 
 #include <QDialog>
+#include "lunarcommon.h"
 
 class QLabel;
 class QLineEdit;
@@ -34,6 +35,8 @@ private:
     QLineEdit* pinput_line_;
     QPushButton* pok_btn_;
     QPushButton* pcancel_btn_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(InputWidget)
 };
 
 }

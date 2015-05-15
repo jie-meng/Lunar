@@ -37,6 +37,8 @@ private:
     bool case_sensitive_;
     bool use_regexp_;
     util::Regex regex_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(SearchThread)
 };
 
 class SearchResultsWidget : public QTreeWidget
@@ -66,6 +68,8 @@ private:
     void searchInDirectory(const std::string& dir, util::PathFilter* path_filter, const std::string& text, bool case_sensitive, bool use_regexp);
 private:
     SearchThread search_thread_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(SearchResultsWidget)
 };
 
 }

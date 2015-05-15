@@ -2,6 +2,7 @@
 #define SEARCHINPUTWIDGET_H
 
 #include <QDialog>
+#include "lunarcommon.h"
 
 class QLabel;
 class QLineEdit;
@@ -45,6 +46,8 @@ private:
     QCheckBox* pcheck_use_regex_;
     QPushButton* pok_btn_;
     QPushButton* pcancel_btn_;
+private:
+    DISALLOW_COPY_AND_ASSIGN(SearchInputWidget)
 };
 
 }

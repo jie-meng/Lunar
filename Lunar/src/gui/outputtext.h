@@ -3,6 +3,7 @@
 
 #include <QtCore/QObject>
 #include <QTextEdit>
+#include "lunarcommon.h"
 
 class QContextMenuEvent;
 
@@ -21,6 +22,8 @@ public slots:
     void onClear();
 protected:
     virtual void contextMenuEvent(QContextMenuEvent *e);
+private:
+    DISALLOW_COPY_AND_ASSIGN(OutputText)
 };
 
 }

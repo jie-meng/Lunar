@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "qsciapisex.h"
+#include "lunarcommon.h"
 
 class QsciLexer;
 
@@ -23,6 +24,8 @@ signals:
 
 public slots:
 
+private:
+    DISALLOW_COPY_AND_ASSIGN(LunarApi)
 };
 
 }
