@@ -9,6 +9,7 @@ class QLabel;
 class QGraphicsView;
 class LuaExecutor;
 class QTabWidget;
+class QDockWidget;
 
 namespace gui
 {
@@ -17,7 +18,6 @@ class MainTabWidget;
 class FindDialog;
 class OutputWidget;
 class FileExplorerWidget;
-class DockWidgetEx;
 class SearchResultsWidget;
 
 class MainWindow : public QMainWindow
@@ -63,8 +63,6 @@ private Q_SLOTS:
     void run();
     void stop();
     void setStatusText(const QString& text);
-    void onBottomDockClose();
-    void onLeftDockClose();
     void searchTextInPath(const QString& dir,
                           const QString& text,
                           const QString& file_filter,
@@ -116,12 +114,10 @@ private:
     FileExplorerWidget* pfile_explorer_widget_;
     OutputWidget* poutput_widget_;
     LuaExecutor* plua_executor_;
-    DockWidgetEx* pleft_widget_;
-    DockWidgetEx* pbottom_widget_;
+    QDockWidget* pleft_widget_;
+    QDockWidget* pbottom_widget_;
     QTabWidget* pbottom_tab_widget_;
     SearchResultsWidget* psearch_results_widget_;
-    bool file_explorer_widget_on_;
-    bool output_widget_on_;
 private:
     DISALLOW_COPY_AND_ASSIGN(MainWindow)
 };

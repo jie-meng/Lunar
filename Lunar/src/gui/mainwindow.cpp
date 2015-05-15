@@ -12,6 +12,7 @@
 #include <QMessageBox>
 #include <QDragEnterEvent>
 #include <QMimeData>
+#include <QDockWidget>
 #include <QtCore/QUrl>
 #include <QtCore/QWaitCondition>
 #include "util/file.hpp"
@@ -22,7 +23,6 @@
 #include "fileexplorerwidget.h"
 #include "outputwidget.h"
 #include "luaexecutor.h"
-#include "dockwidgetex.h"
 #include "searchresultswidget.h"
 #include "extension.h"
 #include "searchinputwidget.h"
@@ -67,9 +67,7 @@ MainWindow::MainWindow(QWidget* parent)
     pleft_widget_(NULL),
     pbottom_widget_(NULL),
     pbottom_tab_widget_(NULL),
-    psearch_results_widget_(NULL),
-    file_explorer_widget_on_(false),
-    output_widget_on_(false)
+    psearch_results_widget_(NULL)
 {
     //ctor
     //user call Init after ctor"Lua Files(*.lua);;All Files(*.*)"
@@ -96,13 +94,11 @@ void MainWindow::processCmdParam()
 
 void MainWindow::initLeftDockWidget()
 {
-    pleft_widget_ = new DockWidgetEx(tr("Management"), this);
+    pleft_widget_ = new QDockWidget(tr("Management"), this);
     pfile_explorer_widget_ = new FileExplorerWidget();
     pleft_widget_->setWidget(pfile_explorer_widget_);
     pleft_widget_->setAllowedAreas(Qt::LeftDockWidgetArea);
     addDockWidget(Qt::LeftDockWidgetArea, pleft_widget_);
-
-    connect(pleft_widget_, SIGNAL(onClose()), this, SLOT(onLeftDockClose()));
 
     //hide at first
     pleft_widget_->close();
@@ -110,7 +106,7 @@ void MainWindow::initLeftDockWidget()
 
 void MainWindow::initBottomDockWidget()
 {
-    pbottom_widget_ = new DockWidgetEx(tr("Logs and others"), this);
+    pbottom_widget_ = new QDockWidget(tr("Logs and others"), this);
     pbottom_tab_widget_ = new QTabWidget;
     //pbottom_tab_widget_->setTabPosition(QTabWidget::South);
     pbottom_widget_->setWidget(pbottom_tab_widget_);
@@ -121,21 +117,19 @@ void MainWindow::initBottomDockWidget()
     pbottom_widget_->setAllowedAreas(Qt::BottomDockWidgetArea);
     addDockWidget(Qt::BottomDockWidgetArea, pbottom_widget_);
 
-    connect(pbottom_widget_, SIGNAL(onClose()), this, SLOT(onBottomDockClose()));
-
     //hide at first
     pbottom_widget_->close();
 }
 
-void MainWindow::onLeftDockClose()
-{
-    file_explorer_widget_on_ = false;
-}
+//void MainWindow::onLeftDockClose()
+//{
+//    file_explorer_widget_on_ = false;
+//}
 
-void MainWindow::onBottomDockClose()
-{
-    output_widget_on_ = false;
-}
+//void MainWindow::onBottomDockClose()
+//{
+//    output_widget_on_ = false;
+//}
 
 void MainWindow::initLuaExecutor()
 {
@@ -519,11 +513,8 @@ void MainWindow::editSearch()
 
 void MainWindow::editGotoSearchResultsWidget()
 {
-    if (!output_widget_on_)
-    {
+    if (pbottom_widget_->isHidden())
         pbottom_widget_->show();
-        output_widget_on_ = true;
-    }
     pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
     psearch_results_widget_->setFocus();
 }
@@ -543,11 +534,9 @@ void MainWindow::searchTextInPath(
 {
     psearch_results_widget_->searchInPath(dir, text, file_filter, case_sensitive, use_regex);
 
-    if (!output_widget_on_)
-    {
+    if (pbottom_widget_->isHidden())
         pbottom_widget_->show();
-        output_widget_on_ = true;
-    }
+
     pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
     psearch_results_widget_->setFocus();
 }
@@ -570,21 +559,18 @@ void MainWindow::editComment()
 
 void MainWindow::viewFileExplorer()
 {
-    if (!file_explorer_widget_on_)
-    {
+    if (pleft_widget_->isHidden())
         pleft_widget_->show();
-        file_explorer_widget_on_ = true;
-    }
 
     pfile_explorer_widget_->setFocus();
 }
 
 void MainWindow::viewCloseDocks()
 {
-    if (pleft_widget_ && file_explorer_widget_on_)
+    if (pleft_widget_ && !pleft_widget_->isHidden())
         pleft_widget_->close();
 
-    if (pbottom_widget_ && output_widget_on_)
+    if (pbottom_widget_ && !pbottom_widget_->isHidden())
         pbottom_widget_->close();
 }
 
@@ -750,11 +736,8 @@ void MainWindow::runEx()
         }
     }
 
-    if (!output_widget_on_)
-    {
+    if (pbottom_widget_->isHidden())
         pbottom_widget_->show();
-        output_widget_on_ = true;
-    }
     pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
 
     clearOutput();
