@@ -711,15 +711,15 @@ void DocView::selectionChanged()
 
     if (ptext_edit_->hasSelectedText())
     {
-        int line_from = 0;
-        int index_from = 0;
-        int line_to = 0;
-        int index_to = 0;
-        ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
-
         string selection = QStringToStdString(ptext_edit_->selectedText());
-        if (!strContains(selection, "\n"))
+        if (!strContains(selection, "\n") && !strTrim(selection).empty())
         {
+            int line_from = 0;
+            int index_from = 0;
+            int line_to = 0;
+            int index_to = 0;
+            ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
+
             string text = QStringToStdString(ptext_edit_->text());
             text = strReplaceAll(text, "\r\n", "\n");
             vector<string> vec;
