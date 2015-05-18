@@ -121,16 +121,6 @@ void MainWindow::initBottomDockWidget()
     pbottom_widget_->close();
 }
 
-//void MainWindow::onLeftDockClose()
-//{
-//    file_explorer_widget_on_ = false;
-//}
-
-//void MainWindow::onBottomDockClose()
-//{
-//    output_widget_on_ = false;
-//}
-
 void MainWindow::initLuaExecutor()
 {
     plua_executor_ = new LuaExecutor(this);
@@ -340,6 +330,8 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
     ptoolbar->addAction(pfile_save_action_);
+    ptoolbar->addAction(pfile_goto_prev_action_);
+    ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_find_action_);
@@ -349,8 +341,6 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pview_search_results_action_);
     ptoolbar->addAction(pview_documents_action_);
     ptoolbar->addAction(pview_close_docks_action_);
-    ptoolbar->addAction(pfile_goto_prev_action_);
-    ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(pfile_close_action_);
     ptoolbar->addAction(pfile_close_all_action_);
     ptoolbar->addAction(pfile_dump_action_);
