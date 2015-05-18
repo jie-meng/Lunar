@@ -722,6 +722,7 @@ void DocView::selectionChanged()
 
             string text = QStringToStdString(ptext_edit_->text());
             text = strReplaceAll(text, "\r\n", "\n");
+            text = strReplaceAll(text, "\r", "\n");
             vector<string> vec;
             strSplit(text, "\n", vec);
             for (size_t i=0; i<vec.size(); ++i)
