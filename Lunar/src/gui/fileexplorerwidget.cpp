@@ -91,7 +91,7 @@ void FileExplorerWidget::loadRoot()
 
     QList<QTreeWidgetItem*> items;
     QTreeWidgetItem* proot_item = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(currentPath()).second)));
-    proot_item->setIcon(0, QIcon(tr(":/res/open.png")));
+    proot_item->setIcon(0, QIcon(tr(":/res/fe_folder.png")));
     loadNode(proot_item);
     items.append(proot_item);
 
@@ -124,7 +124,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
-            new_child->setIcon(0, QIcon(tr(":/res/open.png")));
+            new_child->setIcon(0, QIcon(tr(":/res/fe_folder.png")));
             item->addChild(new_child);
         }
 
@@ -136,7 +136,7 @@ bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
-            new_child->setIcon(0, QIcon(tr(":/res/new.png")));
+            new_child->setIcon(0, QIcon(tr(":/res/fe_file.png")));
             item->addChild(new_child);
         }
 
@@ -183,7 +183,7 @@ bool FileExplorerWidget::loadNodeFiles(QTreeWidgetItem* item)
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
-            new_child->setIcon(0, QIcon(tr(":/res/new.png")));
+            new_child->setIcon(0, QIcon(tr(":/res/file.png")));
             item->addChild(new_child);
         }
 

@@ -22,6 +22,8 @@
     <file>res/dump.png</file>
 	<file>res/comment.png</file>
 	<file>res/about.png</file>
+	<file>res/fe_file.png</file>
+	<file>res/fe_folder.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>
