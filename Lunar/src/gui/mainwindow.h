@@ -62,7 +62,6 @@ private Q_SLOTS:
     void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
     void run();
     void stop();
-    void setStatusText(const QString& text);
     void searchTextInPath(const QString& dir,
                           const QString& text,
                           const QString& file_filter,
@@ -86,7 +85,6 @@ private:
     void initLuaExecutor();
     void initExtension();
     void processCmdParam();
-    void runEx();
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;

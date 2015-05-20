@@ -699,20 +699,6 @@ void MainWindow::clearOutput()
 
 void MainWindow::run()
 {
-    runEx();
-}
-
-void MainWindow::stop()
-{
-    if (plua_executor_->isRunning())
-    {
-        plua_executor_->stop();
-        poutput_widget_->append(tr("Running stopped manually."));
-    }
-}
-
-void MainWindow::runEx()
-{
     if (plua_executor_->isRunning())
     {
         if (QMessageBox::No == QMessageBox::question(this, "question", "A script is running, will you still want to run current script?",
@@ -755,17 +741,21 @@ void MainWindow::runEx()
     }
 }
 
+void MainWindow::stop()
+{
+    if (plua_executor_->isRunning())
+    {
+        plua_executor_->stop();
+        poutput_widget_->append(tr("Running stopped manually."));
+    }
+}
+
 void MainWindow::initExtension()
 {
     if (!Extension::getInstance().init())
         LunarMsgBox(Extension::getInstance().errorInfo());
 
     LunarGlobal::getInstance().parseExtensionFileFilter();
-}
-
-void MainWindow::setStatusText(const QString& text)
-{
-    pstatus_text_->setText(text);
 }
 
 } // namespace gui
