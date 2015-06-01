@@ -215,7 +215,7 @@ void DocView::initTextEdit()
     ptext_edit_->setTabWidth(4);
     ptext_edit_->indicatorDefine(QsciScintilla::RoundBoxIndicator, selection_match_indicator_);
     ptext_edit_->setIndicatorForegroundColor(QColor(251, 220, 0, 120));
-    //ptext_edit_->setIndicatorOutlineColor(QColor(0, 0, 0));
+    ptext_edit_->setIndentationGuides(true);
 
     if(tr("") != pathname_)
         ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
