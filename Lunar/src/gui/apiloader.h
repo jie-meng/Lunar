@@ -76,6 +76,7 @@ private:
     ApiLoadThread api_load_thread_;
     QsciAPIsEx* papis_;
     std::string file_;
+    std::vector<std::string> api_files_;
     std::set<std::string> api_supplement_last_;
     std::set<std::string> api_supplement_;
     std::vector<std::string> remove_apis_;

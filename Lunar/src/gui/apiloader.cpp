@@ -101,7 +101,7 @@ void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
     if (result)
     {
         if (papi_loader_)
-        papi_loader_->prepare();
+            papi_loader_->prepare();
     }
     else
     {
@@ -167,6 +167,8 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
 
 void ApiLoader::loadCommonApi(const std::string& api_paths)
 {
+    api_files_.clear();
+
     if (api_paths.length() == 0)
         return;
 
@@ -176,6 +178,7 @@ void ApiLoader::loadCommonApi(const std::string& api_paths)
     for (it = paths.begin(); it != paths.end(); ++it)
     {
         std::string path = strTrim(*it);
+
         if (isPathDir(splitPathname(file_).first + "/" + path))
         {
             vector<string> api_vec;
@@ -185,12 +188,12 @@ void ApiLoader::loadCommonApi(const std::string& api_paths)
             if (api_vec.size()>0)
             {
                 for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
-                    papis_->load(StdStringToQString(*it1));
+                    api_files_.push_back(*it1);
             }
         }
         else if (isPathFile(splitPathname(file_).first + "/" + path))
         {
-            papis_->load(StdStringToQString(splitPathname(file_).first + "/" + path));
+            api_files_.push_back(splitPathname(file_).first + "/" + path);
         }
         else if (isPathDir(currentPath() + "/" + path))
         {
@@ -201,12 +204,12 @@ void ApiLoader::loadCommonApi(const std::string& api_paths)
             if (api_vec.size()>0)
             {
                 for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
-                    papis_->load(StdStringToQString(*it1));
+                    api_files_.push_back(*it1);
             }
         }
         else if (isPathFile(currentPath() + "/" + path))
         {
-            papis_->load(StdStringToQString(currentPath() + "/" + path));
+            api_files_.push_back(currentPath() + "/" + path);
         }
         else if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + path))
         {
@@ -217,12 +220,12 @@ void ApiLoader::loadCommonApi(const std::string& api_paths)
             if (api_vec.size()>0)
             {
                 for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
-                    papis_->load(StdStringToQString(*it1));
+                    api_files_.push_back(*it1);
             }
         }
         else if (isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + path))
         {
-            papis_->load(StdStringToQString(LunarGlobal::getInstance().getAppPath() + "/" + path));
+            api_files_.push_back(LunarGlobal::getInstance().getAppPath() + "/" + path);
         }
     }
 }
@@ -277,6 +280,9 @@ bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_scri
 
 void ApiLoader::clearSupplementApi()
 {
+    if (!api_files_.empty())
+        api_files_.clear();
+
     remove_apis_.clear();
     append_apis_.clear();
     api_supplement_last_ = api_supplement_;
@@ -323,15 +329,25 @@ bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func,
 }
 
 void ApiLoader::prepare()
-{
+{  
     vector<string>::iterator it;
     bool change = false;
+
+    for (it = api_files_.begin(); it != api_files_.end(); ++it)
+    {
+        LogSocket::getInstance().sendLog(strFormat("load api file: %s", (*it).c_str()), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+        papis_->load(StdStringToQString(*it));
+        change = true;
+    }
+    api_files_.clear();
+
     for (it = remove_apis_.begin(); it != remove_apis_.end(); ++it)
     {
         LogSocket::getInstance().sendLog(strFormat("remove api: %s", (*it).c_str()), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
         papis_->remove(StdStringToQString(*it));
         change = true;
     }
+
     for (it = append_apis_.begin(); it != append_apis_.end(); ++it)
     {
         LogSocket::getInstance().sendLog(strFormat("add api: %s", (*it).c_str()), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
