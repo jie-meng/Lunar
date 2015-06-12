@@ -183,7 +183,7 @@ bool FileExplorerWidget::loadNodeFiles(QTreeWidgetItem* item)
         for (it = vec.begin(); it != vec.end(); ++it)
         {
             QTreeWidgetItem* new_child = new QTreeWidgetItem((QTreeWidget*)0, QStringList(StdStringToQString(splitPathname(*it).second)));
-            new_child->setIcon(0, QIcon(tr(":/res/file.png")));
+            new_child->setIcon(0, QIcon(tr(":/res/fe_file.png")));
             item->addChild(new_child);
         }
 
