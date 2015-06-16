@@ -91,33 +91,34 @@ void SearchThread::run()
 
 void SearchThread::searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp)
 {
-    std::ifstream ifs(file.c_str());
-    if (ifs.is_open())
-    {
-        std::string line("");
-        size_t idx = 0;
-        while(!ifs.eof())
-        {
-            std::getline(ifs, line);
-            ++idx;
-            bool match = false;
-            if (!use_regexp)
-            {
-                if (strContains(line, text, case_sensitive))
-                    match = true;
-            }
-            else
-            {
-                if (regex_.search(line))
-                    match = true;
-            }
+    string content = readTextFile(file);
+    if (content.empty())
+        return;
 
-            if (match)
-            {
-                Q_EMIT found(StdStringToQString(strReplace(file, currentPath() + "/", "")), StdStringToQString(toString(idx)), StdStringToQString(strTrim(line)));
-            }
+    content = strReplaceAll(content, "\r\n", "\n");
+    content = strReplaceAll(content, "\r", "\n");
+    vector<string> vec;
+    strSplit(content, "\n", vec);
+    for (size_t i = 0; i<vec.size(); ++i)
+    {
+        //LogSocket::getInstance().sendLog(strFormat("%d -- %s", i+1, vec[i].c_str()), "127.0.0.1", 9966);
+
+        bool match = false;
+        if (!use_regexp)
+        {
+            if (strContains(vec[i], text, case_sensitive))
+                match = true;
         }
-        ifs.close();
+        else
+        {
+            if (regex_.search(vec[i]))
+                match = true;
+        }
+
+        if (match)
+        {
+            Q_EMIT found(StdStringToQString(strReplace(file, currentPath() + "/", "")), StdStringToQString(toString(i+1)), StdStringToQString(strTrim(vec[i])));
+        }
     }
 }
 

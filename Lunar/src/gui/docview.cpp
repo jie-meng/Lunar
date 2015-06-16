@@ -278,6 +278,7 @@ bool DocView::doSave(bool reset_lexer)
     emit updateTitle(this);
     std::string content = QStringToStdString(ptext_edit_->text());
     content = util::strReplaceAll(content, "\r\n", "\n");
+    content = util::strReplaceAll(content, "\r", "\n");
     bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
     if (reset_lexer)
         resetLexer();
