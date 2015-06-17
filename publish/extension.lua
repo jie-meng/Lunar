@@ -130,7 +130,8 @@ end
 
 function ignoreFile(filename)
 	local ext = file.fileExtension(filename)
-	if ext == "so" or 
+	if ext == "luac" or
+        ext == "so" or 
         ext == "pyc" or
 		ext == "o" or
 		ext == "lib" or
