@@ -28,6 +28,9 @@ function parseApi(filename, apis)
                 local tb, func, param = string.match(line, pattern_tb_function_lua)
                 if tb and func and param then
                     table.insert(apis, string.format("%s.%s%s", tb, func, param))
+                    if func == "ctor" then
+                        table.insert(apis, string.format("%s.%s%s", tb, "create", param))
+                    end
                     break
                 end
                 
