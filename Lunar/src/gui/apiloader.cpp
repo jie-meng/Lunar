@@ -7,6 +7,7 @@
 #include "qsciapisex.h"
 #include "util/file.hpp"
 #include "util/regex.hpp"
+#include "util/thread.hpp"
 #include "lunarcommon.h"
 #include "docview.h"
 
@@ -27,7 +28,6 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     loading_(false)
 {
     connect(this, SIGNAL(loadFinish(bool, const QString&)), this, SLOT(onLoadFinish(bool, const QString&)));
-    connect(papi_loader_->getApis(), SIGNAL(apiPreparationFinished()), this, SLOT(apiPreparationFinished()));
 }
 
 ApiLoadThread::~ApiLoadThread()
@@ -97,23 +97,30 @@ void ApiLoadThread::run()
     }
 }
 
+void ApiLoadThread::loadOvertime()
+{
+    sleep(LunarGlobal::getInstance().getLoadApiMinInterval());
+   // LogSocket::getInstance().sendLog("prepare finish", "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+    loading_ = false;
+}
+
 void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
 {
     if (result)
     {
         if (papi_loader_)
+        {
             papi_loader_->prepare();
+            //LogSocket::getInstance().sendLog("prepare start", "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+
+            Thread td(UtilBind(&ApiLoadThread::loadOvertime, this));
+            td.start();
+        }
     }
     else
     {
         LunarMsgBoxQ(error_info);
     }
-}
-
-void ApiLoadThread::apiPreparationFinished()
-{
-     //LunarMsgBoxQ("ok now");
-    loading_ = false;
 }
 
 const std::string kApisExt = "api";

@@ -36,7 +36,8 @@ protected:
     virtual void run();
 public slots:
     void onLoadFinish(bool result, const QString& error_info);
-    void apiPreparationFinished();
+private:
+    void loadOvertime();
 private:
     QMutex mutex_;
     std::string api_dirs_;
