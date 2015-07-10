@@ -117,17 +117,27 @@ local pattern_func = [[def%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_func_init = [[def%s+__init__%s*%((.*)%)%s*:]]
 local pattern_class = [[class%s+([%w_]+)%s*:]]
 local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
+local pattern_import = [[import%s+([%w_%.]+)]]
+local pattern_from_import = [[from%s+([%w_%.]+)%s+import%s*%*]]
 
 function parseSupplementApi(filename, cursor_line)
 
     local apis = {}
     local classes = {}
     
-    local current_path = file.currentPath()
-    local files = file.findFilesInDirRecursively(current_path, "py")
+    local imports = {}
+    local from_imports = {}
+    parseSupplementApiInFile(filename, "", apis, classes, imports, from_imports)
     
-    for i, v in ipairs(files) do
-        parseSupplementApiInFile(v, apis, classes)
+    local current_file_path = file.splitPathname(filename)
+    for _, v in ipairs(from_imports) do
+        local path = strRelaceAll(v, ".", "/")
+        parseSupplementApiInFile(string.format("%s/%s.py", current_file_path, path), "", apis, classes, nil, nil)
+    end
+    
+    for _, v in ipairs(imports) do
+        local path = strRelaceAll(v, ".", "/")
+        parseSupplementApiInFile(string.format("%s/%s.py", current_file_path, path), v .. ".", apis, classes, nil, nil)
     end
     
     -- process class inherits
@@ -148,19 +158,22 @@ function parseSupplementApi(filename, cursor_line)
         end
     end
     
+    for _, v in ipairs(apis) do
+        sendLog(v)
+    end
+    
     return apis
 end
 
-function parseSupplementApiInFile(filename, apis, classes)
+function parseSupplementApiInFile(filename, prefix, apis, classes, imports, from_imports)
     
     local class_scope_stack = {}
     
     local f = io.open(filename, "r")
+    sendLog(filename)
     if f ~= nil then
-        
         local line = f:read("*line")
         while (line ~= nil) do
-            
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
@@ -190,7 +203,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
                         current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
                     else
-                        table.insert(apis, string.format("%s(%s)", func, param))
+                        table.insert(apis, string.format("%s%s(%s)", prefix, func, param))
                     end
                     break
                 end
@@ -198,7 +211,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                 local class_name1 = string.match(line, pattern_class)
                 if class_name1 then
                     local c = Class:new()
-                    c:setName(class_name1)
+                    c:setName(prefix .. class_name1)
                     c:setIndent(getStartSpaceCount(line))
                     table.insert(class_scope_stack, c)
                     break
@@ -207,7 +220,7 @@ function parseSupplementApiInFile(filename, apis, classes)
                 local class_name2, extends = string.match(line, pattern_class_extend)
                 if class_name2 and extends then
                     local c = Class:new()
-                    c:setName(class_name2)
+                    c:setName(prefix .. class_name2)
                     c:setIndent(getStartSpaceCount(line))
                     local t_extends = strSplit(extends, ",")
                     for i, v in ipairs(t_extends) do
@@ -215,6 +228,22 @@ function parseSupplementApiInFile(filename, apis, classes)
                     end
                     table.insert(class_scope_stack, c)
                     break
+                end
+                
+                if from_imports then
+                    local from_import_module = string.match(line, pattern_from_import)
+                    if from_import_module then
+                        table.insert(from_imports, from_import_module)
+                        break
+                    end
+                end
+                
+                if imports then
+                    local import_module = string.match(line, pattern_import)
+                    if import_module then
+                        table.insert(imports, import_module)
+                        break
+                    end
                 end
                 
             until true
@@ -266,7 +295,7 @@ function processClassInherits(classes)
                         
                         -- not extend from current classes, ignore it.
                         v:removeExtends(e)
-                                            until true
+                    until true
                 end
             end
         end -- main for
@@ -279,7 +308,7 @@ function processClassInherits(classes)
     return classes_processed
 end
 
-local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_]+)%s*%(]]
+local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_%.]+)%s*%(]]
 
 function processCurrentFileObjects(filename, cursor_line, processed_class)
     
@@ -291,8 +320,6 @@ function processCurrentFileObjects(filename, cursor_line, processed_class)
         local current_line = 0
         while (line ~= nil and current_line < cursor_line) do
             repeat
-                --sendLog(string.format("line: %d text: %s", current_line+1, line))
-            
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
                 end
