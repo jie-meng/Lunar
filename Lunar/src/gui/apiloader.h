@@ -34,8 +34,9 @@ signals:
     void loadFinish(bool, const QString&);
 protected:
     virtual void run();
-private slots:
+public slots:
     void onLoadFinish(bool result, const QString& error_info);
+    void apiPreparationFinished();
 private:
     QMutex mutex_;
     std::string api_dirs_;
@@ -64,6 +65,7 @@ public:
     void loadCommonApiAsync(const std::string& api_dirs);
     void loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
     inline std::string errorInformation() const { return error_information_; }
+    inline QsciAPIsEx* getApis() { return papis_; }
 private:
     bool initLuaState(const std::string& parse_supplement_api_script);
     void loadCommonApi(const std::string& api_dirs);
@@ -73,8 +75,8 @@ private:
     void clearSupplementApi();
     void prepare();
 private:
-    ApiLoadThread api_load_thread_;
     QsciAPIsEx* papis_;
+    ApiLoadThread api_load_thread_;
     std::string file_;
     std::vector<std::string> api_files_;
     std::set<std::string> api_supplement_last_;

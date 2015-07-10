@@ -27,6 +27,7 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     loading_(false)
 {
     connect(this, SIGNAL(loadFinish(bool, const QString&)), this, SLOT(onLoadFinish(bool, const QString&)));
+    connect(papi_loader_->getApis(), SIGNAL(apiPreparationFinished()), this, SLOT(apiPreparationFinished()));
 }
 
 ApiLoadThread::~ApiLoadThread()
@@ -107,7 +108,11 @@ void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
     {
         LunarMsgBoxQ(error_info);
     }
+}
 
+void ApiLoadThread::apiPreparationFinished()
+{
+     //LunarMsgBoxQ("ok now");
     loading_ = false;
 }
 
@@ -116,8 +121,8 @@ const std::string kApisExt = "api";
 //ApiLoader
 ApiLoader::ApiLoader(QsciAPIsEx* papis,
                      const std::string& file) :
-    api_load_thread_(this),
     papis_(papis),
+    api_load_thread_(this),
 	file_(file),
     lua_state_ok_(false),
     error_information_("")
