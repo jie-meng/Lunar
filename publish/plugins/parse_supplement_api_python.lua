@@ -672,7 +672,8 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
     return objects
 end
 
-local apis = parseSupplementApi("./test.py", 50)
-for _, v in pairs(apis) do
-    print(v)
-end
+--[[ test ]]
+--local apis = parseSupplementApi("./test.py", 50)
+--for _, v in pairs(apis) do
+--    print(v)
+--end
