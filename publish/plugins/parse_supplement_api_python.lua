@@ -118,6 +118,44 @@ end
 
 --[[ Class end --]]
 
+--[[ Import begin ]]
+
+local Import = {
+    name_ = nil,
+    is_from_import_ =false
+}
+
+function Import:new(name, is_from_import)
+    local o = {}
+    setmetatable(o, self)
+    self.__index = self
+    
+    self.name_ = name
+    self.is_from_import_ = is_from_import
+    
+    return o
+end
+
+function Import:getName()
+    return self.name_
+end
+
+function Import:setName(name)
+    self.name_ = name
+    return self
+end
+
+function Import:isFromImport()
+    return self.is_from_import_
+end
+
+function Import:setFromImport(is_from_import)
+    self.is_from_import_ = is_from_import
+    return self
+end
+
+--[[ Import end ]]
+
 function parseSupplementApi(filename, cursor_line)
 
     local apis = {}
@@ -125,6 +163,7 @@ function parseSupplementApi(filename, cursor_line)
     local path, name = file.splitPathname(filename)
     local base = file.fileBaseName(name)
     
+    local imports = parseImports(filename)
     local functions = parseFunctions(base, path, false, true)
     local classes = parseClasses(base, path)
     
@@ -132,21 +171,24 @@ function parseSupplementApi(filename, cursor_line)
         table.insert(apis, v)
     end
     
+    -- ctors
     for _, v in pairs(classes) do
-        local ctor = findCtorInClass(v)
-        if ctor then
-            table.insert(apis, v:getModuleName() .. "." .. v:getName() .. ctor)
-            table.insert(apis, v:getName() .. ctor)
+        if imports[v:getModuleName()] then
+            parseCtorApis(apis, imports, v)
         end
     end
     
     for _, v in pairs(classes) do
-        parseClassesApis(v, v, apis, true)
+        if imports[v:getModuleName()] then
+            parseClassesApis(apis, imports, v, v, false)
+        end
     end
     
     local objects = processCurrentFileObjects(filename, cursor_line, classes)
     for _, v in pairs(objects) do
-        parseClassesApis(v, v, apis, false)
+        if imports[v:getModuleName()] then
+            parseClassesApis(apis, imports, v, v, true)
+        end
     end
     
     return apis
@@ -203,19 +245,28 @@ function removeSelfFromParams(params)
     return strTrim(params)
 end
 
-function parseClassesApis(derived, cls, apis, with_module_name)
+function parseCtorApis(apis, imports, cls)
+    local ctor = findCtorInClass(cls)
+    if ctor then
+        if imports[cls:getModuleName()]:isFromImport() then
+            table.insert(apis, cls:getName() .. ctor)
+        else
+            table.insert(apis, cls:getModuleName() .. "." .. cls:getName() .. ctor)
+        end
+    end
+end
+
+function parseClassesApis(apis, imports, derived, cls, is_object)
     for _, v in pairs(cls:getExtends()) do
-        parseClassesApis(derived, v, apis, with_module_name)
+        parseClassesApis(apis, imports, derived, v, is_object)
     end
     
     for _, v in pairs(cls:getFunctions()) do
-        local method = nil
-        if with_module_name then
-            method = string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v)
+        if is_object or imports[derived:getModuleName()]:isFromImport() then
+            table.insert(apis, string.format("%s.%s", derived:getName(), v))
         else
-            method = string.format("%s.%s", derived:getName(), v)
+            table.insert(apis, string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v))
         end
-        table.insert(apis, method)
     end
 end
 
@@ -253,6 +304,47 @@ function getModuleFile(module_name, path)
     return nil
 end
 
+function parseImports(filename)
+    local imports = {}
+    
+    local f = io.open(filename, "r")
+    if f then
+        local line = f:read("*line")
+        while line do
+            repeat
+                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                    break
+                end
+                
+                if getStartSpaceCount(line) > 0 then
+                    break
+                end
+                
+                if (not strStartWith(line, "import")) and (not strStartWith(line, "from")) then
+                    break
+                end
+                
+                local from_import_module = string.match(line, pattern_from_import)
+                if from_import_module then
+                    imports[from_import_module] = Import:new(from_import_module, true)
+                    break
+                end
+                
+                local import_module = string.match(line, pattern_import)
+                if import_module then
+                    imports[import_module] = Import:new(import_module, false)
+                    break
+                end
+            
+            until true
+            line = f:read("*line")
+        end
+        io.close()
+    end
+    
+    return imports
+end
+
 function parseFunctions(module_name, path, add_module_prefix, recursive, function_coll)
 
     local functions = function_coll or {}
@@ -263,10 +355,10 @@ function parseFunctions(module_name, path, add_module_prefix, recursive, functio
     end
     
     local f = io.open(filename, "r")
-    if f ~= nil then
+    if f then
         local filepath = file.splitPathname(filename)
         local line = f:read("*line")
-        while (line ~= nil) do
+        while line do
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
@@ -321,10 +413,10 @@ function parseClasses(module_name, path, class_coll)
     end
     
     local f = io.open(filename, "r")
-    if f ~= nil then
+    if f then
         local filepath = file.splitPathname(filename)
         local line = f:read("*line")
-        while (line ~= nil) do
+        while line do
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
@@ -417,10 +509,10 @@ function processCurrentFileObjects(filename, cursor_line, classes)
     
     local objects = {}
     local f = io.open(filename, "r")
-    if f ~= nil then
+    if f then
         local line = f:read("*line")
         local current_line = 0
-        while (line ~= nil and current_line < cursor_line) do
+        while (line and current_line < cursor_line) do
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
                     break
