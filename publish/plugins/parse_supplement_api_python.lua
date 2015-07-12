@@ -141,12 +141,12 @@ function parseSupplementApi(filename, cursor_line)
     end
     
     for _, v in pairs(classes) do
-        parseClassesApis(v, v, apis)
+        parseClassesApis(v, v, apis, true)
     end
     
     local objects = processCurrentFileObjects(filename, cursor_line, classes)
     for _, v in pairs(objects) do
-        parseClassesApis(v, v, apis)
+        parseClassesApis(v, v, apis, false)
     end
     
     return apis
@@ -158,7 +158,10 @@ function findCtorInClass(cls)
     end
     
     for _, v in ipairs(cls:getExtends()) do
-        return findCtorInClass(v)
+        local ctor = findCtorInClass(v)
+        if ctor then
+            return ctor
+        end
     end
     
     return nil
@@ -200,13 +203,19 @@ function removeSelfFromParams(params)
     return strTrim(params)
 end
 
-function parseClassesApis(derived, cls, apis)
+function parseClassesApis(derived, cls, apis, with_module_name)
     for _, v in pairs(cls:getExtends()) do
-        parseClassesApis(derived, v, apis)
+        parseClassesApis(derived, v, apis, with_module_name)
     end
     
     for _, v in pairs(cls:getFunctions()) do
-        table.insert(apis, string.format("%s.%s", derived:getName(), v))
+        local method = nil
+        if with_module_name then
+            method = string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v)
+        else
+            method = string.format("%s.%s", derived:getName(), v)
+        end
+        table.insert(apis, method)
     end
 end
 
@@ -324,7 +333,9 @@ function parseClasses(module_name, path, class_coll)
                 local current_class = getCurrentClassInScopeStack(class_scope_stack)
                 if current_class then
                     if getStartSpaceCount(line) == current_class:getIndent() then
-                        table.insert(classes, current_class)
+                        if current_class:getIndent() == 0 then
+                            classes[current_class:getModuleName() .. "." .. current_class:getName()] = current_class
+                        end
                         table.remove(class_scope_stack)
                         -- do not break here
                     end
@@ -392,7 +403,9 @@ function parseClasses(module_name, path, class_coll)
     while #class_scope_stack > 0 do
         local current_class = getCurrentClassInScopeStack(class_scope_stack)
         if current_class then
-            classes[current_class:getModuleName() .. "." .. current_class:getName()] = current_class
+            if current_class:getIndent() == 0 then
+                classes[current_class:getModuleName() .. "." .. current_class:getName()] = current_class
+            end
             table.remove(class_scope_stack)
         end
     end
@@ -415,17 +428,11 @@ function processCurrentFileObjects(filename, cursor_line, classes)
                 
                 local left, right = string.match(line, pattern_object_assignment)
                 if left and right and left ~= right then
-                    local flag = false
-                    for _, v in pairs(classes) do
-                        if v:getModuleName() .. "." .. v:getName() == right then
-                            local c = v:clone()
-                            c:setName(left)
-                            table.insert(objects, c)
-                            flag = true
-                        end
-                    end
-                    
-                    if not flag then
+                    if classes[right] then
+                        local c = classes[right]:clone()
+                        c:setName(left)
+                        table.insert(objects, c)
+                    else
                         for _, v in pairs(classes) do
                             if v:getName() == right then
                                 local c = v:clone()
@@ -434,9 +441,9 @@ function processCurrentFileObjects(filename, cursor_line, classes)
                             end
                         end
                     end
-                    
                     break
                 end
+                
             until true
             line = f:read("*line")
             current_line = current_line + 1
