@@ -49,3 +49,6 @@ Lunar.pro
 
 # vim
 tags
+
+#script
+.pyc
