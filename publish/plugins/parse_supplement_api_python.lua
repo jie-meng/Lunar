@@ -4,7 +4,12 @@ local pattern_class = [[class%s+([%w_]+)%s*:]]
 local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import%s*%*]]
-local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_%.]+)%s*%(]]
+local pattern_object_assignment_class = [[([%w_]+)%s*=%s*([%w_%.]+)%s*%(]]
+local pattern_object_assignment_string = [[([%w_]+)%s*=%s*['"].*['"]%s*]]
+local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_]+)]]
+local pattern_object_del = [[del%s*([%w_%.]+)]]
+
+local kstr_build_in = "__build_in__"
 
 --[[ Class begin --]]
 
@@ -156,6 +161,58 @@ end
 
 --[[ Import end ]]
 
+function buildInClasses()
+    local classes = {}
+    
+    local cls_string = Class:new("string", kstr_build_in, 0)
+    cls_string:addFunction([[capitalize()]])    
+    cls_string:addFunction([[center(width, fillchar)]])
+    cls_string:addFunction([[count(str, beg= 0,end=len(string))]])
+    cls_string:addFunction([[decode(encoding='UTF-8',errors='strict')]])
+    cls_string:addFunction([[encode(encoding='UTF-8',errors='strict')]])
+    cls_string:addFunction([[endswith(suffix, beg=0, end=len(string))]])
+    cls_string:addFunction([[expandtabs(tabsize=8)]])
+    cls_string:addFunction([[find(str, beg=0 end=len(string))]])
+    cls_string:addFunction([[index(str, beg=0, end=len(string))]])
+    cls_string:addFunction([[isalnum()]])
+    cls_string:addFunction([[isalpha()]])
+    cls_string:addFunction([[isdigit()]])
+    cls_string:addFunction([[islower()]])
+    cls_string:addFunction([[isnumeric()]])
+    cls_string:addFunction([[isspace()]])
+    cls_string:addFunction([[istitle()]])
+    cls_string:addFunction([[isupper()]])
+    cls_string:addFunction([[join(seq)]])
+    cls_string:addFunction([[len(string)]])
+    cls_string:addFunction([[ljust(width[, fillchar])]])
+    cls_string:addFunction([[lower()]])
+    cls_string:addFunction([[lstrip()]])
+    cls_string:addFunction([[maketrans()]])
+    cls_string:addFunction([[max(str)]])
+    cls_string:addFunction([[min(str)]])
+    cls_string:addFunction([[replace(old, new [, max])]])
+    cls_string:addFunction([[rfind(str, beg=0,end=len(string))]])
+    cls_string:addFunction([[rindex( str, beg=0, end=len(string))]])
+    cls_string:addFunction([[rjust(width,[, fillchar])]])
+    cls_string:addFunction([[rstrip()]])
+    cls_string:addFunction([[split(str="", num=string.count(str))]])
+    cls_string:addFunction([[splitlines( num=string.count('\n'))]])
+    cls_string:addFunction([[startswith(str, beg=0,end=len(string))]])
+    cls_string:addFunction([[strip([chars])]])
+    cls_string:addFunction([[swapcase()]])
+    cls_string:addFunction([[title()]])
+    cls_string:addFunction([[translate(table, deletechars="")]])
+    cls_string:addFunction([[upper()]])
+    cls_string:addFunction([[zfill (width)]])
+    cls_string:addFunction([[isdecimal()]])
+    
+    classes[cls_string:getName()] = cls_string
+    
+    return classes
+end
+
+local build_in_classes = buildInClasses()
+
 function parseSupplementApi(filename, cursor_line)
 
     local apis = {}
@@ -184,7 +241,7 @@ function parseSupplementApi(filename, cursor_line)
         end
     end
     
-    local objects = processCurrentFileObjects(filename, cursor_line, classes)
+    local objects = processCurrentFileObjects(filename, cursor_line, classes, imports)
     for _, v in pairs(objects) do
         if imports[v:getModuleName()] then
             parseClassesApis(apis, imports, v, v, true)
@@ -306,6 +363,7 @@ end
 
 function parseImports(filename)
     local imports = {}
+    imports[kstr_build_in] = Import:new(kstr_build_in, true)
     
     local f = io.open(filename, "r")
     if f then
@@ -505,7 +563,7 @@ function parseClasses(module_name, path, class_coll)
     return classes
 end
 
-function processCurrentFileObjects(filename, cursor_line, classes)
+function processCurrentFileObjects(filename, cursor_line, classes, imports)
     
     local objects = {}
     local f = io.open(filename, "r")
@@ -518,21 +576,47 @@ function processCurrentFileObjects(filename, cursor_line, classes)
                     break
                 end
                 
-                local left, right = string.match(line, pattern_object_assignment)
+                local left, right = string.match(line, pattern_object_assignment_class)
                 if left and right and left ~= right then
                     if classes[right] then
                         local c = classes[right]:clone()
                         c:setName(left)
-                        table.insert(objects, c)
+                        objects[left] = c
                     else
                         for _, v in pairs(classes) do
-                            if v:getName() == right then
+                            if v:getName() == right and imports[v:getModuleName()] then
                                 local c = v:clone()
                                 c:setName(left)
-                                table.insert(objects, c)
+                                objects[left] = c
                             end
                         end
                     end
+                    break
+                end
+                
+                local left, right = string.match(line, pattern_object_assignment)
+                if left and right and left ~= right then
+                    if objects[right] then
+                        local c = objects[right]:clone()
+                        c:setName(left)
+                        objects[left] = c
+                    else
+                        objects[left] = nil
+                    end
+                    break
+                end
+                
+                local obj = string.match(line, pattern_object_assignment_string)
+                if obj then
+                    local c = build_in_classes["string"]:clone()
+                    c:setName(obj)
+                    objects[obj] = c
+                    break
+                end
+                
+                local obj = string.match(line, pattern_object_del)
+                if obj then
+                    objects[obj] = nil
                     break
                 end
                 
