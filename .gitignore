@@ -51,4 +51,4 @@ Lunar.pro
 tags
 
 #script
-.pyc
+*.pyc
