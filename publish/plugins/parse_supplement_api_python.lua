@@ -228,16 +228,20 @@ end
 
 function getModuleFile(module_name, path)
     local relative_path = strRelaceAll(module_name, ".", "/")
-    if relative_path == module_name then
-        local filename = string.format("%s/%s.py", path, relative_path)
-        if not file.isPathFile(filename) then
-            filename = string.format("%s/%s.py", file.currentPath(), relative_path)
-        end
+    
+    -- check relative path first
+    local filename = string.format("%s/%s.py", path, relative_path)
+    if file.isPathFile(filename) then
         return filename
-    else
-        local relative_path = strRelaceAll(module_name, ".", "/")
-        return string.format("%s/%s.py", file.currentPath(), relative_path)
     end
+    
+    -- then check from currentpath
+    filename = string.format("%s/%s.py", file.currentPath(), relative_path)
+    if file.isPathFile(filename) then
+        return filename
+    end
+    
+    return nil
 end
 
 function parseFunctions(module_name, path, add_module_prefix, recursive, function_coll)
@@ -245,6 +249,10 @@ function parseFunctions(module_name, path, add_module_prefix, recursive, functio
     local functions = function_coll or {}
     
     local filename = getModuleFile(module_name, path)
+    if not filename then
+        return functions
+    end
+    
     local f = io.open(filename, "r")
     if f ~= nil then
         local filepath = file.splitPathname(filename)
@@ -299,6 +307,10 @@ function parseClasses(module_name, path, class_coll)
     local class_scope_stack = {}
     
     local filename = getModuleFile(module_name, path)
+    if not filename then
+        return classes
+    end
+    
     local f = io.open(filename, "r")
     if f ~= nil then
         local filepath = file.splitPathname(filename)
@@ -352,7 +364,7 @@ function parseClasses(module_name, path, class_coll)
                 
                 local func, param = string.match(line, pattern_func)
                 if func and param then
-                    if #class_scope_stack > 0 then
+                    if #class_scope_stack > 0 and not strStartWith(func, "__") then
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
                         current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
                     end
