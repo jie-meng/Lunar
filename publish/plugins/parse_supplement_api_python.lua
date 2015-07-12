@@ -6,6 +6,8 @@ local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import%s*%*]]
 local pattern_object_assignment_class = [[([%w_]+)%s*=%s*([%w_%.]+)%s*%(]]
 local pattern_object_assignment_string = [[([%w_]+)%s*=%s*['"].*['"]%s*]]
+local pattern_object_assignment_list = "([%w_]+)%s*=%s*%[.*%]"
+local pattern_object_assignment_dict = "([%w_]+)%s*=%s*{.*}"
 local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_]+)]]
 local pattern_object_del = [[del%s*([%w_%.]+)]]
 
@@ -205,8 +207,32 @@ function buildInClasses()
     cls_string:addFunction([[upper()]])
     cls_string:addFunction([[zfill (width)]])
     cls_string:addFunction([[isdecimal()]])
-    
     classes[cls_string:getName()] = cls_string
+    
+    local cls_list = Class:new("list", kstr_build_in, 0)
+    cls_list:addFunction([[append(obj)]])
+    cls_list:addFunction([[count(obj)]])
+    cls_list:addFunction([[extend(seq)]])
+    cls_list:addFunction([[index(obj)]])
+    cls_list:addFunction([[insert(index, obj)]])
+    cls_list:addFunction([[pop(obj=list[-1])]])
+    cls_list:addFunction([[remove(obj)]])
+    cls_list:addFunction([[reverse()]])
+    cls_list:addFunction([[sort([func])]])
+    classes[cls_list:getName()] = cls_list
+    
+    local cls_dict = Class:new("dict", kstr_build_in, 0)
+    cls_dict:addFunction([[clear()]])
+    cls_dict:addFunction([[copy()]])
+    cls_dict:addFunction([[fromkeys()]])
+    cls_dict:addFunction([[get(key, default=None)]])
+    cls_dict:addFunction([[has_key(key)]])
+    cls_dict:addFunction([[items()]])
+    cls_dict:addFunction([[keys()]])
+    cls_dict:addFunction([[setdefault(key, default=None)]])
+    cls_dict:addFunction([[update(dict2)]])
+    cls_dict:addFunction([[values()]])
+    classes[cls_dict:getName()] = cls_dict
     
     return classes
 end
@@ -614,6 +640,22 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     break
                 end
                 
+                local obj = string.match(line, pattern_object_assignment_list)
+                if obj then
+                    local c = build_in_classes["list"]:clone()
+                    c:setName(obj)
+                    objects[obj] = c
+                    break
+                end
+                
+                local obj = string.match(line, pattern_object_assignment_dict)
+                if obj then
+                    local c = build_in_classes["dict"]:clone()
+                    c:setName(obj)
+                    objects[obj] = c
+                    break
+                end
+                
                 local obj = string.match(line, pattern_object_del)
                 if obj then
                     objects[obj] = nil
@@ -630,7 +672,7 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
     return objects
 end
 
---local apis = parseSupplementApi("./test.py", 50)
---for _, v in pairs(apis) do
---    print(v)
---end
+local apis = parseSupplementApi("./test.py", 50)
+for _, v in pairs(apis) do
+    print(v)
+end
