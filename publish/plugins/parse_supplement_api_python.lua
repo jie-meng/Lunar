@@ -4,11 +4,11 @@ local pattern_class = [[class%s+([%w_]+)%s*:]]
 local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import%s*%*]]
-local pattern_object_assignment_class = [[([%w_]+)%s*=%s*([%w_%.]+)%s*%(]]
-local pattern_object_assignment_string = [[([%w_]+)%s*=%s*['"].*['"]%s*]]
-local pattern_object_assignment_list = "([%w_]+)%s*=%s*%[.*%]"
-local pattern_object_assignment_dict = "([%w_]+)%s*=%s*{.*}"
-local pattern_object_assignment = [[([%w_]+)%s*=%s*([%w_]+)]]
+local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
+local pattern_object_assignment_string = [[([%w_%.]+)%s*=%s*['"].*['"]%s*]]
+local pattern_object_assignment_list = "([%w_%.]+)%s*=%s*%[.*%]"
+local pattern_object_assignment_dict = "([%w_%.]+)%s*=%s*{.*}"
+local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_]+)]]
 local pattern_object_del = [[del%s*([%w_%.]+)]]
 
 local kstr_build_in = "__build_in__"
