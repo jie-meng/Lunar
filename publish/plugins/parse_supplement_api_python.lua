@@ -2,6 +2,7 @@ local pattern_func = [[def%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_func_init = [[def%s+__init__%s*%((.*)%)%s*:]]
 local pattern_class = [[class%s+([%w_]+)%s*:]]
 local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
+local pattern_class_static_field = [[([%w_]+)%s*=%s*(.+)]]
 local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import%s*%*]]
 local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
@@ -21,7 +22,8 @@ local Class = {
     indent_ = nil,
     
     extends_ = {},
-    functions_ = {}
+    functions_ = {},
+    static_fields_ = {}
 }
 
 function Class:new(name, module_name, indent)
@@ -36,6 +38,7 @@ function Class:new(name, module_name, indent)
     o.ctor_ = nil
     o.extends_ = {}
     o.functions_ = {}
+    o.static_fields_ = {}
     
     return o
 end
@@ -121,6 +124,14 @@ function Class:removeExtends(super_class)
     end
     
     return self
+end
+
+function Class:getStaticFields()
+    return self.static_fields_
+end
+
+function Class:addStaticField(f)
+    table.insert(self.static_fields_, f)
 end
 
 --[[ Class end --]]
@@ -351,6 +362,14 @@ function parseClassesApis(apis, imports, derived, cls, is_object)
             table.insert(apis, string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v))
         end
     end
+    
+    for _, v in pairs(cls:getStaticFields()) do
+        if is_object or imports[derived:getModuleName()]:isFromImport() then
+            table.insert(apis, string.format("%s.%s", derived:getName(), v))
+        else
+            table.insert(apis, string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v))
+        end
+    end
 end
 
 function findClass(class_desc, classes)
@@ -543,22 +562,31 @@ function parseClasses(module_name, path, class_coll)
                     break
                 end
                 
-                local param_init = string.match(line, pattern_func_init)
-                if param_init then
-                    if #class_scope_stack > 0 then
+                if #class_scope_stack > 0 then
+                    local param_init = string.match(line, pattern_func_init)
+                    if param_init then                        
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
                         current_class:setCtor(string.format("(%s)", removeSelfFromParams(param_init)))
+                        
+                        break
                     end
-                    break
-                end
-                
-                local func, param = string.match(line, pattern_func)
-                if func and param then
-                    if #class_scope_stack > 0 and not strStartWith(func, "__") then
+                    
+                    local func, param = string.match(line, pattern_func)
+                    if func and param then
+                        if not strStartWith(func, "__") then
+                            local current_class = getCurrentClassInScopeStack(class_scope_stack)
+                            current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
+                        end
+                        break
+                    end
+                    
+                    local field = string.match(line, pattern_class_static_field)
+                    -- do not consider inner class's fields
+                    if field and getStartSpaceCount(line) == 4 then
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
-                        current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
+                        current_class:addStaticField(field)
+                        break
                     end
-                    break
                 end
                 
                 local from_import_module = string.match(line, pattern_from_import)
