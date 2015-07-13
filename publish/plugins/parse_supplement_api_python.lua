@@ -530,9 +530,12 @@ function parseClasses(module_name, path, class_coll)
                     local c = Class:new(class_name2, module_name, getStartSpaceCount(line))
                     local t_extends = strSplit(extends, ",")
                     for i, v in ipairs(t_extends) do
-                        local super = findClass(strTrim(v), classes)
-                        if super then
-                            c:addExtend(super)
+                        local super_name = strTrim(v)
+                        if super_name ~= "object" then
+                            local super = findClass(super_name, classes)
+                            if super then
+                                c:addExtend(super)
+                            end
                         end
                     end
                     table.insert(class_scope_stack, c)
