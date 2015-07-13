@@ -80,7 +80,6 @@ public:
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
     inline bool isLogEnable() const { return is_log_enable_; }
     void parseExtensionFileFilter();
-    inline size_t getLoadApiMinInterval() const { return load_api_min_interval_; }
 private:
     LunarGlobal();
     ~LunarGlobal();
@@ -101,7 +100,6 @@ private:
     std::string file_filter_;
     unsigned short log_sock_port_;
     bool is_log_enable_;
-    size_t load_api_min_interval_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

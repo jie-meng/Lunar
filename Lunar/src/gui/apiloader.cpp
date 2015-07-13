@@ -28,6 +28,7 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     loading_(false)
 {
     connect(this, SIGNAL(loadFinish(bool, const QString&)), this, SLOT(onLoadFinish(bool, const QString&)));
+    connect(papi_loader_->getApis(), SIGNAL(apiPreparationFinished()), this, SLOT(onPrepareFinish()));
 }
 
 ApiLoadThread::~ApiLoadThread()
@@ -97,11 +98,10 @@ void ApiLoadThread::run()
     }
 }
 
-void ApiLoadThread::loadOvertime()
+void ApiLoadThread::onPrepareFinish()
 {
-    sleep(LunarGlobal::getInstance().getLoadApiMinInterval());
-   // LogSocket::getInstance().sendLog("prepare finish", "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
-    loading_ = false;
+    resetLoading();
+    LogSocket::getInstance().sendLog("Api prepare ok!", "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
 }
 
 void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
@@ -109,13 +109,7 @@ void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
     if (result)
     {
         if (papi_loader_)
-        {
             papi_loader_->prepare();
-            //LogSocket::getInstance().sendLog("prepare start", "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
-
-            Thread td(UtilBind(&ApiLoadThread::loadOvertime, this));
-            td.start();
-        }
     }
     else
     {
@@ -369,6 +363,8 @@ void ApiLoader::prepare()
 
     if (change)
         papis_->prepare();
+    else
+        api_load_thread_.resetLoading();
 }
 
 } // namespace gui

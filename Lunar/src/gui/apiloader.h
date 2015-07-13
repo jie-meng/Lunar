@@ -30,14 +30,14 @@ public:
     virtual ~ApiLoadThread();
     void startLoadCommonApi(const std::string& api_dirs);
     void startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
+    inline void resetLoading() { loading_ = false; }
 signals:
     void loadFinish(bool, const QString&);
 protected:
     virtual void run();
 public slots:
     void onLoadFinish(bool result, const QString& error_info);
-private:
-    void loadOvertime();
+    void onPrepareFinish();
 private:
     QMutex mutex_;
     std::string api_dirs_;

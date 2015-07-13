@@ -620,18 +620,6 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     break
                 end
                 
-                local left, right = string.match(line, pattern_object_assignment)
-                if left and right and left ~= right then
-                    if objects[right] then
-                        local c = objects[right]:clone()
-                        c:setName(left)
-                        objects[left] = c
-                    else
-                        objects[left] = nil
-                    end
-                    break
-                end
-                
                 local obj = string.match(line, pattern_object_assignment_string)
                 if obj then
                     local c = build_in_classes["string"]:clone()
@@ -653,6 +641,18 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     local c = build_in_classes["dict"]:clone()
                     c:setName(obj)
                     objects[obj] = c
+                    break
+                end
+                
+                local left, right = string.match(line, pattern_object_assignment)
+                if left and right and left ~= right then
+                    if objects[right] then
+                        local c = objects[right]:clone()
+                        c:setName(left)
+                        objects[left] = c
+                    else
+                        objects[left] = nil
+                    end
                     break
                 end
                 
