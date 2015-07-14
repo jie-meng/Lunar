@@ -67,9 +67,9 @@ function parseFileType(filename)
             { 
                 type = "python",
                 auto_complete_type = 1,
-                api = "apis/python",
-                executor = "python -u",
-                parse_supplement_api_script = "plugins/parse_supplement_api_python.lua", 
+                api = "apis/python/python3.api",
+                executor = "python.exe -u",
+                parse_supplement_api_script = "plugins/parse_supplement_api_python3.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "#"
             }

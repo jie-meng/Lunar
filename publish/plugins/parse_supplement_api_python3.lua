@@ -178,71 +178,80 @@ function buildInClasses()
     local classes = {}
     
     local cls_string = Class:new("string", kstr_build_in, 0)
-    cls_string:addFunction([[capitalize()]])    
-    cls_string:addFunction([[center(width, fillchar)]])
-    cls_string:addFunction([[count(str, beg= 0,end=len(string))]])
-    cls_string:addFunction([[decode(encoding='UTF-8',errors='strict')]])
-    cls_string:addFunction([[encode(encoding='UTF-8',errors='strict')]])
-    cls_string:addFunction([[endswith(suffix, beg=0, end=len(string))]])
-    cls_string:addFunction([[expandtabs(tabsize=8)]])
-    cls_string:addFunction([[find(str, beg=0 end=len(string))]])
-    cls_string:addFunction([[index(str, beg=0, end=len(string))]])
-    cls_string:addFunction([[isalnum()]])
-    cls_string:addFunction([[isalpha()]])
-    cls_string:addFunction([[isdigit()]])
-    cls_string:addFunction([[islower()]])
-    cls_string:addFunction([[isnumeric()]])
-    cls_string:addFunction([[isspace()]])
-    cls_string:addFunction([[istitle()]])
-    cls_string:addFunction([[isupper()]])
-    cls_string:addFunction([[join(seq)]])
-    cls_string:addFunction([[len(string)]])
-    cls_string:addFunction([[ljust(width[, fillchar])]])
-    cls_string:addFunction([[lower()]])
-    cls_string:addFunction([[lstrip()]])
-    cls_string:addFunction([[maketrans()]])
-    cls_string:addFunction([[max(str)]])
-    cls_string:addFunction([[min(str)]])
-    cls_string:addFunction([[replace(old, new [, max])]])
-    cls_string:addFunction([[rfind(str, beg=0,end=len(string))]])
-    cls_string:addFunction([[rindex( str, beg=0, end=len(string))]])
-    cls_string:addFunction([[rjust(width,[, fillchar])]])
-    cls_string:addFunction([[rstrip()]])
-    cls_string:addFunction([[split(str="", num=string.count(str))]])
-    cls_string:addFunction([[splitlines( num=string.count('\n'))]])
-    cls_string:addFunction([[startswith(str, beg=0,end=len(string))]])
-    cls_string:addFunction([[strip([chars])]])
-    cls_string:addFunction([[swapcase()]])
-    cls_string:addFunction([[title()]])
-    cls_string:addFunction([[translate(table, deletechars="")]])
-    cls_string:addFunction([[upper()]])
-    cls_string:addFunction([[zfill (width)]])
-    cls_string:addFunction([[isdecimal()]])
+    cls_string:addFunction('capitalize()')
+    cls_string:addFunction('casefold()')
+    cls_string:addFunction('center(width[, fillchar])')
+    cls_string:addFunction('count(sub[, start[, end]])')
+    cls_string:addFunction('encode(encoding="utf-8", errors="strict")')
+    cls_string:addFunction('endswith(suffix[, start[, end]])')
+    cls_string:addFunction('expandtabs(tabsize=8)')
+    cls_string:addFunction('find(sub[, start[, end]])')
+    cls_string:addFunction('format(*args, **kwargs)')
+    cls_string:addFunction('format_map(mapping)')
+    cls_string:addFunction('index(sub[, start[, end]])')
+    cls_string:addFunction('isalnum()')
+    cls_string:addFunction('isalpha()')
+    cls_string:addFunction('isdecimal()')
+    cls_string:addFunction('isdigit()')
+    cls_string:addFunction('isidentifier()')
+    cls_string:addFunction('islower()')
+    cls_string:addFunction('isnumeric()')
+    cls_string:addFunction('isprintable()')
+    cls_string:addFunction('isspace()')
+    cls_string:addFunction('istitle()')
+    cls_string:addFunction('isupper()')
+    cls_string:addFunction('join(iterable)')
+    cls_string:addFunction('ljust(width[, fillchar])')
+    cls_string:addFunction('lower()')
+    cls_string:addFunction('lstrip([chars])')
+    cls_string:addFunction('maketrans(x[, y[, z]])')
+    cls_string:addFunction('partition(sep)')
+    cls_string:addFunction('replace(old, new[, count])')
+    cls_string:addFunction('rfind(sub[, start[, end]])')
+    cls_string:addFunction('rindex(sub[, start[, end]])')
+    cls_string:addFunction('rjust(width[, fillchar])')
+    cls_string:addFunction('rpartition(sep)')
+    cls_string:addFunction('rsplit(sep=None, maxsplit=-1)')
+    cls_string:addFunction('rstrip([chars])')
+    cls_string:addFunction('split(sep=None, maxsplit=-1)')
+    cls_string:addFunction('splitlines([keepends])')
+    cls_string:addFunction('startswith(prefix[, start[, end]])')
+    cls_string:addFunction('strip([chars])')
+    cls_string:addFunction('swapcase()')
+    cls_string:addFunction('title()')
+    cls_string:addFunction('translate(map)')
+    cls_string:addFunction('upper()')
+    cls_string:addFunction('zfill(width)')
     classes[cls_string:getName()] = cls_string
     
     local cls_list = Class:new("list", kstr_build_in, 0)
-    cls_list:addFunction([[append(obj)]])
-    cls_list:addFunction([[count(obj)]])
-    cls_list:addFunction([[extend(seq)]])
-    cls_list:addFunction([[index(obj)]])
-    cls_list:addFunction([[insert(index, obj)]])
-    cls_list:addFunction([[pop(obj=list[-1])]])
-    cls_list:addFunction([[remove(obj)]])
-    cls_list:addFunction([[reverse()]])
-    cls_list:addFunction([[sort([func])]])
+    cls_list:addFunction('append(x)')
+    cls_list:addFunction('extend(L)')
+    cls_list:addFunction('insert(i, x)')
+    cls_list:addFunction('remove(x)')
+    cls_list:addFunction('pop([i])')
+    cls_list:addFunction('clear()')
+    cls_list:addFunction('index(x)')
+    cls_list:addFunction('count(x)')
+    cls_list:addFunction('sort()')
+    cls_list:addFunction('reverse()')
+    cls_list:addFunction('copy()')
     classes[cls_list:getName()] = cls_list
     
     local cls_dict = Class:new("dict", kstr_build_in, 0)
-    cls_dict:addFunction([[clear()]])
-    cls_dict:addFunction([[copy()]])
-    cls_dict:addFunction([[fromkeys()]])
-    cls_dict:addFunction([[get(key, default=None)]])
-    cls_dict:addFunction([[has_key(key)]])
-    cls_dict:addFunction([[items()]])
-    cls_dict:addFunction([[keys()]])
-    cls_dict:addFunction([[setdefault(key, default=None)]])
-    cls_dict:addFunction([[update(dict2)]])
-    cls_dict:addFunction([[values()]])
+    cls_dict:addFunction('iter()')
+    cls_dict:addFunction('clear()')
+    cls_dict:addFunction('copy()')
+    cls_dict:addFunction('fromkeys(seq[, value])')
+    cls_dict:addFunction('get(key[, default])')
+    cls_dict:addFunction('items()')
+    cls_dict:addFunction('keys()')
+    cls_dict:addFunction('pop(key[, default)')
+    cls_dict:addFunction('popitem()')
+    cls_dict:addFunction('keys()')
+    cls_dict:addFunction('setdefault(key[, default])')
+    cls_dict:addFunction('update([othter])')
+    cls_dict:addFunction('values()')
     classes[cls_dict:getName()] = cls_dict
     
     return classes
@@ -258,8 +267,8 @@ function parseSupplementApi(filename, cursor_line)
     local base = file.fileBaseName(name)
     
     local imports = parseImports(filename)
-    local functions = parseFunctions(base, path, false, true)
-    local classes = parseClasses(base, path)
+    local functions = parseFunctions("." .. base, path, false, true)
+    local classes = parseClasses("." .. base, path)
     
     for _, v in pairs(functions) do
         table.insert(apis, v)
@@ -389,18 +398,27 @@ function findClass(class_desc, classes)
 end
 
 function getModuleFile(module_name, path)
-    local relative_path = strRelaceAll(module_name, ".", "/")
-    
-    -- check relative path first
-    local filename = string.format("%s/%s.py", path, relative_path)
-    if file.isPathFile(filename) then
-        return filename
-    end
-    
-    -- then check from currentpath
-    filename = string.format("%s/%s.py", file.currentPath(), relative_path)
-    if file.isPathFile(filename) then
-        return filename
+    if strStartWith(module_name, ".") then
+        -- python 3 package relative path parse
+        local trdot_left = strTrimLeftEx(module_name, ".")
+        local rep_dots = string.len(module_name) - string.len(trdot_left) - 1
+        local relative_path = strRelaceAll(trdot_left, ".", "/")
+        if rep_dots > 0 then
+            for i=1, rep_dots, 1 do
+                relative_path = "../" .. relative_path
+            end
+        end
+        local filename = string.format("%s/%s.py", path, relative_path)
+        if file.isPathFile(filename) then
+            return filename
+        end
+    else
+        -- current path parse
+        local relative_path = strRelaceAll(module_name, ".", "/")
+        filename = string.format("%s/%s.py", file.currentPath(), relative_path)
+        if file.isPathFile(filename) then
+            return filename
+        end
     end
     
     return nil
