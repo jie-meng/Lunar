@@ -1,5 +1,7 @@
 #include "lunarcommon.h"
 #include <QMessageBox>
+#include <QTextStream>
+#include <QFile>
 #include <vector>
 #include "util/file.hpp"
 #include "util/cfg.hpp"
@@ -11,7 +13,41 @@ using namespace util;
 
 //static LogSocket s_logger;
 
-void InitLunarCommon(int argc, char* argv[])
+QString qtReadFile(const QString& filename, const char* codec)
+{
+    QFile f(filename);
+    if (!f.open(QIODevice::ReadOnly | QIODevice::Text))
+        return "";
+
+    QTextStream in(&f);
+    in.setCodec(codec);
+    QString str;
+    while(!in.atEnd())
+        str.append(in.readLine() + "\n");
+
+    return str;
+}
+
+bool qtWriteFile(const QString& filename, const QString& content, bool append, const char* codec)
+{
+    QFile::OpenMode mode = QIODevice::WriteOnly | QIODevice::Text;
+    if (append)
+        mode |= QIODevice::Append;
+
+    QFile f(filename);
+    if (!f.open(mode))
+        return false;
+
+    QTextStream out(&f);
+    out.setCodec(codec);
+    out<<content;
+    out.flush();
+    f.close();
+
+    return true;
+}
+
+void initLunarCommon(int argc, char* argv[])
 {
     //setPrintFunc(UtilBind(&LogSocket::sendLog, &s_logger, _1));
     LunarGlobal::getInstance().init(argc, argv);

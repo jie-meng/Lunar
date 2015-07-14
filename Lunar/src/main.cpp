@@ -7,7 +7,7 @@
 
 int main(int argc, char* argv[])
 {
-    InitLunarCommon(argc, argv);
+    initLunarCommon(argc, argv);
 
     QApplication a(argc, argv);
     gui::MainWindow main_window;

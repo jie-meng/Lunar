@@ -218,7 +218,8 @@ void DocView::initTextEdit()
     ptext_edit_->setIndentationGuides(true);
 
     if(tr("") != pathname_)
-        ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
+        //ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
+        ptext_edit_->setText(qtReadFile(pathname_));
     else
         ptext_edit_->setText(tr(""));
 
@@ -276,10 +277,12 @@ void DocView::initConnections()
 bool DocView::doSave(bool reset_lexer)
 {
     emit updateTitle(this);
-    std::string content = QStringToStdString(ptext_edit_->text());
-    content = util::strReplaceAll(content, "\r\n", "\n");
-    content = util::strReplaceAll(content, "\r", "\n");
-    bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
+//    std::string content = QStringToStdString(ptext_edit_->text());
+    //std::string content = ptext_edit_->text();
+//    content = util::strReplaceAll(content, "\r\n", "\n");
+//    content = util::strReplaceAll(content, "\r", "\n");
+    bool ret = qtWriteFile(pathname_, ptext_edit_->text());
+    //bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
     if (reset_lexer)
         resetLexer();
     else

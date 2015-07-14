@@ -19,7 +19,10 @@ inline std::string QStringToStdString(const QString &s)
     return std::string((const char *)s.toLocal8Bit());
 }
 
-void InitLunarCommon(int argc, char* argv[]);
+QString qtReadFile(const QString& filename, const char* codec = "UTF-8");
+bool qtWriteFile(const QString& filename, const QString& content, bool append = false, const char* codec = "UTF-8");
+
+void initLunarCommon(int argc, char* argv[]);
 void LunarMsgBox(const std::string& str);
 void LunarMsgBoxQ(const QString& str);
 int scriptMessage(lua_State* plua_state);
