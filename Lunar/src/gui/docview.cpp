@@ -716,7 +716,7 @@ void DocView::selectionChanged()
     if (ptext_edit_->hasSelectedText())
     {
         QString selection = ptext_edit_->selectedText();
-        if (selection.length() > 0 && !selection.contains("\n"))
+        if (selection.trimmed().length() > 0  && !selection.contains("\n"))
         {
             int line_from = 0;
             int index_from = 0;
