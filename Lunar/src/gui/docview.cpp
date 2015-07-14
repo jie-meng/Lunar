@@ -715,8 +715,8 @@ void DocView::selectionChanged()
 
     if (ptext_edit_->hasSelectedText())
     {
-        string selection = QStringToStdString(ptext_edit_->selectedText());
-        if (!strContains(selection, "\n") && !strTrim(selection).empty())
+        QString selection = ptext_edit_->selectedText();
+        if (selection.length() > 0 && !selection.contains("\n"))
         {
             int line_from = 0;
             int index_from = 0;
@@ -724,15 +724,14 @@ void DocView::selectionChanged()
             int index_to = 0;
             ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
 
-            string text = QStringToStdString(ptext_edit_->text());
-            text = strReplaceAll(text, "\r\n", "\n");
-            text = strReplaceAll(text, "\r", "\n");
-            vector<string> vec;
-            strSplit(text, "\n", vec);
-            for (size_t i=0; i<vec.size(); ++i)
+            QString text = ptext_edit_->text();
+            text = text.replace("\r\n", "\n");
+            text = text.replace("\r", "\n");
+            QStringList list = text.split('\n');
+            for (int i=0; i<list.size(); ++i)
             {
-                std::string::size_type pos = 0;
-                while ((pos = vec[i].find(selection, pos)) != std::string::npos)
+                int pos = 0;
+                while ((pos = list.at(i).indexOf(selection, pos)) >= 0)
                 {
                     if (line_from != (int)i || line_to != (int)i || index_from != (int)pos || index_to != (int)(pos + selection.length()))
                         ptext_edit_->fillIndicatorRange(i, pos, i ,pos + selection.length(), selection_match_indicator_);
