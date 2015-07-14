@@ -91,12 +91,14 @@ void SearchThread::run()
 
 void SearchThread::searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp)
 {
-    string content = readTextFile(file);
+//    string content = readTextFile(file);
+    string content = QStringToStdString(qtReadFile(StdStringToQString(file)));
     if (content.empty())
         return;
 
     content = strReplaceAll(content, "\r\n", "\n");
     content = strReplaceAll(content, "\r", "\n");
+
     vector<string> vec;
     strSplit(content, "\n", vec);
     for (size_t i = 0; i<vec.size(); ++i)
