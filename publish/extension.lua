@@ -47,7 +47,7 @@ function parseFileType(filename)
                 type = "octave", 
                 auto_complete_type = 0, 
                 api = "apis/octave", 
-                executor = "C:/Users/jmeng/programs/Octave-3.8.2/bin/octave.exe", 
+                executor = "octave", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_octave.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "%"
@@ -64,14 +64,24 @@ function parseFileType(filename)
     
     if string.lower(file.fileExtension(name)) == "py" then
         return 
-            { 
+            {
+                -- python3
                 type = "python",
                 auto_complete_type = 1,
                 api = "apis/python/python3.api",
-                executor = "python.exe -u",
+                executor = "python3 -u",
                 parse_supplement_api_script = "plugins/parse_supplement_api_python3.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "#"
+                
+                -- python2
+                --type = "python",
+                --auto_complete_type = 1,
+                --api = "apis/python/python.api",
+                --executor = "python -u",
+                --parse_supplement_api_script = "plugins/parse_supplement_api_python.lua", 
+                --parse_supplement_api_func = "parseSupplementApi",
+                --comment_line = "#"
             }
     end
     
@@ -128,44 +138,33 @@ function fileFilter()
 	return filter
 end
 
-function ignoreFile(filename)
+function isLegalFile(filename)
 	local ext = file.fileExtension(filename)
-	if ext == "luac" or
-        ext == "so" or 
-        ext == "pyc" or
-		ext == "o" or
-		ext == "lib" or
-		ext == "dll" or
-		ext == "obj" or
-		ext == "exe" or
-		ext == "exp" or
-		ext == "bin" or
-		ext == "zip" or
-		ext == "7z" or
-		ext == "rar" or
-		ext == "bmp" or
-        ext == "ico" or
-		ext == "png" or
-		ext == "jpg" or
-		ext == "jpeg" or
-        ext == "wav" or
-        ext == "ogg" or
-        ext == "mp3" or
-        ext == "wma" or
-        ext == "wmv" or
-        ext == "rmvb" or
-        ext == "avi" or
-		ext == "pdf" or
-		ext == "chm" or
-		ext == "doc" or
-		ext == "docx" or
-		ext == "xls" or
-		ext == "xlsx" or
-		ext == "ppt" or
-		ext == "pptx"
-		then
-		return true
-	end
+    if ext == "lua" or
+        ext == "m" or
+        ext == "sh" or
+        ext == "txt" or
+        ext == "cmake" or
+        ext == "py" or
+        ext == "tcl" or
+        ext == "java" or
+        ext == "cs" or
+        ext == "xml" or
+        ext == "axml" or
+        ext == "tmx" or
+        ext == "html" or
+        ext == "c" or
+        ext == "h" or
+        ext == "cpp" or
+        ext == "cxx" or
+        ext == "hpp" or
+        ext == "hxx" or
+        ext == "js" or
+        ext == "inf" or
+        ext == "log" then
+        
+        return true
+    end
 	
 	return false
 end

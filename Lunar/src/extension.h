@@ -11,15 +11,8 @@ public:
     inline std::string errorInfo() const { return error_information_; }
     inline bool isOk() const { return lua_state_ok_; }
     bool parseFilename(const std::string& filename, std::map<std::string, std::string>& out_map);
-//               std::string* pout_type,
-//               size_t* pauto_complete_type_,
-//               std::string* pout_api,
-//               std::string* pout_executor,
-//               std::string* pout_execute_file,
-//               std::string* pout_parse_supplement_api_script = NULL,
-//               std::string* pout_parse_supplement_api_func = NULL);
     std::string fileFilter();
-    bool ignoreFile(const std::string& filename);
+    bool isLegalFile(const std::string& filename);
 private:
     bool initLuaState();
 private:

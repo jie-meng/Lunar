@@ -11,8 +11,6 @@
 using namespace std;
 using namespace util;
 
-//static LogSocket s_logger;
-
 QString qtReadFile(const QString& filename, const char* codec)
 {
     QFile f(filename);
@@ -49,7 +47,6 @@ bool qtWriteFile(const QString& filename, const QString& content, bool append, c
 
 void initLunarCommon(int argc, char* argv[])
 {
-    //setPrintFunc(UtilBind(&LogSocket::sendLog, &s_logger, _1));
     LunarGlobal::getInstance().init(argc, argv);
 }
 
@@ -155,16 +152,29 @@ function fileFilter()\n\
 \treturn filter\n\
 end\n\
 \n\
-function ignoreFile(filename)\n\
+function isLegalFile(filename)\n\
 \tlocal ext = file.fileExtension(filename)\n\
-\tif ext == \"so\" or\n\
-\t\text == \"o\" or\n\
-\t\text == \"lib\" or\n\
-\t\text == \"dll\" or\n\
-\t\text == \"obj\" or\n\
-\t\text == \"exe\" or\n\
-\t\text == \"exp\" or\n\
-\t\text == \"bin\" then\n\
+\tif ext == \"lua\" or\n\
+\t\text == \"m\" or\n\
+\t\text == \"sh\" or\n\
+\t\text == \"js\" or\n\
+\t\text == \"py\" or\n\
+\t\text == \"tcl\" or\n\
+\t\text == \"xml\" or\n\
+\t\text == \"axml\" or\n\
+\t\text == \"tmx\" or\n\
+\t\text == \"java\" or\n\
+\t\text == \"cs\" or\n\
+\t\text == \"c\" or\n\
+\t\text == \"h\" or\n\
+\t\text == \"cpp\" or\n\
+\t\text == \"hpp\" or\n\
+\t\text == \"cxx\" or\n\
+\t\text == \"hxx\" or\n\
+\t\text == \"txt\" or\n\
+\t\text == \"cmake\" or\n\
+\t\text == \"inf\" or\n\
+\t\text == \"log\" then\n\
 \t\treturn true\n\
 \tend\n\
 \n\
@@ -201,7 +211,7 @@ void LunarGlobal::readCfg()
     mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
-    extension_func_ignore_file_ = text_cfg.getValue("Extension.Func.IgnoreFile", "ignoreFile");
+    extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
     is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
 }
@@ -218,7 +228,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("MainWindow.Height", mainwindow_height_);
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
-    text_cfg.setValue("Extension.Func.IgnoreFile", extension_func_ignore_file_);
+    text_cfg.setValue("Extension.Func.IsLegalFile", extension_func_is_legal_file_);
     text_cfg.setValue("Log.SockPort", log_sock_port_);
     text_cfg.setValue("Log.Enable", is_log_enable_);
 

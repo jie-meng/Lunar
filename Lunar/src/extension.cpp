@@ -140,14 +140,14 @@ std::string Extension::fileFilter()
     }
 }
 
-bool Extension::ignoreFile(const std::string& filename)
+bool Extension::isLegalFile(const std::string& filename)
 {
     if (!lua_state_ok_)
         return false;
 
     error_information_ = "";
 
-    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncIgnoreFile());
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncIsLegalFile());
     luaPushString(lua_state_.getState(), filename);
 
     int err = luaCallFunc(lua_state_.getState(), 1, 1);

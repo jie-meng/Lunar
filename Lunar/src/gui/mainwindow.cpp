@@ -33,8 +33,6 @@ namespace gui
 using namespace std;
 using namespace util;
 
-//std::string MainWindow::s_file_filter_= "Lua Files(*.lua);;All Files(*.*)";
-
 MainWindow::MainWindow(QWidget* parent)
     : QMainWindow(parent),
     pfile_new_action_(NULL),
@@ -422,7 +420,7 @@ void MainWindow::fileOpen()
     }
     else
     {
-        if (Extension::getInstance().ignoreFile(QStringToStdString(path)))
+        if (!Extension::getInstance().isLegalFile(QStringToStdString(path)))
             return;
 
         pmain_tabwidget_->addDocViewTab(path);
@@ -635,7 +633,7 @@ void MainWindow::openDoc(const QString& filepath)
     {
         if(util::isPathFile(file_path))
         {
-            if (Extension::getInstance().ignoreFile(file_path))
+            if (!Extension::getInstance().isLegalFile(file_path))
                 return;
 
             pmain_tabwidget_->addDocViewTab(filepath);

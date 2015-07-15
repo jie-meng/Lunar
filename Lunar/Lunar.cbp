@@ -52,8 +52,6 @@
 		<Unit filename="src/gui/aboutdialog.h" />
 		<Unit filename="src/gui/apiloader.cpp" />
 		<Unit filename="src/gui/apiloader.h" />
-		<Unit filename="src/gui/dockwidgetex.cpp" />
-		<Unit filename="src/gui/dockwidgetex.h" />
 		<Unit filename="src/gui/docview.cpp" />
 		<Unit filename="src/gui/docview.h" />
 		<Unit filename="src/gui/fileexplorerwidget.cpp" />
