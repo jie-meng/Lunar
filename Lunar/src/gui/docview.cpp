@@ -277,11 +277,10 @@ void DocView::initConnections()
 bool DocView::doSave(bool reset_lexer)
 {
     emit updateTitle(this);
-//    std::string content = QStringToStdString(ptext_edit_->text());
-    //std::string content = ptext_edit_->text();
-//    content = util::strReplaceAll(content, "\r\n", "\n");
-//    content = util::strReplaceAll(content, "\r", "\n");
-    bool ret = qtWriteFile(pathname_, ptext_edit_->text());
+    QString text = ptext_edit_->text();
+    text = text.replace("\r\n", "\n");
+    text = text.replace("\r", "\n");
+    bool ret = qtWriteFile(pathname_, text);
     //bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
     if (reset_lexer)
         resetLexer();
