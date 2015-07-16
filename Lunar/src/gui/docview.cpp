@@ -269,7 +269,6 @@ void DocView::initConnections()
 {
     connect(getTextEdit(), SIGNAL(textChanged()), this, SLOT(textChanged()));
     connect(ptext_edit_, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
-    //connect(papis_, SIGNAL(apiPreparationFinished()), this, SLOT(apisPreparationFinished()));
     connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
     //connect(ptext_edit_, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(cursorPositionChanged(int, int)))
 }
@@ -277,10 +276,7 @@ void DocView::initConnections()
 bool DocView::doSave(bool reset_lexer)
 {
     emit updateTitle(this);
-    QString text = ptext_edit_->text();
-    text = text.replace("\r\n", "\n");
-    text = text.replace("\r", "\n");
-    bool ret = qtWriteFile(pathname_, text);
+    bool ret = qtWriteFile(pathname_, removeTextReturn());
     //bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
     if (reset_lexer)
         resetLexer();
@@ -723,10 +719,7 @@ void DocView::selectionChanged()
             int index_to = 0;
             ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
 
-            QString text = ptext_edit_->text();
-            text = text.replace("\r\n", "\n");
-            text = text.replace("\r", "\n");
-            QStringList list = text.split('\n');
+            QStringList list = removeTextReturn().split('\n');
             for (int i=0; i<list.size(); ++i)
             {
                 int pos = 0;
@@ -739,6 +732,11 @@ void DocView::selectionChanged()
             }
         }
     }
+}
+
+QString DocView::removeTextReturn() const
+{
+    return ptext_edit_->text().replace("\r\n", "\n").replace("\r", "\n");
 }
 
 } // namespace gui

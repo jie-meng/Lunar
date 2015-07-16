@@ -9,7 +9,8 @@ local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
 local pattern_object_assignment_string = [[([%w_%.]+)%s*=%s*['"].*['"]%s*]]
 local pattern_object_assignment_list = "([%w_%.]+)%s*=%s*%[.*%]"
 local pattern_object_assignment_dict = "([%w_%.]+)%s*=%s*{.*}"
-local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_]+)]]
+local pattern_object_assignment_set = "([%w_%.]+)%s*=%s*set(.*)"
+local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_%.]+)]]
 local pattern_object_del = [[del%s*([%w_%.]+)]]
 
 local kstr_build_in = "__build_in__"
@@ -18,6 +19,7 @@ local kstr_build_in = "__build_in__"
 
 local Class = {
     name_ = nil,
+    class_name_ = nil,
     module_name_ = nil,
     indent_ = nil,
     
@@ -32,6 +34,7 @@ function Class:new(name, module_name, indent)
     self.__index = self
         
     o.name_ = name
+    o.class_name_ = name
     o.module_name_ = module_name
     o.indent_ = indent
     
@@ -63,7 +66,15 @@ end
 
 function Class:setName(name)
     self.name_ = name
-    
+    return self
+end
+
+function Class:getClassName()
+    return self.class_name_
+end
+
+function Class:setClassName(name)
+    self.class_name_ = name
     return self
 end
 
@@ -73,7 +84,6 @@ end
 
 function Class:setModuleName(module_name)
     self.module_name_ = module_name
-    
     return self
 end
 
@@ -83,7 +93,6 @@ end
 
 function Class:setIndent(indent)
     self.indent_ = indent
-    
     return self
 end
 
@@ -101,7 +110,6 @@ end
 
 function Class:addFunction(func)
     table.insert(self.functions_, func)
-    
     return self
 end
 
@@ -111,7 +119,6 @@ end
 
 function Class:addExtend(super_class)
     table.insert(self.extends_, super_class)
-    
     return self
 end
 
@@ -178,72 +185,93 @@ function buildInClasses()
     local classes = {}
     
     local cls_string = Class:new("string", kstr_build_in, 0)
-    cls_string:addFunction([[capitalize()]])    
-    cls_string:addFunction([[center(width, fillchar)]])
-    cls_string:addFunction([[count(str, beg= 0,end=len(string))]])
-    cls_string:addFunction([[decode(encoding='UTF-8',errors='strict')]])
-    cls_string:addFunction([[encode(encoding='UTF-8',errors='strict')]])
-    cls_string:addFunction([[endswith(suffix, beg=0, end=len(string))]])
-    cls_string:addFunction([[expandtabs(tabsize=8)]])
-    cls_string:addFunction([[find(str, beg=0 end=len(string))]])
-    cls_string:addFunction([[index(str, beg=0, end=len(string))]])
-    cls_string:addFunction([[isalnum()]])
-    cls_string:addFunction([[isalpha()]])
-    cls_string:addFunction([[isdigit()]])
-    cls_string:addFunction([[islower()]])
-    cls_string:addFunction([[isnumeric()]])
-    cls_string:addFunction([[isspace()]])
-    cls_string:addFunction([[istitle()]])
-    cls_string:addFunction([[isupper()]])
-    cls_string:addFunction([[join(seq)]])
-    cls_string:addFunction([[len(string)]])
-    cls_string:addFunction([[ljust(width[, fillchar])]])
-    cls_string:addFunction([[lower()]])
-    cls_string:addFunction([[lstrip()]])
-    cls_string:addFunction([[maketrans()]])
-    cls_string:addFunction([[max(str)]])
-    cls_string:addFunction([[min(str)]])
-    cls_string:addFunction([[replace(old, new [, max])]])
-    cls_string:addFunction([[rfind(str, beg=0,end=len(string))]])
-    cls_string:addFunction([[rindex( str, beg=0, end=len(string))]])
-    cls_string:addFunction([[rjust(width,[, fillchar])]])
-    cls_string:addFunction([[rstrip()]])
-    cls_string:addFunction([[split(str="", num=string.count(str))]])
-    cls_string:addFunction([[splitlines( num=string.count('\n'))]])
-    cls_string:addFunction([[startswith(str, beg=0,end=len(string))]])
-    cls_string:addFunction([[strip([chars])]])
-    cls_string:addFunction([[swapcase()]])
-    cls_string:addFunction([[title()]])
-    cls_string:addFunction([[translate(table, deletechars="")]])
-    cls_string:addFunction([[upper()]])
-    cls_string:addFunction([[zfill (width)]])
-    cls_string:addFunction([[isdecimal()]])
+    cls_string:addFunction('capitalize()')    
+    cls_string:addFunction('center(width, fillchar)')
+    cls_string:addFunction('count(str, beg= 0,end=len(string))')
+    cls_string:addFunction('decode(encoding="UTF-8",errors="strict")')
+    cls_string:addFunction('encode(encoding="UTF-8",errors="strict")')
+    cls_string:addFunction('endswith(suffix, beg=0, end=len(string))')
+    cls_string:addFunction('expandtabs(tabsize=8)')
+    cls_string:addFunction('find(str, beg=0 end=len(string))')
+    cls_string:addFunction('index(str, beg=0, end=len(string))')
+    cls_string:addFunction('isalnum()')
+    cls_string:addFunction('isalpha()')
+    cls_string:addFunction('isdigit()')
+    cls_string:addFunction('islower()')
+    cls_string:addFunction('isnumeric()')
+    cls_string:addFunction('isspace()')
+    cls_string:addFunction('istitle()')
+    cls_string:addFunction('isupper()')
+    cls_string:addFunction('join(seq)')
+    cls_string:addFunction('len(string)')
+    cls_string:addFunction('ljust(width[, fillchar])')
+    cls_string:addFunction('lower()')
+    cls_string:addFunction('lstrip()')
+    cls_string:addFunction('maketrans()')
+    cls_string:addFunction('max(str)')
+    cls_string:addFunction('min(str)')
+    cls_string:addFunction('replace(old, new [, max])')
+    cls_string:addFunction('rfind(str, beg=0,end=len(string))')
+    cls_string:addFunction('rindex( str, beg=0, end=len(string))')
+    cls_string:addFunction('rjust(width,[, fillchar])')
+    cls_string:addFunction('rstrip()')
+    cls_string:addFunction('split(str="", num=string.count(str))')
+    cls_string:addFunction("splitlines( num=string.count('\n'))")
+    cls_string:addFunction('startswith(str, beg=0,end=len(string))')
+    cls_string:addFunction('strip([chars])')
+    cls_string:addFunction('swapcase()')
+    cls_string:addFunction('title()')
+    cls_string:addFunction('translate(table, deletechars="")')
+    cls_string:addFunction('upper()')
+    cls_string:addFunction('zfill (width)')
+    cls_string:addFunction('isdecimal()')
     classes[cls_string:getName()] = cls_string
     
     local cls_list = Class:new("list", kstr_build_in, 0)
-    cls_list:addFunction([[append(obj)]])
-    cls_list:addFunction([[count(obj)]])
-    cls_list:addFunction([[extend(seq)]])
-    cls_list:addFunction([[index(obj)]])
-    cls_list:addFunction([[insert(index, obj)]])
-    cls_list:addFunction([[pop(obj=list[-1])]])
-    cls_list:addFunction([[remove(obj)]])
-    cls_list:addFunction([[reverse()]])
-    cls_list:addFunction([[sort([func])]])
+    cls_list:addFunction('append(obj)')
+    cls_list:addFunction('count(obj)')
+    cls_list:addFunction('extend(seq)')
+    cls_list:addFunction('index(obj)')
+    cls_list:addFunction('insert(index, obj)')
+    cls_list:addFunction('pop(obj=list[-1])')
+    cls_list:addFunction('remove(obj)')
+    cls_list:addFunction('reverse()')
+    cls_list:addFunction('sort([func])')
     classes[cls_list:getName()] = cls_list
     
     local cls_dict = Class:new("dict", kstr_build_in, 0)
-    cls_dict:addFunction([[clear()]])
-    cls_dict:addFunction([[copy()]])
-    cls_dict:addFunction([[fromkeys()]])
-    cls_dict:addFunction([[get(key, default=None)]])
-    cls_dict:addFunction([[has_key(key)]])
-    cls_dict:addFunction([[items()]])
-    cls_dict:addFunction([[keys()]])
-    cls_dict:addFunction([[setdefault(key, default=None)]])
-    cls_dict:addFunction([[update(dict2)]])
-    cls_dict:addFunction([[values()]])
+    cls_dict:addFunction('clear()')
+    cls_dict:addFunction('copy()')
+    cls_dict:addFunction('fromkeys()')
+    cls_dict:addFunction('get(key, default=None)')
+    cls_dict:addFunction('has_key(key)')
+    cls_dict:addFunction('items()')
+    cls_dict:addFunction('keys()')
+    cls_dict:addFunction('setdefault(key, default=None)')
+    cls_dict:addFunction('update(dict2)')
+    cls_dict:addFunction('values()')
     classes[cls_dict:getName()] = cls_dict
+    
+    local cls_set = Class:new("set", kstr_build_in, 0)
+    cls_set:addFunction('len(s)')
+    cls_set:addFunction('isdisjoint(other)')
+    cls_set:addFunction('issubset(other)')
+    cls_set:addFunction('issuperset(other)')
+    cls_set:addFunction('union(other, ...)')
+    cls_set:addFunction('intersection(other, ...)')
+    cls_set:addFunction('difference(other, ...)')
+    cls_set:addFunction('symmetric_difference(other)')
+    cls_set:addFunction('copy()')
+    cls_set:addFunction('update(other, ...)')
+    cls_set:addFunction('intersection_update(other, ...)')
+    cls_set:addFunction('difference_update(other, ...)')
+    cls_set:addFunction('symmetric_difference_update(other)')
+    cls_set:addFunction('add(elem)')
+    cls_set:addFunction('remove(elem)')
+    cls_set:addFunction('discard(elem)')
+    cls_set:addFunction('pop()')
+    cls_set:addFunction('clear()')
+    classes[cls_set:getName()] = cls_set
     
     return classes
 end
@@ -620,6 +648,18 @@ function parseClasses(module_name, path, class_coll)
     return classes
 end
 
+function setSpecificClassObject(pattern, class_name, line, objects_table)
+    local obj = string.match(line, pattern)
+    if obj then
+        local c = build_in_classes[class_name]:clone()
+        c:setName(obj)
+        objects_table[obj] = c
+        return true
+    end
+    
+    return false
+end
+
 function processCurrentFileObjects(filename, cursor_line, classes, imports)
     
     local objects = {}
@@ -630,6 +670,22 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
         while (line and current_line < cursor_line) do
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_string, "string", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_list, "list", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_dict, "dict", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_set, "set", line, objects) then
                     break
                 end
                 
@@ -648,30 +704,6 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                             end
                         end
                     end
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_string)
-                if obj then
-                    local c = build_in_classes["string"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_list)
-                if obj then
-                    local c = build_in_classes["list"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_dict)
-                if obj then
-                    local c = build_in_classes["dict"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
                     break
                 end
                 
@@ -694,6 +726,7 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                 end
                 
             until true
+            
             line = f:read("*line")
             current_line = current_line + 1
         end

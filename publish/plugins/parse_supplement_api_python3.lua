@@ -5,11 +5,16 @@ local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_class_static_field = [[([%w_]+)%s*=%s*(.+)]]
 local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import]]
-local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
 local pattern_object_assignment_string = [[([%w_%.]+)%s*=%s*['"].*['"]%s*]]
+local pattern_object_assignment_bytes = [[([%w_%.]+)%s*=%s*b['"].*['"]%s*]]
+local pattern_object_assignment_memoryview = "([%w_%.]+)%s*=%s*memoryview(.*)"
 local pattern_object_assignment_list = "([%w_%.]+)%s*=%s*%[.*%]"
 local pattern_object_assignment_dict = "([%w_%.]+)%s*=%s*{.*}"
-local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_]+)]]
+local pattern_object_assignment_set = "([%w_%.]+)%s*=%s*set(.*)"
+local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
+local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_%.]+)]]
+local pattern_object_assignment_string_encode = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.encode%(.*%)]]
+local pattern_object_assignment_bytes_decode = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.decode%(.*%)]]
 local pattern_object_del = [[del%s*([%w_%.]+)]]
 
 local kstr_build_in = "__build_in__"
@@ -18,6 +23,7 @@ local kstr_build_in = "__build_in__"
 
 local Class = {
     name_ = nil,
+    class_name_ = nil,
     module_name_ = nil,
     indent_ = nil,
     
@@ -32,6 +38,7 @@ function Class:new(name, module_name, indent)
     self.__index = self
         
     o.name_ = name
+    o.class_name_ = name
     o.module_name_ = module_name
     o.indent_ = indent
     
@@ -63,7 +70,15 @@ end
 
 function Class:setName(name)
     self.name_ = name
-    
+    return self
+end
+
+function Class:getClassName()
+    return self.class_name_
+end
+
+function Class:setClassName(name)
+    self.class_name_ = name
     return self
 end
 
@@ -73,7 +88,6 @@ end
 
 function Class:setModuleName(module_name)
     self.module_name_ = module_name
-    
     return self
 end
 
@@ -83,7 +97,6 @@ end
 
 function Class:setIndent(indent)
     self.indent_ = indent
-    
     return self
 end
 
@@ -101,7 +114,6 @@ end
 
 function Class:addFunction(func)
     table.insert(self.functions_, func)
-    
     return self
 end
 
@@ -111,7 +123,6 @@ end
 
 function Class:addExtend(super_class)
     table.insert(self.extends_, super_class)
-    
     return self
 end
 
@@ -224,6 +235,47 @@ function buildInClasses()
     cls_string:addFunction('zfill(width)')
     classes[cls_string:getName()] = cls_string
     
+    local cls_bytes = Class:new("bytes", kstr_build_in, 0)
+    cls_bytes:addFunction('count(sub[, start[, end]])')
+    cls_bytes:addFunction('decode(encoding="utf-8", errors="strict")')
+    cls_bytes:addFunction('endswith(suffix[, start[, end]])')
+    cls_bytes:addFunction('find(sub[, start[, end]])')
+    cls_bytes:addFunction('index(sub[, start[, end]])')
+    cls_bytes:addFunction('join(iterable)')
+    cls_bytes:addFunction('maketrans(from, to)')
+    cls_bytes:addFunction('partition(sep)')
+    cls_bytes:addFunction('replace(old, new[, count])')
+    cls_bytes:addFunction('rfind(sub[, start[, end]])')
+    cls_bytes:addFunction('rindex(sub[, start[, end]])')
+    cls_bytes:addFunction('rpartition(sep)')
+    cls_bytes:addFunction('startswith(prefix[, start[, end]])')
+    cls_bytes:addFunction('translate(table[, delete])')
+    cls_bytes:addFunction('center(width[, fillbyte])')
+    cls_bytes:addFunction('ljust(width[, fillbyte])')
+    cls_bytes:addFunction('lstrip([chars])')
+    cls_bytes:addFunction('rjust(width[, fillbyte])')
+    cls_bytes:addFunction('rsplit(sep=None, maxsplit=-1)')
+    cls_bytes:addFunction('rstrip([chars])')
+    cls_bytes:addFunction('split(sep=None, maxsplit=-1)')
+    cls_bytes:addFunction('strip([chars])')
+    cls_bytes:addFunction('capitalize()')
+    cls_bytes:addFunction('expandtabs(tabsize=8)')
+    cls_bytes:addFunction('isalnum()')
+    cls_bytes:addFunction('isalpha()')
+    cls_bytes:addFunction('isdigit()')
+    cls_bytes:addFunction('islower()')
+    cls_bytes:addFunction('isspace()')
+    cls_bytes:addFunction('istitle()')
+    cls_bytes:addFunction('isupper()')
+    cls_bytes:addFunction('lower()')
+    cls_bytes:addFunction('splitlines(keepends=False)')
+    cls_bytes:addFunction('swapcase()')
+    cls_bytes:addFunction('title()')
+    cls_bytes:addFunction('upper()')
+    cls_bytes:addFunction('zfill(width)')
+    classes[cls_bytes:getName()] = cls_bytes
+    
+    
     local cls_list = Class:new("list", kstr_build_in, 0)
     cls_list:addFunction('append(x)')
     cls_list:addFunction('extend(L)')
@@ -253,6 +305,34 @@ function buildInClasses()
     cls_dict:addFunction('update([othter])')
     cls_dict:addFunction('values()')
     classes[cls_dict:getName()] = cls_dict
+    
+    local cls_set = Class:new("set", kstr_build_in, 0)
+    cls_set:addFunction('len(s)')
+    cls_set:addFunction('isdisjoint(other)')
+    cls_set:addFunction('issubset(other)')
+    cls_set:addFunction('issuperset(other)')
+    cls_set:addFunction('union(other, ...)')
+    cls_set:addFunction('intersection(other, ...)')
+    cls_set:addFunction('difference(other, ...)')
+    cls_set:addFunction('symmetric_difference(other)')
+    cls_set:addFunction('copy()')
+    cls_set:addFunction('update(other, ...)')
+    cls_set:addFunction('intersection_update(other, ...)')
+    cls_set:addFunction('difference_update(other, ...)')
+    cls_set:addFunction('symmetric_difference_update(other)')
+    cls_set:addFunction('add(elem)')
+    cls_set:addFunction('remove(elem)')
+    cls_set:addFunction('discard(elem)')
+    cls_set:addFunction('pop()')
+    cls_set:addFunction('clear()')
+    classes[cls_set:getName()] = cls_set
+    
+    local cls_memoryview = Class:new("memoryview", kstr_build_in, 0)
+    cls_memoryview:addFunction('tobytes()')
+    cls_memoryview:addFunction('tolist()')
+    cls_memoryview:addFunction('release()')
+    cls_memoryview:addFunction('cast(format[, shape])')
+    classes[cls_memoryview:getName()] = cls_memoryview
     
     return classes
 end
@@ -638,6 +718,18 @@ function parseClasses(module_name, path, class_coll)
     return classes
 end
 
+function setSpecificClassObject(pattern, class_name, line, objects_table)
+    local obj = string.match(line, pattern)
+    if obj then
+        local c = build_in_classes[class_name]:clone()
+        c:setName(obj)
+        objects_table[obj] = c
+        return true
+    end
+    
+    return false
+end
+
 function processCurrentFileObjects(filename, cursor_line, classes, imports)
     
     local objects = {}
@@ -651,6 +743,58 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     break
                 end
                 
+                -- set specific class objects
+                if setSpecificClassObject(pattern_object_assignment_string, "string", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_bytes, "bytes", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_list, "list", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_dict, "dict", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_set, "set", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_assignment_memoryview, "memoryview", line, objects) then
+                    break
+                end
+                
+                local left, right = string.match(line, pattern_object_assignment_string_encode)
+                if left and right then
+                    if objects[right] and objects[right]:getClassName() == "string" then
+                        local c = build_in_classes["bytes"]:clone()
+                        c:setClassName("bytes")
+                        c:setName(left)
+                        objects[left] = c
+                    else
+                        objects[left] = nil
+                    end
+                    break
+                end
+                
+                local left, right = string.match(line, pattern_object_assignment_bytes_decode)
+                if left and right then
+                    if objects[right] and objects[right]:getClassName() == "bytes" then
+                        local c = build_in_classes["string"]:clone()
+                        c:setClassName("string")
+                        c:setName(left)
+                        objects[left] = c
+                    else
+                        objects[left] = nil
+                    end
+                    break
+                end
+                
+                -- set user define class objects
                 local left, right = string.match(line, pattern_object_assignment_class)
                 if left and right and left ~= right then
                     if classes[right] then
@@ -666,30 +810,6 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                             end
                         end
                     end
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_string)
-                if obj then
-                    local c = build_in_classes["string"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_list)
-                if obj then
-                    local c = build_in_classes["list"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_assignment_dict)
-                if obj then
-                    local c = build_in_classes["dict"]:clone()
-                    c:setName(obj)
-                    objects[obj] = c
                     break
                 end
                 
@@ -712,6 +832,7 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                 end
                 
             until true
+            
             line = f:read("*line")
             current_line = current_line + 1
         end

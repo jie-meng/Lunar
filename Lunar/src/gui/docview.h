@@ -68,7 +68,8 @@ private:
     void setLexerApi();
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
-    void refreshSupplementApi();    
+    void refreshSupplementApi();
+    QString removeTextReturn() const;
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
     size_t getStartSpaceCount(const std::string& str);
