@@ -9,8 +9,14 @@ local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
 local pattern_object_assignment_string = [[([%w_%.]+)%s*=%s*['"].*['"]%s*]]
 local pattern_object_assignment_list = "([%w_%.]+)%s*=%s*%[.*%]"
 local pattern_object_assignment_dict = "([%w_%.]+)%s*=%s*{.*}"
-local pattern_object_assignment_set = "([%w_%.]+)%s*=%s*set(.*)"
 local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_%.]+)]]
+local pattern_object_cast_string = "([%w_%.]+)%s*=%s*str(.*)"
+local pattern_object_cast_int = "([%w_%.]+)%s*=%s*int(.*)"
+local pattern_object_cast_float = "([%w_%.]+)%s*=%s*float(.*)"
+local pattern_object_cast_long = "([%w_%.]+)%s*=%s*long(.*)"
+local pattern_object_cast_list = "([%w_%.]+)%s*=%s*list(.*)"
+local pattern_object_cast_dict = "([%w_%.]+)%s*=%s*dict(.*)"
+local pattern_object_cast_set = "([%w_%.]+)%s*=%s*set(.*)"
 local pattern_object_del = [[del%s*([%w_%.]+)]]
 
 local kstr_build_in = "__build_in__"
@@ -660,6 +666,16 @@ function setSpecificClassObject(pattern, class_name, line, objects_table)
     return false
 end
 
+function removeClassObject(pattern, line, objects_table)
+    local obj = string.match(line, pattern)
+    if obj then
+        objects_table[obj] = nil
+        return true
+    end
+    
+    return false
+end
+
 function processCurrentFileObjects(filename, cursor_line, classes, imports)
     
     local objects = {}
@@ -673,6 +689,7 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     break
                 end
                 
+                -- set specific class objects
                 if setSpecificClassObject(pattern_object_assignment_string, "string", line, objects) then
                     break
                 end
@@ -685,10 +702,35 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                     break
                 end
                 
-                if setSpecificClassObject(pattern_object_assignment_set, "set", line, objects) then
+                if setSpecificClassObject(pattern_object_cast_string, "string", line, objects) then
                     break
                 end
                 
+                if setSpecificClassObject(pattern_object_cast_list, "list", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_cast_dict, "dict", line, objects) then
+                    break
+                end
+                
+                if setSpecificClassObject(pattern_object_cast_set, "set", line, objects) then
+                    break
+                end
+                
+                if removeClassObject(pattern_object_cast_int, line, objects) then
+                    break
+                end
+                
+                if removeClassObject(pattern_object_cast_float, line, objects) then
+                    break
+                end
+                
+                if removeClassObject(pattern_object_cast_long, line, objects) then
+                    break
+                end
+                
+                -- user defined class objects
                 local left, right = string.match(line, pattern_object_assignment_class)
                 if left and right and left ~= right then
                     if classes[right] then
@@ -696,12 +738,19 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
                         c:setName(left)
                         objects[left] = c
                     else
+                        local flag = false
                         for _, v in pairs(classes) do
                             if v:getName() == right and imports[v:getModuleName()] then
                                 local c = v:clone()
                                 c:setName(left)
                                 objects[left] = c
+                                flag = true
+                                break
                             end
+                        end
+                        
+                        if not flag then
+                            objects[left] = nil
                         end
                     end
                     break
