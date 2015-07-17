@@ -616,8 +616,8 @@ void DocView::commentSelection()
         if (ptext_edit_->text(line).trimmed().length() == 0)
             return;
 
-        int len = ptext_edit_->lineLength(line)-1 > 0 ? ptext_edit_->lineLength(line)-1 : 0;
-        ptext_edit_->setSelection(line, 0, line, len);
+        int len = ptext_edit_->text(line).length();
+        ptext_edit_->setSelection(line, 0, line, len-1);
     }
 
     int line_from = 0;
@@ -625,7 +625,8 @@ void DocView::commentSelection()
     int line_to = 0;
     int index_to = 0;
     ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
-    ptext_edit_->setSelection(line_from, 0, line_to, ptext_edit_->lineLength(line_to)-1 > 0 ? ptext_edit_->lineLength(line_to)-1 : 0);
+    int len = ptext_edit_->text(line_to).length();
+    ptext_edit_->setSelection(line_from, 0, line_to, len -1);
 
     QStringList list = removeTextReturn(ptext_edit_->selectedText()).split('\n');
 
