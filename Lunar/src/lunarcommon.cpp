@@ -76,6 +76,19 @@ int sendLog(lua_State* plua_state)
     return 0;
 }
 
+QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const QString& str_replace)
+{
+    QString ret_str = str_src;
+    int pos = 0;
+
+    if ((pos = ret_str.indexOf(str_find, 0)) >= 0)
+    {
+        ret_str.replace(pos, str_find.length(), str_replace);
+        return ret_str;
+    }
+    return ret_str;
+}
+
 ////////////////////////////////////////////////////
 // class name : LogSocket
 // description :

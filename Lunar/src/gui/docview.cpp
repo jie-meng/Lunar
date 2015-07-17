@@ -73,7 +73,7 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     executor_(""),
     parse_supplement_api_script_(""),
     parse_supplement_api_func_(""),
-    comment_line_symbol_(""),
+    comment_line_symbol_(tr("")),
     selection_match_indicator_(0)
 {
     //ctor
@@ -136,7 +136,7 @@ void DocView::setLexerApi()
             executor_ = getValueFromMap<string>(dict, "executor", "");
             parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
             parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
-            comment_line_symbol_ = getValueFromMap<string>(dict, "comment_line", "");
+            comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));
 
             FileType filetype = Unknown;
             plexer_ = getLexerFromTypeName(getValueFromMap<string>(dict, "type", ""), &filetype);
@@ -276,7 +276,7 @@ void DocView::initConnections()
 bool DocView::doSave(bool reset_lexer)
 {
     emit updateTitle(this);
-    bool ret = qtWriteFile(pathname_, removeTextReturn());
+    bool ret = qtWriteFile(pathname_, removeTextReturn(ptext_edit_->text()));
     //bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
     if (reset_lexer)
         resetLexer();
@@ -588,14 +588,22 @@ void DocView::replace(const QString& replace_with_text)
     ptext_edit_->replace(replace_with_text);
 }
 
-size_t DocView::getStartSpaceCount(const std::string& str)
+size_t DocView::getStartSpaceCount(const QString& str)
 {
-    return str.length() - strTrimLeft(str).length();
+    int i = 0;
+    for (i=0; i<str.length(); ++i)
+    {
+        QChar c = str.at(i);
+        if (c != ' ' && c != '\t' && c != '\n' && c != '\r')
+            break;
+    }
+
+    return i;
 }
 
 void DocView::commentSelection()
 {
-    if (strTrim(comment_line_symbol_).length() == 0)
+    if (comment_line_symbol_.trimmed().length() == 0)
         return;
 
     if (ptext_edit_->selectedText().length() == 0)
@@ -605,7 +613,7 @@ void DocView::commentSelection()
         ptext_edit_->getCursorPosition(&line, &index);
 
         //empty line
-        if (strTrim(QStringToStdString(ptext_edit_->text(line))).length() == 0)
+        if (ptext_edit_->text(line).trimmed().length() == 0)
             return;
 
         int len = ptext_edit_->lineLength(line)-1 > 0 ? ptext_edit_->lineLength(line)-1 : 0;
@@ -619,54 +627,48 @@ void DocView::commentSelection()
     ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
     ptext_edit_->setSelection(line_from, 0, line_to, ptext_edit_->lineLength(line_to)-1 > 0 ? ptext_edit_->lineLength(line_to)-1 : 0);
 
-    string str = QStringToStdString(ptext_edit_->selectedText());
-    vector<string> vec;
-    util::strSplit(str, "\n", vec);
+    QStringList list = removeTextReturn(ptext_edit_->selectedText()).split('\n');
 
     //check is commented
     bool is_commented = true;
     size_t minium_start_space_count = 0;
-    for (size_t i=0; i<vec.size(); ++i)
+    for (int i=0; i<list.size(); ++i)
     {
-        if (strTrim(vec[i]).length() != 0 && !strStartWith(strTrimLeft(vec[i]), comment_line_symbol_))
+        QString trimmed_line = list[i].trimmed();
+        if (trimmed_line.length() != 0 && !trimmed_line.startsWith(comment_line_symbol_))
             is_commented = false;
 
         if (i == 0)
         {
-            minium_start_space_count = getStartSpaceCount(vec[i]);
+            minium_start_space_count = getStartSpaceCount(list[i]);
         }
         else
         {
-            size_t count = getStartSpaceCount(vec[i]);
+            size_t count = getStartSpaceCount(list[i]);
             if (minium_start_space_count > count)
                 minium_start_space_count = count;
         }
     }
 
-    string space_prefix = "";
+    QString space_prefix = "";
     for (size_t i=0; i<minium_start_space_count; ++i)
-    {
         space_prefix.push_back(' ');
-    }
 
     //do comment or uncomment
-    for (size_t i=0; i<vec.size(); ++i)
+    for (int i=0; i<list.size(); ++i)
     {
-        if (strTrim(vec[i]).length() != 0)
+        if (list[i].trimmed().length() != 0)
         {
             if (is_commented)
-            {
-                vec[i] = strReplace(vec[i], comment_line_symbol_, "");
-            }
+                list[i] = qstrReplaceOnce(list[i], comment_line_symbol_, tr(""));
             else
-            {
-                vec[i] = strReplace(vec[i], space_prefix, space_prefix + comment_line_symbol_);
-            }
+                list[i] = qstrReplaceOnce(list[i], space_prefix, space_prefix + comment_line_symbol_);
         }
     }
-    string rep_text = strJoin(vec, "\n");
+
+    QString rep_text = list.join("\n");
     ptext_edit_->findFirstInSelection(ptext_edit_->selectedText(), false, true, false);
-    replace(StdStringToQString(rep_text));
+    replace(rep_text);
 }
 
 QString DocView::getSelectedText() const
@@ -719,7 +721,7 @@ void DocView::selectionChanged()
             int index_to = 0;
             ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
 
-            QStringList list = removeTextReturn().split('\n');
+            QStringList list = removeTextReturn(ptext_edit_->text()).split('\n');
             for (int i=0; i<list.size(); ++i)
             {
                 int pos = 0;
@@ -734,9 +736,10 @@ void DocView::selectionChanged()
     }
 }
 
-QString DocView::removeTextReturn() const
+QString DocView::removeTextReturn(const QString& text) const
 {
-    return ptext_edit_->text().replace("\r\n", "\n").replace("\r", "\n");
+    QString txt = text;
+    return txt.replace("\r\n", "\n").replace("\r", "\n");
 }
 
 } // namespace gui

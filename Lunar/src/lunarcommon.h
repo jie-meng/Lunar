@@ -27,6 +27,7 @@ void LunarMsgBox(const std::string& str);
 void LunarMsgBoxQ(const QString& str);
 int scriptMessage(lua_State* plua_state);
 int sendLog(lua_State* plua_state);
+QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const QString& str_replace);
 
 ////////////////////////////////////////////////////
 // class name : LogSocket

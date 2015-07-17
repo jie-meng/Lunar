@@ -69,10 +69,10 @@ private:
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
     void refreshSupplementApi();
-    QString removeTextReturn() const;
+    QString removeTextReturn(const QString& text) const;
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
-    size_t getStartSpaceCount(const std::string& str);
+    size_t getStartSpaceCount(const QString& str);
 
     template<typename T>
     static inline T getValueFromMap(const std::map<std::string, std::string>& from_map, const std::string& key, T default_value)
@@ -97,7 +97,7 @@ private:
     std::string executor_;
     std::string parse_supplement_api_script_;
 	std::string parse_supplement_api_func_;
-    std::string comment_line_symbol_;
+    QString comment_line_symbol_;
     int selection_match_indicator_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
