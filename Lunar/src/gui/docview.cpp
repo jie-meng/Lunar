@@ -606,6 +606,8 @@ void DocView::commentSelection()
     if (comment_line_symbol_.trimmed().length() == 0)
         return;
 
+    int final_line_from = 0;
+    int final_line_to = 0;
     if (ptext_edit_->selectedText().length() == 0)
     {
         int line;
@@ -618,15 +620,23 @@ void DocView::commentSelection()
 
         int len = ptext_edit_->text(line).length();
         ptext_edit_->setSelection(line, 0, line, len-1);
-    }
 
-    int line_from = 0;
-    int index_from = 0;
-    int line_to = 0;
-    int index_to = 0;
-    ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
-    int len = ptext_edit_->text(line_to).length();
-    ptext_edit_->setSelection(line_from, 0, line_to, len -1);
+        final_line_from = line;
+        final_line_to = line;
+    }
+    else
+    {
+        int line_from = 0;
+        int index_from = 0;
+        int line_to = 0;
+        int index_to = 0;
+        ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
+        int len = ptext_edit_->text(line_to).length();
+        ptext_edit_->setSelection(line_from, 0, line_to, len -1);
+
+        final_line_from = line_from;
+        final_line_to = line_to;
+    }
 
     QStringList list = removeTextReturn(ptext_edit_->selectedText()).split('\n');
 
@@ -670,6 +680,8 @@ void DocView::commentSelection()
     QString rep_text = list.join("\n");
     ptext_edit_->findFirstInSelection(ptext_edit_->selectedText(), false, true, false);
     replace(rep_text);
+
+    ptext_edit_->setSelection(final_line_from, 0, final_line_to, ptext_edit_->text(final_line_to).length()-1);
 }
 
 QString DocView::getSelectedText() const
