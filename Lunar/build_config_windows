@@ -7,7 +7,7 @@ DEFINES += _PLATFORM_WINDOWS_ \
 			_GUI_ \
 			_CPP11_
 
-INCLUDEPATH +=  src
+INCLUDEPATH += src
 
 LIBS += -lws2_32 \
 		-lShlwapi \

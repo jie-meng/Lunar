@@ -7,7 +7,7 @@ DEFINES += _PLATFORM_UNIX_ \
 			_GUI_ \
 			_CPP11_
 
-INCLUDEPATH += rc
+INCLUDEPATH += src
 
 LIBS += -lpthread \
         -lqscintilla2
