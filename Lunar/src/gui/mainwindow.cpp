@@ -248,9 +248,9 @@ void MainWindow::initActions()
     pedit_font_action_->setStatusTip(tr("Set font."));
     pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
 
-    pedit_comment_action_ = new QAction(tr("Comment"), this);
+    pedit_comment_action_ = new QAction(tr("&Comment"), this);
     pedit_comment_action_->setStatusTip(tr("Comment current selection."));
-    pedit_comment_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Slash);
+    pedit_comment_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
 	pedit_comment_action_->setIcon(QIcon(tr(":/res/comment.png")));
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
