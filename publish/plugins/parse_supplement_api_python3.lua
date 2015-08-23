@@ -500,7 +500,7 @@ function getModuleFile(module_name, path)
     else
         -- current path parse
         local relative_path = strRelaceAll(module_name, ".", "/")
-        filename = string.format("%s/%s.py", file.currentPath(), relative_path)
+        local filename = string.format("%s/%s.py", file.currentPath(), relative_path)
         if file.isPathFile(filename) then
             return filename
         end
