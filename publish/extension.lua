@@ -161,6 +161,12 @@ function isLegalFile(filename)
         ext == "hxx" or
         ext == "js" or
         ext == "inf" or
+		ext == "json" or
+		ext == "mk" or
+		ext == "properties" or
+		ext == "gitignore" or
+		ext == "project" or
+		ext == "classpath" or
         ext == "log" then
         
         return true
