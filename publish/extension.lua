@@ -160,6 +160,7 @@ function isLegalFile(filename)
         ext == "hpp" or
         ext == "hxx" or
         ext == "js" or
+		ext == "css" or
         ext == "inf" or
 		ext == "json" or
 		ext == "mk" or
