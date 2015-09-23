@@ -168,6 +168,7 @@ function isLegalFile(filename)
 		ext == "gitignore" or
 		ext == "project" or
 		ext == "classpath" or
+		ext == "md" or
         ext == "log" then
         
         return true
