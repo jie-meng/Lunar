@@ -10,7 +10,9 @@ function parseFileType(filename)
                     type = "lua", 
                     auto_complete_type = 1, 
                     api = "apis/lua/standard,apis/lua/uextend.api,apis/lua/uextend_file.api,apis/lua/uextend_regex.api" ,
-                    comment_line = "--"
+                    comment_line = "--",
+					comment_block_begin = "--[[",
+					comment_block_end = "]]"
                 }
 		end
 	end
@@ -24,7 +26,9 @@ function parseFileType(filename)
                 executor = "luaexec", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_cocos_lua.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
-                comment_line = "--"
+                comment_line = "--",
+				comment_block_begin = "--[[",
+				comment_block_end = "]]"
             }
 	end
 
@@ -37,7 +41,9 @@ function parseFileType(filename)
                 executor = "luaexec", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_lua.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
-                comment_line = "--"
+                comment_line = "--",
+				comment_block_begin = "--[[",
+				comment_block_end = "]]"
             }
 	end
     
@@ -61,7 +67,9 @@ function parseFileType(filename)
                 auto_complete_type = 0,
                 api = "apis/javascript", 
                 executor = "", 
-                comment_line = "//"
+                comment_line = "//",
+				comment_block_begin = "/*",
+				comment_block_end = "*/"
             }
 	end
 	
@@ -70,7 +78,9 @@ function parseFileType(filename)
             {
                 type = "html", 
                 auto_complete_type = 0,
-                executor = "firefox"
+                executor = "firefox",
+				comment_block_begin = "<!--",
+				comment_block_end = "-->"
             }
 	end
     
@@ -110,21 +120,34 @@ function parseFileType(filename)
     end
     
     if string.lower(file.fileExtension(name)) == "java" then
-        return { type = "java", comment_line = "//" }
+        return 
+			{ 
+				type = "java",
+				comment_line = "//",
+				comment_block_begin = "/*",
+				comment_block_end = "*/"
+			}
     end
     
     if string.lower(file.fileExtension(name)) == "cs" then
-        return { type = "csharp", comment_line = "//" }
+        return 
+			{ 
+				type = "csharp", 
+				comment_line = "//",
+				comment_block_begin = "/*",
+				comment_block_end = "*/"
+			}
     end
     
     if string.lower(file.fileExtension(name)) == "xml" or
        string.lower(file.fileExtension(name)) == "axml" or
        string.lower(file.fileExtension(name)) == "tmx" then
-        return { type = "xml" }
-    end
-    
-    if string.lower(file.fileExtension(name)) == "html" then
-        return { type = "html" }
+        return 
+			{ 
+				type = "xml",
+				comment_block_begin = "<!--",
+				comment_block_end = "-->"
+			}
     end
     
     if string.lower(file.fileExtension(name)) == "c" or
@@ -138,7 +161,9 @@ function parseFileType(filename)
                 type = "cpp",
                 api = "apis/cpp",
                 auto_complete_type = 1,
-                comment_line = "//"
+                comment_line = "//",
+				comment_block_begin = "/*",
+				comment_block_end = "*/"
             }
     end
 end

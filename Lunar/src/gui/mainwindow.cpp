@@ -49,6 +49,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_search_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
+    pedit_comment_block_action_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
     pview_documents_action_(NULL),
@@ -248,10 +249,15 @@ void MainWindow::initActions()
     pedit_font_action_->setStatusTip(tr("Set font."));
     pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
 
-    pedit_comment_action_ = new QAction(tr("&Comment"), this);
-    pedit_comment_action_->setStatusTip(tr("Comment current selection."));
+    pedit_comment_action_ = new QAction(tr("&Comment line"), this);
+    pedit_comment_action_->setStatusTip(tr("Comment selection lines."));
     pedit_comment_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
-	pedit_comment_action_->setIcon(QIcon(tr(":/res/comment.png")));
+    pedit_comment_action_->setIcon(QIcon(tr(":/res/comment_line.png")));
+
+    pedit_comment_block_action_ = new QAction(tr("Comment &block"), this);
+    pedit_comment_block_action_->setStatusTip(tr("Comment selection block."));
+    pedit_comment_block_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
+    pedit_comment_block_action_->setIcon(QIcon(tr(":/res/comment_block.png")));
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
@@ -268,9 +274,9 @@ void MainWindow::initActions()
     pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
     pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
-    pview_close_docks_action_ = new QAction(tr("Close docks"), this);
+    pview_close_docks_action_ = new QAction(tr("Close &docks"), this);
     pview_close_docks_action_->setStatusTip(tr("Close dock views."));
-    pview_close_docks_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
+    pview_close_docks_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_D);
     pview_close_docks_action_->setIcon(QIcon(tr(":/res/close_docks.png")));
 
     prun_run_action_ = new QAction(tr("Run"), this);
@@ -307,6 +313,7 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_search_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
+    pedit_menu->addAction(pedit_comment_block_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -335,6 +342,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
 	ptoolbar->addAction(pedit_comment_action_);
+    ptoolbar->addAction(pedit_comment_block_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pview_search_results_action_);
     ptoolbar->addAction(pview_documents_action_);
@@ -380,6 +388,7 @@ void MainWindow::initConnections()
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
+    connect(pedit_comment_block_action_, SIGNAL(triggered()), this, SLOT(editCommentBlock()));
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
@@ -528,7 +537,12 @@ void MainWindow::editSetFont()
 
 void MainWindow::editComment()
 {
-    pmain_tabwidget_->currentDocComment();
+    pmain_tabwidget_->currentDocComment(true);
+}
+
+void MainWindow::editCommentBlock()
+{
+    pmain_tabwidget_->currentDocComment(false);
 }
 
 void MainWindow::viewFileExplorer()

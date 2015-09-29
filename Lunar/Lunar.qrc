@@ -20,7 +20,8 @@
     <file>res/file_explorer.png</file>
 	<file>res/close_docks.png</file>
     <file>res/dump.png</file>
-	<file>res/comment.png</file>
+	<file>res/comment_line.png</file>
+	<file>res/comment_block.png</file>
 	<file>res/about.png</file>
 	<file>res/fe_file.png</file>
 	<file>res/fe_folder.png</file>

@@ -42,7 +42,9 @@ public:
               bool first_find,
 			  bool from_start
               );
-    void commentSelection();
+    void commentSelection(bool comment_line_or_block);
+    void commentSelectionLine();
+    void commentSelectionBlock();
     QString getSelectedText() const;
     inline FileType getFileType() const { return file_type_; }
     inline std::string getExecutor() const { return executor_; }
@@ -98,6 +100,8 @@ private:
     std::string parse_supplement_api_script_;
 	std::string parse_supplement_api_func_;
     QString comment_line_symbol_;
+    QString comment_block_symbol_begin_;
+    QString comment_block_symbol_end_;
     int selection_match_indicator_;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)

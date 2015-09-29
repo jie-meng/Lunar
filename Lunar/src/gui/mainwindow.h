@@ -52,6 +52,7 @@ private Q_SLOTS:
     void editSearch();
     void editSetFont();
     void editComment();
+    void editCommentBlock();
     void viewFileExplorer();
     void viewSearchResultsWidget();
     void viewDocuments();
@@ -99,6 +100,7 @@ private:
     QAction* pedit_search_action_;
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
+    QAction* pedit_comment_block_action_;
     QAction* pview_file_explorer_action_;
     QAction* pview_search_results_action_;
     QAction* pview_documents_action_;

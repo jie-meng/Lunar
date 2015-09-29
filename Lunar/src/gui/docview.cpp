@@ -137,6 +137,8 @@ void DocView::setLexerApi()
             parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
             parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
             comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));
+            comment_block_symbol_begin_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_begin", ""));
+            comment_block_symbol_end_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_end", ""));
 
             FileType filetype = Unknown;
             plexer_ = getLexerFromTypeName(getValueFromMap<string>(dict, "type", ""), &filetype);
@@ -601,7 +603,51 @@ size_t DocView::getStartSpaceCount(const QString& str)
     return i;
 }
 
-void DocView::commentSelection()
+void DocView::commentSelection(bool comment_line_or_block)
+{
+    if (comment_line_or_block)
+        commentSelectionLine();
+    else
+        commentSelectionBlock();
+}
+
+void DocView::commentSelectionBlock()
+{
+    if (comment_block_symbol_begin_.trimmed().length() == 0 || comment_block_symbol_end_ == 0)
+        return;
+
+    if (ptext_edit_->selectedText().trimmed().length() == 0)
+        return;
+
+    int line_from = 0;
+    int index_from = 0;
+    int line_to = 0;
+    int index_to = 0;
+    ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
+    ptext_edit_->findFirstInSelection(ptext_edit_->selectedText(), false, true, false);
+
+    if (ptext_edit_->selectedText().startsWith(comment_block_symbol_begin_) && ptext_edit_->selectedText().endsWith(comment_block_symbol_end_))
+    {
+        //remove comment
+        replace(ptext_edit_->selectedText().mid(comment_block_symbol_begin_.length(),
+                                                ptext_edit_->selectedText().length() - comment_block_symbol_begin_.length() - comment_block_symbol_end_.length()));
+        int addition = 0;
+        if (line_from == line_to)
+            addition += comment_block_symbol_begin_.length();
+        ptext_edit_->setSelection(line_from, index_from, line_to, index_to - comment_block_symbol_end_.length() - addition);
+    }
+    else
+    {
+        //add comment
+        replace(comment_block_symbol_begin_ + ptext_edit_->selectedText() + comment_block_symbol_end_);
+        int addition = 0;
+        if (line_from == line_to)
+            addition += comment_block_symbol_begin_.length();
+        ptext_edit_->setSelection(line_from, index_from, line_to, index_to + comment_block_symbol_end_.length() + addition);
+    }
+}
+
+void DocView::commentSelectionLine()
 {
     if (comment_line_symbol_.trimmed().length() == 0)
         return;

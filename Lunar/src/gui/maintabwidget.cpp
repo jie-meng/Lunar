@@ -271,11 +271,11 @@ void MainTabWidget::gotoPrevTabIndex()
     }
 }
 
-void MainTabWidget::currentDocComment()
+void MainTabWidget::currentDocComment(bool comment_line_or_block)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     if(NULL != pdocview)
-        pdocview->commentSelection();
+        pdocview->commentSelection(comment_line_or_block);
 }
 
 QString MainTabWidget::getCurrentDocSelectedText() const

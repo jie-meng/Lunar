@@ -37,7 +37,7 @@ public:
     bool hasUnsavedFiles();
     void gotoNextTabIndex();
     void gotoPrevTabIndex();
-    void currentDocComment();
+    void currentDocComment(bool comment_line_or_block);
     QString getCurrentDocSelectedText() const;
     QString getCurrentDocPathname() const;
     void currentDocGotoLine(int line);
