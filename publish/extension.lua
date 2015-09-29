@@ -83,6 +83,16 @@ function parseFileType(filename)
 				comment_block_end = "-->"
             }
 	end
+	
+	if string.lower(file.fileExtension(name)) == "css" then
+		return 
+            {
+                type = "css", 
+                auto_complete_type = 0,
+				comment_block_begin = "/*",
+				comment_block_end = "*/"
+            }
+	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
         return { type = "bash", comment_line = "#" }
