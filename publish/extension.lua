@@ -64,6 +64,15 @@ function parseFileType(filename)
                 comment_line = "//"
             }
 	end
+	
+	if string.lower(file.fileExtension(name)) == "html" then
+		return 
+            {
+                type = "html", 
+                auto_complete_type = 0,
+                executor = "firefox"
+            }
+	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
         return { type = "bash", comment_line = "#" }
