@@ -89,6 +89,7 @@ function parseFileType(filename)
             {
                 type = "css", 
                 auto_complete_type = 0,
+				api = "apis/css",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
             }
@@ -186,9 +187,11 @@ function fileFilter()
     table.insert(filter, "Python Files(*.py)")
     table.insert(filter, "Tcl Files(*.tcl)")
     table.insert(filter, "Java Files(*.java)")
+	table.insert(filter, "JavaScript Files(*.js)")
     table.insert(filter, "C# Files(*.csharp)")
     table.insert(filter, "Xml(*.xml)")
     table.insert(filter, "Html(*.html)")
+	table.insert(filter, "CSS(*.css)")
     table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
 	return filter
 end
