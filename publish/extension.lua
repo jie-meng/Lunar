@@ -189,9 +189,9 @@ function fileFilter()
     table.insert(filter, "Java Files(*.java)")
 	table.insert(filter, "JavaScript Files(*.js)")
     table.insert(filter, "C# Files(*.csharp)")
-    table.insert(filter, "Xml(*.xml)")
-    table.insert(filter, "Html(*.html)")
-	table.insert(filter, "CSS(*.css)")
+    table.insert(filter, "Xml Files(*.xml)")
+    table.insert(filter, "Html Files(*.html)")
+	table.insert(filter, "CSS Files(*.css)")
     table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
 	return filter
 end
