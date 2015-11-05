@@ -222,6 +222,7 @@ function isLegalFile(filename)
         ext == "inf" or
 		ext == "json" or
 		ext == "mk" or
+		ext == "api" or
 		ext == "properties" or
 		ext == "gitignore" or
 		ext == "project" or
