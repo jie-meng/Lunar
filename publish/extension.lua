@@ -152,6 +152,9 @@ function parseFileType(filename)
     
     if string.lower(file.fileExtension(name)) == "xml" or
        string.lower(file.fileExtension(name)) == "axml" or
+	   string.lower(file.fileExtension(name)) == "xsd" or
+	   string.lower(file.fileExtension(name)) == "jxl" or
+	   string.lower(file.fileExtension(name)) == "rxl" or
        string.lower(file.fileExtension(name)) == "tmx" then
         return 
 			{ 
@@ -210,6 +213,9 @@ function isLegalFile(filename)
         ext == "xml" or
         ext == "axml" or
         ext == "tmx" or
+		ext == "xsd" or
+		ext == "jxl" or
+		ext == "rxl" or
         ext == "html" or
         ext == "c" or
         ext == "h" or
