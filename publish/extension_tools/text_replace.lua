@@ -8,6 +8,10 @@ print("Ext: " .. ext)
 
 print("Input find text:")
 local find_text = strTrim(io.read())
+if find_text == "" then
+    print("Error: Find text cannot be empty")
+    os.exit(0)
+end
 print("Find text: " .. find_text)
 
 print("Input replace text:")
@@ -19,7 +23,6 @@ for _, v in ipairs(tb) do
     local text = file.readTextFile(v)
     if strContains(text, find_text) then
         local replace = strRelaceAll(text, find_text, replace_text)
-        print("Replace in file " .. v .. "  ok.")
         file.writeTextFile(v, replace)
     end
 end
