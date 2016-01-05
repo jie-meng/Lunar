@@ -91,7 +91,6 @@ void SearchThread::run()
 
 void SearchThread::searchInFile(const std::string& file, const std::string& text, bool case_sensitive, bool use_regexp)
 {
-//    string content = readTextFile(file);
     string content = QStringToStdString(qtReadFile(StdStringToQString(file)));
     if (content.empty())
         return;
@@ -178,7 +177,6 @@ void SearchResultsWidget::searchInPath(const QString& path,
         return;
     }
 
-    //clear all items
     clear();
     search_thread_.start(path, text, exts, case_sensitive, use_regexp);
 }

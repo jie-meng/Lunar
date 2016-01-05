@@ -155,7 +155,8 @@ function parseFileType(filename)
 	   string.lower(file.fileExtension(name)) == "xsd" or
 	   string.lower(file.fileExtension(name)) == "jxl" or
 	   string.lower(file.fileExtension(name)) == "rxl" or
-       string.lower(file.fileExtension(name)) == "tmx" then
+       string.lower(file.fileExtension(name)) == "tmx" or
+	   string.lower(file.fileExtension(name)) == "project" then
         return 
 			{ 
 				type = "xml",

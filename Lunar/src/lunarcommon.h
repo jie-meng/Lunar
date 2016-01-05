@@ -76,11 +76,13 @@ public:
     inline size_t getMainwindowHeight() const { return mainwindow_height_; }
     inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
+
     inline std::string getExtensionFile() const { return "extension.lua"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
     inline std::string getExtensionFuncIsLegalFile() const { return extension_func_is_legal_file_; }
     inline std::string getFileFilter() const { return file_filter_; }
+    inline std::string getExtensionToolsPath() const { return extension_tools_path_; }
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
     inline bool isLogEnable() const { return is_log_enable_; }
     void parseExtensionFileFilter();
@@ -102,6 +104,7 @@ private:
     std::string extension_func_filefilter_;
     std::string extension_func_is_legal_file_;
     std::string file_filter_;
+    std::string extension_tools_path_;
     unsigned short log_sock_port_;
     bool is_log_enable_;
 private:

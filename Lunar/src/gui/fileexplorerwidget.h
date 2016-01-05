@@ -21,6 +21,7 @@ public:
     QString getCurrentSelectedDir();
 signals:
     void openFile(const QString&);
+    void executeExtensionTool(const QString& tool_script, const QString& execute_path, const QString& additional_args);
 public slots:
     void onFileSaved(const QString& file);
     void onAllFilesSaved();
@@ -36,6 +37,7 @@ private:
     bool loadNodeFiles(QTreeWidgetItem* item);
     QString getNodeAbsolutePath(QTreeWidgetItem* item);
     QString getNodeRelativePath(QTreeWidgetItem* item);
+    void onClickExtensionTool(const std::string& str);
 private Q_SLOTS:
     void loadRoot();
     void newFolder();

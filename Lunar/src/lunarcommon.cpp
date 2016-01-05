@@ -224,6 +224,7 @@ void LunarGlobal::readCfg()
     mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
+    extension_tools_path_ = text_cfg.getValue("ExtensionToolsPath", "extension_tools");
     extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
     is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
@@ -242,6 +243,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
     text_cfg.setValue("Extension.Func.IsLegalFile", extension_func_is_legal_file_);
+    text_cfg.setValue("ExtensionToolsPath", extension_tools_path_);
     text_cfg.setValue("Log.SockPort", log_sock_port_);
     text_cfg.setValue("Log.Enable", is_log_enable_);
 

@@ -62,6 +62,7 @@ private Q_SLOTS:
     void replace(const QString&, bool find_in_output);
     void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
     void run();
+    void executeScriptInPath(const QString& script, const QString& execute_path, const QString& additional_args);
     void stop();
     void searchTextInPath(const QString& dir,
                           const QString& text,

@@ -406,6 +406,7 @@ void MainWindow::initConnections()
     connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
             connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
+    connect(pfile_explorer_widget_, SIGNAL(executeExtensionTool(QString,QString,QString)), this, SLOT(executeScriptInPath(QString,QString,QString)));
     //search results
     connect(psearch_results_widget_, SIGNAL(gotoSearchResult(QString,int)), this, SLOT(gotoSearchResult(QString,int)));
     //luaexecutor
@@ -739,8 +740,8 @@ void MainWindow::run()
             return;
 
         pair<string, string> path_name = util::splitPathname(script);
-
         std::string runPath = path_name.first;
+
         //for windows disk root, there gonna be an error when excute if path is "X:"
         if (strEndWith(runPath, ":"))
             runPath += "/";
@@ -750,6 +751,32 @@ void MainWindow::run()
 
         if (!ret)
             addOutput("Run failed");
+    }
+}
+
+void MainWindow::executeScriptInPath(const QString& script, const QString& execute_path, const QString& additional_args)
+{
+    stop();
+    clearOutput();
+
+    string ss = QStringToStdString(script);
+    std::map<std::string, std::string> dict;
+    if (Extension::getInstance().parseFilename(ss, dict))
+    {
+        std::map<std::string, std::string>::const_iterator it = dict.find("executor");
+        if (it != dict.end())
+        {
+            string executor = strTrim(it->second);
+            if (executor != "")
+            {
+                if (plua_executor_->execute(QStringToStdString(script), QStringToStdString(additional_args), QStringToStdString(execute_path), executor))
+                {
+                    if (pbottom_widget_->isHidden())
+                        pbottom_widget_->show();
+                    pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
+                }
+            }
+        }
     }
 }
 
