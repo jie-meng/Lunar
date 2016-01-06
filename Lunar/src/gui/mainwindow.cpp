@@ -728,6 +728,7 @@ void MainWindow::run()
     if (pbottom_widget_->isHidden())
         pbottom_widget_->show();
     pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
+    poutput_widget_->setFocusOnInput();
 
     clearOutput();
     DocView* pdoc_view = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
@@ -774,6 +775,7 @@ void MainWindow::executeScriptInPath(const QString& script, const QString& execu
                     if (pbottom_widget_->isHidden())
                         pbottom_widget_->show();
                     pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
+                    poutput_widget_->setFocusOnInput();
                 }
             }
         }

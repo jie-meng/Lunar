@@ -84,6 +84,11 @@ void OutputWidget::initConnections()
     connect(pinput_line_, SIGNAL(returnPressed()), this, SLOT(input()));
 }
 
+void OutputWidget::setFocusOnInput()
+{
+    pinput_line_->setFocus();
+}
+
 void OutputWidget::input()
 {
     emit sendInput(pinput_line_->text() + "\n");
