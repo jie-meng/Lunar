@@ -29,4 +29,4 @@ end
 
 print()
 
-print(string.format([[Replace all "%s" to "%s" in path <%s> finish.]], find_text, replace_text, file.currentPath()))
+print(string.format([[Replace all "%s" to "%s" in path <%s> ok.]], find_text, replace_text, file.currentPath()))
