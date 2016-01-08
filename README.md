@@ -13,7 +13,7 @@ A cross-platform script IDE
 
 #### build luaexec ####
 
-1. Get Util project from [https://github.com/joshua-meng/Util]()
+1. Get Util project from [git@github.com:joshua-meng/Util.git]()
 
 2. Build and get an executable file: Util (Util.exe on windows).
 
