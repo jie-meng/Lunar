@@ -21,7 +21,8 @@ A cross-platform script IDE
 
 4. luaexec is a lua script executor which contains basic lua (lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
 
-#### build qscintilla #### 
+
+#### build qscintilla ####
 
 1. cd QScintilla-gpl-version_xxx\Qt4Qt5
 
