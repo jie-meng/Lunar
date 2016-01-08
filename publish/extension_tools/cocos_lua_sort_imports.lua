@@ -14,7 +14,7 @@ for _, f in ipairs(files) do
             if var and path then
                 table.insert(imports, { sort_key = path, value = line, module = var })
             else
-                table.insert(codes, line)
+                table.insert(codes, l)
             end
         end
         
