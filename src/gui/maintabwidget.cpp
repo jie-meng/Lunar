@@ -57,13 +57,17 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
     }
 
     setCurrentIndex(tab_index);
-    dynamic_cast<DocView*>(currentWidget())->focusOnText();
+    if (currentWidget())
+        dynamic_cast<DocView*>(currentWidget())->focusOnText();
 
     return tab_index;
 }
 
 std::pair<bool, QString> MainTabWidget::saveCurDocViewTab(const QString& save_dialog_init_dir)
 {
+    if (!currentWidget())
+        return std::pair<bool, QString>(false, tr(""));
+
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     pdocview->setSaveDialogInitDir(save_dialog_init_dir);
     bool ret = pdocview->saveDoc();
@@ -72,6 +76,9 @@ std::pair<bool, QString> MainTabWidget::saveCurDocViewTab(const QString& save_di
 
 std::pair<bool, QString> MainTabWidget::saveAsCurDocViewTab(const QString& save_dialog_init_dir)
 {
+    if (!currentWidget())
+        return std::pair<bool, QString>(false, tr(""));
+
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
     pdocview->setSaveDialogInitDir(save_dialog_init_dir);
     bool ret = pdocview->saveAsDoc();
@@ -90,6 +97,9 @@ void MainTabWidget::saveAllViewTabs(const QString& save_dialog_init_dir)
 
 void MainTabWidget::closeCurDocViewTab()
 {
+    if (!currentWidget())
+        return;
+
     tabClose(indexOf(currentWidget()));
 }
 
@@ -119,11 +129,17 @@ bool MainTabWidget::findInCurTextEdit(const QString& expr,
 						   bool from_start
                            )
 {
+    if (!currentWidget())
+        return false;
+
     return dynamic_cast<DocView*>(currentWidget())->find(expr, re, cs, wo, wrap, forward, first_find, from_start);
 }
 
 void MainTabWidget::replaceInCurTextEdit(const QString& replace_with_text)
-{    
+{
+    if (!currentWidget())
+        return;
+
     dynamic_cast<DocView*>(currentWidget())->replace(replace_with_text);
 }
 
@@ -198,27 +214,42 @@ void MainTabWidget::gotoPrevTabIndex()
 }
 
 void MainTabWidget::currentDocComment(bool comment_line_or_block)
-{    
+{
+    if (!currentWidget())
+        return;
+
     dynamic_cast<DocView*>(currentWidget())->commentSelection(comment_line_or_block);
 }
 
 QString MainTabWidget::getCurrentDocSelectedText() const
 {
+    if (!currentWidget())
+        return "";
+
     return dynamic_cast<DocView*>(currentWidget())->getSelectedText();
 }
 
 QString MainTabWidget::getCurrentDocPathname() const
 {
+    if (!currentWidget())
+        return "";
+
     return dynamic_cast<DocView*>(currentWidget())->getPathname();
 }
 
 void MainTabWidget::currentDocGotoLine(int line)
 {    
+    if (!currentWidget())
+        return;
+
     dynamic_cast<DocView*>(currentWidget())->gotoLine(line);
 }
 
 void MainTabWidget::focusOnCurrentDoc()
 {    
+    if (!currentWidget())
+        return;
+
     dynamic_cast<DocView*>(currentWidget())->focusOnEdit();
 }
 

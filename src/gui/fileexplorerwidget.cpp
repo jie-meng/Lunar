@@ -408,7 +408,7 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
 
     if (item->childCount() == 0)
     {
-        if (QMessageBox::No == QMessageBox::question(this, "question", "Are you sure to delete " + filename + "?",
+        if (QMessageBox::No == QMessageBox::question(this, "", "Are you sure to delete " + filename + "?",
                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
         {
             return;

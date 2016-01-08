@@ -522,7 +522,6 @@ void MainWindow::editSearch()
     QString str = pmain_tabwidget_->getCurrentDocSelectedText();
     text = StdStringToQString(strTrim(QStringToStdString(str)));
     QString pathname = pmain_tabwidget_->getCurrentDocPathname();
-
     file_filter = StdStringToQString(fileExtension(QStringToStdString(pathname)));
 
     SearchInputWidget inputwidget(QString(dir), text, file_filter);
