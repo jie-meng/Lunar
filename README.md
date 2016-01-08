@@ -1,20 +1,21 @@
 # Lunar #
-A cross-platform Lua script extension and IDE
+A cross-platform script extension and IDE
   
-
-* Luaexec: Lua script basic(lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix)
-* Lunar: Lua & Octave IDE
+* Luaexec: Lua script execute tool which contains basic lua (lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix)
+* Lunar: Script IDE
+* You can make your own auto-completion schema which meets you needs.
+* Currently provided: lua, cocos_lua, python2 & 3, octave
 
 -------------------------------------------------
 
 
 ## enviromment ##
-* Qt5.3 (mingw 4.8.2)
-* QScintilla 2.8
+* Qt5.5 (mingw)
+* QScintilla 2.9.1
 
 ## build step ##
 * build qscintilla
-cd QScintilla-gpl-2.8.4\Qt4Qt5
+cd QScintilla-gpl-version_xxx\Qt4Qt5
 qmake qscintilla.pro
 make
 make install
@@ -26,8 +27,8 @@ luaexec qt_remake.lua
 
 ## release ##
 
-* luaexec.exe must run with libstdc++-6.dll, libgcc_s_dw2-1.dll of mingw 4.8 
-* Lunar.exe must run with libstdc++-6.dll(mingw4.8), libgcc_s_dw2-1.dll(mingw4.8), Qt5Core.dll, Qt5Gui.dll, qscintilla2.dll.
+* luaexec.exe must run with libstdc++-6.dll, libgcc_s_dw2-1.dll of mingw
+* Lunar.exe must run with libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll, qscintilla2.dll.
 
 ## notes ##
 
