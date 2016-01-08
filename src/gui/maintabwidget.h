@@ -24,6 +24,9 @@ public:
     void closeCurDocViewTab();
     void closeAllDocViewTabs();
     void setDocViewFont();
+    int findTabIndexByFile(const QString& file);
+    void forceCloseTab(int index);
+    void renameTab(int index, const QString& new_pathname);
     bool findInCurTextEdit(const QString& expr,
                            bool re,
                            bool cs,
@@ -43,9 +46,8 @@ public:
     void currentDocGotoLine(int line);
     void focusOnCurrentDoc();
 private Q_SLOTS:
-    void updateTabTitleAndTip(DocView*);
-    void tabTextModified(DocView*);
     void tabClose(int index);
+    void updateTabTitleAndTip(DocView* pdocview);
     int getTabIndex(const QString& pathname);
 private:
     void init();

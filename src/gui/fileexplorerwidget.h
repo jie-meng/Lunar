@@ -22,6 +22,9 @@ public:
 signals:
     void openFile(const QString&);
     void executeExtensionTool(const QString& tool_script, const QString& execute_path, const QString& additional_args);
+    void renameFile(const QString&, const QString&);
+    void removeFile(const QString&);
+    void removeDir(const QString&);
 public slots:
     void onFileSaved(const QString& file);
     void onAllFilesSaved();

@@ -67,15 +67,10 @@ MainWindow::MainWindow(QWidget* parent)
     pbottom_widget_(NULL),
     pbottom_tab_widget_(NULL),
     psearch_results_widget_(NULL)
-{
-    //ctor
-    //user call Init after ctor"Lua Files(*.lua);;All Files(*.*)"
-}
+{}
 
 MainWindow::~MainWindow()
-{
-    //dtor
-}
+{}
 
 void MainWindow::processCmdParam()
 {
@@ -407,6 +402,33 @@ void MainWindow::initConnections()
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
             connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
     connect(pfile_explorer_widget_, SIGNAL(executeExtensionTool(QString,QString,QString)), this, SLOT(executeScriptInPath(QString,QString,QString)));
+    connect(pfile_explorer_widget_, &FileExplorerWidget::renameFile, [this](const QString& from, const QString& to)
+    {
+        int idx = pmain_tabwidget_->findTabIndexByFile(from);
+        if (idx >= 0)
+            pmain_tabwidget_->renameTab(idx, to);
+    });
+    connect(pfile_explorer_widget_, &FileExplorerWidget::removeFile, [this](const QString& file)
+    {
+        int idx = pmain_tabwidget_->findTabIndexByFile(file);
+        if (idx >= 0)
+            pmain_tabwidget_->forceCloseTab(idx);
+    });
+    connect(pfile_explorer_widget_, &FileExplorerWidget::removeDir, [this](const QString& dir)
+    {
+        vector<string> vec;
+        FileFilterRecursive< vector<string> > ff(vec);
+        if (listFiles(QStringToStdString(dir), vec, &ff) > 0)
+        {
+            for (vector<string>::iterator it = vec.begin(); it != vec.end(); ++it)
+            {
+                int idx = pmain_tabwidget_->findTabIndexByFile(StdStringToQString(*it));
+                if (idx >= 0)
+                    pmain_tabwidget_->forceCloseTab(idx);
+            }
+        }
+    });
+
     //search results
     connect(psearch_results_widget_, SIGNAL(gotoSearchResult(QString,int)), this, SLOT(gotoSearchResult(QString,int)));
     //luaexecutor

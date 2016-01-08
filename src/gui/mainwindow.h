@@ -37,6 +37,10 @@ public Q_SLOTS:
     void sendInput(const QString& input);
     void dumpOutput();
     void clearOutput();
+protected:
+    virtual void dragEnterEvent(QDragEnterEvent *event);
+    virtual void dropEvent(QDropEvent *event);
+    virtual void closeEvent(QCloseEvent* e);
 private Q_SLOTS:
     void fileNew();
     void fileOpen();
@@ -70,10 +74,6 @@ private Q_SLOTS:
                           bool case_sensitive,
                           bool use_regex);
     void gotoSearchResult(const QString& file, int line);
-protected:
-    virtual void dragEnterEvent(QDragEnterEvent *event);
-    virtual void dropEvent(QDropEvent *event);
-    virtual void closeEvent(QCloseEvent* e);
 private:
     void initActions();
     void initMenubar();

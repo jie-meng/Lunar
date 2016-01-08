@@ -59,12 +59,12 @@ using namespace util;
 namespace gui
 {
 
-int DocView::s_new_docview_sequence_ = 0;
+int DocView::s_new_docview_sequence_ = 1;
 
 DocView::DocView(const QString& pathname, QWidget* parent)
     : QWidget(parent),
     save_dialog_init_dir_("."),
-    pathname_(pathname),
+    pathname_(tr("")),
     papis_(NULL),
     plexer_(NULL),
     is_apis_preparing_(false),
@@ -74,23 +74,34 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     parse_supplement_api_script_(""),
     parse_supplement_api_func_(""),
     comment_line_symbol_(tr("")),
-    selection_match_indicator_(0)
+    selection_match_indicator_(0),
+    new_file_sequence_no_(0)
 {
-    //ctor
     ptext_edit_ = new QsciScintilla(parent);
-    title_ = getTitleFromPath(pathname_);
-    if(tr("") == title_)
-    {
-        std::string name = util::strFormat("New_%d", DocView::s_new_docview_sequence_++);
-        title_ = StdStringToQString(name);
-    }
+    setPathname(pathname);
+
     init();
 }
 
 DocView::~DocView()
 {
-    //dtor
     clearLexerApi();
+}
+
+QString DocView::getTitle()
+{
+    auto title = getTitleFromPath(getPathname());
+    if(tr("") == title)
+    {
+        if (new_file_sequence_no_ == 0)
+            new_file_sequence_no_ = DocView::s_new_docview_sequence_++;
+
+        return StdStringToQString(strFormat("New_%d", new_file_sequence_no_));
+    }
+    else
+    {
+        return ptext_edit_->isModified() ? "*" + title : title;
+    }
 }
 
 void DocView::focusOnText()
@@ -101,11 +112,11 @@ void DocView::focusOnText()
 void DocView::clearLexerApi()
 {
     if (plexer_)
-        util::safeDelete(plexer_);
+        safeDelete(plexer_);
     //papis_ would be delete together with plexer_
 
     if (papi_loader_)
-        util::safeDelete(papi_loader_);
+        safeDelete(papi_loader_);
 
     executor_ = "";
     parse_supplement_api_script_ = "";
@@ -219,11 +230,12 @@ void DocView::initTextEdit()
     ptext_edit_->setIndicatorForegroundColor(QColor(251, 220, 0, 120));
     ptext_edit_->setIndentationGuides(true);
 
-    if(tr("") != pathname_)
-        //ptext_edit_->setText(StdStringToQString(util::readTextFile(QStringToStdString(pathname_))));
-        ptext_edit_->setText(qtReadFile(pathname_));
+    if(tr("") != getPathname())
+        ptext_edit_->setText(qtReadFile(getPathname()));
     else
         ptext_edit_->setText(tr(""));
+    //text_loaded_ = true;
+    ptext_edit_->setModified(false);
 
     resetLexer();
 
@@ -233,7 +245,7 @@ void DocView::initTextEdit()
 
 bool DocView::testFileFilter(const std::string& file_filter)
 {
-    std::string title = QStringToStdString(title_);
+    std::string title = QStringToStdString(getTitle());
     std::vector<std::string> filterVec;
     util::strSplit(file_filter, ",", filterVec);
     for (std::vector<std::string>::iterator it = filterVec.begin(); it != filterVec.end(); ++it)
@@ -261,10 +273,8 @@ void DocView::init()
 
 void DocView::textChanged()
 {
-    if (getTextEdit()->isModified())
-    {
+    if (ptext_edit_->isModified())
         emit textModified(this);
-    }
 }
 
 void DocView::initConnections()
@@ -275,11 +285,16 @@ void DocView::initConnections()
     //connect(ptext_edit_, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(cursorPositionChanged(int, int)))
 }
 
-bool DocView::doSave(bool reset_lexer)
+bool DocView::doSave(bool reset_lexer, const QString& pathname)
 {
-    emit updateTitle(this);
-    bool ret = qtWriteFile(pathname_, removeTextReturn(ptext_edit_->text()));
-    //bool ret = util::writeTextFile(QStringToStdString(pathname_), content);
+    bool ret = qtWriteFile(pathname, removeTextReturn(ptext_edit_->text()));
+    if (ret)
+    {
+        setPathname(pathname);
+        ptext_edit_->setModified(false);
+        emit updateTitle(this);
+    }
+
     if (reset_lexer)
         resetLexer();
     else
@@ -290,28 +305,13 @@ bool DocView::doSave(bool reset_lexer)
 
 bool DocView::saveDoc()
 {
-    if (tr("") != pathname_)
-        return doSave(false);
-    else
-        return saveAsDoc();
+    return getPathname().length() != 0 ? doSave(false, getPathname()) : saveAsDoc();
 }
 
 bool DocView::saveAsDoc()
 {
-    //newed file
-    QString title = "Save File : " + getTitle();
-    QString path = QFileDialog::getSaveFileName(this, title, getSaveDialogInitDir(), StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
-    if(path.length() == 0)
-    {
-        //do nothing
-        return false;
-    }
-    else
-    {
-        pathname_ = path;
-        title_ = getTitleFromPath(pathname_);
-        return doSave(true);
-    }
+    QString pathname = QFileDialog::getSaveFileName(this, "Save File : " + getTitle(), getSaveDialogInitDir(), StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
+    return pathname.length() != 0 ? doSave(true, pathname) : false;
 }
 
 QString DocView::getTitleFromPath(const QString& path) const

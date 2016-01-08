@@ -14,13 +14,11 @@ namespace gui
 MainTabWidget::MainTabWidget(QWidget* parent)
     : QTabWidget(parent)
 {
-    //ctor
     init();
 }
 
 MainTabWidget::~MainTabWidget()
 {
-    //dtor
 }
 
 void MainTabWidget::init()
@@ -34,12 +32,8 @@ int MainTabWidget::getTabIndex(const QString& pathname)
 {
     for (int i=0; i<count(); ++i)
     {
-        DocView* pdocview = dynamic_cast<DocView*>(widget(i));
-        if(NULL != pdocview)
-        {
-            if(pathname == pdocview->getPathname())
-                return i;
-        }
+        if(pathname == dynamic_cast<DocView*>(widget(i))->getPathname())
+            return i;
     }
 
     return -1;
@@ -59,14 +53,11 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
         setTabToolTip(tab_index, formatPathName);
 
         connect(pdocview, SIGNAL(updateTitle(DocView*)), this, SLOT(updateTabTitleAndTip(DocView*)));
-        connect(pdocview, SIGNAL(textModified(DocView*)), this, SLOT(tabTextModified(DocView*)));
+        connect(pdocview, SIGNAL(textModified(DocView*)), this, SLOT(updateTabTitleAndTip(DocView*)));
     }
 
     setCurrentIndex(tab_index);
-
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if (pdocview)
-        pdocview->focusOnText();
+    dynamic_cast<DocView*>(currentWidget())->focusOnText();
 
     return tab_index;
 }
@@ -74,31 +65,17 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
 std::pair<bool, QString> MainTabWidget::saveCurDocViewTab(const QString& save_dialog_init_dir)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-    {
-        pdocview->setSaveDialogInitDir(save_dialog_init_dir);
-        bool ret = pdocview->saveDoc();
-        return std::make_pair(ret, pdocview->getPathname());
-    }
-    else
-    {
-        return std::make_pair(false, "");
-    }
+    pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+    bool ret = pdocview->saveDoc();
+    return std::make_pair(ret, pdocview->getPathname());
 }
 
 std::pair<bool, QString> MainTabWidget::saveAsCurDocViewTab(const QString& save_dialog_init_dir)
 {
     DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-    {
-        pdocview->setSaveDialogInitDir(save_dialog_init_dir);
-        bool ret = pdocview->saveAsDoc();
-        return std::make_pair(ret, pdocview->getPathname());
-    }
-    else
-    {
-        return std::make_pair(false, "");
-    }
+    pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+    bool ret = pdocview->saveAsDoc();
+    return std::make_pair(ret, pdocview->getPathname());
 }
 
 void MainTabWidget::saveAllViewTabs(const QString& save_dialog_init_dir)
@@ -106,11 +83,8 @@ void MainTabWidget::saveAllViewTabs(const QString& save_dialog_init_dir)
     for (int i=0; i<count(); i++)
     {
         DocView* pdocview = dynamic_cast<DocView*>(widget(i));
-        if(NULL != pdocview)
-        {
-            pdocview->setSaveDialogInitDir(save_dialog_init_dir);
-            pdocview->saveDoc();
-        }
+        pdocview->setSaveDialogInitDir(save_dialog_init_dir);
+        pdocview->saveDoc();
     }
 }
 
@@ -122,22 +96,16 @@ void MainTabWidget::closeCurDocViewTab()
 void MainTabWidget::closeAllDocViewTabs()
 {
     while (count() > 0)
-    {
         tabClose(0);
-    }
 }
 
 void MainTabWidget::setDocViewFont()
 {
     bool ok;
     QFont font = QFontDialog::getFont(&ok, QFont("Consolas", 10), this);
-    if ( ok ) {
-        for (int i=0; i<count(); i++)
-        {
-            DocView* pdocview = dynamic_cast<DocView*>(widget(i));
-            if(NULL != pdocview)
-                pdocview->setEditTextFont(font);
-        }
+    if (ok) {
+        for (int i=0; i<count(); i++)    
+            dynamic_cast<DocView*>(widget(i))->setEditTextFont(font);
     }
 }
 
@@ -151,62 +119,22 @@ bool MainTabWidget::findInCurTextEdit(const QString& expr,
 						   bool from_start
                            )
 {
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        return pdocview->find(expr, re, cs, wo, wrap, forward, first_find, from_start);
-    else
-        return false;
+    return dynamic_cast<DocView*>(currentWidget())->find(expr, re, cs, wo, wrap, forward, first_find, from_start);
 }
 
 void MainTabWidget::replaceInCurTextEdit(const QString& replace_with_text)
-{
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        pdocview->replace(replace_with_text);
+{    
+    dynamic_cast<DocView*>(currentWidget())->replace(replace_with_text);
 }
 
 void MainTabWidget::updateTabTitleAndTip(DocView* pdocview)
 {
-    if (pdocview == currentWidget())
-    {
-        //change tab name
-        setTabText(indexOf(pdocview), pdocview->getTitle());
-        setTabToolTip(indexOf(pdocview), pdocview->getPathname());
-    }
-    else
-    {
-        for (int i=0; i<count(); i++)
-        {
-            if (pdocview == widget(i))
-            {
-                //change tab name
-                setTabText(indexOf(pdocview), pdocview->getTitle());
-                setTabToolTip(indexOf(pdocview), pdocview->getPathname());
-                break;
-            }
-        }
-    }
-}
+    auto index = indexOf(pdocview);
+    if (tabText(index) != pdocview->getTitle())
+        setTabText(index, pdocview->getTitle());
 
-void MainTabWidget::tabTextModified(DocView* pdocview)
-{
-    if (pdocview == currentWidget())
-    {
-        //change tab name
-        setTabText(indexOf(pdocview), "*" + pdocview->getTitle());
-    }
-    else
-    {
-        for (int i=0; i<count(); i++)
-        {
-            if (pdocview == widget(i))
-            {
-                //change tab name
-                setTabText(indexOf(pdocview), "*" + pdocview->getTitle());
-                break;
-            }
-        }
-    }
+    if (tabToolTip(index) != pdocview->getPathname())
+        setTabToolTip(index, pdocview->getPathname());
 }
 
 void MainTabWidget::tabClose(int index)
@@ -240,9 +168,7 @@ bool MainTabWidget::hasUnsavedFiles()
     for (int i=0; i<count(); i++)
     {
         if(tabText(i).startsWith("*"))
-        {
             return true;
-        }
     }
     return false;
 }
@@ -272,42 +198,54 @@ void MainTabWidget::gotoPrevTabIndex()
 }
 
 void MainTabWidget::currentDocComment(bool comment_line_or_block)
-{
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        pdocview->commentSelection(comment_line_or_block);
+{    
+    dynamic_cast<DocView*>(currentWidget())->commentSelection(comment_line_or_block);
 }
 
 QString MainTabWidget::getCurrentDocSelectedText() const
 {
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        return pdocview->getSelectedText();
-    else
-        return tr("");
+    return dynamic_cast<DocView*>(currentWidget())->getSelectedText();
 }
 
 QString MainTabWidget::getCurrentDocPathname() const
 {
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        return pdocview->getPathname();
-    else
-        return tr("");
+    return dynamic_cast<DocView*>(currentWidget())->getPathname();
 }
 
 void MainTabWidget::currentDocGotoLine(int line)
-{
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        pdocview->gotoLine(line);
+{    
+    dynamic_cast<DocView*>(currentWidget())->gotoLine(line);
 }
 
 void MainTabWidget::focusOnCurrentDoc()
+{    
+    dynamic_cast<DocView*>(currentWidget())->focusOnEdit();
+}
+
+int MainTabWidget::findTabIndexByFile(const QString& file)
 {
-    DocView* pdocview = dynamic_cast<DocView*>(currentWidget());
-    if(NULL != pdocview)
-        pdocview->focusOnEdit();
+    for (int i=0; i<count(); i++)
+    {
+        if (dynamic_cast<DocView*>(widget(i))->getPathname() == file)
+            return i;
+    }
+
+    return -1;
+}
+
+void MainTabWidget::renameTab(int index, const QString& new_pathname)
+{
+    DocView* pdocview = dynamic_cast<DocView*>(widget(index));
+    pdocview->setPathname(new_pathname);
+    setTabText(index, pdocview->getTitle());
+    setTabToolTip(index, pdocview->getPathname());
+}
+
+void MainTabWidget::forceCloseTab(int index)
+{
+    DocView* pdocview = dynamic_cast<DocView*>(widget(index));
+    removeTab(index);
+    util::safeDelete(pdocview);
 }
 
 } // namespace gui

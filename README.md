@@ -34,7 +34,7 @@ A cross-platform script IDE
 #### build Lunar ####
 
 cd Lunar
-luaexec qt_remake.lua
+luaexec remake_lunar.lua
 
 
 ### release ###

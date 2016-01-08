@@ -376,11 +376,13 @@ void FileExplorerWidget::renameCurrentItem()
 void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
 {
     string str_name = QStringToStdString(new_name);
-    string str_path = QStringToStdString(getNodeAbsolutePath(currentItem()));
-    if (fileRename(str_path, splitPathname(str_path).first + "/" + str_name))
+    string str_from_pathname = QStringToStdString(getNodeAbsolutePath(currentItem()));
+    string str_to_pathname = splitPathname(str_from_pathname).first + "/" + str_name;
+    if (fileRename(str_from_pathname, str_to_pathname))
     {
         QTreeWidgetItem* parent = currentItem()->parent();
         loadNodeFiles(parent);
+        emit renameFile(StdStringToQString(str_from_pathname), StdStringToQString(str_to_pathname));
     }
     else
     {
@@ -413,12 +415,12 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
         }
         else
         {
-            pathRemove(fullpathname);
-            QTreeWidgetItem* pparent = item->parent();
-            if (pparent)
+            if (pathRemove(fullpathname))
             {
+                QTreeWidgetItem* pparent = item->parent();
                 pparent->removeChild(item);
                 delete item;
+                emit removeFile(StdStringToQString(fullpathname));
             }
         }
     }
@@ -431,13 +433,12 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
         }
         else
         {
+            //emit this signal before remove file, because slot hoster would check the files in dir
+            emit removeDir(StdStringToQString(fullpathname));
+
             pathRemoveAll(fullpathname);
-            QTreeWidgetItem* pparent = item->parent();
-            if (pparent)
-            {
-                pparent->removeChild(item);
-                delete item;
-            }
+            item->parent()->removeChild(item);
+            delete item;
         }
     }
 }

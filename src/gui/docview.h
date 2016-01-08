@@ -24,15 +24,22 @@ class DocView : public QWidget
 public:
     explicit DocView(const QString& pathname, QWidget* parent = 0);
     virtual ~DocView();
+
+    inline QsciScintilla* getTextEdit() const { return ptext_edit_; }
+    inline QString getPathname() const { return pathname_; }
+    inline void setPathname(const QString& pathname) { pathname_ = pathname; }
+    inline FileType getFileType() const { return file_type_; }
+    inline std::string getExecutor() const { return executor_; }
+    inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
+    inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
+
+    QString getTitle();
     void focusOnText();
-    QsciScintilla* getTextEdit() const { return ptext_edit_; }
-    QString getPathname() const { return pathname_; }
-    QString getTitle() const { return title_; }
     void setEditTextFont(const QFont& font);
     void replace(const QString& replace_with_text);
     bool saveDoc();
     bool saveAsDoc();
-    bool doSave(bool reset_lexer);
+    bool doSave(bool reset_lexer, const QString& pathname);
     bool find(const QString& expr,
               bool re,
               bool cs,
@@ -46,10 +53,6 @@ public:
     void commentSelectionLine();
     void commentSelectionBlock();
     QString getSelectedText() const;
-    inline FileType getFileType() const { return file_type_; }
-    inline std::string getExecutor() const { return executor_; }
-    inline void setSaveDialogInitDir(const QString& dir) { save_dialog_init_dir_ = dir; }
-    inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
     void gotoLine(int line);
     void focusOnEdit();
 Q_SIGNALS:
@@ -102,6 +105,7 @@ private:
     QString comment_block_symbol_begin_;
     QString comment_block_symbol_end_;
     int selection_match_indicator_;
+    int new_file_sequence_no_ = 0;
 private:
     DISALLOW_COPY_AND_ASSIGN(DocView)
 };
