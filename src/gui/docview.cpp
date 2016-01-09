@@ -769,6 +769,9 @@ bool DocView::getDefinitions(vector<string>& out_results)
     if (getPathname().length() == 0 || goto_script_.empty() || goto_definition_func_.empty())
         return false;
 
+    if (getSelectedText().trimmed().length() == 0)
+        return false;
+
     return GotoManager::getInstance().getDefinitions(
         goto_script_,
         goto_definition_func_,

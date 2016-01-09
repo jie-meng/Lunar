@@ -263,15 +263,17 @@ void MainWindow::initActions()
     pedit_goto_definition_action_ = new QAction(tr("Goto definition"), this);
     pedit_goto_definition_action_->setStatusTip(tr("Goto definition."));
     pedit_goto_definition_action_->setShortcut(Qt::CTRL + Qt::Key_G);
-    //pedit_goto_definition_action_->setIcon(QIcon(tr(":/res/comment_block.png")));
+    pedit_goto_definition_action_->setIcon(QIcon(tr(":/res/goto_definition.png")));
 
     pedit_jump_back_action_ = new QAction(tr("Jump back"), this);
     pedit_jump_back_action_->setStatusTip(tr("Jump back."));
-    pedit_jump_back_action_->setShortcut(Qt::ALT + Qt::Key_Left);
+    pedit_jump_back_action_->setShortcut(Qt::CTRL + Qt::Key_J);
+    pedit_jump_back_action_->setIcon(QIcon(tr(":/res/jump_back.png")));
 
     pedit_jump_forward_action_ = new QAction(tr("Jump forward"), this);
     pedit_jump_forward_action_->setStatusTip(tr("Jump forward."));
-    pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_Right);
+    pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_K);
+    pedit_jump_forward_action_->setIcon(QIcon(tr(":/res/jump_forward.png")));
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));

@@ -25,6 +25,9 @@
 	<file>res/about.png</file>
 	<file>res/fe_file.png</file>
 	<file>res/fe_folder.png</file>
+    <file>res/goto_definition.png</file>
+    <file>res/jump_back.png</file>
+    <file>res/jump_forward.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>
