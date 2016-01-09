@@ -31,7 +31,7 @@ Q_SIGNALS:
     void fileSaved(const QString&);
     void allFilesSaved();
 public Q_SLOTS:
-    void openDoc(const QString& filepath);
+    bool openDoc(const QString& filepath);
     //output
     void addOutput(const QString& output);
     void sendInput(const QString& input);
@@ -57,6 +57,9 @@ private Q_SLOTS:
     void editSetFont();
     void editComment();
     void editCommentBlock();
+    void editGotoDefinition();
+    void editJumpBack();
+    void editJumpForward();
     void viewFileExplorer();
     void viewSearchResultsWidget();
     void viewDocuments();
@@ -87,6 +90,7 @@ private:
     void initLuaExecutor();
     void initExtension();
     void processCmdParam();
+    bool gotoPosition(const std::string& file, int line);
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;
@@ -102,6 +106,9 @@ private:
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
     QAction* pedit_comment_block_action_;
+    QAction* pedit_goto_definition_action_;
+    QAction* pedit_jump_back_action_;
+    QAction* pedit_jump_forward_action_;
     QAction* pview_file_explorer_action_;
     QAction* pview_search_results_action_;
     QAction* pview_documents_action_;

@@ -26,6 +26,8 @@
 #include "searchresultswidget.h"
 #include "extension.h"
 #include "searchinputwidget.h"
+#include "docview.h"
+#include "jump_manager.h"
 
 namespace gui
 {
@@ -50,6 +52,9 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
     pedit_comment_block_action_(NULL),
+    pedit_goto_definition_action_(NULL),
+    pedit_jump_back_action_(NULL),
+    pedit_jump_forward_action_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
     pview_documents_action_(NULL),
@@ -67,7 +72,11 @@ MainWindow::MainWindow(QWidget* parent)
     pbottom_widget_(NULL),
     pbottom_tab_widget_(NULL),
     psearch_results_widget_(NULL)
-{}
+{
+    //JumpManager init here to make JumpManager's position init at start,
+    //or it'll not get correct value when first time use.
+    JumpManager::getInstance();
+}
 
 MainWindow::~MainWindow()
 {}
@@ -79,9 +88,8 @@ void MainWindow::processCmdParam()
         for (int i=1; i<LunarGlobal::getInstance().getArgCnt(); i++)
         {
             std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::getInstance().getArg(i));
-            if(util::isPathExists(filepath))
-                if(util::isPathFile(filepath))
-                    pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
+            if(util::isPathFile(filepath))
+                pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
         }
     }
 }
@@ -169,9 +177,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
     {
        int ret = QMessageBox::question(this, "question", "Quit without save?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
        if(ret == QMessageBox::No)
-       {
            e->ignore();
-       }
     }
 
     if (windowState() != Qt::WindowMaximized && windowState() != Qt::WindowFullScreen)
@@ -254,6 +260,19 @@ void MainWindow::initActions()
     pedit_comment_block_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
     pedit_comment_block_action_->setIcon(QIcon(tr(":/res/comment_block.png")));
 
+    pedit_goto_definition_action_ = new QAction(tr("Goto definition"), this);
+    pedit_goto_definition_action_->setStatusTip(tr("Goto definition."));
+    pedit_goto_definition_action_->setShortcut(Qt::CTRL + Qt::Key_G);
+    //pedit_goto_definition_action_->setIcon(QIcon(tr(":/res/comment_block.png")));
+
+    pedit_jump_back_action_ = new QAction(tr("Jump back"), this);
+    pedit_jump_back_action_->setStatusTip(tr("Jump back."));
+    pedit_jump_back_action_->setShortcut(Qt::ALT + Qt::Key_Left);
+
+    pedit_jump_forward_action_ = new QAction(tr("Jump forward"), this);
+    pedit_jump_forward_action_->setStatusTip(tr("Jump forward."));
+    pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_Right);
+
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
@@ -309,6 +328,9 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
     pedit_menu->addAction(pedit_comment_block_action_);
+    pedit_menu->addAction(pedit_goto_definition_action_);
+    pedit_menu->addAction(pedit_jump_back_action_);
+    pedit_menu->addAction(pedit_jump_forward_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -338,6 +360,9 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pedit_search_action_);
 	ptoolbar->addAction(pedit_comment_action_);
     ptoolbar->addAction(pedit_comment_block_action_);
+    ptoolbar->addAction(pedit_goto_definition_action_);
+    ptoolbar->addAction(pedit_jump_back_action_);
+    ptoolbar->addAction(pedit_jump_forward_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pview_search_results_action_);
     ptoolbar->addAction(pview_documents_action_);
@@ -353,7 +378,6 @@ void MainWindow::InitStatusBar()
 
     pstatus_text_ = new QLabel(this);
     statusBar()->addWidget(pstatus_text_);
-    //statusBar()->addPermanentWidget(new QLabel("2011-09-03"));
 }
 
 void MainWindow::InitMainWidget()
@@ -384,6 +408,10 @@ void MainWindow::initConnections()
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
     connect(pedit_comment_block_action_, SIGNAL(triggered()), this, SLOT(editCommentBlock()));
+    connect(pedit_goto_definition_action_, SIGNAL(triggered()), this, SLOT(editGotoDefinition()));
+    connect(pedit_jump_back_action_, SIGNAL(triggered()), this, SLOT(editJumpBack()));
+    connect(pedit_jump_forward_action_, SIGNAL(triggered()), this, SLOT(editJumpForward()));
+
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
@@ -538,18 +566,30 @@ void MainWindow::searchTextInPath(
                                   bool use_regex)
 {
     psearch_results_widget_->searchInPath(dir, text, file_filter, case_sensitive, use_regex);
-
-    if (pbottom_widget_->isHidden())
-        pbottom_widget_->show();
-
-    pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
-    psearch_results_widget_->setFocus();
+    viewSearchResultsWidget();
 }
 
-void MainWindow::gotoSearchResult(const QString& file, int line)
+void MainWindow::gotoSearchResult(const QString& file_relative, int line)
 {
-    openDoc(StdStringToQString(currentPath())+ "/" + file);
-    pmain_tabwidget_->currentDocGotoLine(line);
+    string record_file = "";
+    int record_line = 0;
+    auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+    if (pdocview)
+    {
+        auto tmp_file = QStringToStdString(pdocview->getPathname());
+        if (isPathFile(tmp_file))
+        {
+            record_file = tmp_file;
+            record_line = pdocview->getCurrentLine();
+        }
+    }
+
+    if (openDoc(StdStringToQString(currentPath())+ "/" + file_relative))
+    {
+        pmain_tabwidget_->currentDocGotoLine(line);
+        if (0 != record_file.length() && record_line > 0)
+            JumpManager::getInstance().recordPosition(record_file, record_line);
+    }
 }
 
 void MainWindow::editSetFont()
@@ -565,6 +605,85 @@ void MainWindow::editComment()
 void MainWindow::editCommentBlock()
 {
     pmain_tabwidget_->currentDocComment(false);
+}
+
+void MainWindow::editGotoDefinition()
+{
+    DocView* pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+    if (pdocview)
+    {
+        psearch_results_widget_->clear();
+        vector<string> results;
+        if (pdocview->getDefinitions(results))
+        {
+            if (!results.empty())
+            {
+                int result_count = 0;
+                string file = "";
+                int line = 0;
+                for (auto it = results.begin(); it != results.end(); ++it)
+                {
+                    vector<string> vec;
+                    if (strSplit(*it, "\n", vec) == 3)
+                    {
+                        file = vec[0];
+                        line = lexicalCastDefault<int>(vec[1], 0);
+
+                        if (line > 0)
+                        {
+                            ++result_count;
+                            psearch_results_widget_->addItem(
+                                    StdStringToQString(vec[0]),
+                                    StdStringToQString(vec[1]),
+                                    StdStringToQString(vec[2]));
+                        }
+                    }
+                }
+
+                if (result_count == 1)
+                    gotoSearchResult(StdStringToQString(file), line);
+                else
+                    viewSearchResultsWidget();
+            }
+        }
+    }
+}
+
+void MainWindow::editJumpBack()
+{
+    auto position = JumpManager::getInstance().getBackPosition();
+    if (!position.first.empty() && position.second > 0)
+    {
+        if (gotoPosition(position.first, position.second))
+            JumpManager::getInstance().moveBack();
+        else
+            JumpManager::getInstance().clear();
+    }
+}
+
+void MainWindow::editJumpForward()
+{
+    auto position = JumpManager::getInstance().getForwardPosition();
+    if (!position.first.empty() && position.second > 0)
+    {
+        if (gotoPosition(position.first, position.second))
+            JumpManager::getInstance().moveForward();
+        else
+            JumpManager::getInstance().clear();
+    }
+}
+
+bool MainWindow::gotoPosition(const std::string& file, int line)
+{
+    if (openDoc(StdStringToQString(file)))
+    {
+        pmain_tabwidget_->currentDocGotoLine(line);
+        return true;
+    }
+    else
+    {
+        return false;
+    }
 }
 
 void MainWindow::viewFileExplorer()
@@ -653,31 +772,30 @@ void MainWindow::helpAbout()
     about_dlg.exec();
 }
 
-void MainWindow::openDoc(const QString& filepath)
+bool MainWindow::openDoc(const QString& filepath)
 {
     std::string file_path = QStringToStdString(filepath);
 
-    if("" == file_path)
+    if(file_path.empty())
     {
         if (this->isMinimized())
             this->showNormal();
         this->activateWindow();
-        return;
+        return true;
     }
 
-    if(util::isPathExists(file_path))
-    {
-        if(util::isPathFile(file_path))
-        {
-            if (!Extension::getInstance().isLegalFile(file_path))
-                return;
+    if(!util::isPathFile(file_path))
+        return false;
 
-            pmain_tabwidget_->addDocViewTab(filepath);
-            if (this->isMinimized())
-                this->showNormal();
-            this->activateWindow();
-        }
-    }
+    if (!Extension::getInstance().isLegalFile(file_path))
+        return false;
+
+    pmain_tabwidget_->addDocViewTab(filepath);
+    if (this->isMinimized())
+        this->showNormal();
+    this->activateWindow();
+
+    return true;
 }
 
 void MainWindow::addOutput(const QString& output)
@@ -692,7 +810,7 @@ void MainWindow::dumpOutput()
         return;
 
     string script = QStringToStdString(pdoc_view->getPathname());
-    if (script == "")
+    if (script.empty())
         return;
 
     pair<string, string> path_name = util::splitPathname(script);
@@ -712,7 +830,7 @@ void MainWindow::dumpOutput()
         return;
 
     QString qstr = poutput_widget_->getOutput();
-    if (qstr == "")
+    if (0 == qstr.length())
         return;
 
     string str = QStringToStdString(qstr);
@@ -758,7 +876,7 @@ void MainWindow::run()
         string addtional_args = "";
 
         string script = QStringToStdString(pdoc_view->getPathname());
-        if (script == "")
+        if (script.empty())
             return;
 
         pair<string, string> path_name = util::splitPathname(script);

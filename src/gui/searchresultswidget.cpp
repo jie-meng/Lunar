@@ -198,10 +198,10 @@ void SearchResultsWidget::keyPressEvent(QKeyEvent *event)
 void SearchResultsWidget::initConnections()
 {
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(onItemDoubleClicked(QTreeWidgetItem *, int)));
-    connect(&search_thread_, SIGNAL(found(const QString&, const QString&, const QString&)), this, SLOT(onAddItem(const QString&, const QString&, const QString&)));
+    connect(&search_thread_, SIGNAL(found(const QString&, const QString&, const QString&)), this, SLOT(addItem(const QString&, const QString&, const QString&)));
 }
 
-void SearchResultsWidget::onAddItem(const QString& file, const QString& line, const QString& text)
+void SearchResultsWidget::addItem(const QString& file, const QString& line, const QString& text)
 {
     QStringList list;
     list.append(file);

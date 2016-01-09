@@ -52,6 +52,7 @@
 #include "extension.h"
 #include "mainwindow.h"
 #include "apiloader.h"
+#include "goto_manager.h"
 
 using namespace std;
 using namespace util;
@@ -73,7 +74,9 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     executor_(""),
     parse_supplement_api_script_(""),
     parse_supplement_api_func_(""),
-    comment_line_symbol_(tr("")),
+    project_src_dir_(""),
+    goto_script_(""),
+    goto_definition_func_(""),
     selection_match_indicator_(0),
     new_file_sequence_no_(0)
 {
@@ -102,6 +105,14 @@ QString DocView::getTitle()
     {
         return ptext_edit_->isModified() ? "*" + title : title;
     }
+}
+
+int DocView::getCurrentLine()
+{
+    int line;
+    int index;
+    ptext_edit_->getCursorPosition(&line, &index);
+    return line+1;
 }
 
 void DocView::focusOnText()
@@ -147,6 +158,9 @@ void DocView::setLexerApi()
             executor_ = getValueFromMap<string>(dict, "executor", "");
             parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
             parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
+            project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", currentPath());
+            goto_script_ = getValueFromMap<string>(dict, "goto_script", "");
+            goto_definition_func_ = getValueFromMap<string>(dict, "goto_definition_func", "");
             comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));
             comment_block_symbol_begin_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_begin", ""));
             comment_block_symbol_end_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_end", ""));
@@ -189,12 +203,9 @@ void DocView::setLexerApi()
 void DocView::refreshSupplementApi()
 {
     if (papi_loader_ && ptext_edit_)
-    {
-        int line = 0;
-        int index = 0;
-        ptext_edit_->getCursorPosition(&line, &index);
-        papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_, line);
-    }
+        papi_loader_->loadSupplementApiAsync(
+            parse_supplement_api_script_, parse_supplement_api_func_,
+            getCurrentLine()-1);
 }
 
 void DocView::apisPreparationFinished()
@@ -751,6 +762,20 @@ void DocView::focusOnEdit()
 {
     if (ptext_edit_)
         ptext_edit_->setFocus();
+}
+
+bool DocView::getDefinitions(vector<string>& out_results)
+{
+    if (getPathname().length() == 0 || goto_script_.empty() || goto_definition_func_.empty())
+        return false;
+
+    return GotoManager::getInstance().getDefinitions(
+        goto_script_,
+        goto_definition_func_,
+        project_src_dir_,
+        QStringToStdString(getPathname()),
+        QStringToStdString(getSelectedText()),
+        out_results);
 }
 
 void DocView::setEditTextFont(const QFont& font)

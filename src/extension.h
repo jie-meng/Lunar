@@ -1,3 +1,6 @@
+#ifndef EXTENSION_H
+#define EXTENSION_H
+
 #include "util/luax.hpp"
 #include <map>
 
@@ -22,3 +25,5 @@ private:
 private:
     DISALLOW_COPY_AND_ASSIGN(Extension)
 };
+
+#endif // EXTENSION_H

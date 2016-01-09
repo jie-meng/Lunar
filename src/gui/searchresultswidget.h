@@ -56,10 +56,10 @@ public slots:
                       const QString& exts,
                       bool case_sensitive = true,
                       bool use_regexp = false);
+    void addItem(const QString& file, const QString& line, const QString& text);
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
 private slots:
-    void onAddItem(const QString& file, const QString& line, const QString& text);
     void onItemReturn(QTreeWidgetItem *item, int column);
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
 private:

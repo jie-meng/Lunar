@@ -34,6 +34,7 @@ public:
     inline QString getSaveDialogInitDir() const { return save_dialog_init_dir_; }
 
     QString getTitle();
+    int getCurrentLine();
     void focusOnText();
     void setEditTextFont(const QFont& font);
     void replace(const QString& replace_with_text);
@@ -55,6 +56,7 @@ public:
     QString getSelectedText() const;
     void gotoLine(int line);
     void focusOnEdit();
+    bool getDefinitions(std::vector<std::string>& out_results);
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
@@ -101,6 +103,9 @@ private:
     std::string executor_;
     std::string parse_supplement_api_script_;
 	std::string parse_supplement_api_func_;
+    std::string project_src_dir_;
+    std::string goto_script_;
+    std::string goto_definition_func_;
     QString comment_line_symbol_;
     QString comment_block_symbol_begin_;
     QString comment_block_symbol_end_;
