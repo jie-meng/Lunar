@@ -158,7 +158,7 @@ void DocView::setLexerApi()
             executor_ = getValueFromMap<string>(dict, "executor", "");
             parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
             parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
-            project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", currentPath());
+            project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", "");
             goto_script_ = getValueFromMap<string>(dict, "goto_script", "");
             goto_definition_func_ = getValueFromMap<string>(dict, "goto_definition_func", "");
             comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));

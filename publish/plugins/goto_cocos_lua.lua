@@ -30,6 +30,8 @@ function gotoDefinition(project_src_dir, filename, text)
                         matched = true
                     elseif string.match(trimmed_line, "function%s+[%w_]+:" .. text .. "%s*%(") then
                         matched = true
+                    elseif string.match(trimmed_line, text .. "%s*=%s*class%s*%(") then
+                        matched = true
                     end
                     
                     if matched then

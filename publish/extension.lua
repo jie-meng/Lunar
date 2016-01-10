@@ -25,7 +25,7 @@ function parseFileType(filename)
                 api = "apis/lua/standard,cocos.api", 
                 executor = "luaexec",
                 project_src_dir = "src/app",
-                goto_script = "plugins/goto_lua.lua",
+                goto_script = "plugins/goto_cocos_lua.lua",
                 goto_definition_func = "gotoDefinition",
                 parse_supplement_api_script = "plugins/parse_supplement_api_cocos_lua.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
@@ -116,6 +116,8 @@ function parseFileType(filename)
                 auto_complete_type = 1,
                 api = "apis/python/python3.api",
                 executor = "python3 -u",
+                goto_script = "plugins/goto_python.lua",
+                goto_definition_func = "gotoDefinition",
                 parse_supplement_api_script = "plugins/parse_supplement_api_python3.lua", 
                 parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "#"

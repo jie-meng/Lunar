@@ -3,7 +3,7 @@ function gotoDefinition(project_src_dir, filename, text)
     if strTrim(project_src_dir) ~= "" then
         find_path = find_path .. "/" .. project_src_dir
     end
-    local files = file.findFilesInDirRecursively(find_path, "lua")
+    local files = file.findFilesInDirRecursively(find_path, "py")
     
     table.sort(files, 
         function (a, b)
@@ -19,16 +19,14 @@ function gotoDefinition(project_src_dir, filename, text)
             while line do
                 repeat
                     local trimmed_line = strTrim(line)
-                    if trimmed_line == "" or strStartWith(trimmed_line, "--") then
+                    if trimmed_line == "" or strStartWith(trimmed_line, "#") then
                         break
                     end
                     
                     local matched = false
-                    if string.match(trimmed_line, "function%s+" .. text .. "%s*%(") then
+                    if string.match(trimmed_line, "def%s+" .. text .. "%s*%(") then
                         matched = true
-                    elseif string.match(trimmed_line, "function%s+[%w_]+%." .. text .. "%s*%(") then
-                        matched = true
-                    elseif string.match(trimmed_line, "function%s+[%w_]+:" .. text .. "%s*%(") then
+                    elseif string.match(trimmed_line, "class%s+" .. text .. "%s*%(") then
                         matched = true
                     end
                     
