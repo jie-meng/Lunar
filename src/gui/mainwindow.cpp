@@ -573,25 +573,34 @@ void MainWindow::searchTextInPath(
 
 void MainWindow::gotoSearchResult(const QString& file_relative, int line)
 {
-    string record_file = "";
-    int record_line = 0;
+    //take a record
+    auto record_pos = getCurrentPosition();
+
+    if (openDoc(StdStringToQString(currentPath())+ "/" + file_relative))
+    {
+        pmain_tabwidget_->currentDocGotoLine(line);
+
+        if (0 != record_pos.first.length() && record_pos.second > 0)
+            JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
+    }
+}
+
+std::pair<std::string, int> MainWindow::getCurrentPosition()
+{
+    string file = "";
+    int line = 0;
     auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
     if (pdocview)
     {
         auto tmp_file = QStringToStdString(pdocview->getPathname());
         if (isPathFile(tmp_file))
         {
-            record_file = tmp_file;
-            record_line = pdocview->getCurrentLine();
+            file = tmp_file;
+            line = pdocview->getCurrentLine();
         }
     }
 
-    if (openDoc(StdStringToQString(currentPath())+ "/" + file_relative))
-    {
-        pmain_tabwidget_->currentDocGotoLine(line);
-        if (0 != record_file.length() && record_line > 0)
-            JumpManager::getInstance().recordPosition(record_file, record_line);
-    }
+    return pair<string, int>(file, line);
 }
 
 void MainWindow::editSetFont()
@@ -654,24 +663,58 @@ void MainWindow::editGotoDefinition()
 void MainWindow::editJumpBack()
 {
     auto position = JumpManager::getInstance().getBackPosition();
-    if (!position.first.empty() && position.second > 0)
+    auto current_positon = getCurrentPosition();
+
+    while (
+           !position.first.empty() &&
+           position.second > 0 &&
+           !current_positon.first.empty() &&
+           current_positon.second > 0)
     {
-        if (gotoPosition(position.first, position.second))
-            JumpManager::getInstance().moveBack();
+        if (position != current_positon)
+        {
+            if (gotoPosition(position.first, position.second))
+                JumpManager::getInstance().moveBack();
+            else
+                JumpManager::getInstance().clear();
+            break;
+        }
         else
-            JumpManager::getInstance().clear();
+        {
+            if (!JumpManager::getInstance().moveBack())
+                break;
+
+            position = JumpManager::getInstance().getBackPosition();
+        }
     }
 }
 
 void MainWindow::editJumpForward()
 {
     auto position = JumpManager::getInstance().getForwardPosition();
-    if (!position.first.empty() && position.second > 0)
+    auto current_positon = getCurrentPosition();
+
+    while (
+           !position.first.empty() &&
+           position.second > 0 &&
+           !current_positon.first.empty() &&
+           current_positon.second > 0)
     {
-        if (gotoPosition(position.first, position.second))
-            JumpManager::getInstance().moveForward();
+        if (position != current_positon)
+        {
+            if (gotoPosition(position.first, position.second))
+                JumpManager::getInstance().moveForward();
+            else
+                JumpManager::getInstance().clear();
+            break;
+        }
         else
-            JumpManager::getInstance().clear();
+        {
+            if (!JumpManager::getInstance().moveForward())
+                break;
+
+            position = JumpManager::getInstance().getForwardPosition();
+        }
     }
 }
 

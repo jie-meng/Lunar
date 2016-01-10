@@ -91,6 +91,7 @@ private:
     void initExtension();
     void processCmdParam();
     bool gotoPosition(const std::string& file, int line);
+    std::pair<std::string, int> getCurrentPosition();
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
     QAction* pfile_save_action_;

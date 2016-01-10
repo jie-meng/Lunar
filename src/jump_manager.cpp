@@ -21,7 +21,7 @@ std::pair<std::string, int> JumpManager::getBackPosition()
     return cursor_ != jump_list_.begin() ? *getCursorLeft() : kPositionNone;
 }
 
-void JumpManager::moveForward()
+bool JumpManager::moveForward()
 {
     auto it = getCursorRight();
     if (it != jump_list_.end())
@@ -32,11 +32,14 @@ void JumpManager::moveForward()
         {
             jump_list_.erase(cursor_);
             cursor_ = jump_list_.insert(it_next, kPositionNone);
+            return true;
         }
     }
+
+    return false;
 }
 
-void JumpManager::moveBack()
+bool JumpManager::moveBack()
 {
     if (cursor_ != jump_list_.begin())
     {
@@ -45,8 +48,11 @@ void JumpManager::moveBack()
         {
             jump_list_.erase(cursor_);
             cursor_ = jump_list_.insert(it, kPositionNone);
+            return true;
         }
     }
+
+    return false;
 }
 
 void JumpManager::recordPosition(
@@ -54,10 +60,8 @@ void JumpManager::recordPosition(
         int line)
 {
     while (getCursorRight() != jump_list_.end())
-    {
         jump_list_.pop_back();
-        //update it to prevent pop make it lose reference
-    }
+
     jump_list_.insert(cursor_, std::pair<string, int>(file, line));
     if (jump_list_.size() > 30)
         jump_list_.erase(jump_list_.begin());

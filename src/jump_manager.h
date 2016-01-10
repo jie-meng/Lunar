@@ -12,8 +12,8 @@ public:
     JumpManager();
     std::pair<std::string, int> getForwardPosition();
     std::pair<std::string, int> getBackPosition();
-    void moveForward();
-    void moveBack();
+    bool moveForward();
+    bool moveBack();
     void recordPosition(
             const std::string& file,
             int line);
