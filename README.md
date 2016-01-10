@@ -1,8 +1,10 @@
 ## Lunar ##
-A cross-platform script IDE
 
-- You can make your own auto-completion plugin which meets you needs.
-- Currently provided: lua, cocos_lua, python2 & 3, octave
+A cross-platform script editor
+
+- You can make your own auto-completion plugin as you wish.
+- You can make your own goto-definition plugin as you wish.
+- Currently provided: lua, cocos2dx_lua, python2 & 3, octave
 
 ### enviromment ###
 
@@ -40,6 +42,8 @@ luaexec remake_lunar.lua
 
 ### release ###
 
+On all platform
+
 - Make a dir named Lunar, lets' call it LUNAR_HOME. 
 - and put all the files and folders in public to LUNAR_HOME.
 - Put luaexec and Lunar to LUNAR_HOME.
@@ -75,3 +79,9 @@ On windows (You can find all the dlls in Qt installation directory):
 	Support extension_tools, right-click mouse on directory of file explore, you can use extension tools.
 	
 	You can make your extension_tools of you own. The extension_tools can be programmed in any script language you Lunar supported.
+
+- 2016.01.10
+    
+    Support goto_definition, jump list.
+
+    You can make your goto definition plugin for your own needs. Use plugins/goto_lua.lua as an example.
