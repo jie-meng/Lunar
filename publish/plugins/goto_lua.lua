@@ -19,7 +19,7 @@ function gotoDefinition(project_dir, filename, text)
                     end
                     
                     local matched = false
-                    if string.match(trimmed_line, "function%s+" .. text .. "") then
+                    if string.match(trimmed_line, "function%s+" .. text .. "%s*%(") then
                         matched = true
                     elseif string.match(trimmed_line, "function%s+[%w_]+%." .. text .. "%s*%(") then
                         matched = true

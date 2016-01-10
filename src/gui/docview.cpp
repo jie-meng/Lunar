@@ -769,15 +769,30 @@ bool DocView::getDefinitions(vector<string>& out_results)
     if (getPathname().length() == 0 || goto_script_.empty() || goto_definition_func_.empty())
         return false;
 
-    if (getSelectedText().trimmed().length() == 0)
-        return false;
+    QString text;
+    if (getSelectedText().trimmed().length() > 0)
+    {
+        text = getSelectedText().trimmed();
+    }
+    else
+    {
+        int line;
+        int index;
+        ptext_edit_->getCursorPosition(&line, &index);
+        if (line < 0 || index < 0)
+            return false;
+
+        text = ptext_edit_->wordAtLineIndex(line, index);
+        if (text.trimmed().length() == 0)
+            return false;
+    }
 
     return GotoManager::getInstance().getDefinitions(
         goto_script_,
         goto_definition_func_,
         project_src_dir_,
         QStringToStdString(getPathname()),
-        QStringToStdString(getSelectedText()),
+        QStringToStdString(text),
         out_results);
 }
 
