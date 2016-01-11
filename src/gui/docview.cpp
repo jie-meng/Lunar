@@ -204,8 +204,10 @@ void DocView::refreshSupplementApi()
 {
     if (papi_loader_ && ptext_edit_)
         papi_loader_->loadSupplementApiAsync(
-            parse_supplement_api_script_, parse_supplement_api_func_,
-            getCurrentLine());
+            parse_supplement_api_script_,
+            parse_supplement_api_func_,
+            getCurrentLine(),
+            project_src_dir_);
 }
 
 void DocView::apisPreparationFinished()

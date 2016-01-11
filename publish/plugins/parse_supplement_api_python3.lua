@@ -344,7 +344,7 @@ end
 
 local build_in_classes = buildInClasses()
 
-function parseSupplementApi(filename, cursor_line)
+function parseSupplementApi(filename, cursor_line, project_src_dir)
 
     local apis = {}
     

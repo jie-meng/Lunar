@@ -192,7 +192,7 @@ function parseClass(current_file_dir, import_path)
     return class
 end
 
-function parseSupplementApi(filename, cursor_line)
+function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
   
     local path, name = file.splitPathname(filename)

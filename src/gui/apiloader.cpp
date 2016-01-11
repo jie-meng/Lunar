@@ -23,6 +23,7 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
     parse_supplement_api_script_(""),
     parse_supplement_api_func_(""),
     cursor_line_(0),
+    project_src_dir_(""),
     papi_loader_(papi_loader),
     load_api_type_(Unknown),
     loading_(false)
@@ -50,7 +51,10 @@ void ApiLoadThread::startLoadCommonApi(const std::string& api_dirs)
     }
 }
 
-void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
+void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplement_api_script,
+                                              const std::string& parse_supplement_api_func,
+                                              int cursor_line,
+                                              const std::string& project_src_dir)
 {
     if (isRunning() || loading_)
         return;
@@ -61,6 +65,7 @@ void ApiLoadThread::startRefreshSupplementApi(const std::string& parse_supplemen
         parse_supplement_api_script_ = parse_supplement_api_script;
         parse_supplement_api_func_ = parse_supplement_api_func;
         cursor_line_ = cursor_line;
+        project_src_dir_ = project_src_dir;
 
         QThread::start();
     }
@@ -87,7 +92,10 @@ void ApiLoadThread::run()
         {
             loading_ = true;
 
-            std::pair<bool, string> ret = papi_loader_->refreshSupplementApi(parse_supplement_api_script_, parse_supplement_api_func_, cursor_line_);
+            std::pair<bool, string> ret = papi_loader_->refreshSupplementApi(parse_supplement_api_script_,
+                                                                             parse_supplement_api_func_,
+                                                                             cursor_line_,
+                                                                             project_src_dir_);
             parse_supplement_api_script_ = "";
             parse_supplement_api_func_ = "";
             cursor_line_ = 0;
@@ -241,18 +249,21 @@ void ApiLoader::loadCommonApiAsync(const std::string& api_dirs)
     api_load_thread_.startLoadCommonApi(api_dirs);
 }
 
-void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
+void ApiLoader::loadSupplementApiAsync(const std::string& parse_supplement_api_script,
+                                       const std::string& parse_supplement_api_func,
+                                       int cursor_line,
+                                       const std::string& project_src_dir)
 {
-    api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line);
+    api_load_thread_.startRefreshSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line, project_src_dir);
 }
 
-std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
+std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line, const std::string& project_src_dir)
 {
     clearSupplementApi();
 
     if ("" != parse_supplement_api_script && "" != parse_supplement_api_func)
     {
-        bool ret = appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line);
+        bool ret = appendSupplementApi(parse_supplement_api_script, parse_supplement_api_func, cursor_line, project_src_dir);
         if (ret)
         {
             set_difference(api_supplement_last_.begin(), api_supplement_last_.end(), api_supplement_.begin(), api_supplement_.end(), back_inserter(remove_apis_));
@@ -276,12 +287,15 @@ std::pair<bool, std::string> ApiLoader::refreshSupplementApi(const std::string& 
     }
 }
 
-bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line)
+bool ApiLoader::appendSupplementApi(const std::string& parse_supplement_api_script,
+                                    const std::string& parse_supplement_api_func,
+                                    int cursor_line,
+                                    const std::string& project_src_dir)
 {
     if (!initLuaState(parse_supplement_api_script))
         return false;
 
-    return parseSupplementApi(parse_supplement_api_func, cursor_line);
+    return parseSupplementApi(parse_supplement_api_func, cursor_line, project_src_dir);
 }
 
 void ApiLoader::clearSupplementApi()
@@ -295,7 +309,9 @@ void ApiLoader::clearSupplementApi()
     api_supplement_.clear();
 }
 
-bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func, int cursor_line)
+bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func,
+                                   int cursor_line,
+                                   const std::string& project_src_dir)
 {
     if (!lua_state_ok_)
         return false;
@@ -303,8 +319,9 @@ bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func,
     luaGetGlobal(lua_state_.getState(), parse_supplement_api_func);
     luaPushString(lua_state_.getState(), file_);
     luaPushInteger(lua_state_.getState(), cursor_line);
+    luaPushString(lua_state_.getState(), project_src_dir);
 
-    int err = luaCallFunc(lua_state_.getState(), 2, 1);
+    int err = luaCallFunc(lua_state_.getState(), 3, 1);
     if (0 != err)
     {
         error_information_ = strFormat("ApiLoader.parseSupplementApi: %s", luaGetError(lua_state_.getState(), err).c_str());

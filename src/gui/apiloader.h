@@ -29,7 +29,10 @@ public:
     ApiLoadThread(ApiLoader* papi_loader, QObject *parent = 0);
     virtual ~ApiLoadThread();
     void startLoadCommonApi(const std::string& api_dirs);
-    void startRefreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
+    void startRefreshSupplementApi(const std::string& parse_supplement_api_script,
+                                   const std::string& parse_supplement_api_func,
+                                   int cursor_line,
+                                   const std::string& project_src_dir);
     inline void resetLoading() { loading_ = false; }
 signals:
     void loadFinish(bool, const QString&);
@@ -44,6 +47,7 @@ private:
     std::string parse_supplement_api_script_;
     std::string parse_supplement_api_func_;
     int cursor_line_;
+    std::string project_src_dir_;
     ApiLoader* papi_loader_;
     LoadApiType load_api_type_;
     bool loading_;
@@ -64,15 +68,26 @@ public:
     ~ApiLoader();
 
     void loadCommonApiAsync(const std::string& api_dirs);
-    void loadSupplementApiAsync(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
+    void loadSupplementApiAsync(const std::string& parse_supplement_api_script,
+                                const std::string& parse_supplement_api_func,
+                                int cursor_line,
+                                const std::string& project_src_dir);
     inline std::string errorInformation() const { return error_information_; }
     inline QsciAPIsEx* getApis() { return papis_; }
 private:
     bool initLuaState(const std::string& parse_supplement_api_script);
     void loadCommonApi(const std::string& api_dirs);
-    std::pair<bool, std::string> refreshSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
-    bool parseSupplementApi(const std::string& parse_supplement_api_func, int cursor_line);
-    bool appendSupplementApi(const std::string& parse_supplement_api_script, const std::string& parse_supplement_api_func, int cursor_line);
+    std::pair<bool, std::string> refreshSupplementApi(const std::string& parse_supplement_api_script,
+                                                      const std::string& parse_supplement_api_func,
+                                                      int cursor_line,
+                                                      const std::string& project_src_dir);
+    bool parseSupplementApi(const std::string& parse_supplement_api_func,
+                            int cursor_line,
+                            const std::string& project_src_dir);
+    bool appendSupplementApi(const std::string& parse_supplement_api_script,
+                             const std::string& parse_supplement_api_func,
+                             int cursor_line,
+                             const std::string& project_src_dir);
     void clearSupplementApi();
     void prepare();
 private:
