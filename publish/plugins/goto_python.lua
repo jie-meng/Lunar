@@ -1,4 +1,4 @@
-function gotoDefinition(project_src_dir, filename, text)
+function gotoDefinition(text, line, filename, project_src_dir)
     local find_path = file.currentPath()
     if strTrim(project_src_dir) ~= "" then
         find_path = find_path .. "/" .. project_src_dir
@@ -14,11 +14,11 @@ function gotoDefinition(project_src_dir, filename, text)
     for _, v in ipairs(files) do
         local f = io.open(v, "r")
         if f then
-            local line = f:read("*line")
+            local readline = f:read("*line")
             local line_index = 1
-            while line do
+            while readline do
                 repeat
-                    local trimmed_line = strTrim(line)
+                    local trimmed_line = strTrim(readline)
                     if trimmed_line == "" or strStartWith(trimmed_line, "#") then
                         break
                     end
@@ -33,11 +33,11 @@ function gotoDefinition(project_src_dir, filename, text)
                     if matched then
                         local _, j = string.find(v, file.currentPath())
                         if j then
-                            table.insert(results, string.format("%s\n%d\n%s", string.sub(v, j+2), line_index, line))
+                            table.insert(results, string.format("%s\n%d\n%s", string.sub(v, j+2), line_index, readline))
                         end
                     end
                 until true
-                line = f:read("*line")
+                readline = f:read("*line")
                 line_index = line_index+1
             end
         end

@@ -12,9 +12,10 @@ public:
     bool getDefinitions(
             const std::string& script,
             const std::string& func,
-            const std::string& project_dir,
-            const std::string& current_file,
             const std::string& text,
+            int line,
+            const std::string& filename,
+            const std::string& project_dir,
             std::vector< std::string >& out_result);
 private:
     util::LuaState lua_state_;

@@ -751,7 +751,7 @@ function processCurrentFileObjects(filename, cursor_line, classes, imports)
     local f = io.open(filename, "r")
     if f then
         local line = f:read("*line")
-        local current_line = 0
+        local current_line = 1
         while (line and current_line < cursor_line) do
             repeat
                 if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then

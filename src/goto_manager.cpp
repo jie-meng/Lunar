@@ -16,9 +16,10 @@ GotoManager::GotoManager()
 bool GotoManager::getDefinitions(
         const std::string& script,
         const std::string& func,
-        const std::string& project_dir,
-        const std::string& current_file,
         const std::string& text,
+        int line,
+        const std::string& filename,
+        const std::string& project_dir,
         std::vector< std::string >& out_result)
 {
     if (!isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + script))
@@ -36,11 +37,13 @@ bool GotoManager::getDefinitions(
     else
     {
         luaGetGlobal(lua_state_.getState(), func);
-        luaPushString(lua_state_.getState(), project_dir);
-        luaPushString(lua_state_.getState(), current_file);
-        luaPushString(lua_state_.getState(), text);
 
-        int err = luaCallFunc(lua_state_.getState(), 3, 1);
+        luaPushString(lua_state_.getState(), text);
+        luaPushInteger(lua_state_.getState(), line);
+        luaPushString(lua_state_.getState(), filename);
+        luaPushString(lua_state_.getState(), project_dir);
+
+        int err = luaCallFunc(lua_state_.getState(), 4, 1);
         if (0 != err)
         {
             LunarMsgBox(strFormat("Error<GotoManager::gotoDefinition> Execute func failed: %s.", luaGetError(lua_state_.getState(), err).c_str()));

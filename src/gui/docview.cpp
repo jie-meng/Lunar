@@ -182,7 +182,7 @@ void DocView::setLexerApi()
                 papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
                 papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
                 //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
-                //papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_);
+                //papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_, getCurrentLine());
 
                 //parse success
                 file_type_ = filetype;
@@ -205,7 +205,7 @@ void DocView::refreshSupplementApi()
     if (papi_loader_ && ptext_edit_)
         papi_loader_->loadSupplementApiAsync(
             parse_supplement_api_script_, parse_supplement_api_func_,
-            getCurrentLine()-1);
+            getCurrentLine());
 }
 
 void DocView::apisPreparationFinished()
@@ -790,9 +790,10 @@ bool DocView::getDefinitions(vector<string>& out_results)
     return GotoManager::getInstance().getDefinitions(
         goto_script_,
         goto_definition_func_,
-        project_src_dir_,
-        QStringToStdString(getPathname()),
         QStringToStdString(text),
+        getCurrentLine(),
+        QStringToStdString(getPathname()),
+        project_src_dir_,
         out_results);
 }
 
