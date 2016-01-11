@@ -291,9 +291,14 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     local path, name = file.splitPathname(filename)
     local base = file.fileBaseName(name)
     
+    local search_path = file.currentPath()
+    if strTrim(project_src_dir) ~= "" then
+        search_path = search_path .. "/" .. project_src_dir
+    end
+    
     local imports = parseImports(filename)
-    local functions = parseFunctions(base, path, false, true)
-    local classes = parseClasses(base, path)
+    local functions = parseFunctions(base, path, search_path, false, true)
+    local classes = parseClasses(base, path, search_path)
     
     for _, v in pairs(functions) do
         table.insert(apis, v)
@@ -422,7 +427,7 @@ function findClass(class_desc, classes)
     return nil
 end
 
-function getModuleFile(module_name, path)
+function getModuleFile(module_name, path, search_path)
     local relative_path = strRelaceAll(module_name, ".", "/")
     
     -- check relative path first
@@ -432,7 +437,7 @@ function getModuleFile(module_name, path)
     end
     
     -- then check from currentpath
-    filename = string.format("%s/%s.py", file.currentPath(), relative_path)
+    filename = string.format("%s/%s.py", search_path, relative_path)
     if file.isPathFile(filename) then
         return filename
     end
@@ -482,11 +487,11 @@ function parseImports(filename)
     return imports
 end
 
-function parseFunctions(module_name, path, add_module_prefix, recursive, function_coll)
+function parseFunctions(module_name, path, search_path, add_module_prefix, recursive, function_coll)
 
     local functions = function_coll or {}
     
-    local filename = getModuleFile(module_name, path)
+    local filename = getModuleFile(module_name, path, search_path)
     if not filename then
         return functions
     end
@@ -519,13 +524,13 @@ function parseFunctions(module_name, path, add_module_prefix, recursive, functio
                 if recursive then
                     local from_import_module = string.match(line, pattern_from_import)
                     if from_import_module then
-                        parseFunctions(from_import_module, filepath, false, false, functions)
+                        parseFunctions(from_import_module, filepath, search_path, false, false, functions)
                         break
                     end
                     
                     local import_module = string.match(line, pattern_import)
                     if import_module then
-                        parseFunctions(import_module, filepath, true, false, functions)
+                        parseFunctions(import_module, filepath, search_path, true, false, functions)
                         break
                     end
                 end
@@ -539,12 +544,12 @@ function parseFunctions(module_name, path, add_module_prefix, recursive, functio
     return functions
 end
 
-function parseClasses(module_name, path, class_coll)
+function parseClasses(module_name, path, search_path, class_coll)
     
     local classes = class_coll or {}
     local class_scope_stack = {}
     
-    local filename = getModuleFile(module_name, path)
+    local filename = getModuleFile(module_name, path, search_path)
     if not filename then
         return classes
     end
@@ -625,13 +630,13 @@ function parseClasses(module_name, path, class_coll)
                 
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
-                    parseClasses(from_import_module, filepath, classes)
+                    parseClasses(from_import_module, filepath, search_path, classes)
                     break
                 end
                         
                 local import_module = string.match(line, pattern_import)
                 if import_module then
-                    parseClasses(import_module, filepath, classes)
+                    parseClasses(import_module, filepath, search_path, classes)
                     break
                 end
                 
