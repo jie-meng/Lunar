@@ -1,14 +1,31 @@
+local pattern_import_lua = [[([%w_]+)%s*=%s*import%("([%w_%.%s]+)"%)]]
+local pattern_class_lua = [[([%w_]+)%s*=%s*class%("[%w_]+"(["%%()%,%.%s%w_]*)%)]]
+
 function gotoDefinition(text, line, filename, project_src_dir)
+    local imports = {}
+    findImports(filename, imports, true)
+    
     local find_path = file.currentPath()
     if strTrim(project_src_dir) ~= "" then
         find_path = find_path .. "/" .. project_src_dir
     end
-    local files = file.findFilesInDirRecursively(find_path, "lua")
+    local all_files_in_project = file.findFilesInDirRecursively(find_path, "lua")
+    
+    local files = {}
+    for _, v in ipairs(all_files_in_project) do
+        if imports[v] then
+            table.insert(files, v)
+        end
+    end
+    all_files_in_project = nil
+    imports = nil
     
     table.sort(files, 
         function (a, b)
             return string.len(a) > string.len(b)
         end)
+    -- insert current file to the first one
+    table.insert(files, 1, filename)
     
     local results = {}
     for _, v in ipairs(files) do
@@ -44,9 +61,57 @@ function gotoDefinition(text, line, filename, project_src_dir)
                 readline = f:read("*line")
                 line_index = line_index+1
             end
+            io.close(f)
         end
-        io.close(f)
     end
     
     return results
+end
+
+function findImports(filename, out_imports, current_file)
+    local import_files = {}
+    
+    local f = io.open(filename, "r")
+    if f then
+        local readline = f:read("*line")
+        while readline do
+            repeat
+                local trimmed_line = strTrim(readline)
+                if trimmed_line == "" or strStartWith(trimmed_line, "--") then
+                    break
+                end
+                
+                local current_file_path = file.splitPathname(filename)
+                local name, path = string.match(trimmed_line, pattern_import_lua)
+                if name and path then
+                    local import_file = nil
+                    if strStartWith(strTrimLeft(path), ".") then
+                        import_file = current_file_path .. strRelaceAll(path, ".", "/") .. ".lua"
+                    else
+                        import_file = file.currentPath() .. "/src/" .. strRelaceAll(path, ".", "/") .. ".lua"
+                    end
+                    import_files[name] = import_file
+                    if current_file then
+                        out_imports[import_file] = true
+                    end
+                end
+                
+                local name, extends = string.match(readline, pattern_class_lua)
+                if name and extends then
+                    local tb = strSplit(extends, ",")
+                    for _, v in ipairs(tb) do
+                        local extend = strTrim(v)
+                        if string.len(extend) > 0 and import_files[extend] then
+                            out_imports[import_files[extend]] = true
+                            findImports(import_files[extend], out_imports, false)
+                        end
+                    end
+                    break
+                end
+                
+            until true
+            readline = f:read("*line")
+        end
+        io.close(f)
+    end
 end

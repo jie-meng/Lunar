@@ -40,8 +40,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
                 readline = f:read("*line")
                 line_index = line_index+1
             end
+            io.close(f)
         end
-        io.close(f)
     end
     
     return results
