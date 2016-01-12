@@ -17,13 +17,16 @@ print("Find text: " .. find_text)
 print("Input replace text:")
 local replace_text = strTrim(io.read())
 print("Replace text: " .. replace_text)
+print()
 
 local tb = file.findFilesInDirRecursively(file.currentPath(), ext)
 for _, v in ipairs(tb) do
     local text = file.readTextFile(v)
     if strContains(text, find_text) then
         local replace = strRelaceAll(text, find_text, replace_text)
-        file.writeTextFile(v, replace)
+        if file.writeTextFile(v, replace) then
+            print(string.format("Replace in file %s ok.", v))
+        end
     end
 end
 
