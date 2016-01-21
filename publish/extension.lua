@@ -114,7 +114,7 @@ function parseFileType(filename)
                 -- python3
                 type = "python",
                 auto_complete_type = 1,
-                api = "apis/python/python3.api",
+                api = "apis/python",
                 executor = "python3 -u",
                 goto_script = "plugins/goto_python.lua",
                 goto_definition_func = "gotoDefinition",
