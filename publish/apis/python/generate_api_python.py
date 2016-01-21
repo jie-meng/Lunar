@@ -12,27 +12,6 @@ pattern_func_half = re.compile(regex_func_half)
 pattern_class = re.compile(regex_class)    
 pattern_class_extend = re.compile(regex_class_extend)
 
-#m = pattern.search('def parseLine(prefix, line, out_list):')
-#if m:
-#    print(m.group(0))
-#    print(m.group(1))
-#    print(m.group(2))
-
-#print()
-
-#m = pattern.search('class Go:')
-#if m:
-#    print(m.group(0))
-#    print(m.group(1))
-
-#print()
-
-#m = pattern.search('class Test(object, damn):')
-#if m:
-#    print(m.group(0))
-#    print(m.group(1))
-#    print(m.group(2))
-
 class Function(object):
     def __init__(self, name, params, comment = ''):
         self.__name = name
@@ -178,13 +157,12 @@ def parseFolder(syspath_list, prefix, dir, func_list, class_list):
 
 # main
 sys_path_list = []
-for dir in sys.path:
-    if os.getcwd() == dir:
+for path in sys.path:
+    if os.getcwd() == path:
         continue
     
-    if os.path.isdir(dir):
-        if len([x for x in os.listdir(dir) if x.endswith('py')]) > 0:
-            sys_path_list.append(dir.replace('\\', '/'))
+    if os.path.isdir(path):
+        sys_path_list.append(path.replace('\\', '/'))
 
 sys_path_list.sort(key = lambda x: len(x), reverse = True)
 
@@ -197,6 +175,13 @@ for sys_path in sys_path_list:
 # saving
 print('saving api file to \'python.api\' ...')
 f = open('python.api', 'wt')
+
+f.writelines([x + '\n' for x in dir(__builtins__) if not x.startswith('__')])
+f.writelines(['string.' + x + '\n' for x in dir('') if not x.startswith('__')])
+f.writelines(['list.' + x + '\n' for x in dir('list') if not x.startswith('__')])
+f.writelines(['set.' + x + '\n' for x in dir('set') if not x.startswith('__')])
+f.writelines(['dict.' + x + '\n' for x in dir('dict') if not x.startswith('__')])
+
 f.writelines([x.getName() + '(' + x.getParams() + ')\n' for x in func_list])
 for cls in class_list:
 #    f.writelines([cls.getName() + '.' + x.getName() + '(' + x.getParams() + ')\n' for x in cls.getMethods()])
