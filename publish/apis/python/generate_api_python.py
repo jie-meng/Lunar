@@ -3,7 +3,7 @@ import os
 import re
 
 regex_func = 'def\s+([\w_]+)\s*\((.*)\)\s*:'
-regex_func_half = 'def\s+([\w_]+)'
+regex_func_half = 'def\s+([\w_]+)\s*\('
 regex_class = 'class\s+([\w_]+)\s*:'
 regex_class_extend = 'class\s+([\w_]+)\s*\((.*)\)\s*:'
 
@@ -12,7 +12,6 @@ pattern_func_half = re.compile(regex_func_half)
 pattern_class = re.compile(regex_class)    
 pattern_class_extend = re.compile(regex_class_extend)
 
-#pattern = re.compile(regex_func)
 #m = pattern.search('def parseLine(prefix, line, out_list):')
 #if m:
 #    print(m.group(0))
@@ -21,7 +20,6 @@ pattern_class_extend = re.compile(regex_class_extend)
 
 #print()
 
-#pattern = re.compile(regex_class)
 #m = pattern.search('class Go:')
 #if m:
 #    print(m.group(0))
@@ -29,7 +27,6 @@ pattern_class_extend = re.compile(regex_class_extend)
 
 #print()
 
-#pattern = re.compile(regex_class_extend)    
 #m = pattern.search('class Test(object, damn):')
 #if m:
 #    print(m.group(0))
@@ -48,12 +45,22 @@ class Function(object):
     def getParams(self):
         return self.__params
         
+    def setParams(self, params):
+        self.__params = params
+        
     def getComment(self):
         return self.__comment
 
 class Method(Function):
     def __init__(self, name, params, comment = ''):
         super(Method, self).__init__(name, params, comment)
+        
+        params = params.strip()
+        if params.startswith('self'):
+            params = params.replace('self', '', 1).lstrip()
+            if params.startswith(','):
+                params = params.replace(',', '', 1).lstrip()
+        self.setParams(params)
 
 class Cls(object):
     def __init__(self, indent, name, extends = []):
@@ -135,7 +142,7 @@ def parseLine(cls_stack, prefix, line, func_list, class_list):
                     cls_stack.append(Cls(indent, m.group(1), [x.strip() for x in m.group(2).split(',')]))
     
 def parseFile(prefix, file, func_list, class_list):
-    #print("Parse file <%s> with prefix (%s)" % (file, prefix))
+    print("Parse file <%s>" % file)
     f = open(file, 'r')
     cls_stack = []
     try:
@@ -159,7 +166,7 @@ def parseFile(prefix, file, func_list, class_list):
             class_list.append(cls_stack.pop())
 
 def parseFolder(syspath_list, prefix, dir, func_list, class_list):
-    #print('Parse folder [%s] with prefix (%s)' % (dir, prefix))
+    #print('Parse folder [%s]' % dir)
     for x in os.listdir(dir):
         path = dir + '/' + x
         if os.path.isfile(path) and x.endswith('.py'):
@@ -188,12 +195,16 @@ for sys_path in sys_path_list:
     parseFolder(sys_path_list, '', sys_path, func_list, class_list)
     
 # saving
-print('saving api file ...\n')
+print('saving api file to \'python.api\' ...')
 f = open('python.api', 'wt')
 f.writelines([x.getName() + '(' + x.getParams() + ')\n' for x in func_list])
 for cls in class_list:
-#    print([cls.getName() + '.' + x.getName() + '(' + x.getParams() + ')' for x in cls.getMethods()])
-    f.writelines([cls.getName() + '.' + x.getName() + '(' + x.getParams() + ')\n' for x in cls.getMethods()])
+#    f.writelines([cls.getName() + '.' + x.getName() + '(' + x.getParams() + ')\n' for x in cls.getMethods()])
+    for cls_method in cls.getMethods():
+        f.write(cls.getName() + '.' + cls_method.getName() + '(' + cls_method.getParams() + ')\n')
+        if cls_method.getName().strip() == "__init__":
+            f.write(cls.getName() + '(' + cls_method.getParams() + ')\n')
+            
 f.close()
 
-print('done\n')
+print('done')

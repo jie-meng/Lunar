@@ -282,7 +282,7 @@ function buildInClasses()
     return classes
 end
 
-local build_in_classes = buildInClasses()
+--local build_in_classes = buildInClasses()
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
 
@@ -317,12 +317,12 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
         end
     end
     
-    local objects = processCurrentFileObjects(filename, cursor_line, classes, imports)
-    for _, v in pairs(objects) do
-        if imports[v:getModuleName()] then
-            parseClassesApis(apis, imports, v, v, true)
-        end
-    end
+    --local objects = processCurrentFileObjects(filename, cursor_line, classes, imports)
+    --for _, v in pairs(objects) do
+    --    if imports[v:getModuleName()] then
+    --        parseClassesApis(apis, imports, v, v, true)
+    --    end
+    --end
     
     return apis
 end
