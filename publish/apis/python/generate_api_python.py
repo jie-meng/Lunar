@@ -100,17 +100,19 @@ def parseLine(cls_stack, prefix, line, func_list, class_list):
     
     m = pattern_func.search(line)
     if m:
-        if cur_cls:
-            cur_cls.addMethod(Method(m.group(1), m.group(2)))
-        else:
-            func_list.append(Function(trimInitOfPrefix(prefix) + m.group(1), m.group(2)))
-    else:
-        m = pattern_func_half.search(line)
-        if m:
+        if m.group(1) == '__init__' or not m.group(1).startswith('__'):
             if cur_cls:
                 cur_cls.addMethod(Method(m.group(1), m.group(2)))
             else:
-                func_list.append(Function(trimInitOfPrefix(prefix) + m.group(1), '??'))
+                func_list.append(Function(trimInitOfPrefix(prefix) + m.group(1), m.group(2)))
+    else:
+        m = pattern_func_half.search(line)
+        if m:
+            if m.group(1) == '__init__' or not m.group(1).startswith('__'):
+                if cur_cls:
+                    cur_cls.addMethod(Method(m.group(1), m.group(2)))
+                else:
+                    func_list.append(Function(trimInitOfPrefix(prefix) + m.group(1), '??'))
         else:
             m = pattern_class.search(line)
             if m:
