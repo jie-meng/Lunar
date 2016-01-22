@@ -1,6 +1,7 @@
 import sys
 import os
 import re
+import platform
 
 regex_func = 'def\s+([\w_]+)\s*\((.*)\)\s*:'
 regex_func_half = 'def\s+([\w_]+)\s*\('
@@ -123,7 +124,7 @@ def parseLine(cls_stack, prefix, line, func_list, class_list):
                     cls_stack.append(Cls(indent, m.group(1), [x.strip() for x in m.group(2).split(',')]))
     
 def parseFile(prefix, file, func_list, class_list):
-    print("Parse file <%s>" % file)
+    print("Parse file <%s> with prefix (%s)" % (file, trimInitOfPrefix(prefix)))
     f = open(file, 'r')
     cls_stack = []
     try:
@@ -153,6 +154,8 @@ def parseFolder(syspath_list, prefix, dir, func_list, class_list):
         if os.path.isfile(path) and x.endswith('.py'):
             parseFile(prefix + x[:-2], path, func_list, class_list)
         elif os.path.isdir(path):
+            if 'windows' in platform.system().lower():
+                path = path.lower()
             if path not in syspath_list:
                 if len([y for y in os.listdir(path) if y.endswith('py')]) > 0:
                     parseFolder(syspath_list, prefix + x + ".", path, func_list, class_list)
@@ -164,6 +167,8 @@ for path in sys.path:
         continue
     
     if os.path.isdir(path):
+        if 'windows' in platform.system().lower():
+            path = path.lower()
         sys_path_list.append(path.replace('\\', '/'))
 
 sys_path_list.sort(key = lambda x: len(x), reverse = True)
