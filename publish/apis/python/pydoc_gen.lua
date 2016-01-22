@@ -1,22 +1,3 @@
-local modules = {}
-table.insert(modules, 'string')
-table.insert(modules, 'list')
-table.insert(modules, 'set')
-table.insert(modules, 'dict')
-table.insert(modules, 'sys')
-table.insert(modules, 'os')
-table.insert(modules, 'fileinput')
-table.insert(modules, 'shelve')
-table.insert(modules, 'time')
-table.insert(modules, 'random')
-table.insert(modules, 'shutil')
-table.insert(modules, 're')
-table.insert(modules, 'json')
-table.insert(modules, 'email')
-table.insert(modules, 'xlrd')
-table.insert(modules, 'xlwt')
-table.insert(modules, 'numpy')
-
 --[[constants]]
 kLabelName = 'NAME'
 kLabelFile = 'FILE'
@@ -65,9 +46,18 @@ end
 function LineParser:addApi(api)
     if self:getColl() then
         if strStartWith(api, '(') then
-            table.insert(self:getColl(), self:generatePrefix() .. api)
+            if not self:getColl()[self:generatePrefix()] then
+                self:getColl()[self:generatePrefix()] = self:generatePrefix() .. api
+            end
         else
-            table.insert(self:getColl(), self:generatePrefix() .. '.' .. api)
+            local i = string.find(api, '%(')
+            if i then
+                local prefix = self:generatePrefix()
+                if string.len(prefix) > 0 then
+                    prefix = prefix .. '.'
+                end
+                self:getColl()[prefix .. string.sub(api, 1, i-1)] = prefix .. api
+            end
         end
     end
 end
@@ -117,11 +107,16 @@ function ClassParser:parse(line)
 end
 
 function ClassParser:generatePrefix()
-    local suffix = ''
-    if self.class_name_ and string.len(strTrim(self.class_name_)) > 0 then
-        suffix = '.' .. self.class_name_
+    local package = strJoin(self.package_, '.')
+    if string.len(package) == 0 then
+        return self.class_name_
     end
-    return strJoin(self.package_, '.') .. suffix
+    
+    if string.len(self.class_name_) == 0 then
+        return package
+    end
+    
+    return package .. '.' .. self.class_name_
 end
 
 --[[class: FunctionParser]]
@@ -205,8 +200,11 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
     local f = io.open(doc, "r")
     if f then
         local _, file_basename = file.splitPathname(doc)
-        local line = f:read("*line")
+        if file_basename == 'builtins' or file_basename == '__builtin__' then
+            file_basename = ''
+        end
         local line_parser = nil
+        local line = f:read("*line")
         while line do
             repeat
                 if strTrim(line) == "" then
@@ -238,12 +236,32 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
 end
 
 --[[main]]
+local modules = {}
+table.insert(modules, 'sys')
+table.insert(modules, 'os')
+table.insert(modules, 'fileinput')
+table.insert(modules, 'shelve')
+table.insert(modules, 'time')
+table.insert(modules, 'random')
+table.insert(modules, 'shutil')
+table.insert(modules, 're')
+table.insert(modules, 'json')
+table.insert(modules, 'email')
+table.insert(modules, 'xlrd')
+table.insert(modules, 'xlwt')
+table.insert(modules, 'numpy')
+
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
 if strContains(platformInfo(), 'unix', false) then
     print('Is python 3.x? (y/n)')
     if strStartWith(io.read(), 'y', false) then
         python_version = '3'
+        print("Parse python 3 ...")
+        table.insert(modules, 'builtins')
+    else
+        print("Parse python 2 ...")
+        table.insert(modules, '__builtin__')
     end
 end
 
@@ -273,10 +291,17 @@ print('Remove tmp dir [' .. gen_root_dir .. '] ...')
 file.pathRemoveAll(gen_root_dir)
 print('Ok')
 
+-- sort
+local tb = {}
+for _, v in pairs(apis) do
+    table.insert(tb, v)
+end
+table.sort(tb)
+
 print('Save api file to python.api ...')
 local f = io.open('python.api', 'w')
 if f then
-    for _, v in ipairs(apis) do
+    for _, v in pairs(tb) do
         f:write(v .. '\n')
     end
 end
