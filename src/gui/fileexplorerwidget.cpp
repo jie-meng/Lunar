@@ -78,6 +78,7 @@ void FileExplorerWidget::contextMenuEvent(QContextMenuEvent *e)
         vector<string> extension_tools_files;
         if (listFiles(extension_tools_path, extension_tools_files, &ff) > 0)
         {
+            sort(extension_tools_files.begin(), extension_tools_files.end()); 
             QMenu* extension_tool_menu = menu->addMenu("Extension Tools");
             for (vector<string>::iterator it = extension_tools_files.begin(); it != extension_tools_files.end(); ++it)
             {
