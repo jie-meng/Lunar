@@ -96,17 +96,19 @@ function ClassParser:parse(line)
             local class_member_trimmed_line = strTrimLeft(strTrimLeftEx(trimmed_line, '|'))
             local name, args = string.match(class_member_trimmed_line, pattern_function_lua)
             if name and args then
-                local args = strTrim(args)
-                if strStartWith(args, 'self') then
-                    args = strTrimLeft(strTrimLeftEx(strReplace(args, 'self', ''), ','))
-                end
-                self:addApi(name .. '(' .. strTrimLeft(args) .. ')')
-                if strTrim(name) == '__init__' then
-                    self:addApi('(' .. strTrimLeft(args) .. ')')
+                if not strStartWith(name, '__') or name == '__init__' then                    
+                    local args = strTrim(args)
+                    if strStartWith(args, 'self') then
+                        args = strTrimLeft(strTrimLeftEx(strReplace(args, 'self', ''), ','))
+                    end
+                    self:addApi(name .. '(' .. strTrimLeft(args) .. ')')
+                    if name == '__init__' then
+                        self:addApi('(' .. strTrimLeft(args) .. ')')
+                    end
                 end
             else
                 local name, args = string.match(class_member_trimmed_line, pattern_data_lua)
-                if name and args then
+                if name and not strStartWith(name, '__') then
                     self:addApi(name)
                 end
             end
@@ -136,7 +138,7 @@ end
 function FunctionParser:parse(line)
     local trimmed_line = strTrim(line)
     local name, args = string.match(trimmed_line, pattern_function_lua)
-    if name and args then
+    if name and args and not strStartWith(name, '__') then
         self:addApi(name .. '(' .. args .. ')')
     end
 end
@@ -155,7 +157,7 @@ end
 function DataParser:parse(line)
     local trimmed_line = strTrim(line)
     local name, args = string.match(trimmed_line, pattern_data_lua)
-    if name and args then
+    if name and not strStartWith(name, '__') then
         self:addApi(name)
     end
 end
@@ -178,7 +180,7 @@ end
 function PackageContentsParser:parse(line)
     if self.parse_doc_func_ then
         local name = string.match(line, pattern_package_contents_lua)
-        if name then
+        if name and not strStartWith(name, '__') then
             local module = self:generatePrefix() .. '.' .. name
             local gen_doc = self.gen_root_dir_ .. '/' .. module
             os.execute(string.format('%s %s > %s', self.pydoc_gen_cmd_, module, gen_doc))
@@ -239,7 +241,7 @@ end
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
 if strContains(platformInfo(), 'unix', false) then
-    print('Is python version 3? (y/n)')
+    print('Is python 3.x? (y/n)')
     if strStartWith(io.read(), 'y', false) then
         python_version = '3'
     end
