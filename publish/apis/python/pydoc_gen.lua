@@ -241,6 +241,7 @@ end
 local modules = {}
 table.insert(modules, 'sys')
 table.insert(modules, 'os')
+table.insert(modules, 'platform')
 table.insert(modules, 'fileinput')
 table.insert(modules, 'shelve')
 table.insert(modules, 'time')
