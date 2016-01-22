@@ -50,13 +50,15 @@ function LineParser:addApi(api)
                 self:getColl()[self:generatePrefix()] = self:generatePrefix() .. api
             end
         else
+            local prefix = self:generatePrefix()
+            if string.len(prefix) > 0 then
+                prefix = prefix .. '.'
+            end
             local i = string.find(api, '%(')
-            if i then
-                local prefix = self:generatePrefix()
-                if string.len(prefix) > 0 then
-                    prefix = prefix .. '.'
-                end
+            if i then                
                 self:getColl()[prefix .. string.sub(api, 1, i-1)] = prefix .. api
+            else
+                self:getColl()[prefix .. api] = prefix .. api
             end
         end
     end
@@ -157,7 +159,7 @@ function DataParser:parse(line)
     end
 end
 
---[[class: DataParser]]
+--[[class: PackageContentsParser]]
 local PackageContentsParser = LineParser:new()
 
 function PackageContentsParser:new(coll, package, pydoc_gen_cmd, gen_root_dir, parse_doc_func)
@@ -247,9 +249,9 @@ table.insert(modules, 'shutil')
 table.insert(modules, 're')
 table.insert(modules, 'json')
 table.insert(modules, 'email')
-table.insert(modules, 'xlrd')
-table.insert(modules, 'xlwt')
-table.insert(modules, 'numpy')
+--table.insert(modules, 'xlrd')
+--table.insert(modules, 'xlwt')
+--table.insert(modules, 'numpy')
 
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
