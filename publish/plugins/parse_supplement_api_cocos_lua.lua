@@ -1,7 +1,6 @@
 local pattern_import_lua = [[([%w_]+)%s*=%s*import%("([%w_%.%s]+)"%)]]
 local pattern_class_lua = [[([%w_]+)%s*=%s*class%("[%w_]+"(["%%()%,%.%s%w_]*)%)]]
-local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*(%(.*%))]]
-local pattern_function_lua = [[function%s+([%w_]+)%s*(%(.*%))]]
+local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*%((.*)%)]]
 local pattern_field_lua = [[([%w_]+)%.([%w_]+)%s=]]
 
 --[[ Class ]]
@@ -31,7 +30,6 @@ end
 
 function Class:setName(name)
     self.name_ = name
-    
     return self
 end
 
@@ -41,13 +39,11 @@ end
 
 function Class:addExtend(super_class)
     self.extends_[super_class:getName()] = super_class
-    
     return self
 end
 
 function Class:removeExtend(name)
     self.extends_[name] = nil
-    
     return self
 end
 
@@ -55,15 +51,25 @@ function Class:getFunctions()
     return self.functions_
 end
 
-function Class:addFunction(func)
-    table.insert(self.functions_, func)
-    
+function Class:addFunction(func_name, func_args)
+    table.insert(self.functions_, { name = func_name, args = func_args })
     return self
 end
 
-function Class:putFunctionsInto(tb)    
+function Class:makeFunctionApi(func)
+    return string.format("%s(%s)", func.name, func.args)
+end
+
+function Class:makeSuperMethodApi(func)
+    return string.format("super.%s(self, %s)", func.name, func.args)
+end
+
+function Class:putFunctionsInto(tb, is_base)    
     for _, v in ipairs(self:getFunctions()) do
-        table.insert(tb, v)
+        table.insert(tb, self:makeFunctionApi(v))
+        if is_base then
+            table.insert(tb, self:makeSuperMethodApi(v))
+        end
     end
     
     for _, v in ipairs(self:getFields()) do
@@ -71,7 +77,7 @@ function Class:putFunctionsInto(tb)
     end
     
 	for _, v in pairs(self:getExtends()) do
-		v:putFunctionsInto(tb)
+		v:putFunctionsInto(tb, true)
 	end
     
     return self
@@ -98,22 +104,17 @@ function Class:getImports()
 end
 
 function Class:createApis()
-	local tb = {}
-	
     local functions = {}
-	self:putFunctionsInto(functions)
-	for _, v in ipairs(functions) do
-		table.insert(tb, v)
-	end
+    self:putFunctionsInto(functions)
     
     local apis = {}
-    -- override
-    for i = #tb, 1, -1 do
-        local name, args = string.match(tb[i], "([%w_]+)%s*(%(.*%))")
+    -- process override
+    for i = #functions, 1, -1 do
+        local name, args = string.match(functions[i], "([%w_%.]+)%s*(%(.*%))")
         if name and args then
             apis[name] = name .. args
         else
-            apis[tb[i]] = tb[i]
+            apis[functions[i]] = functions[i]
         end
     end
     
@@ -130,7 +131,6 @@ function parseClass(current_file_dir, import_path)
     end
     
     local class = nil
-    
     local f = io.open(filename, "r")
     if f then
         class = Class:new()
@@ -144,9 +144,9 @@ function parseClass(current_file_dir, import_path)
                 
                 local tb, func, param = string.match(line, pattern_tb_function_lua)
                 if tb and func and param and tb == class:getName() then
-                    class:addFunction(string.format("%s%s", func, param))
+                    class:addFunction(func, param)
                     if func == "ctor" then
-                        class:addFunction(string.format("%s%s", "create", param))
+                        class:addFunction("create", param)
                     end
                     break
                 end
