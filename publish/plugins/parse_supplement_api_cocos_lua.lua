@@ -61,7 +61,11 @@ function Class:makeFunctionApi(func)
 end
 
 function Class:makeSuperMethodApi(func)
-    return string.format("super.%s(self, %s)", func.name, func.args)
+    if string.len(strTrim(func.args)) == 0 then
+        return string.format("super.%s()", func.name)
+    else
+        return string.format("super.%s(self, %s)", func.name, func.args)
+    end
 end
 
 function Class:putFunctionsInto(tb, is_base)    
