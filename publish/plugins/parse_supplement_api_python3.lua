@@ -173,7 +173,6 @@ end
 --[[ Import end ]]
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
-    
     local apis = {}
     
     local path, name = file.splitPathname(filename)
@@ -185,8 +184,10 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     end
     
     local imports = parseImports(filename)
+    --current file api is exactly same as from import * format
+    imports[""] = Import:new("", true)
     local functions = parseFunctions("." .. base, path, search_path, false, true)
-    local classes = parseClasses("." .. base, path, search_path)
+    local classes = parseClasses("." .. base, path, search_path, true)
     
     for _, v in pairs(functions) do
         table.insert(apis, v)
@@ -433,7 +434,7 @@ function parseFunctions(module_name, path, search_path, add_module_prefix, recur
     return functions
 end
 
-function parseClasses(module_name, path, search_path, class_coll)
+function parseClasses(module_name, path, search_path, is_current_file, class_coll)
     
     local classes = class_coll or {}
     local class_scope_stack = {}
@@ -445,6 +446,10 @@ function parseClasses(module_name, path, search_path, class_coll)
     
     local f = io.open(filename, "r")
     if f then
+        if is_current_file then
+            module_name = ""
+        end
+    
         local filepath = file.splitPathname(filename)
         local line = f:read("*line")
         while line do
@@ -519,13 +524,13 @@ function parseClasses(module_name, path, search_path, class_coll)
                 
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
-                    parseClasses(from_import_module, filepath, search_path, classes)
+                    parseClasses(from_import_module, filepath, search_path, false, classes)
                     break
                 end
                         
                 local import_module = string.match(line, pattern_import)
                 if import_module then
-                    parseClasses(import_module, filepath, search_path, classes)
+                    parseClasses(import_module, filepath, search_path, false, classes)
                     break
                 end
                 
