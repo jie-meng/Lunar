@@ -5,21 +5,6 @@ local pattern_class_extend = [[class%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_class_static_field = [[([%w_]+)%s*=%s*(.+)]]
 local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import]]
-local pattern_object_assignment_class = [[([%w_%.]+)%s*=%s*([%w_%.]+)%s*%(]]
-local pattern_object_assignment_string = [[([%w_%.]+)%s*=%s*['"].*['"]%s*]]
-local pattern_object_assignment_list = "([%w_%.]+)%s*=%s*%[.*%]"
-local pattern_object_assignment_dict = "([%w_%.]+)%s*=%s*{.*}"
-local pattern_object_assignment = [[([%w_%.]+)%s*=%s*([%w_%.]+)]]
-local pattern_object_cast_string = "([%w_%.]+)%s*=%s*str(.*)"
-local pattern_object_cast_int = "([%w_%.]+)%s*=%s*int(.*)"
-local pattern_object_cast_float = "([%w_%.]+)%s*=%s*float(.*)"
-local pattern_object_cast_long = "([%w_%.]+)%s*=%s*long(.*)"
-local pattern_object_cast_list = "([%w_%.]+)%s*=%s*list(.*)"
-local pattern_object_cast_dict = "([%w_%.]+)%s*=%s*dict(.*)"
-local pattern_object_cast_set = "([%w_%.]+)%s*=%s*set(.*)"
-local pattern_object_del = [[del%s*([%w_%.]+)]]
-
-local kstr_build_in = "__build_in__"
 
 --[[ Class begin --]]
 
@@ -187,103 +172,6 @@ end
 
 --[[ Import end ]]
 
-function buildInClasses()
-    local classes = {}
-    
-    local cls_string = Class:new("string", kstr_build_in, 0)
-    cls_string:addFunction('capitalize()')    
-    cls_string:addFunction('center(width, fillchar)')
-    cls_string:addFunction('count(str, beg= 0,end=len(string))')
-    cls_string:addFunction('decode(encoding="UTF-8",errors="strict")')
-    cls_string:addFunction('encode(encoding="UTF-8",errors="strict")')
-    cls_string:addFunction('endswith(suffix, beg=0, end=len(string))')
-    cls_string:addFunction('expandtabs(tabsize=8)')
-    cls_string:addFunction('find(str, beg=0 end=len(string))')
-    cls_string:addFunction('index(str, beg=0, end=len(string))')
-    cls_string:addFunction('isalnum()')
-    cls_string:addFunction('isalpha()')
-    cls_string:addFunction('isdigit()')
-    cls_string:addFunction('islower()')
-    cls_string:addFunction('isnumeric()')
-    cls_string:addFunction('isspace()')
-    cls_string:addFunction('istitle()')
-    cls_string:addFunction('isupper()')
-    cls_string:addFunction('join(seq)')
-    cls_string:addFunction('len(string)')
-    cls_string:addFunction('ljust(width[, fillchar])')
-    cls_string:addFunction('lower()')
-    cls_string:addFunction('lstrip()')
-    cls_string:addFunction('maketrans()')
-    cls_string:addFunction('max(str)')
-    cls_string:addFunction('min(str)')
-    cls_string:addFunction('replace(old, new [, max])')
-    cls_string:addFunction('rfind(str, beg=0,end=len(string))')
-    cls_string:addFunction('rindex( str, beg=0, end=len(string))')
-    cls_string:addFunction('rjust(width,[, fillchar])')
-    cls_string:addFunction('rstrip()')
-    cls_string:addFunction('split(str="", num=string.count(str))')
-    cls_string:addFunction("splitlines( num=string.count('\n'))")
-    cls_string:addFunction('startswith(str, beg=0,end=len(string))')
-    cls_string:addFunction('strip([chars])')
-    cls_string:addFunction('swapcase()')
-    cls_string:addFunction('title()')
-    cls_string:addFunction('translate(table, deletechars="")')
-    cls_string:addFunction('upper()')
-    cls_string:addFunction('zfill (width)')
-    cls_string:addFunction('isdecimal()')
-    classes[cls_string:getName()] = cls_string
-    
-    local cls_list = Class:new("list", kstr_build_in, 0)
-    cls_list:addFunction('append(obj)')
-    cls_list:addFunction('count(obj)')
-    cls_list:addFunction('extend(seq)')
-    cls_list:addFunction('index(obj)')
-    cls_list:addFunction('insert(index, obj)')
-    cls_list:addFunction('pop(obj=list[-1])')
-    cls_list:addFunction('remove(obj)')
-    cls_list:addFunction('reverse()')
-    cls_list:addFunction('sort([func])')
-    classes[cls_list:getName()] = cls_list
-    
-    local cls_dict = Class:new("dict", kstr_build_in, 0)
-    cls_dict:addFunction('clear()')
-    cls_dict:addFunction('copy()')
-    cls_dict:addFunction('fromkeys()')
-    cls_dict:addFunction('get(key, default=None)')
-    cls_dict:addFunction('has_key(key)')
-    cls_dict:addFunction('items()')
-    cls_dict:addFunction('keys()')
-    cls_dict:addFunction('setdefault(key, default=None)')
-    cls_dict:addFunction('update(dict2)')
-    cls_dict:addFunction('values()')
-    classes[cls_dict:getName()] = cls_dict
-    
-    local cls_set = Class:new("set", kstr_build_in, 0)
-    cls_set:addFunction('len(s)')
-    cls_set:addFunction('isdisjoint(other)')
-    cls_set:addFunction('issubset(other)')
-    cls_set:addFunction('issuperset(other)')
-    cls_set:addFunction('union(other, ...)')
-    cls_set:addFunction('intersection(other, ...)')
-    cls_set:addFunction('difference(other, ...)')
-    cls_set:addFunction('symmetric_difference(other)')
-    cls_set:addFunction('copy()')
-    cls_set:addFunction('update(other, ...)')
-    cls_set:addFunction('intersection_update(other, ...)')
-    cls_set:addFunction('difference_update(other, ...)')
-    cls_set:addFunction('symmetric_difference_update(other)')
-    cls_set:addFunction('add(elem)')
-    cls_set:addFunction('remove(elem)')
-    cls_set:addFunction('discard(elem)')
-    cls_set:addFunction('pop()')
-    cls_set:addFunction('clear()')
-    classes[cls_set:getName()] = cls_set
-    
-    return classes
-end
-
---local build_in_classes = buildInClasses()
-
 function parseSupplementApi(filename, cursor_line, project_src_dir)
 
     local apis = {}
@@ -316,13 +204,6 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
             parseClassesApis(apis, imports, v, v, false)
         end
     end
-    
-    --local objects = processCurrentFileObjects(filename, cursor_line, classes, imports)
-    --for _, v in pairs(objects) do
-    --    if imports[v:getModuleName()] then
-    --        parseClassesApis(apis, imports, v, v, true)
-    --    end
-    --end
     
     return apis
 end
@@ -447,7 +328,6 @@ end
 
 function parseImports(filename)
     local imports = {}
-    imports[kstr_build_in] = Import:new(kstr_build_in, true)
     
     local f = io.open(filename, "r")
     if f then
@@ -657,137 +537,6 @@ function parseClasses(module_name, path, search_path, class_coll)
     end
     
     return classes
-end
-
-function setSpecificClassObject(pattern, class_name, line, objects_table)
-    local obj = string.match(line, pattern)
-    if obj then
-        local c = build_in_classes[class_name]:clone()
-        c:setName(obj)
-        objects_table[obj] = c
-        return true
-    end
-    
-    return false
-end
-
-function removeClassObject(pattern, line, objects_table)
-    local obj = string.match(line, pattern)
-    if obj then
-        objects_table[obj] = nil
-        return true
-    end
-    
-    return false
-end
-
-function processCurrentFileObjects(filename, cursor_line, classes, imports)
-    
-    local objects = {}
-    local f = io.open(filename, "r")
-    if f then
-        local line = f:read("*line")
-        local current_line = 1
-        while (line and current_line < cursor_line) do
-            repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
-                    break
-                end
-                
-                -- set specific class objects
-                if setSpecificClassObject(pattern_object_assignment_string, "string", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_assignment_list, "list", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_assignment_dict, "dict", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_cast_string, "string", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_cast_list, "list", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_cast_dict, "dict", line, objects) then
-                    break
-                end
-                
-                if setSpecificClassObject(pattern_object_cast_set, "set", line, objects) then
-                    break
-                end
-                
-                if removeClassObject(pattern_object_cast_int, line, objects) then
-                    break
-                end
-                
-                if removeClassObject(pattern_object_cast_float, line, objects) then
-                    break
-                end
-                
-                if removeClassObject(pattern_object_cast_long, line, objects) then
-                    break
-                end
-                
-                -- user defined class objects
-                local left, right = string.match(line, pattern_object_assignment_class)
-                if left and right and left ~= right then
-                    if classes[right] then
-                        local c = classes[right]:clone()
-                        c:setName(left)
-                        objects[left] = c
-                    else
-                        local flag = false
-                        for _, v in pairs(classes) do
-                            if v:getName() == right and imports[v:getModuleName()] then
-                                local c = v:clone()
-                                c:setName(left)
-                                objects[left] = c
-                                flag = true
-                                break
-                            end
-                        end
-                        
-                        if not flag then
-                            objects[left] = nil
-                        end
-                    end
-                    break
-                end
-                
-                local left, right = string.match(line, pattern_object_assignment)
-                if left and right and left ~= right then
-                    if objects[right] then
-                        local c = objects[right]:clone()
-                        c:setName(left)
-                        objects[left] = c
-                    else
-                        objects[left] = nil
-                    end
-                    break
-                end
-                
-                local obj = string.match(line, pattern_object_del)
-                if obj then
-                    objects[obj] = nil
-                    break
-                end
-                
-            until true
-            
-            line = f:read("*line")
-            current_line = current_line + 1
-        end
-        io.close(f)
-    end
-    
-    return objects
 end
 
 --[[ test ]]
