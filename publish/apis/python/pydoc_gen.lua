@@ -241,13 +241,25 @@ end
 local modules = {}
 table.insert(modules, 'sys')
 table.insert(modules, 'os')
+table.insert(modules, 'os.path')
+table.insert(modules, 'stat')
+table.insert(modules, 'time')
+table.insert(modules, 'datetime')
 table.insert(modules, 'platform')
+table.insert(modules, 'random')
+table.insert(modules, 'math')
+table.insert(modules, 'cmath')
+table.insert(modules, 'type')
+table.insert(modules, 're')
+table.insert(modules, 'copy')
+table.insert(modules, 'operator')
+table.insert(modules, 'hashlib')
+table.insert(modules, 'md5')
+table.insert(modules, 'shutil')
+table.insert(modules, 'atexit')
 table.insert(modules, 'fileinput')
 table.insert(modules, 'shelve')
-table.insert(modules, 'time')
-table.insert(modules, 'random')
-table.insert(modules, 'shutil')
-table.insert(modules, 're')
+table.insert(modules, 'urllib')
 table.insert(modules, 'json')
 table.insert(modules, 'email')
 --table.insert(modules, 'xlrd')
@@ -256,16 +268,14 @@ table.insert(modules, 'email')
 
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
-if strContains(platformInfo(), 'unix', false) then
-    print('Is python 3.x? (y/n)')
-    if strStartWith(io.read(), 'y', false) then
-        python_version = '3'
-        print("Parse python 3 ...")
-        table.insert(modules, 'builtins')
-    else
-        print("Parse python 2 ...")
-        table.insert(modules, '__builtin__')
-    end
+print('Is python 3.x? (y/n)')
+if strStartWith(io.read(), 'y', false) then
+    python_version = '3'
+    print("Parse python 3 ...")
+    table.insert(modules, 'builtins')
+else
+    print("Parse python 2 ...")
+    table.insert(modules, '__builtin__')
 end
 
 -- Generate cmd
