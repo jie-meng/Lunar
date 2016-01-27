@@ -25,6 +25,7 @@ signals:
     void renameFile(const QString&, const QString&);
     void removeFile(const QString&);
     void removeDir(const QString&);
+    void widthChanged(int width);
 public slots:
     void onFileSaved(const QString& file);
     void onAllFilesSaved();

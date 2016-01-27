@@ -432,6 +432,11 @@ void MainWindow::initConnections()
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
             connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
     connect(pfile_explorer_widget_, SIGNAL(executeExtensionTool(QString,QString,QString)), this, SLOT(executeScriptInPath(QString,QString,QString)));
+    connect(pfile_explorer_widget_, &FileExplorerWidget::widthChanged, [this](int width)
+    {
+        //LogSocket::getInstance().sendLog(strFormat("%d", width), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
+        pleft_widget_->setMinimumWidth(width);
+    });
     connect(pfile_explorer_widget_, &FileExplorerWidget::renameFile, [this](const QString& from, const QString& to)
     {
         int idx = pmain_tabwidget_->findTabIndexByFile(from);

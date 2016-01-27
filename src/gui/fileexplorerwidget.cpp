@@ -287,6 +287,8 @@ void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
         if (loadNode(item))
         {
             item->setExpanded(true);
+            this->resizeColumnToContents(currentColumn());
+            Q_EMIT widthChanged(this->columnWidth(currentColumn()) + 15);
             return;
         }
 
@@ -307,6 +309,9 @@ void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
         loadNode(item);
         item->setExpanded(!item->isExpanded());
     }
+
+    this->resizeColumnToContents(currentColumn());
+    Q_EMIT widthChanged(this->columnWidth(currentColumn()) + 15);
 }
 
 QString FileExplorerWidget::getCurrentSelectedDir()

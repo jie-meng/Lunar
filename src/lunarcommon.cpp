@@ -71,7 +71,7 @@ int sendLog(lua_State* plua_state)
 {
     string log = luaGetString(plua_state, 1, "");
     string ip = luaGetString(plua_state, 2, "127.0.0.1");
-    unsigned short port = (unsigned short)luaGetInteger(plua_state, 3, 9966);
+    unsigned short port = (unsigned short)luaGetInteger(plua_state, 3, LunarGlobal::getInstance().getLogSockPort());
     LogSocket::getInstance().sendLog(log, ip, port);
     return 0;
 }
