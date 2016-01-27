@@ -118,6 +118,7 @@ void FileExplorerWidget::loadRoot()
     items.append(proot_item);
 
     insertTopLevelItems(0, items);
+    Q_EMIT widthChanged(200);
 }
 
 bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
@@ -254,8 +255,6 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         if (loadNode(item))
         {
             //DoubleClicked is different from return key press, strange.
-            this->resizeColumnToContents(currentColumn());
-            Q_EMIT widthChanged(this->columnWidth(currentColumn()));
             return;
         }
 
@@ -276,9 +275,6 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         loadNode(item);
         //DoubleClicked is different from return key press, strange.
     }
-
-    this->resizeColumnToContents(currentColumn());
-    Q_EMIT widthChanged(this->columnWidth(currentColumn()));
 }
 
 void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
@@ -294,6 +290,7 @@ void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
             item->setExpanded(true);
             this->resizeColumnToContents(currentColumn());
             Q_EMIT widthChanged(this->columnWidth(currentColumn()));
+
             return;
         }
 

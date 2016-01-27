@@ -436,6 +436,7 @@ void MainWindow::initConnections()
     {
         //LogSocket::getInstance().sendLog(strFormat("%d", width), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
         pleft_widget_->setMinimumWidth(width);
+        pleft_widget_->setMaximumWidth(width);
     });
     connect(pfile_explorer_widget_, &FileExplorerWidget::renameFile, [this](const QString& from, const QString& to)
     {
