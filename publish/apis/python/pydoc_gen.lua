@@ -242,6 +242,7 @@ local modules = {}
 table.insert(modules, 'sys')
 table.insert(modules, 'os')
 table.insert(modules, 'os.path')
+table.insert(modules, 'subprocess')
 table.insert(modules, 'stat')
 table.insert(modules, 'time')
 table.insert(modules, 'datetime')
