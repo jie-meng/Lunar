@@ -1,9 +1,0 @@
-module(name [, ...])
-require(modname)
-package.cpath
-package.loaded
-package.loaders
-package.loadlib(libname, funcname)
-package.path
-package.preload
-package.seeall(module)

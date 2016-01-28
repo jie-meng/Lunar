@@ -1,5 +1,0 @@
-table.concat(table [, sep [, i [, j]]])
-table.insert(table, [pos,] value)
-table.maxn(table)
-table.remove(table [, pos])
-table.sort(table [, comp])
