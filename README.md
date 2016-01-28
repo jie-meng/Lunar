@@ -17,11 +17,9 @@ A cross-platform script editor
 
 1. Get Util project from [git@github.com:joshua-meng/Util.git]()
 
-2. Build and get an executable file: Util (Util.exe on windows).
+2. Build luaexec follow the README.MD of Util. 
 
-3. Rename Util to luaexec.
-
-4. luaexec is a lua script executor which contains basic lua (lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
+3. luaexec is a lua script executor which contains basic lua (lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
 
 
 #### build qscintilla ####
