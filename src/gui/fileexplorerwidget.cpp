@@ -454,23 +454,26 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
 
 void FileExplorerWidget::onFileSaved(const QString& file)
 {
-    auto* pdir = findDirNodeItemWithFile(file);
-    vector<string> current_dir_node_files;
-    for (int i = 0; i<pdir->childCount(); ++i)
+    QTreeWidgetItem* pdir = findDirNodeItemWithFile(file);
+    if (pdir)
     {
-        auto child = pdir->child(i);
-        current_dir_node_files.push_back(QStringToStdString(getNodeAbsolutePath(child)));
+        vector<string> current_dir_node_files;
+        for (int i = 0; i<pdir->childCount(); ++i)
+        {
+            auto child = pdir->child(i);
+            current_dir_node_files.push_back(QStringToStdString(getNodeAbsolutePath(child)));
+        }
+
+        auto str_dir = QStringToStdString(getNodeAbsolutePath(pdir));
+        vector<string> current_dir_files;
+        listFiles(str_dir, current_dir_files, 0);
+
+        sort(current_dir_files.begin(), current_dir_files.end());
+        sort(current_dir_node_files.begin(), current_dir_node_files.end());
+
+        if (current_dir_files != current_dir_node_files)
+            loadNodeFiles(pdir);
     }
-
-    auto str_dir = QStringToStdString(getNodeAbsolutePath(pdir));
-    vector<string> current_dir_files;
-    listFiles(str_dir, current_dir_files, 0);
-
-    sort(current_dir_files.begin(), current_dir_files.end());
-    sort(current_dir_node_files.begin(), current_dir_node_files.end());
-
-    if (current_dir_files != current_dir_node_files)
-        loadNodeFiles(pdir);
 }
 
 void FileExplorerWidget::onAllFilesSaved()
