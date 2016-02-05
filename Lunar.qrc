@@ -8,6 +8,7 @@
     <file>res/save.png</file>
     <file>res/run.png</file>
     <file>res/stop.png</file>
+	<file>res/select_cursor_word.png</file>
     <file>res/find.png</file>
     <file>res/search.png</file>
 	<file>res/search_results.png</file>

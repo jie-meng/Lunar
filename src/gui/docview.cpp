@@ -799,6 +799,24 @@ bool DocView::getDefinitions(vector<string>& out_results)
         out_results);
 }
 
+void DocView::selectCursorWord()
+{
+    int line;
+    int index;
+    ptext_edit_->getCursorPosition(&line, &index);
+    if (line < 0 || index < 0)
+        return;
+
+    int position = ptext_edit_->positionFromLineIndex(line, index);
+    long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
+    long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
+    long word_len = end_pos - start_pos;
+    if (word_len <= 0)
+        return;
+
+    ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
+}
+
 void DocView::setEditTextFont(const QFont& font)
 {
     LunarGlobal::getInstance().setFont(font);

@@ -57,6 +57,7 @@ public:
     void gotoLine(int line);
     void focusOnEdit();
     bool getDefinitions(std::vector<std::string>& out_results);
+    void selectCursorWord();
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);

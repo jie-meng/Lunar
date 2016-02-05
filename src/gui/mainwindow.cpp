@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_dump_action_(NULL),
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
+    pedit_select_cursor_word_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
     pedit_font_action_(NULL),
@@ -236,6 +237,11 @@ void MainWindow::initActions()
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
+    pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
+    pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
+    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_Q);
+    pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
+
     pedit_find_action_ = new QAction(tr("&Find"), this);
     pedit_find_action_->setStatusTip(tr("Find."));
     pedit_find_action_->setShortcut(QKeySequence::Find);
@@ -325,6 +331,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_goto_prev_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
+    pedit_menu->addAction(pedit_select_cursor_word_action_);
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_search_action_);
     pedit_menu->addAction(pedit_font_action_);
@@ -358,6 +365,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
+    ptoolbar->addAction(pedit_select_cursor_word_action_);
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
 	ptoolbar->addAction(pedit_comment_action_);
@@ -405,6 +413,7 @@ void MainWindow::initConnections()
     connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(fileDump()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
+    connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
@@ -539,6 +548,13 @@ void MainWindow::fileGotoNext()
 void MainWindow::fileGotoPrev()
 {
     pmain_tabwidget_->gotoPrevTabIndex();
+}
+
+void MainWindow::editSelectCursorWord()
+{
+    auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+    if (pdocview)
+        pdocview->selectCursorWord();
 }
 
 void MainWindow::editFind()
