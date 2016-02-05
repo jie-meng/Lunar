@@ -254,6 +254,9 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         //if it's dir, just reload and return
         if (loadNode(item))
         {
+            this->resizeColumnToContents(currentColumn());
+            Q_EMIT widthChanged(this->columnWidth(currentColumn()));
+
             //DoubleClicked is different from return key press, strange.
             return;
         }
@@ -275,6 +278,9 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         loadNode(item);
         //DoubleClicked is different from return key press, strange.
     }
+
+    this->resizeColumnToContents(currentColumn());
+    Q_EMIT widthChanged(this->columnWidth(currentColumn()));
 }
 
 void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
