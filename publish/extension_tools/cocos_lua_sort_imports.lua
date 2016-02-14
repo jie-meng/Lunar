@@ -46,10 +46,14 @@ for _, f in ipairs(files) do
         for _, impt in ipairs(sort_imports) do
             table.insert(imports, impt.value)
         end
-        local imports_text = strJoin(imports, "\n")
+        local imports_text = strTrim(strJoin(imports, "\n"))
         
         --write file
-        if file.writeTextFile(f, strTrim(imports_text) .. "\n\n" .. strTrim(codes_text)) then
+        local text_before_class = ""
+        if string.len(imports_text) > 0 then
+            text_before_class = imports_text .. "\n\n"
+        end
+        if file.writeTextFile(f, text_before_class .. strTrim(codes_text)) then
             print(string.format([[Sort imports of <%s> ok.]], f))
         end
     end

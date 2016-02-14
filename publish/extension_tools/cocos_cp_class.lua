@@ -29,5 +29,3 @@ for _, v in ipairs(tb) do
     
     print(string.format([[Cocos copy class "%s" to "%s" in path <%s> ok.]], src_class, v_class, file.currentPath()))
 end
-
-
