@@ -142,7 +142,7 @@ ApiLoader::ApiLoader(QsciAPIsEx* papis,
 
 ApiLoader::~ApiLoader()
 {
-
+    api_load_thread_.wait();
 }
 
 bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)

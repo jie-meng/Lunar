@@ -122,12 +122,10 @@ void DocView::focusOnText()
 
 void DocView::clearLexerApi()
 {
-    if (plexer_)
-        safeDelete(plexer_);
+    safeDelete(plexer_);
     //papis_ would be delete together with plexer_
 
-    if (papi_loader_)
-        safeDelete(papi_loader_);
+    safeDelete(papi_loader_);
 
     executor_ = "";
     parse_supplement_api_script_ = "";
