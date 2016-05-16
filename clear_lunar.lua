@@ -4,6 +4,9 @@ print("remove dir debug")
 file.pathRemoveAll("release")
 print("remove dir release")
 
+file.pathRemoveAll("Lunar.app")
+print("remove dir Lunar.app")
+
 if file.pathRemove("Makefile") then
     print("remove Makefile")
 end
