@@ -289,7 +289,11 @@ void MainWindow::initActions()
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
+#ifdef __APPLE__
+    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_F);
+#else
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::Key_Tab);
+#endif
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
 
     pview_search_results_action_ = new QAction(tr("Search &results"), this);
@@ -877,6 +881,7 @@ bool MainWindow::openDoc(const QString& filepath)
         return false;
 
     pmain_tabwidget_->addDocViewTab(filepath);
+
     if (this->isMinimized())
         this->showNormal();
     this->activateWindow();
