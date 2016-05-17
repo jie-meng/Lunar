@@ -19,6 +19,7 @@ public:
     explicit FileExplorerWidget(QWidget *parent = 0);
     virtual ~FileExplorerWidget();
     QString getCurrentSelectedDir();
+    void loadRoot();
 signals:
     void openFile(const QString&);
     void executeExtensionTool(const QString& tool_script, const QString& execute_path, const QString& additional_args);
@@ -43,7 +44,6 @@ private:
     QString getNodeRelativePath(QTreeWidgetItem* item);
     void onClickExtensionTool(const std::string& str);
 private Q_SLOTS:
-    void loadRoot();
     void newFolder();
     void newFolderOk(const QString& folder_name);
     void deleteCurrentItem();

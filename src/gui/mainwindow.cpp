@@ -47,6 +47,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_dump_action_(NULL),
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
+    pfile_reset_current_path_(NULL),
     pedit_select_cursor_word_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
@@ -237,6 +238,11 @@ void MainWindow::initActions()
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
+    pfile_reset_current_path_ = new QAction(tr("Reset project path"), this);
+    pfile_reset_current_path_->setStatusTip(tr("Reset project path."));
+    pfile_reset_current_path_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_P);
+    pfile_reset_current_path_->setIcon(QIcon(tr(":/res/project_path.png")));
+
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
     pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_Q);
@@ -329,6 +335,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_dump_action_);
     pfile_menu->addAction(pfile_goto_next_action_);
     pfile_menu->addAction(pfile_goto_prev_action_);
+    pfile_menu->addAction(pfile_reset_current_path_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_select_cursor_word_action_);
@@ -363,6 +370,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_save_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
+    ptoolbar->addAction(pfile_reset_current_path_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_select_cursor_word_action_);
@@ -412,6 +420,7 @@ void MainWindow::initConnections()
     connect(pfile_close_all_action_, SIGNAL(triggered()), this, SLOT(fileCloseAll()));
     connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(fileDump()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
+    connect(pfile_reset_current_path_, SIGNAL(triggered()), this, SLOT(resetCurrentPath()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
@@ -548,6 +557,16 @@ void MainWindow::fileGotoNext()
 void MainWindow::fileGotoPrev()
 {
     pmain_tabwidget_->gotoPrevTabIndex();
+}
+
+void MainWindow::resetCurrentPath()
+{
+    QString path = QFileDialog::getExistingDirectory(this, tr("Select project path"), StdStringToQString(currentPath()));
+    if (path.length() > 0)
+    {
+        setCurrentPath(QStringToStdString(path));
+        pfile_explorer_widget_->loadRoot();
+    }
 }
 
 void MainWindow::editSelectCursorWord()
