@@ -53,7 +53,7 @@ On windows (You can find all the dlls in Qt installation directory):
 - Put qwindows.dll to LUNAR_HOME/platforms
 
 On MacOS
-
+- Put luaexec to /usr/local/bin
 - Put QScintilla dylib to /usr/local/lib
 - Move all the files and folders in publish from LUNAR_HOME to LUNAR_HOME/Lunar.app/Contents/MacOS
 
