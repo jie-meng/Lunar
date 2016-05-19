@@ -9,6 +9,12 @@ LuaExecutor::LuaExecutor(QObject* parent) :
     QObject(parent)
 {
     //ctor
+    qprocess_ = new QProcess(parent);
+    connect(qprocess_, &QProcess::readyReadStandardOutput, this, [this]()
+    {
+       QByteArray data = qprocess_->readAllStandardOutput();
+       emit sendOutput(StdStringToQString(data.toStdString()));
+    });
 }
 
 LuaExecutor::~LuaExecutor()
@@ -18,12 +24,14 @@ LuaExecutor::~LuaExecutor()
 
 bool LuaExecutor::isRunning()
 {
-    return process_.isRunning();
+    //return process_.isRunning();
+    return qprocess_->state() == QProcess::Running;
 }
 
 void LuaExecutor::stop()
 {
-    process_.kill();
+    //process_.kill();
+    qprocess_->kill();
 }
 
 bool LuaExecutor::isFileInFileFilter(const std::string& file, const std::string& file_filter)
@@ -53,12 +61,18 @@ bool LuaExecutor::execute(const std::string& file,
         return false;
 
     std::string script = std::string("\"") + file + std::string("\"");
+    //std::string script = file;
 
-    return process_.create(exec + " " + script + " " + args,
-                           path,
-                           true,
-                           true,
-                           UtilBind(&LuaExecutor::output, this, _1));
+//    return process_.create(exec + " " + script + " " + args,
+//                           path,
+//                           true,
+//                           true,
+//                           UtilBind(&LuaExecutor::output, this, _1));
+
+    //LunarMsgBoxQ(StdStringToQString(exec + " " + script + " " + args));
+    //qprocess_->start(StdStringToQString(exec + " " + script + " " + args), QProcess::ReadWrite);
+    qprocess_->start("git", QProcess::ReadWrite);
+    return true;
 }
 
 void LuaExecutor::output(const std::string& str)

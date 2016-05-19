@@ -4,6 +4,7 @@
 #include <string>
 #include <QtCore/QObject>
 #include <QtCore/QString>
+#include <QtCore/QProcess>
 #include "util/process.hpp"
 #include "lunarcommon.h"
 
@@ -25,6 +26,7 @@ private:
 //    std::string getScriptExecutor(const std::string& file);
 private:
     util::Process process_;
+    QProcess* qprocess_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LuaExecutor)
 };
