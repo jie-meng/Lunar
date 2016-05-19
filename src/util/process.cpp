@@ -463,21 +463,24 @@ struct Process::ProcessImpl
         //reset input
         if (input)
         {
-            close(0);
-            dup(input_pipe_[0]);
-            closePipe(input_pipe_);
+            //close(0);
+            //dup(input_pipe_[0]);
+            //closePipe(input_pipe_);
+            dup2(input_pipe_[0], STDIN_FILENO);
         }
 
         //reset output
         if (output)
         {
-            close(1);
-            dup(output_pipe_[1]);
-            closePipe(output_pipe_);
+            //close(1);
+            //dup(output_pipe_[1]);
+            //closePipe(output_pipe_);
+            dup2(output_pipe_[1], STDOUT_FILENO);
 
-            close(2);
-            dup(error_pipe_[1]);
-            closePipe(error_pipe_);
+            //close(2);
+            //dup(error_pipe_[1]);
+            //closePipe(error_pipe_);
+            dup2(error_pipe_[1], STDERR_FILENO);
         }
 
         //exec
