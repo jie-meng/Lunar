@@ -1,6 +1,6 @@
 ## Lunar ##
 
-A cross-platform script editor
+A cross-platform (Linux, MacOS, Windows) script editor
 
 - You can make your own auto-completion plugin as you wish.
 - You can make your own goto-definition plugin as you wish.
@@ -43,7 +43,7 @@ luaexec remake_lunar.lua
 On all platform
 
 - Make a dir named Lunar, lets' call it LUNAR_HOME. 
-- and put all the files and folders in public to LUNAR_HOME.
+- Put all the files and folders in publish to LUNAR_HOME.
 - Put luaexec and Lunar to LUNAR_HOME.
 
 On windows (You can find all the dlls in Qt installation directory):
@@ -51,6 +51,11 @@ On windows (You can find all the dlls in Qt installation directory):
 - Put libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), libwinpthread-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll,  Qt5PrintSupport.dll, Qt5Widgets.dll, qscintilla2.dll, icudt54, icuin54.dll, icuuc54.dll to LUNAR_HOME.
 - Put qtaccessiblewidgets.dll to LUNAR_HOME/accessible
 - Put qwindows.dll to LUNAR_HOME/platforms
+
+On MacOS
+- Put luaexec to /usr/local/bin
+- Put QScintilla dylib to /usr/local/lib
+- Move all the files and folders in publish from LUNAR_HOME to LUNAR_HOME/Lunar.app/Contents/MacOS
 
 ### notes ###
 
@@ -83,3 +88,7 @@ On windows (You can find all the dlls in Qt installation directory):
     Support goto_definition, jump list.
 
     You can make your goto definition plugin for your own needs. Use plugins/goto_lua.lua as an example.
+
+- 2016.05.17
+
+    V1.5.2 Support MacOS.
