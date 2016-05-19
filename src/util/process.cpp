@@ -536,7 +536,7 @@ struct Process::ProcessImpl
         while(true)
         {
             memset(buf, 0, sizeof(buf));
-            size_t len = ::read(output_pipe_[0], buf, sizeof(buf));
+            int len = ::read(output_pipe_[0], buf, sizeof(buf));
             if (len <= 0)
             {
                 break;
@@ -556,7 +556,7 @@ struct Process::ProcessImpl
         {
 
             memset(buf, 0, sizeof(buf));
-            size_t len = ::read(error_pipe_[0], buf, sizeof(buf));
+            int len = ::read(error_pipe_[0], buf, sizeof(buf));
             if (len <= 0)
             {
                 break;
