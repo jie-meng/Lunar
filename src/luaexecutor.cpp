@@ -76,6 +76,7 @@ bool LuaExecutor::execute(const std::string& file,
 //                           UtilBind(&LuaExecutor::output, this, _1));
 
     //LunarMsgBoxQ(StdStringToQString(exec + " " + script + " " + args));
+    qprocess_->setWorkingDirectory(StdStringToQString(path));
     qprocess_->start(StdStringToQString(exec + " " + script + " " + args), QProcess::ReadWrite);
 
     return true;
