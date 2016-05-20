@@ -230,12 +230,20 @@ void MainWindow::initActions()
 
     pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
     pfile_goto_next_action_->setStatusTip(tr("Goto next document."));
+#ifdef __APPLE__
+    pfile_goto_next_action_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Right);
+#else
     pfile_goto_next_action_->setShortcut(Qt::CTRL + Qt::Key_PageDown);
+#endif
     pfile_goto_next_action_->setIcon(QIcon(tr(":/res/next.png")));
 
     pfile_goto_prev_action_ = new QAction(tr("Goto prev"), this);
     pfile_goto_prev_action_->setStatusTip(tr("Goto prev document."));
+#ifdef __APPLE__
+    pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::ALT + Qt::Key_Left);
+#else
     pfile_goto_prev_action_->setShortcut(Qt::CTRL + Qt::Key_PageUp);
+#endif
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
     pfile_reset_current_path_ = new QAction(tr("Reset project path"), this);
