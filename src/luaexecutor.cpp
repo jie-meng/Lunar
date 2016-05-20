@@ -15,6 +15,12 @@ LuaExecutor::LuaExecutor(QObject* parent) :
        QByteArray data = qprocess_->readAllStandardOutput();
        emit sendOutput(StdStringToQString(data.toStdString()));
     });
+
+    connect(qprocess_, &QProcess::readyReadStandardError, this, [this]()
+    {
+       QByteArray data = qprocess_->readAllStandardError();
+       emit sendOutput(StdStringToQString(data.toStdString()));
+    });
 }
 
 LuaExecutor::~LuaExecutor()
@@ -70,17 +76,19 @@ bool LuaExecutor::execute(const std::string& file,
 //                           UtilBind(&LuaExecutor::output, this, _1));
 
     //LunarMsgBoxQ(StdStringToQString(exec + " " + script + " " + args));
-    //qprocess_->start(StdStringToQString(exec + " " + script + " " + args), QProcess::ReadWrite);
-    qprocess_->start("git", QProcess::ReadWrite);
+    qprocess_->start(StdStringToQString(exec + " " + script + " " + args), QProcess::ReadWrite);
+
     return true;
 }
 
 void LuaExecutor::output(const std::string& str)
 {
-    emit sendOutput(StdStringToQString(str));
+    //emit sendOutput(StdStringToQString(str));
 }
 
 void LuaExecutor::input(const QString& in)
 {
-    process_.input(QStringToStdString(in));
+    //process_.input(QStringToStdString(in));
+    if (isRunning())
+        qprocess_->write(QStringToStdString(in).c_str());
 }
