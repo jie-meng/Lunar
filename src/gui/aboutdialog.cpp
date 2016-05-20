@@ -37,7 +37,7 @@ void AboutDialog::initGui()
 
     setLayout(pcenter_layout);
 
-    setWindowTitle(tr("About"));
+    setWindowTitle(tr("Information"));
     setFixedHeight(sizeHint().height());
     setFixedWidth(sizeHint().width());
 }

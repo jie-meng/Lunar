@@ -325,8 +325,8 @@ void MainWindow::initActions()
     prun_stop_action_->setIcon(QIcon(tr(":/res/stop.png")));
     prun_stop_action_->setShortcut(Qt::Key_F8);
 
-    phelp_about_action_ = new QAction(tr("&About"), this);
-    phelp_about_action_->setStatusTip(tr("About."));
+    phelp_about_action_ = new QAction(tr("Information"), this);
+    phelp_about_action_->setStatusTip(tr("Information."));
     phelp_about_action_->setIcon(QIcon(tr(":/res/about.png")));
 }
 
