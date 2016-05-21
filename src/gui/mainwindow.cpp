@@ -261,9 +261,9 @@ void MainWindow::initActions()
     pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setIcon(QIcon(tr(":/res/find.png")));
 
-    pedit_search_action_ = new QAction(tr("Searc&h"), this);
+    pedit_search_action_ = new QAction(tr("Search"), this);
     pedit_search_action_->setStatusTip(tr("Search in files."));
-    pedit_search_action_->setShortcut(Qt::CTRL + Qt::Key_H);
+    pedit_search_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_F);
     pedit_search_action_->setIcon(QIcon(tr(":/res/search.png")));
 
     pedit_font_action_ = new QAction(tr("Font"), this);
@@ -297,7 +297,7 @@ void MainWindow::initActions()
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
-    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_F);
+    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_E);
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
 
     pview_search_results_action_ = new QAction(tr("Search &results"), this);
