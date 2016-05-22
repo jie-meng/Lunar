@@ -1,0 +1,19 @@
+
+QT       += core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+DEFINES += _PLATFORM_UNIX_ \
+			_GUI_ \
+			_CPP11_
+
+INCLUDEPATH += src
+
+LIBS += -lpthread \
+        -lqscintilla2
+
+RC_FILE += Lunar.rc
+ICON = res/app.icns
+
+CONFIG += c++11
+CONFIG += qscintilla2

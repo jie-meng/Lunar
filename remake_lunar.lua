@@ -28,7 +28,11 @@ end
 PRO = "Lunar.pro"
 
 if strContains(platformInfo(), "unix", false) then
-    ADDTOPRO = "build_config_unix"
+    if strContains(platformInfo(), "macos", false) then
+        ADDTOPRO = "build_config_macos"
+    else
+        ADDTOPRO = "build_config_unix"
+    end
     MAKE = "make"
 elseif strContains(platformInfo(), "windows", false) then 
     ADDTOPRO = "build_config_windows"
