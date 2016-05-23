@@ -192,17 +192,17 @@ void MainWindow::closeEvent(QCloseEvent* e)
 
 void MainWindow::initActions()
 {
-    pfile_new_action_ = new QAction(tr("&New"), this);
+    pfile_new_action_ = new QAction(tr("New"), this);
     pfile_new_action_->setShortcut(QKeySequence::New);
     pfile_new_action_->setStatusTip(tr("New a file."));
     pfile_new_action_->setIcon(QIcon(tr(":/res/new.png")));
 
-    pfile_open_action_ = new QAction(tr("&Open"), this);
+    pfile_open_action_ = new QAction(tr("Open"), this);
     pfile_open_action_->setShortcut(QKeySequence::Open);
     pfile_open_action_->setStatusTip(tr("Open a file."));
     pfile_open_action_->setIcon(QIcon(tr(":/res/open.png")));
 
-    pfile_save_action_ = new QAction(tr("&Save"), this);
+    pfile_save_action_ = new QAction(tr("Save"), this);
     pfile_save_action_->setShortcut(QKeySequence::Save);
     pfile_save_action_->setStatusTip(tr("Save a file."));
     pfile_save_action_->setIcon(QIcon(tr(":/res/save.png")));
@@ -223,7 +223,7 @@ void MainWindow::initActions()
     pfile_close_all_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_W);
     pfile_close_all_action_->setIcon(QIcon(tr(":/res/close_all.png")));
 
-    pfile_dump_action_ = new QAction(tr("Du&mp output"), this);
+    pfile_dump_action_ = new QAction(tr("Dump output"), this);
     pfile_dump_action_->setStatusTip(tr("Dump output."));
     pfile_dump_action_->setShortcut(Qt::CTRL + Qt::Key_M);
     pfile_dump_action_->setIcon(QIcon(tr(":/res/dump.png")));
@@ -256,7 +256,7 @@ void MainWindow::initActions()
     pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_Q);
     pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
 
-    pedit_find_action_ = new QAction(tr("&Find"), this);
+    pedit_find_action_ = new QAction(tr("Find"), this);
     pedit_find_action_->setStatusTip(tr("Find."));
     pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setIcon(QIcon(tr(":/res/find.png")));
@@ -270,12 +270,12 @@ void MainWindow::initActions()
     pedit_font_action_->setStatusTip(tr("Set font."));
     pedit_font_action_->setIcon(QIcon(tr(":/res/font.png")));
 
-    pedit_comment_action_ = new QAction(tr("&Comment line"), this);
+    pedit_comment_action_ = new QAction(tr("Comment line"), this);
     pedit_comment_action_->setStatusTip(tr("Comment selection lines."));
     pedit_comment_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_C);
     pedit_comment_action_->setIcon(QIcon(tr(":/res/comment_line.png")));
 
-    pedit_comment_block_action_ = new QAction(tr("Comment &block"), this);
+    pedit_comment_block_action_ = new QAction(tr("Comment block"), this);
     pedit_comment_block_action_->setStatusTip(tr("Comment selection block."));
     pedit_comment_block_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_B);
     pedit_comment_block_action_->setIcon(QIcon(tr(":/res/comment_block.png")));
@@ -300,17 +300,17 @@ void MainWindow::initActions()
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_E);
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
 
-    pview_search_results_action_ = new QAction(tr("Search &results"), this);
+    pview_search_results_action_ = new QAction(tr("Search results"), this);
     pview_search_results_action_->setStatusTip((tr("Go to search results.")));
     pview_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
     pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
 
-    pview_documents_action_ = new QAction(tr("Doc&uments"), this);
+    pview_documents_action_ = new QAction(tr("Documents"), this);
     pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
     pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
     pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
-    pview_close_docks_action_ = new QAction(tr("Close &docks"), this);
+    pview_close_docks_action_ = new QAction(tr("Close docks"), this);
     pview_close_docks_action_->setStatusTip(tr("Close dock views."));
     pview_close_docks_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_D);
     pview_close_docks_action_->setIcon(QIcon(tr(":/res/close_docks.png")));
