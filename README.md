@@ -1,24 +1,24 @@
 ## Lunar ##
 
-A cross-platform (Linux, MacOS, Windows) script editor
+A cross-platform (MacOS, Linux, Windows) script editor
 
-- Make your own auto-completion and goto-definition plugins which meets your need.
-- Currently provided: lua, cocos2dx_lua, python2 & 3, octave
+- Customize your script api, auto-completion & goto-definition plugins.
+- Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, octave 
 
 ### enviromment ###
 
-- Qt5.5
-- QScintilla 2.9.1
+- Qt5
+- QScintilla 2.9
 
 ### build step ###
 
 #### build luaexec ####
 
-1. Get Util project from [git@github.com:joshua-meng/Util.git]()
+1. Get Util project from [Util: Cross-platform C++ library](https://github.com/joshua-meng/Util)
 
 2. Build luaexec follow the README.MD of Util. 
 
-3. luaexec is a lua script executor which contains basic lua (lua 5.2.3) & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
+3. luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
 
 
 #### build qscintilla ####
@@ -53,10 +53,10 @@ On windows extras (You can find all the dlls in Qt installation directory):
 
 On MacOS
 - Put luaexec to /usr/local/bin
-- Put QScintilla dylib to /usr/local/lib
+- Put QScintilla dylibs to /usr/local/lib
 - Put all the files and folders in publish to Lunar.app/Contents/MacOS
 - Put Lunar.app to /Applications/
-- Modify /Applications/Lunar.app/Contents/MacOS/extension.lua (change executor 'luaexec' to '/usr/local/bin/luaexec')
+- Modify /Applications/Lunar.app/Contents/MacOS/extension.lua (change executor 'luaexec' to '/usr/local/bin/luaexec', 'python' to '/usr/local/bin/python')
 
 ### notes ###
 
