@@ -253,7 +253,7 @@ void MainWindow::initActions()
 
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
-    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_Q);
+    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_E);
     pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
 
     pedit_find_action_ = new QAction(tr("Find"), this);
@@ -307,7 +307,7 @@ void MainWindow::initActions()
 
     pview_documents_action_ = new QAction(tr("Documents"), this);
     pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
-    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_E);
+    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_U);
     pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
     pview_close_docks_action_ = new QAction(tr("Close docks"), this);
