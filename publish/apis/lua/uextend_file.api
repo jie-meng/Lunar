@@ -1,24 +1,25 @@
-file.readTextFile(file)
-file.writeTextFile(file, str, [append = false])
-file.createBinaryFile(file, size, bval)
-file.readBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0])
-file.writeBinaryFile(file, buf, size, [append = false])
-file.overwriteBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0])
-file.fileExtension(file)
-file.fileBaseName(file)
-file.fileRename(oldname, newname)
-file.fileCopy(srcfile, destfile, [fail_if_exist = true])
-file.splitPathname(file)
-file.setCurrentPath(path)
-file.currentPath()
-file.relativePathToAbsolutePath(path)
-file.isPathExists(path)
-file.isPathDir(path)
-file.isPathFile(path)
-file.isPathEmpty(path)
+file.readTextFile(file) -> string
+file.writeTextFile(file, str, [append = false]) -> boolean
+file.createBinaryFile(file, size, bval) -> boolean
+file.readBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
+file.writeBinaryFile(file, buf, size, [append = false]) -> boolean
+file.overwriteBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
+file.fileExtension(file) -> string
+file.fileBaseName(file) -> string
+file.fileRename(oldname, newname) -> boolean
+file.fileCopy(srcfile, destfile, [fail_if_exist = true]) -> boolean
+file.splitPathname(file) -> string (directory), string (file)
+file.setCurrentPath(path) -> boolean
+file.currentPath() -> string
+file.appPath() -> string
+file.relativePathToAbsolutePath(path) -> string
+file.isPathExists(path) -> boolean
+file.isPathDir(path) -> boolean
+file.isPathFile(path) -> boolean
+file.isPathEmpty(path) -> boolean
 file.pathRemoveAll(path)
-file.pathRemove(path)
-file.mkDir(path)
-file.findFilesInDir(path, [ext = ""])
-file.findPathInDir(path)
-file.findFilesInDirRecursively(path, [ext = ""])
+file.pathRemove(path) -> boolean
+file.mkDir(path) -> boolean
+file.findFilesInDir(path, [ext = ""]) -> table
+file.findPathInDir(path) -> table
+file.findFilesInDirRecursively(path, [ext = ""]) -> table

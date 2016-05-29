@@ -1,8 +1,8 @@
-regex.create(re, [flag = 0])
+regex.create(re, [flag = 0]) -> userdata (regex object)
 regex.destroy(re)
 regex.compile(re, s)
-regex.match(re, s)
-regex.search(re, s)
-regex.getMatchedGroupCnt(re)
-regex.getMatchedGroupByIndex(re, idx)
-regex.getMatchedGroupByName(re, name)
+regex.match(re, s) -> boolean
+regex.search(re, s) -> boolean
+regex.getMatchedGroupCnt(re) -> number
+regex.getMatchedGroupByIndex(re, idx) -> string
+regex.getMatchedGroupByName(re, name) -> string

@@ -1,7 +1,7 @@
-process.create()
+process.create() -> userdata (process object)
 process.destroy(ps)
-process.start(ps, cmdline, path, input, output, [file, func)
+process.start(ps, cmdline, path, input, output, [file, func) -> boolean
 process.kill(ps)
-process.input(ps, str)
-process.executeProcess(cmdline, path)
-process.executeProcessAsyn(cmdline, path)
+process.input(ps, str) -> boolean
+process.executeProcess(cmdline, path) -> number
+process.executeProcessAsyn(cmdline, path) -> boolean

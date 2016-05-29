@@ -1,11 +1,11 @@
-csv.create(file, [delimiter = ','], [enclosure = '"'])
+csv.create(file, [delimiter = ','], [enclosure = '"']) -> userdata (csv object)
 csv.destroy(c)
-csv.read(c, file)
-csv.write(c, [file = ""])
-csv.empty(c)
+csv.read(c, file) -> boolean
+csv.write(c, [file = ""]) -> boolean
+csv.empty(c) -> boolean
 csv.clear(c)
-csv.rows(c)
-csv.cols(c)
-csv.getCellValue(c, row, col)
-csv.setCellValue(c, row, col, value)
-csv.addRow(c, ...)
+csv.rows(c) -> number
+csv.cols(c) -> number
+csv.getCellValue(c, row, col) -> string
+csv.setCellValue(c, row, col, value) -> boolean
+csv.addRow(c, ...) -> boolean

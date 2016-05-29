@@ -1,19 +1,19 @@
-memory.create(size)
+memory.create(size) -> userdata (memory object)
 memory.destroy(m)
-memory.size(m)
+memory.size(m) -> number
 memory.clear(m)
-memory.buf(m)
-memory.offset(p, offset)
+memory.buf(m) -> userdata
+memory.offset(p, offset) -> userdata
 memory.memset(p, v, len)
 memory.memcpy(pd, ps, len)
 memory.memmove(pd, ps, len)
 memory.strcpy(pd, [ps, string])
-memory.memstr(p, len)
-memory.tostring(p)
-memory.setUint8(p, uint8)
-memory.setUint16(p, uint16)
-memory.setUint32(p, uint32)
-memory.getUint8(p)
-memory.getUint16(p)
-memory.getUint32(p)
+memory.memstr(p, len) -> string
+memory.tostring(p) -> string
+memory.setUInt8(p, uint8)
+memory.setUInt16(p, uint16)
+memory.setUInt32(p, uint32)
+memory.getUInt8(p)
+memory.getUInt16(p)
+memory.getUInt32(p)
 memory.setBytes(p, ...)
