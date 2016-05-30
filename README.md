@@ -7,7 +7,7 @@ A cross-platform (MacOS, Linux, Windows) script editor
 - Customize your script api, auto-completion & goto-definition plugins.
 - Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, octave 
 
-### Compile preparations ###
+### Preparations ###
 
 - [Qt](https://www.qt.io/)
 - [QScintilla](https://www.riverbankcomputing.com/software/qscintilla/download)
