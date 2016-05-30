@@ -1,5 +1,7 @@
 ## Lunar ##
 
+![](https://github.com/joshua-meng/Lunar/wiki/assets/lunar_linux.png)
+
 A cross-platform (MacOS, Linux, Windows) script editor
 
 - Customize your script api, auto-completion & goto-definition plugins.
