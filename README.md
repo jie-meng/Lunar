@@ -7,14 +7,18 @@ A cross-platform (MacOS, Linux, Windows) script editor
 - Customize your script api, auto-completion & goto-definition plugins.
 - Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, octave 
 
-### enviromment ###
+### Compile preparations ###
 
-- Qt5
-- QScintilla 2.9
+- [Qt](https://www.qt.io/)
+- [QScintilla](https://www.riverbankcomputing.com/software/qscintilla/download)
 
-### build step ###
+Download qt5 and QScintilla 2.9.
 
-#### build luaexec ####
+Install Qt, add Qt compiler directory to environment variable.
+
+### Build step ###
+
+#### Build luaexec ####
 
 1. Get Util project from [Util: Cross-platform C++ library](https://github.com/joshua-meng/Util)
 
@@ -22,8 +26,7 @@ A cross-platform (MacOS, Linux, Windows) script editor
 
 3. luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
 
-
-#### build qscintilla ####
+#### Build Qscintilla ####
 
 1. cd QScintilla-gpl-version_xxx\Qt4Qt5
 
@@ -33,13 +36,13 @@ A cross-platform (MacOS, Linux, Windows) script editor
 
 4. make install
 
-#### build Lunar ####
+#### Build Lunar ####
 
 cd Lunar
 luaexec remake_lunar.lua
 
 
-### release ###
+### Release ###
 
 On Linux and Windows 
 
