@@ -41,7 +41,6 @@ Install Qt, add Qt compiler directory to environment variable.
 cd Lunar
 luaexec remake_lunar.lua
 
-
 ### Release ###
 
 On Linux and Windows 
@@ -58,7 +57,9 @@ On windows extras (You can find all the dlls in Qt installation directory):
 
 On MacOS
 - Put luaexec to /usr/local/bin
-- Put QScintilla dylibs to /usr/local/lib
+- Use command "otool -L Lunar.app" to check the library dependency
+- Use command "install_name_tool -change libqscintilla2.12.dylib(found in result fo otool command result) {absolute_path_of_libqscintilla2.12.dylib} Lunar.app/Contents/MacOS/Lunar" to change the load path of special dylibs
+- Use command "macdeployqt Lunar.app"
 - Put all the files and folders in publish to Lunar.app/Contents/MacOS
 - Put Lunar.app to /Applications/
 - Modify /Applications/Lunar.app/Contents/MacOS/extension.lua (change executor 'luaexec' to '/usr/local/bin/luaexec', 'python' to '/usr/local/bin/python')
