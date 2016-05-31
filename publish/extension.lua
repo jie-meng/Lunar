@@ -56,7 +56,7 @@ function parseFileType(filename)
 		return 
             {
                 type = "octave", 
-                auto_complete_type = 0, 
+                auto_complete_type = 0,
                 api = "apis/octave", 
                 executor = "octave", 
                 parse_supplement_api_script = "plugins/parse_supplement_api_octave.lua", 
@@ -83,6 +83,7 @@ function parseFileType(filename)
             {
                 type = "html", 
                 auto_complete_type = 0,
+				api = "apis/html", 
                 executor = "firefox",
 				comment_block_begin = "<!--",
 				comment_block_end = "-->"
@@ -101,11 +102,11 @@ function parseFileType(filename)
 	end
     
     if string.lower(file.fileExtension(name)) == "sh" then
-        return { type = "bash", comment_line = "#" }
+        return { type = "bash", comment_line = "#", api = "apis/bash" }
     end
     
 	if string.lower(name) == "cmakelists.txt" or string.lower(file.fileExtension(name)) == "cmake" then
-		return { type = "cmake", comment_line = "#" }
+		return { type = "cmake", comment_line = "#", api = "apis/cmake" }
 	end
     
     if string.lower(file.fileExtension(name)) == "py" then
@@ -141,6 +142,7 @@ function parseFileType(filename)
         return 
 			{ 
 				type = "java",
+				api = "apis/java", 
 				comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
