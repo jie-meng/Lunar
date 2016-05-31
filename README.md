@@ -12,7 +12,7 @@ A cross-platform (MacOS, Linux, Windows) script editor
 - [Qt](https://www.qt.io/)
 - [QScintilla](https://www.riverbankcomputing.com/software/qscintilla/download)
 
-Download qt5 and QScintilla 2.9.
+Download Qt5 and QScintilla 2.9.
 
 Install Qt, add Qt compiler directory to environment variable.
 
@@ -63,7 +63,7 @@ On MacOS
 - Put Lunar.app to /Applications/
 - Modify /Applications/Lunar.app/Contents/MacOS/extension.lua (change executor 'luaexec' to '/usr/local/bin/luaexec', 'python' to '/usr/local/bin/python')
 
-### notes ###
+### Notes ###
 
 - 2015.03.10
 
