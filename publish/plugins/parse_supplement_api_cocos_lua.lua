@@ -136,6 +136,7 @@ function parseClass(current_file_dir, import_path)
     
     local class = nil
     local f = io.open(filename, "r")
+    current_file_dir = file.splitPathname(filename)
     if f then
         class = Class:new()
         
