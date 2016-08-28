@@ -185,6 +185,10 @@ function parseFileType(filename)
                 type = "cpp",
                 api = "apis/cpp",
                 auto_complete_type = 1,
+				goto_script = "plugins/goto_cpp.lua",
+                goto_definition_func = "gotoDefinition",
+				parse_supplement_api_script = "plugins/parse_supplement_api_cpp.lua", 
+                parse_supplement_api_func = "parseSupplementApi",
                 comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
@@ -214,6 +218,8 @@ function isLegalFile(filename)
     if ext == "lua" or
         ext == "m" or
         ext == "sh" or
+		ext == "bat" or
+		ext == "cmd" or
         ext == "txt" or
         ext == "cmake" or
         ext == "py" or
@@ -244,6 +250,7 @@ function isLegalFile(filename)
 		ext == "project" or
 		ext == "classpath" or
 		ext == "md" or
+		ext == "cfg" or
         ext == "log" then
         
         return true

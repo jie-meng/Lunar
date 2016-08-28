@@ -620,12 +620,16 @@ void MainWindow::searchTextInPath(
     viewSearchResultsWidget();
 }
 
-void MainWindow::gotoSearchResult(const QString& file_relative, int line)
+void MainWindow::gotoSearchResult(const QString& file, int line)
 {
     //take a record
     auto record_pos = getCurrentPosition();
+	
+    QString doc_path = (file.startsWith("/") || (file.length()> 2 && file.at(1) == ':')) ?
+            file :
+            StdStringToQString(currentPath())+ "/" + file;
 
-    if (openDoc(StdStringToQString(currentPath())+ "/" + file_relative))
+    if (openDoc(doc_path))
     {
         pmain_tabwidget_->currentDocGotoLine(line);
 
