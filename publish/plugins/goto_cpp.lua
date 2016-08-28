@@ -213,6 +213,7 @@ end
 
 function gotoDefinition(text, line, filename, project_src_dir)
     local inc_path = {}
+	table.insert(inc_path, { path = project_src_dir, find = false})
     local cfg = io.open(file.currentPath() .. "/" .. "lunar_cpp.cfg", "r")
     if cfg then
         local region = nil

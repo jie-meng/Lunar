@@ -147,6 +147,7 @@ end
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local inc_path = {}
+	table.insert(inc_path, { path = project_src_dir, find = false})
     local cfg = io.open(project_src_dir .. "/" .. "lunar_cpp.cfg", "r")
     if cfg then
         local region = nil
