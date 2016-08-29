@@ -11,7 +11,27 @@ function tryGetFuncWithReturnType(line_str)
 end
 
 function tryGetClassOrStruct(line_str)
-    local class_name = string.match(line_str, 'class%s+([%w_]+)')
+    local class_name = string.match(line_str, 'class%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+
+    class_name = string.match(line_str, 'struct%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'enum%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'union%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'class%s+([%w_]+)')
     if class_name then
         return class_name
     end
@@ -33,7 +53,7 @@ function tryGetClassOrStruct(line_str)
 end
 
 function tryGetMacro(line_str)
-    return string.match(line_str, '#%s*define%s+([%w_]+)')
+    return string.match(line_str, '#define%s+([%w_]+)')
 end
 
 function tryGetTypedef(line_str)
@@ -68,7 +88,12 @@ function tryGetInclude(line_str)
     return file, directive
 end
 
-function parseFile(coll, project_src_dir, filename, current_line_index, inc_path, recuresive)
+function parseFile(coll, parsed_files, project_src_dir, filename, current_line_index, inc_path, recuresive)
+    if parsed_files[filename] then
+        return false
+    end
+    parsed_files[filename] = true
+    
     local found = false
     local f = io.open(filename, "r")
     if f then
@@ -122,19 +147,19 @@ function parseFile(coll, project_src_dir, filename, current_line_index, inc_path
                 -- directive path <>                    
                 for _, v in ipairs(inc_path) do
                     if v.find then
-                        parseFile(coll, project_src_dir, v.path .. "/" .. inc.file, current_line_index, inc_path, true)
+                        parseFile(coll, parsed_files, project_src_dir, v.path .. "/" .. inc.file, current_line_index, inc_path, true)
                     end
                 end
             else
                 -- relative path ""
                 if file.isPathFile(current_file_path .. "/" .. inc.file) then
-                    parseFile(coll, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, inc_path, true)
+                    parseFile(coll, parsed_files, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, inc_path, true)
                 elseif file.isPathFile(project_src_dir .. "/" .. inc.file) then
-                    parseFile(coll, project_src_dir, project_src_dir .. "/" .. inc.file, current_line_index, inc_path, true)
+                    parseFile(coll, parsed_files, project_src_dir, project_src_dir .. "/" .. inc.file, current_line_index, inc_path, true)
                 else                        
                     for _, v in ipairs(inc_path) do
                         if not v.find then
-                            parseFile(coll, project_src_dir, project_src_dir .. "/" .. v.path .. "/" .. inc.file, current_line_index, inc_path, true)
+                            parseFile(coll, parsed_files, project_src_dir, project_src_dir .. "/" .. v.path .. "/" .. inc.file, current_line_index, inc_path, true)
                         end
                     end
                 end
@@ -178,7 +203,8 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     end
     
     local coll = {}
-    parseFile(coll, project_src_dir, filename, line, inc_path)
+    local parsed_files = {}
+    parseFile(coll, parsed_files, project_src_dir, filename, line, inc_path)
     
     local apis = {}
     for k, v in pairs(coll) do

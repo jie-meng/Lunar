@@ -23,14 +23,18 @@ function isMethodWithReturnType(line_str, text)
 end
 
 function isClassOrStruct(line_str, text)
-    return string.match(line_str, 'class%s+(' .. text .. ')') ~= nil or
+    return string.match(line_str, 'class%s+[%w_%(%)]+%s+(' .. text .. ')') ~= nil or
+        string.match(line_str, 'struct%s+[%w_%(%)]+%s+(' .. text .. ')') ~= nil or
+        string.match(line_str, 'enum%s+[%w_%(%)]+%s+(' .. text .. ')') ~= nil or
+        string.match(line_str, 'union%s+[%w_%(%)]+%s+(' .. text .. ')') ~= nil or
+        string.match(line_str, 'class%s+(' .. text .. ')') ~= nil or
         string.match(line_str, 'struct%s+(' .. text .. ')') ~= nil or
         string.match(line_str, 'enum%s+(' .. text .. ')') ~= nil or
         string.match(line_str, 'union%s+(' .. text .. ')') ~= nil
 end
 
 function isMacro(line_str, text)
-    return string.match(line_str, '#%s*define%s+(' .. text .. ')') ~= nil
+    return string.match(line_str, '#define%s+(' .. text .. ')') ~= nil
 end
 
 function isTypedef(line_str, text)
@@ -83,7 +87,12 @@ function isInclude(line_str)
     return file, directive
 end
 
-function parseFile(coll, filename, current_line_index, text, inc_path, recuresive)
+function parseFile(coll, parsed_files, filename, current_line_index, text, inc_path, recuresive)
+    if parsed_files[filename] then
+        return false
+    end
+    parsed_files[filename] = true
+    
     local found = false
     local f = io.open(filename, "r")
     if f then
@@ -173,7 +182,7 @@ function parseFile(coll, filename, current_line_index, text, inc_path, recuresiv
                         end
                         
                         if v.find then
-                            if parseFile(coll, v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                            if parseFile(coll, parsed_files, v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                 found = true
                             end
                         end
@@ -181,11 +190,11 @@ function parseFile(coll, filename, current_line_index, text, inc_path, recuresiv
                 else
                     -- relative path ""
                     if file.isPathFile(current_file_path .. "/" .. inc.file) then
-                        if parseFile(coll, current_file_path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                        if parseFile(coll, parsed_files, current_file_path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
                     elseif file.isPathFile(file.currentPath() .. "/" .. inc.file) then
-                        if parseFile(coll, file.currentPath() .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                        if parseFile(coll, parsed_files, file.currentPath() .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
                     else                        
@@ -195,7 +204,7 @@ function parseFile(coll, filename, current_line_index, text, inc_path, recuresiv
                             end
                             
                             if not v.find then
-                                if parseFile(coll, file.currentPath() .. "/" .. v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                                if parseFile(coll, parsed_files, file.currentPath() .. "/" .. v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                     found = true
                                 end
                             end
@@ -244,7 +253,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
     end
     
     local coll = {}
-    parseFile(coll, filename, line, text, inc_path)
+    local parsed_files = {}
+    parseFile(coll, parsed_files, filename, line, text, inc_path)
     
     local results = {}
     for k, v in pairs(coll) do
