@@ -5,7 +5,7 @@
 A cross-platform (MacOS, Linux, Windows) script editor
 
 - Customize your script api, auto-completion & goto-definition plugins.
-- Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, octave 
+- Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, cpp, octave 
 
 ### Preparations ###
 
@@ -38,7 +38,6 @@ Install Qt, add Qt compiler directory to environment variable.
 
 #### Build Lunar ####
 
-cd Lunar
 luaexec remake_lunar.lua
 
 ### Release ###
@@ -57,7 +56,7 @@ On windows extras (You can find all the dlls in Qt installation directory):
 
 On MacOS
 - Put luaexec to /usr/local/bin
-- Use command "otool -L Lunar.app" to check the library dependency
+- Use command "otool -L Lunar.app/Content/MacOS/Lunar" to check the library dependency
 - Use command "install_name_tool -change libqscintilla2.12.dylib(found in result of otool command) {absolute_path_of_libqscintilla2.12.dylib} Lunar.app/Contents/MacOS/Lunar" to change the load path of special dylibs
 - Use command "macdeployqt Lunar.app"
 - Put all the files and folders in publish to Lunar.app/Contents/MacOS
@@ -98,4 +97,8 @@ On MacOS
 
 - 2016.05.20
 
-    V1.5.3 Support MacOS.
+    V1.5.3 support MacOS.
+
+- 2016.6.28
+    
+    V1.5.8 support cpp plugins.

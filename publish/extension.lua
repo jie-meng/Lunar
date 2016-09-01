@@ -161,6 +161,7 @@ function parseFileType(filename)
     
     if string.lower(file.fileExtension(name)) == "xml" or
        string.lower(file.fileExtension(name)) == "axml" or
+       string.lower(file.fileExtension(name)) == "xaml" or
 	   string.lower(file.fileExtension(name)) == "xsd" or
 	   string.lower(file.fileExtension(name)) == "jxl" or
 	   string.lower(file.fileExtension(name)) == "rxl" or
@@ -228,6 +229,7 @@ function isLegalFile(filename)
         ext == "cs" or
         ext == "xml" or
         ext == "axml" or
+        ext == "xaml" or
         ext == "tmx" or
 		ext == "xsd" or
 		ext == "jxl" or
@@ -253,6 +255,11 @@ function isLegalFile(filename)
 		ext == "cfg" or
         ext == "log" then
         
+        return true
+    end
+    
+    local base  = file.fileBaseName(filename)
+    if string.lower(base) == "makefile" then
         return true
     end
 	
