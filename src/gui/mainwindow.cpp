@@ -461,8 +461,15 @@ void MainWindow::initConnections()
     connect(pfile_explorer_widget_, &FileExplorerWidget::widthChanged, [this](int width)
     {
         //LogSocket::getInstance().sendLog(strFormat("%d", width), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
-        pleft_widget_->setMinimumWidth(width);
-        pleft_widget_->setMaximumWidth(width);
+        if (width > 0)
+        {
+            pleft_widget_->setFixedWidth(width);
+        }
+        else
+        {
+            pleft_widget_->setMinimumWidth(0);
+            pleft_widget_->setMaximumWidth(this->width());
+        }
     });
     connect(pfile_explorer_widget_, &FileExplorerWidget::renameFile, [this](const QString& from, const QString& to)
     {

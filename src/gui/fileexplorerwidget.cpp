@@ -255,6 +255,7 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         if (loadNode(item))
         {
             //DoubleClicked is different from return key press, strange.
+            Q_EMIT widthChanged(0);
             return;
         }
 
@@ -275,6 +276,7 @@ void FileExplorerWidget::onItemDoubleClicked(QTreeWidgetItem *item, int column)
         loadNode(item);
         //DoubleClicked is different from return key press, strange.
     }
+    Q_EMIT widthChanged(0);
 }
 
 void FileExplorerWidget::onItemReturn(QTreeWidgetItem *item, int column)
