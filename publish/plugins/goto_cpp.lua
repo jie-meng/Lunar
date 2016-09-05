@@ -1,25 +1,46 @@
+local keywords = {}
+keywords["if"] = true
+keywords["else"] = true
+keywords["elseif"] = true
+keywords["switch"] = true
+keywords["new"] = true
+keywords["delete"] = true
+keywords["operator"] = true
+keywords["return"] = true
+keywords["try"] = true
+keywords["catch"] = true
+keywords["throw"] = true
+
+function isKeyWord(str)
+    return keywords[str]
+end
+
 function isFuncWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_]+)%s+(' .. text .. ')%s*%(')
-    if return_type ~= "return" and func_name then
+    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+(' .. text .. ')%s*%(')
+    if not isKeyWord(return_type) and func_name then
         return true
     end
     
-    return_type, func_name = string.match(line_str, '([%w_]+)%s+(' .. text .. ')%s*(<[%w_:%s]*>)%s*%(')
-    if return_type ~= "return" and func_name then
+    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
+    if not isKeyWord(return_type) and func_name then
         return true
     end
+    
+    return false
 end
 
 function isMethodWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_]+)%s+[%w_]+::(' .. text .. ')%s*%(')
-    if return_type ~= "return" and func_name then
+    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+[%w_]+%s*::%s*(' .. text .. ')%s*%(')
+    if not isKeyWord(return_type) and func_name then
         return true
     end
     
-    return_type, func_name = string.match(line_str, '([%w_]+)%s+[%w_]+::(' .. text .. ')%s*(<[%w_:%s]*>)%s*%(')
-    if return_type ~= "return" and func_name then
+    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
+    if not isKeyWord(return_type) and func_name then
         return true
     end
+    
+    return false
 end
 
 function isClassOrStruct(line_str, text)
@@ -43,42 +64,34 @@ end
 
 function isFunc(line_str, previous_line_str, text)
     if string.match(line_str, '(' .. text .. ')%s*%(') ~= nil 
-        and string.match(previous_line_str, '([%w_]+)') == previous_line_str
-        and previous_line_str ~= "if"
-        and previous_line_str ~= "else"
-        and previous_line_str ~= "elseif"
-        and previous_line_str ~= "return" then
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
         return true
     end
     
-    if string.match(line_str, '(' .. text .. ')%s*(<[%w_:%s]*>)%s*%(') ~= nil 
-        and string.match(previous_line_str, '([%w_]+)') == previous_line_str
-        and previous_line_str ~= "if"
-        and previous_line_str ~= "else"
-        and previous_line_str ~= "elseif"
-        and previous_line_str ~= "return" then
+    if string.match(line_str, '(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(') ~= nil 
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
         return true
     end
+    
+    return false
 end
 
 function isMethod(line_str, previous_line_str, text)
-    if string.match(line_str, '[%w_]+::(' .. text .. ')%s*%(') ~= nil 
-        and string.match(previous_line_str, '([%w_]+)') == previous_line_str
-        and previous_line_str ~= "if"
-        and previous_line_str ~= "else"
-        and previous_line_str ~= "elseif"
-        and previous_line_str ~= "return" then
+    if string.match(line_str, '[%w_]+%s*::%s*(' .. text .. ')%s*%(') ~= nil 
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
         return true
     end
     
-    if string.match(line_str, '[%w_]+::(' .. text .. ')%s*(<[%w_:%s]*>)%s*%(') ~= nil 
-        and string.match(previous_line_str, '([%w_]+)') == previous_line_str
-        and previous_line_str ~= "if"
-        and previous_line_str ~= "else"
-        and previous_line_str ~= "elseif"
-        and previous_line_str ~= "return" then
+    if string.match(line_str, '[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::%s*(' .. text .. ')%s*%(') ~= nil 
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
         return true
     end
+    
+    return false
 end
 
 function isInclude(line_str)
@@ -143,7 +156,7 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                     matched = true
                 elseif isMethodWithReturnType(trimmed_line, text) then
                     matched = true
-                elseif isClassOrStruct(trimmed_line, text) then
+                elseif isClassOrStruct(trimmed_line, text) and not strEndWith(trimmed_line, ";") then
                     matched = true
                 elseif isMacro(trimmed_line, text) then
                     matched = true
