@@ -59,7 +59,7 @@ function isMacro(line_str, text)
 end
 
 function isTypedef(line_str, text)
-    return string.match(line_str, 'typedef%s+[%w_<>:%s]+(%s+' .. text .. ')%s*;') ~= nil
+    return string.match(line_str, 'typedef%s+[%w_<>%(%):%s]+(%s+' .. text .. ')%s*;') ~= nil
 end
 
 function isFunc(line_str, previous_line_str, text)
