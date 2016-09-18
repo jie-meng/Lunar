@@ -100,7 +100,15 @@ function isInclude(line_str)
     return file, directive
 end
 
-function parseFile(coll, parsed_files, filename, current_line_index, text, inc_path, recuresive)
+function getProjectSrcAbsoluteDir(project_src_dir)
+    if strTrim(project_src_dir) == "" then
+        return file.currentPath()
+    else
+        return string.format("%s/%s", file.currentPath(), project_src_dir)
+    end
+end
+
+function parseFile(coll, parsed_files, project_src_dir, filename, current_line_index, text, inc_path, recuresive)
     if parsed_files[filename] then
         return false
     end
@@ -110,6 +118,7 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
     local f = io.open(filename, "r")
     if f then
         local current_file_path, current_file_name = file.splitPathname(filename)
+        local project_dir_absolute = getProjectSrcAbsoluteDir(project_src_dir)
         local readline = f:read("*line")
         local line_index = 1
         local previous_line_str = ""
@@ -130,6 +139,10 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                             local item = string.format("%s\n%d\n%s", current_file_path .. "/" .. inc, 1, inc)
                             coll[item] = true
                             found = true
+                        elseif file.isPathFile(project_dir_absolute .. "/" .. inc) then
+                            local item = string.format("%s\n%d\n%s", project_dir_absolute .. "/" .. inc, 1, inc)
+                            coll[item] = true
+                            found = true
                         else                            
                             for _, v in ipairs(inc_path) do
                                 if v.find == directive then
@@ -140,8 +153,8 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                                             found = true
                                         end
                                     else
-                                        if file.isPathFile(file.currentPath() .. "/" .. v.path .. "/" .. inc) then
-                                            local item = string.format("%s\n%d\n%s", file.currentPath() .. "/" .. v.path .. "/" .. inc, 1, inc)
+                                        if file.isPathFile(project_dir_absolute .. "/" .. v.path .. "/" .. inc) then
+                                            local item = string.format("%s\n%d\n%s", project_dir_absolute .. "/" .. v.path .. "/" .. inc, 1, inc)
                                             coll[item] = true
                                             found = true
                                         end
@@ -195,7 +208,7 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                         end
                         
                         if v.find then
-                            if parseFile(coll, parsed_files, v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                            if parseFile(coll, parsed_files, project_src_dir, v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                 found = true
                             end
                         end
@@ -203,11 +216,11 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                 else
                     -- relative path ""
                     if file.isPathFile(current_file_path .. "/" .. inc.file) then
-                        if parseFile(coll, parsed_files, current_file_path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                        if parseFile(coll, parsed_files, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
-                    elseif file.isPathFile(file.currentPath() .. "/" .. inc.file) then
-                        if parseFile(coll, parsed_files, file.currentPath() .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                    elseif file.isPathFile(project_dir_absolute .. "/" .. inc.file) then
+                        if parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
                     else                        
@@ -217,7 +230,7 @@ function parseFile(coll, parsed_files, filename, current_line_index, text, inc_p
                             end
                             
                             if not v.find then
-                                if parseFile(coll, parsed_files, file.currentPath() .. "/" .. v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
+                                if parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                     found = true
                                 end
                             end
@@ -236,7 +249,7 @@ end
 function gotoDefinition(text, line, filename, project_src_dir)
     local inc_path = {}
 	table.insert(inc_path, { path = project_src_dir, find = false})
-    local cfg = io.open(file.currentPath() .. "/" .. "lunar_cpp.cfg", "r")
+    local cfg = io.open(getProjectSrcAbsoluteDir(project_src_dir) .. "/" .. "lunar_cpp.cfg", "r")
     if cfg then
         local region = nil
         local readline = cfg:read("*line")
@@ -267,7 +280,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
     
     local coll = {}
     local parsed_files = {}
-    parseFile(coll, parsed_files, filename, line, text, inc_path)
+    parseFile(coll, parsed_files, project_src_dir, filename, line, text, inc_path)
     
     local results = {}
     for k, v in pairs(coll) do
@@ -287,53 +300,3 @@ function gotoDefinition(text, line, filename, project_src_dir)
     
     return results
 end
-
-
---[[test]]
---local test_string = "void func(int a = 0)"
---local ret = string.match(test_string, pattern_func_with_return_type)
---if ret then
---    print(ret)
---end
-
---local test_string = "func("
---local ret = string.match(test_string, pattern_func)
---if ret then
---    print(ret)
---end
-
---test_string = "class A"
---ret = string.match(test_string, pattern_class)
---if ret then
---    print(ret)
---end
-
---test_string = "struct T"
---ret = string.match(test_string, pattern_struct)
---if ret then
---    print(ret)
---end
-
---test_string = "#define PI (3.14)"
---ret = string.match(test_string, pattern_define)
---if ret then
---    print(ret)
---end
-
---test_string = "typedef unsigned int INT;"
---ret = string.match(test_string, pattern_typedef)
---if ret then
---    print(ret)
---end
-
---test_string = "#include <base/test.hpp>"
---ret = string.match(test_string, pattern_include)
---if ret then
---    print(ret)
---end
-
---test_string = [[#include "base/test.hpp"]]
---ret = string.match(test_string, pattern_include)
---if ret then
---    print(ret)
---end

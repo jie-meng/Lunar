@@ -99,16 +99,22 @@ function tryGetInclude(line_str)
     return file, directive
 end
 
+function getProjectSrcAbsoluteDir(project_src_dir)
+    if strTrim(project_src_dir) == "" then
+        return file.currentPath()
+    else
+        return string.format("%s/%s", file.currentPath(), project_src_dir)
+    end
+end
+
 function parseFile(coll, parsed_files, project_src_dir, filename, current_line_index, inc_path, recuresive)
     if parsed_files[filename] then
         return false
     end
     parsed_files[filename] = true
     
-    local found = false
     local f = io.open(filename, "r")
     if f then
-        local current_file_path, current_file_name = file.splitPathname(filename)
         local readline = f:read("*line")
         local line_index = 1
         local previous_line_str = ""
@@ -163,14 +169,17 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 end
             else
                 -- relative path ""
+                local current_file_path, current_file_name = file.splitPathname(filename)
+                local project_dir_absolute = getProjectSrcAbsoluteDir(project_src_dir)
+                
                 if file.isPathFile(current_file_path .. "/" .. inc.file) then
                     parseFile(coll, parsed_files, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, inc_path, true)
-                elseif file.isPathFile(project_src_dir .. "/" .. inc.file) then
-                    parseFile(coll, parsed_files, project_src_dir, project_src_dir .. "/" .. inc.file, current_line_index, inc_path, true)
+                elseif file.isPathFile(project_dir_absolute .. "/" .. inc.file) then
+                    parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. inc.file, current_line_index, inc_path, true)
                 else                        
                     for _, v in ipairs(inc_path) do
                         if not v.find then
-                            parseFile(coll, parsed_files, project_src_dir, project_src_dir .. "/" .. v.path .. "/" .. inc.file, current_line_index, inc_path, true)
+                            parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. v.path .. "/" .. inc.file, current_line_index, inc_path, true)
                         end
                     end
                 end
@@ -184,7 +193,7 @@ end
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local inc_path = {}
 	table.insert(inc_path, { path = project_src_dir, find = false})
-    local cfg = io.open(project_src_dir .. "/" .. "lunar_cpp.cfg", "r")
+    local cfg = io.open(getProjectSrcAbsoluteDir(project_src_dir) .. "/" .. "lunar_cpp.cfg", "r")
     if cfg then
         local region = nil
         local readline = cfg:read("*line")
