@@ -178,12 +178,6 @@ function tryGetFunc(line_str, previous_line_str)
     end
 end
 
-function tryGetInclude(line_str)
-    local file = string.match(line_str, '#%s*include%s+[<"]([%w_%./]+)[>"]')
-    local directive = strContains(line_str, "<")
-    return file, directive
-end
-
 function getProjectSrcAbsoluteDir(project_src_dir)
     if strTrim(project_src_dir) == "" then
         return file.currentPath()
