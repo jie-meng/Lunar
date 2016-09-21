@@ -100,6 +100,90 @@ function isInclude(line_str)
     return file, directive
 end
 
+function tryGetFuncWithReturnType(line_str)
+    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*%(')
+    if not isKeyWord(return_type) and func_name then
+        return func_name
+    end
+    
+    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
+    if not isKeyWord(return_type) and func_name then
+        return func_name
+    end
+end
+
+function tryGetClassOrStruct(line_str)
+    local class_name = string.match(line_str, 'class%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+
+    class_name = string.match(line_str, 'struct%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'enum%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'union%s+[%w_%(%)]+%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'class%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+
+    class_name = string.match(line_str, 'struct%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'enum%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+    
+    class_name = string.match(line_str, 'union%s+([%w_]+)')
+    if class_name then
+        return class_name
+    end
+end
+
+function tryGetMacro(line_str)
+    return string.match(line_str, '#define%s+([%w_]+)')
+end
+
+function tryGetTypedef(line_str)
+    return string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;')
+end
+
+function tryGetFunc(line_str, previous_line_str)
+    local func_name = string.match(line_str, '([%w_:]+)%s*%(')
+    if func_name
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
+        return func_name
+    end
+    
+    func_name = string.match(line_str, '([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
+    if func_name
+        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and not isKeyWord(previous_line_str) then
+        return func_name
+    end
+end
+
+function tryGetInclude(line_str)
+    local file = string.match(line_str, '#%s*include%s+[<"]([%w_%./]+)[>"]')
+    local directive = strContains(line_str, "<")
+    return file, directive
+end
+
 function getProjectSrcAbsoluteDir(project_src_dir)
     if strTrim(project_src_dir) == "" then
         return file.currentPath()
@@ -165,17 +249,17 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                     else
                         table.insert(inc_coll, { file = inc, find = directive })
                     end
-                elseif isFuncWithReturnType(trimmed_line, text) then
+                elseif isFuncWithReturnType(trimmed_line, text) and tryGetFuncWithReturnType(trimmed_line) == text then
                     matched = true
                 elseif isMethodWithReturnType(trimmed_line, text) then
                     matched = true
-                elseif isClassOrStruct(trimmed_line, text) and not strEndWith(trimmed_line, ";") then
+                elseif not strEndWith(trimmed_line, ";") and isClassOrStruct(trimmed_line, text) and tryGetClassOrStruct(trimmed_line) == text then
                     matched = true
-                elseif isMacro(trimmed_line, text) then
+                elseif isMacro(trimmed_line, text) and tryGetMacro(trimmed_line) == text then
                     matched = true
-                elseif isTypedef(trimmed_line, text) then
+                elseif isTypedef(trimmed_line, text) and tryGetTypedef(trimmed_line) == text then
                     matched = true
-                elseif isFunc(trimmed_line, previous_line_str, text) then
+                elseif isFunc(trimmed_line, previous_line_str, text) and tryGetFunc(trimmed_line, previous_line_str) == text then
                     matched = true
                 elseif isMethod(trimmed_line, previous_line_str, text) then
                     matched = true
