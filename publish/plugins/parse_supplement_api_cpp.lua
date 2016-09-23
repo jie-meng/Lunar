@@ -75,7 +75,7 @@ function tryGetMacro(line_str)
 end
 
 function tryGetTypedef(line_str)
-    return string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;')
+    return strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
 end
 
 function tryGetFunc(line_str, previous_line_str)
