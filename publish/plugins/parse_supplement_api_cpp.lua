@@ -10,6 +10,7 @@ keywords["return"] = true
 keywords["try"] = true
 keywords["catch"] = true
 keywords["throw"] = true
+keywords["typedef"] = true
 
 function isKeyWord(str)
     return keywords[str] ~= nil
