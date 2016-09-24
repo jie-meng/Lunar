@@ -3,6 +3,7 @@
 
 #include <string>
 #include <vector>
+#include <list>
 #include <QtCore/QString>
 #include <QtGui/QFont>
 #include "util/net.hpp"
@@ -28,6 +29,9 @@ void LunarMsgBoxQ(const QString& str);
 int scriptMessage(lua_State* plua_state);
 int sendLog(lua_State* plua_state);
 QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const QString& str_replace);
+
+void getRecentProjectPath(std::list<std::string>& out);
+void addNewProjectPath(const std::string& path);
 
 ////////////////////////////////////////////////////
 // class name : LogSocket
@@ -76,6 +80,8 @@ public:
     inline size_t getMainwindowHeight() const { return mainwindow_height_; }
     inline void setMainwindowWidth(size_t width) { mainwindow_width_ = width; }
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
+    inline void setRecentProjectPath(const std::string& path_list) { recent_project_path_ = path_list; }
+    inline void setRecentProjectPathCnt(size_t cnt) { recent_project_path_cnt_ = cnt; }
 
     inline std::string getExtensionFile() const { return "extension.lua"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
@@ -85,6 +91,8 @@ public:
     inline std::string getExtensionToolsPath() const { return extension_tools_path_; }
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
     inline bool isLogEnable() const { return is_log_enable_; }
+    inline std::string getRecentProjectPath() const { return recent_project_path_; }
+    inline size_t getRecentProjectPathCnt() const { return recent_project_path_cnt_; }
     void parseExtensionFileFilter();
 private:
     LunarGlobal();
@@ -107,6 +115,8 @@ private:
     std::string extension_tools_path_;
     unsigned short log_sock_port_;
     bool is_log_enable_;
+    size_t  recent_project_path_cnt_;
+    std::string recent_project_path_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

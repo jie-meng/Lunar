@@ -53,6 +53,8 @@ private Q_SLOTS:
     void fileGotoNext();
     void fileGotoPrev();
     void resetCurrentPath();
+    void resetCurrentPath(const QString& path);
+    void recentProjectPath();
     void editSelectCursorWord();
     void editFind();
     void editSearch();
@@ -105,6 +107,7 @@ private:
     QAction* pfile_goto_next_action_;
     QAction* pfile_goto_prev_action_;
     QAction* pfile_reset_current_path_;
+    QAction* pfile_recent_project_path_;
     QAction* pedit_select_cursor_word_action_;
     QAction* pedit_find_action_;
     QAction* pedit_search_action_;

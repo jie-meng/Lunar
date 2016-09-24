@@ -2,7 +2,7 @@
 #include <QMessageBox>
 #include <QTextStream>
 #include <QFile>
-#include <vector>
+#include <algorithm>
 #include "util/file.hpp"
 #include "util/cfg.hpp"
 #include "util/process.hpp"
@@ -87,6 +87,47 @@ QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const Q
         return ret_str;
     }
     return ret_str;
+}
+
+void trimInvalidPath(list<string>& input, list<string>& output)
+{
+    for (list<string>::iterator it = input.begin(); it != input.end(); ++it)
+    {
+        if (isPathDir(*it))
+            output.push_back(*it);
+    }
+}
+
+void getRecentProjectPath(std::list<std::string>& out)
+{
+    string paths = LunarGlobal::getInstance().getRecentProjectPath();
+    list<string> ls;
+    strSplit(paths, ",", ls);
+    for (list<string>::iterator it = ls.begin(); it != ls.end(); ++it)
+    {
+        if (isPathDir(*it))
+            out.push_back(strTrim(strReplaceAll(*it, "\\", "/")));
+    }
+}
+
+void addNewProjectPath(const std::string& path)
+{
+    string s = strReplaceAll(path, "\\", "/");
+    list<string> input;
+    getRecentProjectPath(input);
+    list<string> ls;
+    trimInvalidPath(input, ls);
+
+    list<string>::iterator it = find(ls.begin(), ls.end(), s);
+    if (it != ls.end())
+        ls.erase(it);
+
+    ls.push_front(s);
+
+    while (ls.size() > LunarGlobal::getInstance().getRecentProjectPathCnt())
+        ls.pop_back();
+
+    LunarGlobal::getInstance().setRecentProjectPath(strJoin(ls, ","));
 }
 
 ////////////////////////////////////////////////////
@@ -228,6 +269,8 @@ void LunarGlobal::readCfg()
     extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
     is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
+    recent_project_path_ = text_cfg.getValue("Path.RecentProject", "");
+    recent_project_path_cnt_ = text_cfg.getValue("Path.RecentProject.Count", 10);
 }
 
 void LunarGlobal::writeCfg()
@@ -246,6 +289,8 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("ExtensionToolsPath", extension_tools_path_);
     text_cfg.setValue("Log.SockPort", log_sock_port_);
     text_cfg.setValue("Log.Enable", is_log_enable_);
+    text_cfg.setValue("Path.RecentProject", recent_project_path_);
+    text_cfg.setValue("Path.RecentProject.Count", recent_project_path_cnt_);
 
     text_cfg.save();
 }
