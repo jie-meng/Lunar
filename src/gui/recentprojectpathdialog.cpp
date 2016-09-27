@@ -1,7 +1,7 @@
 #include "recentprojectpathdialog.h"
-#include <vector>
 #include <list>
 #include <QLabel>
+#include <QPushButton>
 #include <QVBoxLayout>
 #include "util/file.hpp"
 #include "treeview.h"
@@ -14,7 +14,9 @@ namespace gui {
 
 RecentProjectPathDialog::RecentProjectPathDialog(QWidget *parent) :
     QDialog(parent),
-    ptree_view_(NULL)
+    plabel_recent_(NULL),
+    ptree_view_(NULL),
+    pnew_button_(NULL)
 {
     init();
 }
@@ -26,20 +28,27 @@ RecentProjectPathDialog::~RecentProjectPathDialog()
 
 void RecentProjectPathDialog::init()
 {
-    initGui();
-}
+    plabel_recent_ = new QLabel();
+    plabel_recent_->setText(tr("Recent project path"));
 
-void RecentProjectPathDialog::initGui()
-{
     QStringList header;
     header.append(tr("Name"));
     header.append(tr("Path"));
     ptree_view_ = new TreeView(header);
-    connect(ptree_view_, SIGNAL(itemSelected(const QStringList&, int)),
-            this, SLOT(onSelectRecentProjectPathItem(const QStringList&, int)));
 
+    pnew_button_ = new QPushButton();
+    pnew_button_->setText(tr("New"));
+
+    initGui();
+    initConnections();
+}
+
+void RecentProjectPathDialog::initGui()
+{
     QVBoxLayout* pcenter_layout = new QVBoxLayout;
+    pcenter_layout->addWidget(plabel_recent_, 0, Qt::AlignLeft);
     pcenter_layout->addWidget(ptree_view_);
+    pcenter_layout->addWidget(pnew_button_);
 
     list<string> ls;
     getRecentProjectPath(ls);
@@ -54,7 +63,7 @@ void RecentProjectPathDialog::initGui()
 
     setLayout(pcenter_layout);
 
-    setWindowTitle(tr("Select recent project path"));
+    setWindowTitle(tr("Reset project path"));
 
     ptree_view_->resizeColumnToContents(0);
     ptree_view_->resizeColumnToContents(1);
@@ -62,9 +71,22 @@ void RecentProjectPathDialog::initGui()
     setFixedHeight(sizeHint().height());
 }
 
+void RecentProjectPathDialog::initConnections()
+{
+    connect(ptree_view_, SIGNAL(itemSelected(const QStringList&, int)),
+            this, SLOT(onSelectRecentProjectPathItem(const QStringList&, int)));
+    connect(pnew_button_, SIGNAL(clicked()), this, SLOT(onNewProjectPath()));
+}
+
 void RecentProjectPathDialog::onSelectRecentProjectPathItem(const QStringList& item, int number)
 {
     Q_EMIT selectRecentProjectPath(item.at(1));
+    close();
+}
+
+void RecentProjectPathDialog::onNewProjectPath()
+{
+    Q_EMIT newProjectPath();
     close();
 }
 

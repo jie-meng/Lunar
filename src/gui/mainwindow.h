@@ -106,7 +106,6 @@ private:
     QAction* pfile_dump_action_;
     QAction* pfile_goto_next_action_;
     QAction* pfile_goto_prev_action_;
-    QAction* pfile_reset_current_path_;
     QAction* pfile_recent_project_path_;
     QAction* pedit_select_cursor_word_action_;
     QAction* pedit_find_action_;

@@ -5,6 +5,7 @@
 #include "util/base.hpp"
 
 class QLabel;
+class QPushButton;
 
 namespace gui
 {
@@ -22,10 +23,14 @@ public:
     void initGui();
 signals:
     void selectRecentProjectPath(const QString&);
+    void newProjectPath();
 public slots:
     void onSelectRecentProjectPathItem(const QStringList& item, int number);
+    void onNewProjectPath();
 private:
+    QLabel *plabel_recent_;
     TreeView* ptree_view_;
+    QPushButton *pnew_button_;
 private:
     DISALLOW_COPY_AND_ASSIGN(RecentProjectPathDialog)
 };
