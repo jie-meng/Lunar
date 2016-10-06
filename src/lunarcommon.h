@@ -24,7 +24,8 @@ int sendLog(lua_State* plua_state);
 QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const QString& str_replace);
 
 void getRecentProjectPath(std::list<std::string>& out);
-void addNewProjectPath(const std::string& path);
+void addNewRecentProjectPath(const std::string& path);
+void saveRecentProjectPath(const std::list<std::string>& paths);
 
 ////////////////////////////////////////////////////
 // class name : LogSocket

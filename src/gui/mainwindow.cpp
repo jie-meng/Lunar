@@ -589,7 +589,7 @@ void MainWindow::resetCurrentPath(const QString& path)
     setCurrentPath(stdpath);
     pfile_explorer_widget_->loadRoot();
 
-    addNewProjectPath(stdpath);
+    addNewRecentProjectPath(stdpath);
 }
 
 void MainWindow::recentProjectPath()

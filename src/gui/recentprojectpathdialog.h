@@ -26,6 +26,7 @@ signals:
     void newProjectPath();
 public slots:
     void onSelectRecentProjectPathItem(const QStringList& item, int number);
+    void onDeleteRecentProjectPathItem(const QStringList& item, int number);
     void onNewProjectPath();
 private:
     QLabel *plabel_recent_;

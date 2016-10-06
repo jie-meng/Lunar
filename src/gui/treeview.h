@@ -16,12 +16,14 @@ public:
 
 signals:
     void itemSelected(const QStringList&, int);
+    void itemDeleted(const QStringList&, int);
 public slots:
     void addItem(const QStringList& item_list);
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
 private slots:
     void onItemSelect(QTreeWidgetItem *item, int column);
+    void onItemDelete(QTreeWidgetItem *item, int column);
     void onItemDoubleClicked(QTreeWidgetItem *item, int column);
 private:
     void initConnections();

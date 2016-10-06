@@ -23,7 +23,14 @@ RecentProjectPathDialog::RecentProjectPathDialog(QWidget *parent) :
 
 RecentProjectPathDialog::~RecentProjectPathDialog()
 {
-
+    //save current recent project path when close
+    list<string> paths;
+    for (int i=0; i<ptree_view_->topLevelItemCount(); ++i)
+    {
+        QTreeWidgetItem* item = ptree_view_->topLevelItem(i);
+        paths.push_back(QStringToStdString(item->text(1)));
+    }
+    saveRecentProjectPath(paths);
 }
 
 void RecentProjectPathDialog::init()
@@ -75,6 +82,8 @@ void RecentProjectPathDialog::initConnections()
 {
     connect(ptree_view_, SIGNAL(itemSelected(const QStringList&, int)),
             this, SLOT(onSelectRecentProjectPathItem(const QStringList&, int)));
+    connect(ptree_view_, SIGNAL(itemDeleted(const QStringList&, int)),
+            this, SLOT(onDeleteRecentProjectPathItem(const QStringList&, int)));
     connect(pnew_button_, SIGNAL(clicked()), this, SLOT(onNewProjectPath()));
 }
 
@@ -84,6 +93,10 @@ void RecentProjectPathDialog::onSelectRecentProjectPathItem(const QStringList& i
     close();
 }
 
+void RecentProjectPathDialog::onDeleteRecentProjectPathItem(const QStringList& item, int number)
+{
+}
+
 void RecentProjectPathDialog::onNewProjectPath()
 {
     Q_EMIT newProjectPath();
@@ -91,4 +104,3 @@ void RecentProjectPathDialog::onNewProjectPath()
 }
 
 } //namespace gui
-

@@ -99,9 +99,9 @@ QString qstrReplaceOnce(const QString& str_src, const QString& str_find, const Q
     return ret_str;
 }
 
-void trimInvalidPath(list<string>& input, list<string>& output)
+void trimInvalidPath(const list<string>& input, list<string>& output)
 {
-    for (list<string>::iterator it = input.begin(); it != input.end(); ++it)
+    for (list<string>::const_iterator it = input.begin(); it != input.end(); ++it)
     {
         if (isPathDir(*it))
             output.push_back(*it);
@@ -120,7 +120,7 @@ void getRecentProjectPath(std::list<std::string>& out)
     }
 }
 
-void addNewProjectPath(const std::string& path)
+void addNewRecentProjectPath(const std::string& path)
 {
     string s = strReplaceAll(path, "\\", "/");
     list<string> input;
@@ -137,6 +137,13 @@ void addNewProjectPath(const std::string& path)
     while (ls.size() > LunarGlobal::getInstance().getRecentProjectPathCnt())
         ls.pop_back();
 
+    LunarGlobal::getInstance().setRecentProjectPath(strJoin(ls, ","));
+}
+
+void saveRecentProjectPath(const std::list<std::string>& paths)
+{
+    list<string> ls;
+    trimInvalidPath(paths, ls);
     LunarGlobal::getInstance().setRecentProjectPath(strJoin(ls, ","));
 }
 
