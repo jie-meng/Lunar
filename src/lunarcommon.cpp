@@ -11,6 +11,16 @@
 using namespace std;
 using namespace util;
 
+QString StdStringToQString(const std::string &s)
+{
+    return QString(QString::fromUtf8(s.c_str()));
+}
+
+std::string QStringToStdString(const QString &s)
+{
+    return std::string((const char *)s.toUtf8());
+}
+
 QString qtReadFile(const QString& filename, const char* codec)
 {
     QFile f(filename);

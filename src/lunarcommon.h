@@ -10,15 +10,8 @@
 
 struct lua_State;
 
-inline QString StdStringToQString(const std::string &s)
-{
-    return QString(QString::fromLocal8Bit(s.c_str()));
-}
-
-inline std::string QStringToStdString(const QString &s)
-{
-    return std::string((const char *)s.toLocal8Bit());
-}
+QString StdStringToQString(const std::string &s);
+std::string QStringToStdString(const QString &s);
 
 QString qtReadFile(const QString& filename, const char* codec = "UTF-8");
 bool qtWriteFile(const QString& filename, const QString& content, bool append = false, const char* codec = "UTF-8");
