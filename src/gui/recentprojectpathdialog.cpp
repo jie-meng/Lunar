@@ -23,14 +23,6 @@ RecentProjectPathDialog::RecentProjectPathDialog(QWidget *parent) :
 
 RecentProjectPathDialog::~RecentProjectPathDialog()
 {
-    //save current recent project path when close
-    list<string> paths;
-    for (int i=0; i<ptree_view_->topLevelItemCount(); ++i)
-    {
-        QTreeWidgetItem* item = ptree_view_->topLevelItem(i);
-        paths.push_back(QStringToStdString(item->text(1)));
-    }
-    saveRecentProjectPath(paths);
 }
 
 void RecentProjectPathDialog::init()
@@ -95,6 +87,14 @@ void RecentProjectPathDialog::onSelectRecentProjectPathItem(const QStringList& i
 
 void RecentProjectPathDialog::onDeleteRecentProjectPathItem(const QStringList& item, int number)
 {
+    //save current recent project path after delete
+    list<string> paths;
+    for (int i=0; i<ptree_view_->topLevelItemCount(); ++i)
+    {
+        QTreeWidgetItem* item = ptree_view_->topLevelItem(i);
+        paths.push_back(QStringToStdString(item->text(1)));
+    }
+    saveRecentProjectPath(paths);
 }
 
 void RecentProjectPathDialog::onNewProjectPath()
