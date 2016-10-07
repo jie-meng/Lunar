@@ -126,7 +126,7 @@ function parseFileType(filename)
                 -- python2
                 --type = "python",
                 --auto_complete_type = 1,
-                --api = "apis/python/python.api",
+                --api = "apis/python/python",
                 --executor = "python -u",
                 --parse_supplement_api_script = "plugins/parse_supplement_api_python.lua", 
                 --parse_supplement_api_func = "parseSupplementApi",
@@ -200,17 +200,18 @@ end
 function fileFilter()
 	filter = {}
 	table.insert(filter, "Lua Files(*.lua)")
-    table.insert(filter, "Octave Files(*.m)")
-    table.insert(filter, "Bash Files(*.sh)")
     table.insert(filter, "Python Files(*.py)")
+	table.insert(filter, "Bash Files(*.sh)")
+	table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Tcl Files(*.tcl)")
-    table.insert(filter, "Java Files(*.java)")
+    table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
+	table.insert(filter, "C# Files(*.csharp)")
+	table.insert(filter, "Java Files(*.java)")
 	table.insert(filter, "JavaScript Files(*.js)")
-    table.insert(filter, "C# Files(*.csharp)")
     table.insert(filter, "Xml Files(*.xml)")
     table.insert(filter, "Html Files(*.html)")
 	table.insert(filter, "CSS Files(*.css)")
-    table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
+    
 	return filter
 end
 
