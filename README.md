@@ -67,6 +67,7 @@ On MacOS
 5. Put all the files and folders in publish to Lunar.app/Contents/MacOS
 
 6. Put Lunar.app to /Applications/
+
 (Run postbuild_mac.lua can do steps 2~5 automatically)
 
 ### Notes ###
