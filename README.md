@@ -55,11 +55,17 @@ On windows extras (You can find all the dlls in Qt installation directory):
 - Put qwindows.dll to LUNAR_HOME/platforms
 
 On MacOS
+
 1. Put luaexec to /usr/local/bin
+
 2. Use command "otool -L Lunar.app/Contents/MacOS/Lunar" to check the library dependency
+
 3. Use command "install_name_tool -change libqscintilla2.12.dylib(found in result of otool command) {absolute_path_of_libqscintilla2.12.dylib} Lunar.app/Contents/MacOS/Lunar" to change the load path of special dylibs
+
 4. Use command "macdeployqt Lunar.app"
+
 5. Put all the files and folders in publish to Lunar.app/Contents/MacOS
+
 6. Put Lunar.app to /Applications/
 (Run postbuild_mac.lua can do steps 2~5 automatically)
 
