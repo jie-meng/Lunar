@@ -1,5 +1,6 @@
 #include "file.hpp"
 #include <fstream>
+#include "process.hpp"
 
 #ifdef _PLATFORM_WINDOWS_
 #include <io.h>
@@ -168,11 +169,6 @@ std::string fileBaseName(const std::string& file)
         return str;
     else
         return str.substr(0, found);
-}
-
-bool fileRename(const std::string& src_path, const std::string& dest_path)
-{
-    return 0 == rename(src_path.c_str(), dest_path.c_str());
 }
 
 bool fileCopy(const std::string& src_path, const std::string& dest_path, bool fail_if_exitst)
@@ -404,7 +400,7 @@ void pathRemoveAll(const std::string& path)
 #ifdef _PLATFORM_UNIX_
         std::string cmd = std::string("rm -rf \"") + path + "\"";
 #endif
-        ::system(cmd.c_str());
+        executeProcess(cmd);
     }
 }
 
@@ -422,6 +418,11 @@ bool pathRemove(const std::string& path)
         return 0 == ::rmdir(path.c_str());
 
     return false;
+}
+
+bool pathRename(const std::string& src_path, const std::string& dest_path)
+{
+    return 0 == rename(src_path.c_str(), dest_path.c_str());
 }
 
 bool mkDir(const std::string& path)

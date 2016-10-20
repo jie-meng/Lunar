@@ -389,7 +389,7 @@ void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
     string str_name = QStringToStdString(new_name);
     string str_from_pathname = QStringToStdString(getNodeAbsolutePath(currentItem()));
     string str_to_pathname = splitPathname(str_from_pathname).first + "/" + str_name;
-    if (fileRename(str_from_pathname, str_to_pathname))
+    if (pathRename(str_from_pathname, str_to_pathname))
     {
         QTreeWidgetItem* parent = currentItem()->parent();
         loadNodeFiles(parent);
