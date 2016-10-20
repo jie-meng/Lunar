@@ -13,12 +13,12 @@ using namespace util;
 
 QString StdStringToQString(const std::string &s)
 {
-    return QString(QString::fromUtf8(s.c_str()));
+    return QString::fromStdString(s);
 }
 
 std::string QStringToStdString(const QString &s)
 {
-    return std::string((const char *)s.toUtf8());
+    return s.toStdString();
 }
 
 QString qtReadFile(const QString& filename, const char* codec)
