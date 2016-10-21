@@ -479,6 +479,20 @@ void MainWindow::initConnections()
         if (idx >= 0)
             pmain_tabwidget_->renameTab(idx, to);
     });
+    connect(pfile_explorer_widget_, &FileExplorerWidget::renameDir, [this](const QString& from, const QString& to)
+    {
+        for (int i = 0; i < pmain_tabwidget_->count(); ++i)
+        {
+            string cur_name = strReplaceAll(QStringToStdString(pmain_tabwidget_->getDocPathname(i)), "\\", "/");
+            string from_name = strReplaceAll(QStringToStdString(from), "\\", "/");
+            string to_name = strReplaceAll(QStringToStdString(to), "\\", "/");
+            if (strStartWith(cur_name, from_name))
+            {
+                QString new_pathname = StdStringToQString(strReplace(cur_name, from_name, to_name));
+                pmain_tabwidget_->setDocPathname(i, new_pathname);
+            }
+        }
+    });
     connect(pfile_explorer_widget_, &FileExplorerWidget::removeFile, [this](const QString& file)
     {
         int idx = pmain_tabwidget_->findTabIndexByFile(file);

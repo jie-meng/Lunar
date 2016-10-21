@@ -88,9 +88,6 @@ void FileExplorerWidget::contextMenuEvent(QContextMenuEvent *e)
         }
     }
 
-    if (isPathDir(QStringToStdString(getNodeAbsolutePath(currentItem()))))
-        act_rename->setEnabled(false);
-
     connect(act_refresh, SIGNAL(triggered()),this,SLOT(loadRoot()));
     connect(act_new_folder, SIGNAL(triggered()), this, SLOT(newFolder()));
     connect(act_rename, SIGNAL(triggered()),this, SLOT(renameCurrentItem()));
@@ -375,13 +372,10 @@ void FileExplorerWidget::deleteCurrentItem()
 void FileExplorerWidget::renameCurrentItem()
 {
     QString path = getNodeAbsolutePath(currentItem());
-    if (isPathFile(QStringToStdString(path)))
-    {
-        InputWidget inputwidget(QString(tr("Rename ") + currentItem()->text(0) + " to"),
-                                currentItem()->text(0));
-        connect(&inputwidget, SIGNAL(inputOk(const QString&)), this, SLOT(renameCurrentItemOk(const QString&)));
-        inputwidget.exec();
-    }
+    InputWidget inputwidget(QString(tr("Rename ") + currentItem()->text(0) + " to"),
+                            currentItem()->text(0));
+    connect(&inputwidget, SIGNAL(inputOk(const QString&)), this, SLOT(renameCurrentItemOk(const QString&)));
+    inputwidget.exec();
 }
 
 void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
@@ -391,9 +385,17 @@ void FileExplorerWidget::renameCurrentItemOk(const QString& new_name)
     string str_to_pathname = splitPathname(str_from_pathname).first + "/" + str_name;
     if (pathRename(str_from_pathname, str_to_pathname))
     {
-        QTreeWidgetItem* parent = currentItem()->parent();
-        loadNodeFiles(parent);
-        emit renameFile(StdStringToQString(str_from_pathname), StdStringToQString(str_to_pathname));
+        if (isPathDir(str_to_pathname))
+        {
+            currentItem()->setText(0, StdStringToQString(fileBaseName(str_to_pathname)));
+            emit renameDir(StdStringToQString(str_from_pathname), StdStringToQString(str_to_pathname));
+        }
+        else
+        {
+            QTreeWidgetItem* parent = currentItem()->parent();
+            loadNodeFiles(parent);
+            emit renameFile(StdStringToQString(str_from_pathname), StdStringToQString(str_to_pathname));
+        }
     }
     else
     {

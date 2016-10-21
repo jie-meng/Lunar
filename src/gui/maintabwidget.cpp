@@ -213,6 +213,19 @@ void MainTabWidget::gotoPrevTabIndex()
     }
 }
 
+QString MainTabWidget::getDocPathname(int index) const
+{
+    return dynamic_cast<DocView*>(widget(index))->getPathname();
+}
+
+void MainTabWidget::setDocPathname(int index, const QString& pathname)
+{
+    DocView* pdocview = dynamic_cast<DocView*>(widget(index));
+    pdocview->setPathname(pathname);
+    setTabText(index, pdocview->getTitle());
+    setTabToolTip(index, pdocview->getPathname());
+}
+
 void MainTabWidget::currentDocComment(bool comment_line_or_block)
 {
     if (!currentWidget())
