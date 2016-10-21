@@ -24,7 +24,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 2. Build luaexec follow the README.MD of Util. 
 
-3. luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv, matrix) which Lunar needs.
+3. luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv) which Lunar needs.
 
 #### Build Qscintilla ####
 
