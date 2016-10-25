@@ -127,28 +127,31 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                     break
                 end
                 
-                local inc, directive = tryGetInclude(trimmed_line)
-                if inc then
-                    table.insert(inc_coll, { file = inc, find = directive })
-                end 
-                
-                local get_value = tryGetFuncWithReturnType(trimmed_line)
-                if not inc and not get_value then
-                    get_value = tryGetClassOrStruct(trimmed_line)
+                local get_value = nil
+                if strStartWith(trimmed_line, "#") then
+                    local inc, directive = tryGetInclude(trimmed_line)
+                    if inc then
+                        table.insert(inc_coll, { file = inc, find = directive })
+                    end 
+                    
+                    if not inc then
+                        get_value = tryGetMacro(trimmed_line)
+                    end
+                else
+                    get_value = tryGetFuncWithReturnType(trimmed_line)
+                    if not get_value then
+                        get_value = tryGetClassOrStruct(trimmed_line)
+                    end
+                    
+                    if not get_value then
+                        get_value = tryGetTypedef(trimmed_line)
+                    end
+                    
+                    if not get_value then
+                        get_value = tryGetFunc(trimmed_line, previous_line_str)
+                    end
                 end
-                
-                if not inc and not get_value then
-                    get_value = tryGetMacro(trimmed_line)
-                end
-                
-                if not inc and not get_value then
-                    get_value = tryGetTypedef(trimmed_line)
-                end
-                
-                if not inc and not get_value then
-                    get_value = tryGetFunc(trimmed_line, previous_line_str)
-                end
-                
+                    
                 if get_value then
                     coll[get_value] = true
                 end
