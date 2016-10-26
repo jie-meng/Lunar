@@ -57,6 +57,10 @@ static const int defaultFoldMarginWidth = 14;
 // The default set of characters that make up a word.
 static const char *defaultWordChars = "_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
 
+struct QsciScintilla::QScintillaImpl
+{
+    QPointer<QsciLexer> lex;
+};
 
 // The ctor.
 QsciScintilla::QsciScintilla(QWidget *parent)
@@ -66,7 +70,8 @@ QsciScintilla::QsciScintilla(QWidget *parent)
       braceMode(NoBraceMatch), acSource(AcsNone), acThresh(-1),
       wchars(defaultWordChars), call_tips_position(CallTipsBelowText),
       call_tips_style(CallTipsNoContext), maxCallTips(-1),
-      use_single(AcusNever), explicit_fillups(""), fillups_enabled(false)
+      use_single(AcusNever), explicit_fillups(""), fillups_enabled(false),
+      pimpl_(new QScintillaImpl())
 {
     connect(this,SIGNAL(SCN_MODIFYATTEMPTRO()),
              SIGNAL(modificationAttempted()));
@@ -159,7 +164,7 @@ QColor QsciScintilla::color() const
 // Set the text colour.
 void QsciScintilla::setColor(const QColor &c)
 {
-    if (lex.isNull())
+    if (pimpl_->lex.isNull())
     {
         // Assume style 0 applies to everything so that we don't need to use
         // SCI_STYLECLEARALL which clears everything.
@@ -193,7 +198,7 @@ QColor QsciScintilla::paper() const
 // Set the paper colour.
 void QsciScintilla::setPaper(const QColor &c)
 {
-    if (lex.isNull())
+    if (pimpl_->lex.isNull())
     {
         // Assume style 0 applies to everything so that we don't need to use
         // SCI_STYLECLEARALL which clears everything.  We still have to set the
@@ -208,7 +213,7 @@ void QsciScintilla::setPaper(const QColor &c)
 // Set the default font.
 void QsciScintilla::setFont(const QFont &f)
 {
-    if (lex.isNull())
+    if (pimpl_->lex.isNull())
     {
         // Assume style 0 applies to everything so that we don't need to use
         // SCI_STYLECLEARALL which clears everything.
@@ -254,12 +259,12 @@ void QsciScintilla::handleCharAdded(int ch)
     }
 
     // Handle call tips.
-    if (call_tips_style != CallTipsNone && !lex.isNull() && strchr("(),", ch) != NULL)
+    if (call_tips_style != CallTipsNone && !pimpl_->lex.isNull() && strchr("(),", ch) != NULL)
         callTip();
 
     // Handle auto-indentation.
     if (autoInd)
-        if (lex.isNull() || (lex->autoIndentStyle() & AiMaintain))
+        if (pimpl_->lex.isNull() || (pimpl_->lex->autoIndentStyle() & AiMaintain))
             maintainIndentation(ch, pos);
         else
             autoIndentation(ch, pos);
@@ -283,7 +288,7 @@ bool QsciScintilla::isCallTipActive() const
 // Handle a possible change to any current call tip.
 void QsciScintilla::callTip()
 {
-    QsciAbstractAPIs *apis = lex->apis();
+    QsciAbstractAPIs *apis = pimpl_->lex->apis();
 
     if (!apis)
         return;
@@ -674,9 +679,9 @@ void QsciScintilla::startAutoCompletion(AutoCompletionSource acs,
     // Generate the string representing the valid words to select from.
     QStringList wlist;
 
-    if ((acs == AcsAll || acs == AcsAPIs) && !lex.isNull())
+    if ((acs == AcsAll || acs == AcsAPIs) && !pimpl_->lex.isNull())
     {
-        QsciAbstractAPIs *apis = lex->apis();
+        QsciAbstractAPIs *apis = pimpl_->lex->apis();
 
         if (apis)
             apis->updateAutoCompletionList(context, wlist);
@@ -803,22 +808,22 @@ void QsciScintilla::autoIndentation(char ch, long pos)
     int ind_width = indentWidth();
     long curr_line_start = SendScintilla(SCI_POSITIONFROMLINE, curr_line);
 
-    const char *block_start = lex->blockStart();
+    const char *block_start = pimpl_->lex->blockStart();
     bool start_single = (block_start && qstrlen(block_start) == 1);
 
-    const char *block_end = lex->blockEnd();
+    const char *block_end = pimpl_->lex->blockEnd();
     bool end_single = (block_end && qstrlen(block_end) == 1);
 
     if (end_single && block_end[0] == ch)
     {
-        if (!(lex->autoIndentStyle() & AiClosing) && rangeIsWhitespace(curr_line_start, pos - 1))
+        if (!(pimpl_->lex->autoIndentStyle() & AiClosing) && rangeIsWhitespace(curr_line_start, pos - 1))
             autoIndentLine(pos, curr_line, blockIndent(curr_line - 1) - ind_width);
     }
     else if (start_single && block_start[0] == ch)
     {
         // De-indent if we have already indented because the previous line was
         // a start of block keyword.
-        if (!(lex->autoIndentStyle() & AiOpening) && curr_line > 0 && getIndentState(curr_line - 1) == isKeywordStart && rangeIsWhitespace(curr_line_start, pos - 1))
+        if (!(pimpl_->lex->autoIndentStyle() & AiOpening) && curr_line > 0 && getIndentState(curr_line - 1) == isKeywordStart && rangeIsWhitespace(curr_line_start, pos - 1))
             autoIndentLine(pos, curr_line, blockIndent(curr_line - 1) - ind_width);
     }
     else if (ch == '\r' || ch == '\n')
@@ -866,10 +871,10 @@ int QsciScintilla::blockIndent(int line)
         return 0;
 
     // Handle the trvial case.
-    if (!lex->blockStartKeyword() && !lex->blockStart() && !lex->blockEnd())
+    if (!pimpl_->lex->blockStartKeyword() && !pimpl_->lex->blockStart() && !pimpl_->lex->blockEnd())
         return indentation(line);
 
-    int line_limit = line - lex->blockLookback();
+    int line_limit = line - pimpl_->lex->blockLookback();
 
     if (line_limit < 0)
         line_limit = 0;
@@ -885,12 +890,12 @@ int QsciScintilla::blockIndent(int line)
 
             if (istate == isBlockStart)
             {
-                if (!(lex -> autoIndentStyle() & AiOpening))
+                if (!(pimpl_->lex -> autoIndentStyle() & AiOpening))
                     ind += ind_width;
             }
             else if (istate == isBlockEnd)
             {
-                if (lex -> autoIndentStyle() & AiClosing)
+                if (pimpl_->lex -> autoIndentStyle() & AiClosing)
                     ind -= ind_width;
 
                 if (ind < 0)
@@ -941,10 +946,10 @@ QsciScintilla::IndentState QsciScintilla::getIndentState(int line)
     int style, bstart_off, bend_off;
 
     // Block start/end takes precedence over keywords.
-    const char *bstart_words = lex->blockStart(&style);
+    const char *bstart_words = pimpl_->lex->blockStart(&style);
     bstart_off = findStyledWord(text, style, bstart_words);
 
-    const char *bend_words = lex->blockEnd(&style);
+    const char *bend_words = pimpl_->lex->blockEnd(&style);
     bend_off = findStyledWord(text, style, bend_words);
 
     // If there is a block start but no block end characters then ignore it
@@ -961,7 +966,7 @@ QsciScintilla::IndentState QsciScintilla::getIndentState(int line)
         istate = isBlockEnd;
     else
     {
-        const char *words = lex->blockStartKeyword(&style);
+        const char *words = pimpl_->lex->blockStartKeyword(&style);
 
         istate = (findStyledWord(text,style,words) >= 0) ? isKeywordStart : isNone;
     }
@@ -2433,10 +2438,10 @@ void QsciScintilla::setIndentationGuides(bool enable)
 
     if (!enable)
         iv = SC_IV_NONE;
-    else if (lex.isNull())
+    else if (pimpl_->lex.isNull())
         iv = SC_IV_REAL;
     else
-        iv = lex->indentationGuideView();
+        iv = pimpl_->lex->indentationGuideView();
 
     SendScintilla(SCI_SETINDENTATIONGUIDES, iv);
 }
@@ -3223,10 +3228,10 @@ void QsciScintilla::resetUnmatchedBraceIndicator()
 // Detach any lexer.
 void QsciScintilla::detachLexer()
 {
-    if (!lex.isNull())
+    if (!pimpl_->lex.isNull())
     {
-        lex->setEditor(0);
-        lex->disconnect(this);
+        pimpl_->lex->setEditor(0);
+        pimpl_->lex->disconnect(this);
 
         SendScintilla(SCI_STYLERESETDEFAULT);
         SendScintilla(SCI_STYLECLEARALL);
@@ -3241,28 +3246,28 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
     detachLexer();
 
     // Connect up the new lexer.
-    lex = lexer;
+    pimpl_->lex = lexer;
 
-    if (lex)
+    if (pimpl_->lex)
     {
         SendScintilla(SCI_CLEARDOCUMENTSTYLE);
 
-        if (lex->lexer())
-            SendScintilla(SCI_SETLEXERLANGUAGE, lex->lexer());
+        if (pimpl_->lex->lexer())
+            SendScintilla(SCI_SETLEXERLANGUAGE, pimpl_->lex->lexer());
         else
-            SendScintilla(SCI_SETLEXER, lex->lexerId());
+            SendScintilla(SCI_SETLEXER, pimpl_->lex->lexerId());
 
-        lex->setEditor(this);
+        pimpl_->lex->setEditor(this);
 
-        connect(lex,SIGNAL(colorChanged(const QColor &, int)),
+        connect(pimpl_->lex,SIGNAL(colorChanged(const QColor &, int)),
                 SLOT(handleStyleColorChange(const QColor &, int)));
-        connect(lex,SIGNAL(eolFillChanged(bool, int)),
+        connect(pimpl_->lex,SIGNAL(eolFillChanged(bool, int)),
                 SLOT(handleStyleEolFillChange(bool, int)));
-        connect(lex,SIGNAL(fontChanged(const QFont &, int)),
+        connect(pimpl_->lex,SIGNAL(fontChanged(const QFont &, int)),
                 SLOT(handleStyleFontChange(const QFont &, int)));
-        connect(lex,SIGNAL(paperChanged(const QColor &, int)),
+        connect(pimpl_->lex,SIGNAL(paperChanged(const QColor &, int)),
                 SLOT(handleStylePaperChange(const QColor &, int)));
-        connect(lex,SIGNAL(propertyChanged(const char *, const char *)),
+        connect(pimpl_->lex,SIGNAL(propertyChanged(const char *, const char *)),
                 SLOT(handlePropertyChange(const char *, const char *)));
 
         SendScintilla(SCI_SETPROPERTY, "fold", "1");
@@ -3274,7 +3279,7 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         // files.
         for (int k = 0; k <= KEYWORDSET_MAX; ++k)
         {
-            const char *kw = lex -> keywords(k + 1);
+            const char *kw = pimpl_->lex -> keywords(k + 1);
 
             if (!kw)
                 kw = "";
@@ -3289,22 +3294,22 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
         int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
 
         for (int s = 0; s < nrStyles; ++s)
-            if (!lex->description(s).isEmpty())
+            if (!pimpl_->lex->description(s).isEmpty())
                 setLexerStyle(s);
 
         // Initialise the properties.
-        lex->refreshProperties();
+        pimpl_->lex->refreshProperties();
 
         // Set the auto-completion fillups and word separators.
         setAutoCompletionFillupsEnabled(fillups_enabled);
-        wseps = lex->autoCompletionWordSeparators();
+        wseps = pimpl_->lex->autoCompletionWordSeparators();
 
-        wchars = lex->wordCharacters();
+        wchars = pimpl_->lex->wordCharacters();
 
         if (!wchars)
             wchars = defaultWordChars;
 
-        SendScintilla(SCI_AUTOCSETIGNORECASE, !lex->caseSensitive());
+        SendScintilla(SCI_AUTOCSETIGNORECASE, !pimpl_->lex->caseSensitive());
 
         recolor();
     }
@@ -3326,17 +3331,17 @@ void QsciScintilla::setLexer(QsciLexer *lexer)
 // Set a particular style of the current lexer.
 void QsciScintilla::setLexerStyle(int style)
 {
-    handleStyleColorChange(lex->color(style), style);
-    handleStyleEolFillChange(lex->eolFill(style), style);
-    handleStyleFontChange(lex->font(style), style);
-    handleStylePaperChange(lex->paper(style), style);
+    handleStyleColorChange(pimpl_->lex->color(style), style);
+    handleStyleEolFillChange(pimpl_->lex->eolFill(style), style);
+    handleStyleFontChange(pimpl_->lex->font(style), style);
+    handleStylePaperChange(pimpl_->lex->paper(style), style);
 }
 
 
 // Get the current lexer.
 QsciLexer *QsciScintilla::lexer() const
 {
-    return lex;
+    return pimpl_->lex;
 }
 
 
@@ -3359,7 +3364,7 @@ void QsciScintilla::handleStyleFontChange(const QFont &f, int style)
 {
     setStylesFont(f, style);
 
-    if (style == lex->braceStyle())
+    if (style == pimpl_->lex->braceStyle())
     {
         setStylesFont(f, STYLE_BRACELIGHT);
         setStylesFont(f, STYLE_BRACEBAD);
@@ -3483,7 +3488,7 @@ long QsciScintilla::checkBrace(long pos, int brace_style, bool &colonMode)
     if (ch == ':')
     {
         // A bit of a hack, we should really use a virtual.
-        if (!lex.isNull() && qstrcmp(lex->lexer(), "python") == 0)
+        if (!pimpl_->lex.isNull() && qstrcmp(pimpl_->lex->lexer(), "python") == 0)
         {
             brace_pos = pos;
             colonMode = true;
@@ -3511,7 +3516,7 @@ long QsciScintilla::checkBrace(long pos, int brace_style, bool &colonMode)
 bool QsciScintilla::findMatchingBrace(long &brace, long &other,BraceMatch mode)
 {
     bool colonMode = false;
-    int brace_style = (lex.isNull() ? -1 : lex->braceStyle());
+    int brace_style = (pimpl_->lex.isNull() ? -1 : pimpl_->lex->braceStyle());
 
     brace = -1;
     other = -1;
@@ -3661,7 +3666,7 @@ void QsciScintilla::setAutoCompletionThreshold(int thresh)
 // Set the auto-completion word separators if there is no current lexer.
 void QsciScintilla::setAutoCompletionWordSeparators(const QStringList &separators)
 {
-    if (lex.isNull())
+    if (pimpl_->lex.isNull())
         wseps = separators;
 }
 
@@ -3738,8 +3743,8 @@ void QsciScintilla::setAutoCompletionFillupsEnabled(bool enable)
 
     if (!enable)
         fillups = "";
-    else if (!lex.isNull())
-        fillups = lex->autoCompletionFillups();
+    else if (!pimpl_->lex.isNull())
+        fillups = pimpl_->lex->autoCompletionFillups();
     else
         fillups = explicit_fillups.data();
 
@@ -3904,9 +3909,9 @@ void QsciScintilla::cancelList()
 // Handle a selection from the auto-completion list.
 void QsciScintilla::handleAutoCompletionSelection()
 {
-    if (!lex.isNull())
+    if (!pimpl_->lex.isNull())
     {
-        QsciAbstractAPIs *apis = lex->apis();
+        QsciAbstractAPIs *apis = pimpl_->lex->apis();
 
         if (apis)
             apis->autoCompletionSelected(acSelection);
@@ -3941,7 +3946,7 @@ void QsciScintilla::handleUserListSelection(const char *text, int id)
 // Return the case sensitivity of any lexer.
 bool QsciScintilla::caseSensitive() const
 {
-    return lex.isNull() ? true : lex->caseSensitive();
+    return pimpl_->lex.isNull() ? true : pimpl_->lex->caseSensitive();
 }
 
 
@@ -4259,7 +4264,7 @@ void QsciScintilla::changeEvent(QEvent *e)
     QColor fore = palette().color(QPalette::Disabled, QPalette::Text);
     QColor back = palette().color(QPalette::Disabled, QPalette::Base);
 
-    if (lex.isNull())
+    if (pimpl_->lex.isNull())
     {
         if (isEnabled())
         {
@@ -4282,7 +4287,7 @@ void QsciScintilla::changeEvent(QEvent *e)
         int nrStyles = 1 << SendScintilla(SCI_GETSTYLEBITS);
 
         for (int s = 0; s < nrStyles; ++s)
-            if (!lex->description(s).isNull())
+            if (!pimpl_->lex->description(s).isNull())
                 setEnabledColors(s, fore, back);
     }
 }
@@ -4293,8 +4298,8 @@ void QsciScintilla::setEnabledColors(int style, QColor &fore, QColor &back)
 {
     if (isEnabled())
     {
-        fore = lex->color(style);
-        back = lex->paper(style);
+        fore = pimpl_->lex->color(style);
+        back = pimpl_->lex->paper(style);
     }
 
     handleStyleColorChange(fore, style);

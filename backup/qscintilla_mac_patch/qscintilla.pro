@@ -34,6 +34,7 @@ DEFINES += SCINTILLA_QT SCI_LEXER
 
 greaterThan(QT_MAJOR_VERSION, 4) {
 	QT += widgets printsupport
+    CONFIG += c++11
 
     greaterThan(QT_MINOR_VERSION, 1) {
 	    macx:QT += macextras
@@ -42,6 +43,9 @@ greaterThan(QT_MAJOR_VERSION, 4) {
     # Work around QTBUG-39300.
     CONFIG -= android_install
 }
+
+QMAKE_LFLAGS += -stdlib=libc++
+QMAKE_CXXFLAGS += -stdlib=libc++
 
 # Comment this in if you want the internal Scintilla classes to be placed in a
 # Scintilla namespace rather than pollute the global namespace.
