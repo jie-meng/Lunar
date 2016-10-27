@@ -21,10 +21,6 @@
 #ifndef QSCIAPIS_H
 #define QSCIAPIS_H
 
-#ifdef __APPLE__
-extern "C++" {
-#endif
-
 #include <QList>
 #include <QMap>
 #include <QObject>
@@ -237,10 +233,6 @@ struct QsciAPIsPrepared
             bool strip_image) const;
     static QString apiBaseName(const QString &api);
 };
-
-#ifdef __APPLE__
-}
-#endif
 
 } // namespace gui
 
