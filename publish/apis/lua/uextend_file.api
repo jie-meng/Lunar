@@ -4,6 +4,7 @@ file.createBinaryFile(file, size, bval) -> boolean
 file.readBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
 file.writeBinaryFile(file, buf, size, [append = false]) -> boolean
 file.overwriteBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
+file.fileSize(file) -> number 
 file.fileExtension(file) -> string
 file.fileBaseName(file) -> string
 file.fileCopy(srcfile, destfile, [fail_if_exist = true]) -> boolean
