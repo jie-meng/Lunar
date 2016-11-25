@@ -102,11 +102,9 @@ private:
     ApiLoader* papi_loader_;
     FileType file_type_;
     std::string executor_;
-    std::string parse_supplement_api_script_;
-	std::string parse_supplement_api_func_;
+    std::string parse_api_script_;
     std::string project_src_dir_;
     std::string goto_script_;
-    std::string goto_definition_func_;
     QString comment_line_symbol_;
     QString comment_block_symbol_begin_;
     QString comment_block_symbol_end_;

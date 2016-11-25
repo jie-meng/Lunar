@@ -72,11 +72,9 @@ DocView::DocView(const QString& pathname, QWidget* parent)
     papi_loader_(NULL),
     file_type_(Unknown),
     executor_(""),
-    parse_supplement_api_script_(""),
-    parse_supplement_api_func_(""),
+    parse_api_script_(""),
     project_src_dir_(""),
     goto_script_(""),
-    goto_definition_func_(""),
     selection_match_indicator_(0),
     new_file_sequence_no_(0)
 {
@@ -128,8 +126,7 @@ void DocView::clearLexerApi()
     safeDelete(papi_loader_);
 
     executor_ = "";
-    parse_supplement_api_script_ = "";
-    parse_supplement_api_func_ = "";
+    parse_api_script_ = "";
     file_type_ = Unknown;
 }
 
@@ -154,11 +151,9 @@ void DocView::setLexerApi()
         {
             size_t auto_complete_type_ = getValueFromMap<size_t>(dict, "auto_complete_type", 0);
             executor_ = getValueFromMap<string>(dict, "executor", "");
-            parse_supplement_api_script_ = getValueFromMap<string>(dict, "parse_supplement_api_script", "");
-            parse_supplement_api_func_ = getValueFromMap<string>(dict, "parse_supplement_api_func", "");
+            parse_api_script_ = getValueFromMap<string>(dict, "plugin_parse_api", "");
             project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", "");
-            goto_script_ = getValueFromMap<string>(dict, "goto_script", "");
-            goto_definition_func_ = getValueFromMap<string>(dict, "goto_definition_func", "");
+            goto_script_ = getValueFromMap<string>(dict, "plugin_goto", "");
             comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));
             comment_block_symbol_begin_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_begin", ""));
             comment_block_symbol_end_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_end", ""));
@@ -180,7 +175,6 @@ void DocView::setLexerApi()
                 papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
                 papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
                 //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
-                //papi_loader_->loadSupplementApiAsync(parse_supplement_api_script_, parse_supplement_api_func_, getCurrentLine());
 
                 //parse success
                 file_type_ = filetype;
@@ -202,8 +196,8 @@ void DocView::refreshSupplementApi()
 {
     if (papi_loader_ && ptext_edit_)
         papi_loader_->loadSupplementApiAsync(
-            parse_supplement_api_script_,
-            parse_supplement_api_func_,
+            parse_api_script_,
+            kParseSupplementApi,
             getCurrentLine(),
             project_src_dir_);
 }
@@ -766,7 +760,7 @@ void DocView::focusOnEdit()
 
 bool DocView::getDefinitions(vector<string>& out_results)
 {
-    if (getPathname().length() == 0 || goto_script_.empty() || goto_definition_func_.empty())
+    if (getPathname().length() == 0 || goto_script_.empty())
         return false;
 
     QString text;
@@ -789,7 +783,7 @@ bool DocView::getDefinitions(vector<string>& out_results)
 
     return GotoManager::getInstance().getDefinitions(
         goto_script_,
-        goto_definition_func_,
+        kGotoDefinition,
         QStringToStdString(text),
         getCurrentLine(),
         QStringToStdString(getPathname()),

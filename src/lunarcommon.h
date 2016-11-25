@@ -9,6 +9,9 @@
 #include "util/net.hpp"
 
 struct lua_State;
+    
+const std::string kParseSupplementApi = "parseSupplementApi";
+const std::string kGotoDefinition = "gotoDefinition";
 
 QString StdStringToQString(const std::string &s);
 std::string QStringToStdString(const QString &s);

@@ -25,10 +25,8 @@ function parseFileType(filename)
                 api = "apis/lua/standard,cocos.api", 
                 executor = "luaexec",
                 project_src_dir = "src/app",
-                goto_script = "plugins/goto_cocos_lua.lua",
-                goto_definition_func = "gotoDefinition",
-                parse_supplement_api_script = "plugins/parse_supplement_api_cocos_lua.lua", 
-                parse_supplement_api_func = "parseSupplementApi",
+                plugin_goto = "plugins/goto_cocos_lua.lua",
+                plugin_parse_api = "plugins/parse_supplement_api_cocos_lua.lua", 
                 comment_line = "--",
 				comment_block_begin = "--[[",
 				comment_block_end = "]]"
@@ -42,10 +40,8 @@ function parseFileType(filename)
                 auto_complete_type = 1, 
                 api = "apis/lua", 
                 executor = "luaexec",
-                goto_script = "plugins/goto_lua.lua",
-                goto_definition_func = "gotoDefinition",
-                parse_supplement_api_script = "plugins/parse_supplement_api_lua.lua", 
-                parse_supplement_api_func = "parseSupplementApi",
+                plugin_goto = "plugins/goto_lua.lua",
+                plugin_parse_api = "plugins/parse_supplement_api_lua.lua", 
                 comment_line = "--",
 				comment_block_begin = "--[[",
 				comment_block_end = "]]"
@@ -59,8 +55,7 @@ function parseFileType(filename)
                 auto_complete_type = 0,
                 api = "apis/octave", 
                 executor = "octave", 
-                parse_supplement_api_script = "plugins/parse_supplement_api_octave.lua", 
-                parse_supplement_api_func = "parseSupplementApi",
+                plugin_parse_api = "plugins/parse_supplement_api_octave.lua", 
                 comment_line = "%"
             }
 	end
@@ -117,10 +112,8 @@ function parseFileType(filename)
                 auto_complete_type = 1,
                 api = "apis/python",
                 executor = "python3 -u",
-                goto_script = "plugins/goto_python.lua",
-                goto_definition_func = "gotoDefinition",
-                parse_supplement_api_script = "plugins/parse_supplement_api_python3.lua", 
-                parse_supplement_api_func = "parseSupplementApi",
+                plugin_goto = "plugins/goto_python.lua",
+                plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
                 comment_line = "#"
                 
                 -- python2
@@ -128,8 +121,8 @@ function parseFileType(filename)
                 --auto_complete_type = 1,
                 --api = "apis/python/python",
                 --executor = "python -u",
-                --parse_supplement_api_script = "plugins/parse_supplement_api_python.lua", 
-                --parse_supplement_api_func = "parseSupplementApi",
+                --plugin_goto = "plugins/goto_python.lua",
+                --plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
                 --comment_line = "#"
             }
     end
@@ -186,10 +179,8 @@ function parseFileType(filename)
                 type = "cpp",
                 api = "apis/cpp",
                 auto_complete_type = 1,
-				goto_script = "plugins/goto_cpp.lua",
-                goto_definition_func = "gotoDefinition",
-				parse_supplement_api_script = "plugins/parse_supplement_api_cpp.lua", 
-                parse_supplement_api_func = "parseSupplementApi",
+				plugin_goto = "plugins/goto_cpp.lua",
+				plugin_parse_api = "plugins/parse_supplement_api_cpp.lua", 
                 comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
