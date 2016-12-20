@@ -12,9 +12,3 @@ thread.lockDestroy(lock)
 thread.lockWait(lock, [reset = true])
 thread.lockTimedWait(lock, [ms = 2000], [reset = true]) -> boolean
 thread.lockNotify(lock)
-thread.multiLockCreate([lock_cnt = 1], [wait_all = true]) -> userdata (multi-lock object)
-thread.multiLockDestroy(mlock)
-thread.multiLockWait(mlock, [reset = true])
-thread.multiLockTimedWait(mlock, [ms = 2000], [reset = true]) -> boolean
-thread.multiLockNotify(mlock, idx)
-thread.multiLockNotifyAll(mlock, idx) 
