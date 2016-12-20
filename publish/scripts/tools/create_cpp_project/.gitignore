@@ -1,0 +1,14 @@
+*.obj
+*.o
+*.exe
+
+Debug/
+Release/
+
+CppApplicationName
+tags
+
+*.cmake
+Makefile
+CMakeFiles/
+CMakeCache.txt
