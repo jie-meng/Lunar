@@ -30,9 +30,9 @@ OutputWidget::~OutputWidget()
 void OutputWidget::append(const QString& str)
 {
     Synchronize sc(mutex_);
-    //poutput_->append(str);
     poutput_->moveCursor(QTextCursor::End);
     poutput_->insertPlainText(str);
+    poutput_->moveCursor(QTextCursor::End);
 }
 
 QString OutputWidget::getOutput()
