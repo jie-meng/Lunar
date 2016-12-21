@@ -126,6 +126,21 @@ function parseFileType(filename)
                 --comment_line = "#"
             }
     end
+
+    if string.lower(file.fileExtension(name)) == "rb" then
+        return 
+            {
+                -- python3
+                type = "ruby",
+                auto_complete_type = 0,
+                api = "apis/ruby",
+                executor = "ruby",
+                comment_line = "#",
+                comment_block_begin = "=begin",
+				comment_block_end = "=end"
+            }
+    end
+ 
     
     if string.lower(file.fileExtension(name)) == "tcl" then
         return { type = "tcl", comment_line = "#" }
@@ -192,6 +207,7 @@ function fileFilter()
 	filter = {}
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Python Files(*.py)")
+    table.insert(filter, "Ruby Files(*.rb)")
 	table.insert(filter, "Bash Files(*.sh)")
 	table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Tcl Files(*.tcl)")
@@ -216,6 +232,7 @@ function isLegalFile(filename)
         ext == "txt" or
         ext == "cmake" or
         ext == "py" or
+        ext == "rb" or
         ext == "tcl" or
         ext == "java" or
         ext == "cs" or
