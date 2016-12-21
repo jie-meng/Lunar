@@ -13,10 +13,33 @@ function rebuild(pro_file, append_to_pro_file, makefile, make)
 	file.pathRemove(MAKEFILE_RELEASE)
 	file.pathRemove(pro_file)
 	print("clear debug,release,makefile successfully!")
+    
+    print("process cpp/cxx/c/hpp/hxx/h files in publish directory.")
+    local publish_files = file.findFilesInDirRecursively("./publish")
+    for _, v in ipairs(publish_files) do
+        if strEndWith(v, ".cpp", false) or 
+            strEndWith(v, ".cxx", false) or 
+            strEndWith(v, ".hpp", false) or 
+            strEndWith(v, ".hxx", false) or 
+            strEndWith(v, ".c", false) or 
+            strEndWith(v, ".h", false) then
+            file.pathRename(v, v .. ".tmpback")
+        end
+    end
+    
 	print("qmake -project")
 	os.execute("qmake -project")
+    
+    print("restore cpp/cxx/c/hpp/hxx/h files in publish directory.")
+    local publish_files = file.findFilesInDirRecursively("./publish")
+    for _, v in ipairs(publish_files) do
+        if strEndWith(v, ".tmpback", false) then
+            file.pathRename(v, strLeft(v, string.len(v) - 8))
+        end
+    end
+    
     print("append " .. append_to_pro_file .. " to " .. pro_file)
-	file.writeTextFile(pro_file, file.readTextFile(append_to_pro_file), true)	
+	file.writeTextFile(pro_file, file.readTextFile(append_to_pro_file), true)
     print("qmake")
 	os.execute("qmake")
 	print("qmake successfully!")
