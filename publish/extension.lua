@@ -136,8 +136,8 @@ function parseFileType(filename)
                 api = "apis/ruby",
                 executor = "ruby",
                 comment_line = "#",
-                comment_block_begin = "=begin",
-				comment_block_end = "=end"
+                comment_block_begin = "=begin\n",
+				comment_block_end = "\n=end"
             }
     end
  
