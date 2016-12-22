@@ -5,7 +5,6 @@
 #include <QtCore/QObject>
 #include <QtCore/QString>
 #include <QtCore/QProcess>
-#include "util/process.hpp"
 #include "lunarcommon.h"
 
 class LuaExecutor : public QObject
@@ -23,13 +22,8 @@ Q_SIGNALS:
 private:
     void output(const std::string& str);
     bool isFileInFileFilter(const std::string& file, const std::string& file_filter);
-//    std::string getScriptExecutor(const std::string& file);
 private:
-#ifdef __APPLE__
     QProcess* qprocess_;
-#else
-    util::Process process_;
-#endif
 private:
     DISALLOW_COPY_AND_ASSIGN(LuaExecutor)
 };
