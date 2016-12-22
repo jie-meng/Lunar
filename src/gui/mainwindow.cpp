@@ -45,7 +45,6 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_save_all_action_(NULL),
     pfile_close_action_(NULL),
     pfile_close_all_action_(NULL),
-    pfile_dump_action_(NULL),
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
     pfile_recent_project_path_(NULL),
@@ -224,11 +223,6 @@ void MainWindow::initActions()
     pfile_close_all_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_W);
     pfile_close_all_action_->setIcon(QIcon(tr(":/res/close_all.png")));
 
-    pfile_dump_action_ = new QAction(tr("Dump output"), this);
-    pfile_dump_action_->setStatusTip(tr("Dump output."));
-    pfile_dump_action_->setShortcut(Qt::CTRL + Qt::Key_M);
-    pfile_dump_action_->setIcon(QIcon(tr(":/res/dump.png")));
-
     pfile_goto_next_action_ = new QAction(tr("Goto next"), this);
     pfile_goto_next_action_->setStatusTip(tr("Goto next document."));
 #ifdef __APPLE__
@@ -341,7 +335,6 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_save_all_action_);
     pfile_menu->addAction(pfile_close_action_);
     pfile_menu->addAction(pfile_close_all_action_);
-    pfile_menu->addAction(pfile_dump_action_);
     pfile_menu->addAction(pfile_goto_next_action_);
     pfile_menu->addAction(pfile_goto_prev_action_);
     pfile_menu->addAction(pfile_recent_project_path_);
@@ -396,7 +389,6 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pview_close_docks_action_);
     ptoolbar->addAction(pfile_close_action_);
     ptoolbar->addAction(pfile_close_all_action_);
-    ptoolbar->addAction(pfile_dump_action_);
 }
 
 void MainWindow::InitStatusBar()
@@ -427,7 +419,6 @@ void MainWindow::initConnections()
     connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(fileSaveAll()));
     connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(fileClose()));
     connect(pfile_close_all_action_, SIGNAL(triggered()), this, SLOT(fileCloseAll()));
-    connect(pfile_dump_action_, SIGNAL(triggered()), this, SLOT(fileDump()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pfile_recent_project_path_, SIGNAL(triggered()), this, SLOT(recentProjectPath()));
@@ -573,11 +564,6 @@ void MainWindow::fileClose()
 void MainWindow::fileCloseAll()
 {
     pmain_tabwidget_->closeAllDocViewTabs();
-}
-
-void MainWindow::fileDump()
-{
-    dumpOutput();
 }
 
 void MainWindow::fileGotoNext()
