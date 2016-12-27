@@ -1,8 +1,8 @@
-regex.create(re, [flag = 0]) -> userdata (regex object)
-regex.destroy(re)
-regex.compile(re, s)
-regex.match(re, s) -> boolean
-regex.search(re, s) -> boolean
-regex.getMatchedGroupCnt(re) -> number
-regex.getMatchedGroupByIndex(re, idx) -> string
-regex.getMatchedGroupByName(re, name) -> string
+regex.create(re, [flag = 0]) -> LuaObject (regex)
+regex.regexobj.destroy()
+regex.regexobj.compile(s)
+regex.regexobj.match(s) -> boolean
+regex.regexobj.search(s) -> boolean
+regex.regexobj.getMatchedGroupCnt() -> number
+regex.regexobj.getMatchedGroupByIndex(idx) -> string
+regex.regexobj.getMatchedGroupByName(name) -> string

@@ -1,8 +1,4 @@
-memory.create(size) -> userdata (memory object)
-memory.destroy(m)
-memory.size(m) -> number
-memory.clear(m)
-memory.buf(m) -> userdata
+memory.createMemory(size) ->  LuaObject (memory)
 memory.offset(p, offset) -> userdata
 memory.memset(p, v, len)
 memory.memcpy(pd, ps, len)
@@ -17,3 +13,7 @@ memory.getUInt8(p)
 memory.getUInt16(p)
 memory.getUInt32(p)
 memory.setBytes(p, ...)
+memory.memobj.destroy()
+memory.memobj.size() -> number
+memory.memobj.clear()
+memory.memobj.buf() -> userdata

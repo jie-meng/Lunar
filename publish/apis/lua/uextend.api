@@ -1,4 +1,3 @@
-run(file)
 sleep(s)
 msleep(ms)
 platformInfo() -> string

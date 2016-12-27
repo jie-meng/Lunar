@@ -1,49 +1,49 @@
+net.createUdp([family = 1]) -> LuaObject (udp object)
+net.createTcp([family = 1]) -> LuaObject (tcp)
+net.createRaw([family = 1], protocol) -> LuaObject (raw-socket)
 net.ipArrayToStr(family, p, len) -> string
 net.ipStrToArray(family, s, p, len) -> userdata
 net.htons(uint16) -> number
 net.ntohs(uint16) -> number
 net.htonl(uint32) -> number
 net.ntohl(uint32) -> number
-net.udpCreate(family = 1) -> userdata (udp object)
-net.udpDestroy(udp)
-net.udpGetSocket(udp) -> number
-net.udpInit(udp) -> boolean
-net.udpIsOk(udp) -> boolean
-net.udpSetBlock(udp, block) -> number
-net.udpBind(udp, ip, port) -> boolean
-net.udpRecvFrom(udp) -> number, string (ip), number (port)
-net.udpSendTo(udp, [p, s], len, ip, port) -> number
-net.udpGetRecvBuf(udp) -> userdata
-net.udpClose(udp) -> boolean
-net.tcpCreate(family = 1) -> userdata (tcp object)
-net.tcpDestroy(tcp)
-net.tcpGetSocket(tcp) -> number
-net.tcpInit(tcp) -> boolean
-net.tcpIsOk(tcp) -> boolean
-net.tcpSetBlock(tcp, block) -> number
-net.tcpBind(tcp, ip, port) -> boolean
-net.tcpListen(tcp, n) -> boolean
-net.tcpAccept(tcp) -> number
-net.tcpConnect(tcp, ip, port) -> boolean
-net.tcpClientRecv(tcp) -> number
-net.tcpClientSend(tcp, [p, s], len) -> number
-net.tcpServerRecv(tcp, client_socket) -> number
-net.tcpServerSend(tcp, client_socket, [p, s], len) -> number
-net.tcpGetRecvBuf(tcp) -> userdata
-net.tcpClose(tcp) -> boolean
-net.rawCreate(family = 1, protocol) -> userdata (raw-socket object)
-net.rawDestroy(raw)
-net.rawGetSocket(raw) -> number
-net.rawInit(raw) -> boolean
-net.rawIsOk(raw) -> boolean
-net.rawSetBlock(raw, block) -> number
-net.rawBind(raw, ip, port) -> boolean
-net.rawRecvFrom(raw, buf, len) -> number, string (ip), number (port)
-net.rawSendTo(raw, [p, s], len, ip, port) -> number
-net.rawListen(raw, n) -> boolean
-net.rawAccept(raw) -> string (ip), number (port) 
-net.rawConnect(raw, ip, port) -> boolean
-net.rawRecv(raw, sock, buf, len) -> number
-net.rawSend(raw, sock, [p, s], len) -> number
-net.rawClose(raw) -> boolean
 net.closeSocket(socket) -> number
+net.udpobj.destroy()
+net.udpobj.getSocket() -> number
+net.udpobj.init() -> boolean
+net.udpobj.isOk() -> boolean
+net.udpobj.setBlock([block = true]) -> number
+net.udpobj.bind(ip, port) -> boolean
+net.udpobj.recvFrom() -> number, string (ip), number (port)
+net.udpobj.sendTo([p, s], len, ip, port) -> number
+net.udpobj.getRecvBuf() -> userdata
+net.udpobj.close() -> boolean
+net.tcpobj.destroy()
+net.tcpobj.getSocket() -> number
+net.tcpobj.init() -> boolean
+net.tcpobj.isOk() -> boolean
+net.tcpobj.setBlock([block = true]) -> number
+net.tcpobj.bind(ip, port) -> boolean
+net.tcpobj.listen(n) -> boolean
+net.tcpobj.accept() -> number
+net.tcpobj.connect(ip, port) -> boolean
+net.tcpobj.clientRecv() -> number
+net.tcpobj.clientSend([p, s], len) -> number
+net.tcpobj.serverRecv(client_socket) -> number
+net.tcpobj.serverSend(client_socket, [p, s], len) -> number
+net.tcpobj.getRecvBuf() -> userdata
+net.tcpobj.close() -> boolean
+net.rawobj.destroy()
+net.rawobj.getSocket() -> number
+net.rawobj.init() -> boolean
+net.rawobj.isOk() -> boolean
+net.rawobj.setBlock([block = true]) -> number
+net.rawobj.bind(ip, port) -> boolean
+net.rawobj.recvFrom(buf, len) -> number, string (ip), number (port)
+net.rawobj.sendTo([p, s], len, ip, port) -> number
+net.rawobj.listen(n) -> boolean
+net.rawobj.accept() -> string (ip), number (port) 
+net.rawobj.connect(ip, port) -> boolean
+net.rawobj.recv(sock, buf, len) -> number
+net.rawobj.send(sock, [p, s], len) -> number
+net.rawobj.close() -> boolean
