@@ -1,4 +1,4 @@
-regex.create(re, [flag = 0]) -> LuaObject (regex)
+regex.create(re, [flag = 0 (SingleLine=0x01, MultiLine=0x02, Global=0x04, IgnoreCase=0x08, RightToLeft=0x10, Extended=0x20)]) -> LuaObject (regex)
 regex.regexobj.destroy()
 regex.regexobj.compile(s)
 regex.regexobj.match(s) -> boolean
