@@ -152,6 +152,25 @@ bool overwriteBinaryFile(const std::string& file, char* pbuf, size_t write_len, 
     }
 }
 
+bool fileCopy(const std::string& src_path, const std::string& dest_path, bool fail_if_exitst)
+{
+    if (fail_if_exitst && isPathExists(dest_path)) return false;
+
+    std::ifstream ifs(src_path.c_str(), std::ios::binary);
+    if (!ifs.is_open()) return false;
+
+    char buf[kBufSize];
+    std::ofstream ofs(dest_path.c_str(), std::ios::binary);
+
+    while (!ifs.eof())
+    {
+        ifs.read(buf, sizeof(buf));
+        ofs.write(buf, ifs.gcount());
+    }
+
+    return true;
+}
+
 uint64_t fileSize(const std::string& file)
 {
     if (!isPathFile(file))
@@ -180,25 +199,6 @@ std::string fileBaseName(const std::string& file)
         return str.substr(0, found);
 }
 
-bool fileCopy(const std::string& src_path, const std::string& dest_path, bool fail_if_exitst)
-{
-    if (fail_if_exitst && isPathExists(dest_path)) return false;
-
-    std::ifstream ifs(src_path.c_str(), std::ios::binary);
-    if (!ifs.is_open()) return false;
-
-    char buf[kBufSize];
-    std::ofstream ofs(dest_path.c_str(), std::ios::binary);
-
-    while (!ifs.eof())
-    {
-        ifs.read(buf, sizeof(buf));
-        ofs.write(buf, ifs.gcount());
-    }
-
-    return true;
-}
-
 std::pair<std::string, std::string> splitPathname(const std::string& str)
 {
     size_t found = str.find_last_of("/\\");
@@ -224,12 +224,12 @@ time_t systemTimeToTime_t(const SYSTEMTIME& st)
 }
 #endif
 
-time_t fileTime(const std::string& file, E_FileTime ft)
+DateTime fileTime(const std::string& file, E_FileTime ft)
 {
 #ifdef _PLATFORM_WINDOWS_
     WIN32_FILE_ATTRIBUTE_DATA wfad;
     if (!::GetFileAttributesExA(file.c_str(), ::GetFileExInfoStandard, &wfad))
-        return 0;
+        return DateTime((time_t)0);
 
     FILETIME ftlocal;
     SYSTEMTIME st;
@@ -245,29 +245,36 @@ time_t fileTime(const std::string& file, E_FileTime ft)
             FileTimeToLocalFileTime(&wfad.ftLastAccessTime, &ftlocal);
             break;
         default:
-            return 0;
+            return DateTime((time_t)0);
     }
 
     FileTimeToSystemTime(&ftlocal, &st);
-    return systemTimeToTime_t(st);
+    return DateTime(systemTimeToTime_t(st));
 
 #endif // _PLATFORM_WINDOWS_
 #ifdef _PLATFORM_UNIX_
     struct stat buf;
     if (0 != ::stat(file.c_str(), &buf))
-        return 0;
+        return DateTime((time_t)0);
 
+    time_t timet = 0;
     switch (ft)
     {
         case FtCreationTime:
-            return buf.st_ctime;
+            timet = buf.st_ctime;
+            break;
         case FtLastWriteTime:
-            return buf.st_mtime;
+            timet = buf.st_mtime;
+            break;
         case FtLastAccessTime:
-            return buf.st_atime;
+            timet = buf.st_atime;
+            break;
         default:
-            return 0;
+            timet = 0;
+            break;
     }
+    
+    return DateTime(timet);
 #endif // _PLATFORM_UNIX_
 }
 

@@ -87,10 +87,10 @@ inline void autoPtrMove(UtilAutoPtr<T>& to, UtilAutoPtr<T>& from) { to = from; }
 
 //base classes & functions
 #include "constants.hpp"
+#include "baseclass.hpp"
 #include "memory.hpp"
 #include "in.hpp"
 #include "out.hpp"
-#include "baseclass.hpp"
 #include "string.hpp"
 #include "time.hpp"
 #include "platform.hpp"

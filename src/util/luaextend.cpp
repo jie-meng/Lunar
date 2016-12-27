@@ -3,14 +3,13 @@
 #include "thread.hpp"
 #include "net.hpp"
 #include "lua/src/lua.hpp"
-//#include "lua/extend/lmemorylib.hpp"
+#include "lua/extend/lmemorylib.hpp"
 #include "lua/extend/lregexlib.hpp"
-//#include "lua/extend/lnetlib.hpp"
-//#include "lua/extend/lthreadlib.hpp"
+#include "lua/extend/lnetlib.hpp"
+#include "lua/extend/lthreadlib.hpp"
 #include "lua/extend/lfilelib.hpp"
-//#include "lua/extend/lprocesslib.hpp"
-//#include "lua/extend/lcsvlib.hpp"
-//#include "lua/extend/lmatrixlib.hpp"
+#include "lua/extend/lprocesslib.hpp"
+#include "lua/extend/lcsvlib.hpp"
 
 namespace util
 {
@@ -18,6 +17,15 @@ namespace util
 using namespace std;
 
 const string kLuaExtendTag = "LuaExtend";
+
+void luaCreateMeta(lua_State* plua_state, const std::string& handleName, u_luaL_Reg* lr)
+{
+    luaL_newmetatable(plua_state, handleName.c_str());  /* create metatable for specified handles */
+    lua_pushvalue(plua_state, -1);  /* push metatable */
+    lua_setfield(plua_state, -2, "__index");  /* metatable.__index = metatable */
+    luaL_setfuncs(plua_state, (luaL_Reg*)lr, 0);  /* add file methods to new metatable */
+    lua_pop(plua_state, 1);  /* pop new metatable */
+}
 
 //LuaExtender
 void LuaExtender::addLib(const std::string& name, LuaCFunc lib_create_func)
@@ -58,14 +66,13 @@ private:
 
     void addUtilExtendLibs()
     {
-//        lua_extender_.addLib(kLuaExtendLibMemory, lualibMemoryCreate);
+        lua_extender_.addLib(kLuaExtendLibMemory, lualibMemoryCreate);
         lua_extender_.addLib(kLuaExtendLibFile, lualibFileCreate);
         lua_extender_.addLib(kLuaExtendLibRegex, lualibRegexCreate);
-//        lua_extender_.addLib(kLuaExtendLibNet, lualibNetCreate);
-//        lua_extender_.addLib(kLuaExtendLibThread, lualibThreadCreate);
-//        lua_extender_.addLib(kLuaExtendLibProcess, lualibProcessCreate);
-//        lua_extender_.addLib(kLuaExtendLibCsv, lualibCsvCreate);
-//        lua_extender_.addLib(kLuaExtendLibMatrix, lualibMatrixCreate);
+        lua_extender_.addLib(kLuaExtendLibNet, lualibNetCreate);
+        lua_extender_.addLib(kLuaExtendLibThread, lualibThreadCreate);
+        lua_extender_.addLib(kLuaExtendLibProcess, lualibProcessCreate);
+        lua_extender_.addLib(kLuaExtendLibCsv, lualibCsvCreate);
     }
 private:
     LuaExtender lua_extender_;

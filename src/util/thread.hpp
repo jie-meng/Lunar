@@ -20,7 +20,7 @@ public:
     Mutex();
     ~Mutex();
     void lock();
-    void unLock();
+    void unlock();
 private:
     struct MutexData;
     UtilAutoPtr<MutexData> pdata_;
@@ -32,7 +32,7 @@ class Synchronize
 {
 public:
     explicit Synchronize(Mutex& mutex) : mutex_(mutex) { mutex_.lock(); }
-    ~Synchronize() { mutex_.unLock(); }
+    ~Synchronize() { mutex_.unlock(); }
 private:
     Mutex& mutex_;
 private:
@@ -54,22 +54,6 @@ private:
     DISALLOW_COPY_AND_ASSIGN(Lock)
 };
 
-class MultiLock
-{
-public:
-    MultiLock(size_t lock_cnt, bool wait_all);
-    ~MultiLock();
-    void wait(bool reset = true);
-    bool timedWait(size_t ms, bool reset = true);
-    void notify(size_t index);
-    void notifyAll();
-private:
-    struct MultiLockData;
-    UtilAutoPtr<MultiLockData> pdata_;
-private:
-    DISALLOW_COPY_AND_ASSIGN(MultiLock)
-};
-
 class Thread
 {
     typedef UtilFunction<void ()> ThreadFunc;
@@ -77,7 +61,7 @@ public:
     explicit Thread(ThreadFunc tf);
     ~Thread();
     bool start(size_t stack_size = 0);
-    bool join();
+    void join();
     void kill();
 private:
     static unsigned int threadFunc(void* param);
@@ -96,7 +80,7 @@ public:
     {}
     virtual ~WorkerThread() {}
     inline bool start() { return thread_.start(); }
-    inline bool join() { return thread_.join(); }
+    inline void join() { thread_.join(); }
     inline void kill() { thread_.kill(); }
 protected:
     virtual void run() = 0;
@@ -113,12 +97,13 @@ public:
     typedef UtilSharedPtr<T> MsgPtr;
     explicit MsgThread();
     virtual ~MsgThread();
-    inline bool start() { return isRunning() ? 0 : pthread_->start(); }
+    inline bool isRunning() const { return is_running_; }
+    bool start();
     void stop();
     void queueMsg(MsgPtr pmsg);
-    inline bool isRunning() const { return is_running_; }
-private:
+protected:
     virtual void msgProc(MsgPtr pmsg) = 0;
+private:
     inline void waitForKey() { if (!key_) lock_.wait(); }
     inline void resetKey() { key_ = false; }
     inline void setKey() { key_ = true; lock_.notify(); }
@@ -140,10 +125,11 @@ private:
     void resetKeyIfEmpty();
 private:
     UtilAutoPtr<Thread> pthread_;
+    std::deque<MsgPtr> msg_queqe_;
     bool is_running_;
     bool key_;
-    std::deque<MsgPtr> msg_queqe_;
     Lock lock_;
+    Lock start_lock_;
     Mutex mutex_;
 private:
     DISALLOW_COPY_AND_ASSIGN(MsgThread)
@@ -160,6 +146,19 @@ template <typename T>
 MsgThread<T>::~MsgThread()
 {
     stop();
+}
+
+template <typename T>
+bool MsgThread<T>::start() 
+{ 
+    if (isRunning())
+        return false;
+    
+    if (!pthread_->start())
+        return false;
+    
+    start_lock_.wait();
+    return true;
 }
 
 template <typename T>
@@ -205,6 +204,7 @@ template <typename T>
 void MsgThread<T>::run()
 {
     is_running_ = true;
+    start_lock_.notify();
     while (is_running_)
     {
         waitForKey();

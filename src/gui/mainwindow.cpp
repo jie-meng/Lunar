@@ -938,15 +938,14 @@ void MainWindow::dumpOutput()
 
     pair<string, string> path_name = util::splitPathname(script);
 
-    time_t time = mkCurrentTime();
-    tm* ptm = localtime(&time);
+    DateTime dt = DateTime::now();
     string timeFormat = strFormat("%04d-%02d-%02d_%02d-%02d-%02d",
-                  ptm->tm_year + 1900,
-                  ptm->tm_mon + 1,
-                  ptm->tm_mday,
-                  ptm->tm_hour,
-                  ptm->tm_min,
-                  ptm->tm_sec);
+        dt.getYear(),
+        dt.getMonth(),
+        dt.getDay(),
+        dt.getHour(),
+        dt.getMinute(),
+        dt.getSecond());
 
     string name = script + "_" + timeFormat + ".log";
     if (isPathFile(name))
