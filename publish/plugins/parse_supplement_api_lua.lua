@@ -11,9 +11,9 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}    
     parseSupplementApiMain(filename, file.currentPath(), apis, re_func, re_require, re_return_module)
     
-    regex.destroy(re_func)
-    regex.destroy(re_require)
-    regex.destroy(re_return_module)
+    re_func:destroy()
+    re_require:destroy()
+    re_return_module:destroy()
     
     return apis
 end
@@ -31,8 +31,8 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
                     break
                 end
             
-                if regex.match(re_func, line_format) then
-                    local api = regex.getMatchedGroupByName(re_func, "api")
+                if re_func:match(line_format) then
+                    local api = re_func:getMatchedGroupByName("api")
                     if api ~= "" then
                         local api_format, _ = string.gsub(api, ":", ".")
                         table.insert(apis, api_format)
@@ -40,11 +40,11 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
                     break
                 end    
                 
-                if regex.match(re_require, line_format) then
+                if re_require:match(line_format) then
                     parseSupplementApiRequire(
                         dir,
-                        regex.getMatchedGroupByName(re_require, "module"), 
-                        regex.getMatchedGroupByName(re_require, "path"), 
+                        re_require:getMatchedGroupByName("module"), 
+                        re_require:getMatchedGroupByName("path"), 
                         apis,
                         re_func,
                         re_require,
@@ -87,10 +87,8 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                 
                 return_module = ""
                 
-                if regex.match(re_func, line_format) then
-                    
-                
-                    local api = regex.getMatchedGroupByName(re_func, "api")
+                if re_func:match(line_format) then
+                    local api = re_func:getMatchedGroupByName("api")
                     if api ~= "" then
                         local api_format, _ = string.gsub(api, ":", ".")
                         table.insert(tmp_t, api_format)
@@ -98,12 +96,12 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     break
                 end   
                  
-                if regex.match(re_require, line_format) and (not strStartWith(line_format, "local")) then
+                if re_require:match(line_format) and (not strStartWith(line_format, "local")) then
                     --local require in required file usually not return, just using locally, so ignore them.
                     parseSupplementApiRequire(
                         dir,
-                        regex.getMatchedGroupByName(re_require, "module"), 
-                        regex.getMatchedGroupByName(re_require, "path"), 
+                        re_require:getMatchedGroupByName("module"), 
+                        re_require:getMatchedGroupByName("path"), 
                         api_t,
                         re_func,
                         re_require,
@@ -111,8 +109,8 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     break
                 end
                 
-                if regex.match(re_return_module, line_format) then
-                    return_module = regex.getMatchedGroupByName(re_return_module, "module")
+                if re_return_module:match(line_format) then
+                    return_module = re_return_module:getMatchedGroupByName("module")
                     break
                 end
             until true
