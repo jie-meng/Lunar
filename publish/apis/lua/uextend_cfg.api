@@ -1,0 +1,7 @@
+cfg.createTextCfg([file = '']) -> LuaObject (TextCfg)
+cfg.textcfgobj.destroy()
+cfg.textcfgobj.getCfgFile() -> string
+cfg.textcfgobj.load(file)
+cfg.textcfgobj.save([file = ''])
+cfg.textcfgobj.getValue(key, defaultValue) -> string
+cfg.textcfgobj.setValue(key, value)
