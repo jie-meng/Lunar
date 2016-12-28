@@ -2,8 +2,8 @@ thread.createThread(file, func, ...) -> LuaObject (thread)
 thread.createMutex() -> LuaObject (mutex)
 thread.createLock() -> LuaObject (lock)
 thread.getThreadId() -> number
-thread.sleep()
-thread.msleep()
+thread.sleep(s)
+thread.msleep(ms)
 thread.threadobj.destroy()
 thread.threadobj.start([stack_size = 0]) -> boolean
 thread.threadobj.join()
