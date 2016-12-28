@@ -6,6 +6,7 @@ Debug/
 Release/
 
 CppApplicationName
+!CppApplicationName/
 tags
 
 *.cmake
