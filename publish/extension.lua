@@ -1,10 +1,10 @@
 function parseFileType(filename)
 
-	local path, name = file.splitPathname(filename)
+	local path, name = util.splitPathname(filename)
 
 	-- Lunar extension
 	if name == "extension.lua" then
-		if file.isPathFile(path .. "/Lunar") or file.isPathFile(path .. "/Lunar.exe") then
+		if util.isPathFile(path .. "/Lunar") or util.isPathFile(path .. "/Lunar.exe") then
 			return 
                 {
                     type = "lua", 
@@ -17,7 +17,7 @@ function parseFileType(filename)
 		end
 	end
 
-    if string.lower(file.fileExtension(name)) == "lua" and file.isPathFile("./cocos_run.lua") then
+    if string.lower(util.fileExtension(name)) == "lua" and util.isPathFile("./cocos_run.lua") then
 		return 
             {
                 type = "lua", 
@@ -33,7 +33,7 @@ function parseFileType(filename)
             }
 	end
 
-	if string.lower(file.fileExtension(name)) == "lua" then
+	if string.lower(util.fileExtension(name)) == "lua" then
 		return 
             {
                 type = "lua", 
@@ -48,7 +48,7 @@ function parseFileType(filename)
             }
 	end
     
-	if string.lower(file.fileExtension(name)) == "m" then
+	if string.lower(util.fileExtension(name)) == "m" then
 		return 
             {
                 type = "octave", 
@@ -60,7 +60,7 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(file.fileExtension(name)) == "js" then
+	if string.lower(util.fileExtension(name)) == "js" then
 		return 
             {
                 type = "javascript", 
@@ -73,7 +73,7 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(file.fileExtension(name)) == "html" then
+	if string.lower(util.fileExtension(name)) == "html" then
 		return 
             {
                 type = "html", 
@@ -85,7 +85,7 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(file.fileExtension(name)) == "css" then
+	if string.lower(util.fileExtension(name)) == "css" then
 		return 
             {
                 type = "css", 
@@ -96,15 +96,15 @@ function parseFileType(filename)
             }
 	end
     
-    if string.lower(file.fileExtension(name)) == "sh" then
+    if string.lower(util.fileExtension(name)) == "sh" then
         return { type = "bash", comment_line = "#", api = "apis/bash" }
     end
     
-	if string.lower(name) == "cmakelists.txt" or string.lower(file.fileExtension(name)) == "cmake" then
+	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
 		return { type = "cmake", comment_line = "#", api = "apis/cmake" }
 	end
     
-    if string.lower(file.fileExtension(name)) == "py" then
+    if string.lower(util.fileExtension(name)) == "py" then
         return 
             {
                 -- python3
@@ -127,7 +127,7 @@ function parseFileType(filename)
             }
     end
 
-    if string.lower(file.fileExtension(name)) == "rb" then
+    if string.lower(util.fileExtension(name)) == "rb" then
         return 
             {
                 -- python3
@@ -142,11 +142,11 @@ function parseFileType(filename)
     end
  
     
-    if string.lower(file.fileExtension(name)) == "tcl" then
+    if string.lower(util.fileExtension(name)) == "tcl" then
         return { type = "tcl", comment_line = "#" }
     end
     
-    if string.lower(file.fileExtension(name)) == "java" then
+    if string.lower(util.fileExtension(name)) == "java" then
         return 
 			{ 
 				type = "java",
@@ -157,7 +157,7 @@ function parseFileType(filename)
 			}
     end
     
-    if string.lower(file.fileExtension(name)) == "cs" then
+    if string.lower(util.fileExtension(name)) == "cs" then
         return 
 			{ 
 				type = "csharp", 
@@ -167,14 +167,14 @@ function parseFileType(filename)
 			}
     end
     
-    if string.lower(file.fileExtension(name)) == "xml" or
-       string.lower(file.fileExtension(name)) == "axml" or
-       string.lower(file.fileExtension(name)) == "xaml" or
-	   string.lower(file.fileExtension(name)) == "xsd" or
-	   string.lower(file.fileExtension(name)) == "jxl" or
-	   string.lower(file.fileExtension(name)) == "rxl" or
-       string.lower(file.fileExtension(name)) == "tmx" or
-	   string.lower(file.fileExtension(name)) == "project" then
+    if string.lower(util.fileExtension(name)) == "xml" or
+       string.lower(util.fileExtension(name)) == "axml" or
+       string.lower(util.fileExtension(name)) == "xaml" or
+	   string.lower(util.fileExtension(name)) == "xsd" or
+	   string.lower(util.fileExtension(name)) == "jxl" or
+	   string.lower(util.fileExtension(name)) == "rxl" or
+       string.lower(util.fileExtension(name)) == "tmx" or
+	   string.lower(util.fileExtension(name)) == "project" then
         return 
 			{ 
 				type = "xml",
@@ -183,12 +183,12 @@ function parseFileType(filename)
 			}
     end
     
-    if string.lower(file.fileExtension(name)) == "c" or
-       string.lower(file.fileExtension(name)) == "h" or
-       string.lower(file.fileExtension(name)) == "cpp" or
-       string.lower(file.fileExtension(name)) == "hpp" or
-       string.lower(file.fileExtension(name)) == "cxx" or
-       string.lower(file.fileExtension(name)) == "hxx" then
+    if string.lower(util.fileExtension(name)) == "c" or
+       string.lower(util.fileExtension(name)) == "h" or
+       string.lower(util.fileExtension(name)) == "cpp" or
+       string.lower(util.fileExtension(name)) == "hpp" or
+       string.lower(util.fileExtension(name)) == "cxx" or
+       string.lower(util.fileExtension(name)) == "hxx" then
         return 
             { 
                 type = "cpp",
@@ -223,7 +223,7 @@ function fileFilter()
 end
 
 function isLegalFile(filename)
-	local ext = file.fileExtension(filename)
+	local ext = util.fileExtension(filename)
     if ext == "lua" or
         ext == "m" or
         ext == "sh" or
@@ -267,7 +267,7 @@ function isLegalFile(filename)
         return true
     end
     
-    local base  = file.fileBaseName(filename)
+    local base  = util.fileBaseName(filename)
     if string.lower(base) == "makefile" then
         return true
     end

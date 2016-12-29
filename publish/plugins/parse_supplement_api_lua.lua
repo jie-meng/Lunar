@@ -4,16 +4,16 @@ local kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     
-    local re_func = regex.create(kRegexFunctionLua)
-    local re_require = regex.create(kRegexRequireLua)
-    local re_return_module = regex.create(kRegexReturnModuleLua)
+    local re_func = util.newRegex(kRegexFunctionLua)
+    local re_require = util.newRegex(kRegexRequireLua)
+    local re_return_module = util.newRegex(kRegexReturnModuleLua)
     
     local apis = {}    
     parseSupplementApiMain(filename, util.currentPath(), apis, re_func, re_require, re_return_module)
     
-    re_func:destroy()
-    re_require:destroy()
-    re_return_module:destroy()
+    re_func:delete()
+    re_require:delete()
+    re_return_module:delete()
     
     return apis
 end

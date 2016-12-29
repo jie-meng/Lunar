@@ -12,7 +12,7 @@ end
 
 function parseSupplementApiCurrent(filename, apis)
 
-    local re_func = regex.create(kRegexFunctionOctave)
+    local re_func = util.newRegex(kRegexFunctionOctave)
     
     local f = io.open(filename, "r")
     if f ~= nil then
@@ -23,8 +23,8 @@ function parseSupplementApiCurrent(filename, apis)
                     break
                 end
             
-                if regex.match(re_func, util.strTrim(line)) then
-                    local api = regex.getMatchedGroupByName(re_func, "api")
+                if util.match(re_func, util.strTrim(line)) then
+                    local api = util.getMatchedGroupByName(re_func, "api")
                     if api ~= "" then
                         table.insert(apis, api)
                     end
@@ -37,13 +37,13 @@ function parseSupplementApiCurrent(filename, apis)
         io.close(f)
     end
     
-    regex.destroy(re_func)
+    re_func:delete()
 end
 
 function parseSupplementApiInPath(filename, apis)
 
     local dir, name = util.splitPathname(filename)
-    local re_func = regex.create(kRegexFunctionOctave)
+    local re_func = util.newRegex(kRegexFunctionOctave)
     
     local files = util.findFilesInDir(dir, "m")
     for key, value in pairs(files) do
@@ -57,8 +57,8 @@ function parseSupplementApiInPath(filename, apis)
                     break
                 end
                 
-                if regex.match(re_func, util.strTrim(line)) then
-                    local param = regex.getMatchedGroupByName(re_func, "param")
+                if re_func:match(util.strTrim(line)) then
+                    local param = re_func:getMatchedGroupByName("param")
                     if param ~= "" then
                         table.insert(apis, util.fileBaseName(value) .. param)
                     end
@@ -76,5 +76,5 @@ function parseSupplementApiInPath(filename, apis)
         io.close(f)
     end
     
-    regex.destroy(re_func)
+    re_func:delete()
 end
