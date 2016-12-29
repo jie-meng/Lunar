@@ -1,57 +1,57 @@
-file.pathRemoveAll("debug")
+util.pathRemoveAll("debug")
 print("remove dir debug")
 
-file.pathRemoveAll("release")
+util.pathRemoveAll("release")
 print("remove dir release")
 
-file.pathRemoveAll("Lunar.app")
+util.pathRemoveAll("Lunar.app")
 print("remove dir Lunar.app")
 
-if file.pathRemove("Makefile") then
+if util.pathRemove("Makefile") then
     print("remove Makefile")
 end
 
-if file.pathRemove("Makefile.Debug") then
-    print("remove Makefile.Debug")
+if util.pathRemove("Makeutil.Debug") then
+    print("remove Makeutil.Debug")
 end
 
-if file.pathRemove("Makefile.Release") then
-    print("remove Makefile.Release")
+if util.pathRemove("Makeutil.Release") then
+    print("remove Makeutil.Release")
 end
 
-if file.pathRemove("object_script.Lunar.Debug") then
+if util.pathRemove("object_script.Lunar.Debug") then
     print("remove object_script.Lunar.Debug")
 end
 
-if file.pathRemove("object_script.Lunar.Release") then
+if util.pathRemove("object_script.Lunar.Release") then
     print("remove object_script.Lunar.Release")
 end
 
-if file.pathRemove("qrc_Lunar.cpp") then
+if util.pathRemove("qrc_Lunar.cpp") then
     print("remove qrc_Lunar.cpp")
 end
 
-if file.pathRemove("Lunar.pro") then
+if util.pathRemove("Lunar.pro") then
     print("remove Lunar.pro")
 end
 
-if file.pathRemove("Lunar") then
+if util.pathRemove("Lunar") then
     print("remove Lunar")
 end
 
-t = file.findFilesInDir(".")
+t = util.findFilesInDir(".")
 
 for k, v in pairs(t) do
 
-    local path, fileName = file.splitPathname(v)
-    if file.fileExtension(fileName) == "o" then
+    local path, fileName = util.splitPathname(v)
+    if util.fileExtension(fileName) == "o" then
         print("remove " .. v)
-        file.pathRemove(v)
+        util.pathRemove(v)
     end
     local i, j = string.find(fileName, "moc")
     if i == 1 and j == 3 then
         print("remove " .. v)
-        file.pathRemove(v)
+        util.pathRemove(v)
     end
 end
 
