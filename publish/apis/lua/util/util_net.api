@@ -1,6 +1,6 @@
-util.newUdpSocket([family = 1]) -> LuaObject (udp object)
-util.newTcpSocket([family = 1]) -> LuaObject (tcp)
-util.newRawSocket([family = 1], protocol) -> LuaObject (raw-socket)
+util.newUdpSocket([family = 1]) -> LuaObject (UdpSocket)
+util.newTcpSocket([family = 1]) -> LuaObject (TcpSocket)
+util.newRawSocket([family = 1], protocol) -> LuaObject (RawSocket)
 util.ipArrayToStr(family, p, len) -> string
 util.ipStrToArray(family, s, p, len) -> userdata
 util.htons(uint16) -> number

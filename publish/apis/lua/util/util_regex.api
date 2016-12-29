@@ -1,4 +1,4 @@
-util.newRegex(re, [flag = 0 (SingleLine=0x01, MultiLine=0x02, Global=0x04, IgnoreCase=0x08, RightToLeft=0x10, Extended=0x20)]) -> LuaObject (regex)
+util.newRegex(re, [flag = 0 (SingleLine=0x01, MultiLine=0x02, Global=0x04, IgnoreCase=0x08, RightToLeft=0x10, Extended=0x20)]) -> LuaObject (Regex)
 util.regexobj.delete()
 util.regexobj.compile(s)
 util.regexobj.match(s) -> boolean

@@ -9,7 +9,7 @@ function parseFileType(filename)
                 {
                     type = "lua", 
                     auto_complete_type = 1, 
-                    api = "apis/lua/standard,apis/lua/uextend.api,apis/lua/uextend_file.api,apis/lua/uextend_regex.api" ,
+                    api = "apis/lua/standard,apis/lua/util" ,
                     comment_line = "--",
 					comment_block_begin = "--[[",
 					comment_block_end = "]]"
@@ -105,13 +105,18 @@ function parseFileType(filename)
 	end
     
     if string.lower(util.fileExtension(name)) == "py" then
+        local python3 = "python3"
+        if util.strContains(util.platformInfo(), "win", false) then
+            python3 = "python"
+        end
+        
         return 
             {
                 -- python3
                 type = "python",
                 auto_complete_type = 1,
                 api = "apis/python",
-                executor = "python3 -u",
+                executor =  python3 .. " -u",
                 plugin_goto = "plugins/goto_python.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
                 comment_line = "#"

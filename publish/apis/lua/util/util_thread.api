@@ -1,6 +1,6 @@
-util.newThread(file, func, ...) -> LuaObject (thread)
-util.newMutex() -> LuaObject (mutex)
-util.newLock() -> LuaObject (lock)
+util.newThread(file, func, ...) -> LuaObject (Thread)
+util.newMutex() -> LuaObject (Mutex)
+util.newLock() -> LuaObject (Lock)
 util.getThreadId() -> number
 util.sleep(s)
 util.msleep(ms)

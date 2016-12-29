@@ -1,4 +1,4 @@
-util.newMemory(size) ->  LuaObject (memory)
+util.newMemory(size) ->  LuaObject (Memory)
 util.offset(p, offset) -> userdata
 util.memset(p, v, len)
 util.memcpy(pd, ps, len)

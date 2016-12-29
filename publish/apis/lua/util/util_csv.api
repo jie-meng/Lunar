@@ -1,4 +1,4 @@
-util.newCsv([file = ""], [delimiter = ','], [enclosure = '"']) -> LuaObject (csv)
+util.newCsv([file = ""], [delimiter = ','], [enclosure = '"']) -> LuaObject (Csv)
 util.csvobj.delete()
 util.csvobj.read(file) -> boolean
 util.csvobj.write([file = ""]) -> boolean

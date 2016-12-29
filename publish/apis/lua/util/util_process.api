@@ -1,4 +1,4 @@
-util.newProcess() -> LuaObject (process)
+util.newProcess() -> LuaObject (Process)
 util.executeProcess(cmdline, path) -> number
 util.executeProcessAsyn(cmdline, path) -> boolean
 util.processobj.delete()
