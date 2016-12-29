@@ -1,9 +1,9 @@
 function gotoDefinition(text, line, filename, project_src_dir)
-    local find_path = file.currentPath()
-    if strTrim(project_src_dir) ~= "" then
+    local find_path = util.currentPath()
+    if util.strTrim(project_src_dir) ~= "" then
         find_path = find_path .. "/" .. project_src_dir
     end
-    local files = file.findFilesInDirRecursively(find_path, "lua")
+    local files = util.findFilesInDirRecursively(find_path, "lua")
     
     table.sort(files, 
         function (a, b)
@@ -18,8 +18,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
             local line_index = 1
             while readline do
                 repeat
-                    local trimmed_line = strTrim(readline)
-                    if trimmed_line == "" or strStartWith(trimmed_line, "--") then
+                    local trimmed_line = util.strTrim(readline)
+                    if trimmed_line == "" or util.strStartWith(trimmed_line, "--") then
                         break
                     end
                     
@@ -33,7 +33,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
                     end
                     
                     if matched then
-                        local _, j = string.find(v, file.currentPath())
+                        local _, j = string.find(v, util.currentPath())
                         if j then
                             table.insert(results, string.format("%s\n%d\n%s", string.sub(v, j+2), line_index, readline))
                         end

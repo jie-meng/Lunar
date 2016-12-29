@@ -9,7 +9,7 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     local re_return_module = regex.create(kRegexReturnModuleLua)
     
     local apis = {}    
-    parseSupplementApiMain(filename, file.currentPath(), apis, re_func, re_require, re_return_module)
+    parseSupplementApiMain(filename, util.currentPath(), apis, re_func, re_require, re_return_module)
     
     re_func:destroy()
     re_require:destroy()
@@ -25,9 +25,9 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                local line_format = strTrim(line)
+                local line_format = util.strTrim(line)
                 
-                if line_format == "" or strStartWith(line_format, "--") then
+                if line_format == "" or util.strStartWith(line_format, "--") then
                     break
                 end
             
@@ -61,13 +61,13 @@ end
 
 function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_func, re_require, re_return_module)
     
-    if (not strContains(require_name, "/")) and (not strContains(require_name, "\\")) then
+    if (not util.strContains(require_name, "/")) and (not util.strContains(require_name, "\\")) then
         require_name = strRelaceAll(require_name, ".", "/")
         require_name = strRelaceAll(require_name, "//", "../")
     end
     
     local require_file = dir .. "/" .. require_name .. ".lua"
-    if not file.isPathFile(require_file) then
+    if not util.isPathFile(require_file) then
         return
     end
     
@@ -79,9 +79,9 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                local line_format = strTrim(line)
+                local line_format = util.strTrim(line)
                 
-                if line_format == "" or strStartWith(line_format, "--") then
+                if line_format == "" or util.strStartWith(line_format, "--") then
                     break
                 end
                 
@@ -96,7 +96,7 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     break
                 end   
                  
-                if re_require:match(line_format) and (not strStartWith(line_format, "local")) then
+                if re_require:match(line_format) and (not util.strStartWith(line_format, "local")) then
                     --local require in required file usually not return, just using locally, so ignore them.
                     parseSupplementApiRequire(
                         dir,
@@ -121,9 +121,9 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         
         if return_module ~= "" then
             for k,v in pairs(tmp_t) do
-                if strStartWith(v, return_module .. ".") then
+                if util.strStartWith(v, return_module .. ".") then
                     if module_name ~= "" then
-                        table.insert(api_t, strReplace(v, return_module .. ".", module_name .. "."))
+                        table.insert(api_t, util.strReplace(v, return_module .. ".", module_name .. "."))
                     end
                 else
                     table.insert(api_t, v)

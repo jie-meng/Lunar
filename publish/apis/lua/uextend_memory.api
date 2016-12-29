@@ -1,19 +1,19 @@
-memory.createMemory(size) ->  LuaObject (memory)
-memory.offset(p, offset) -> userdata
-memory.memset(p, v, len)
-memory.memcpy(pd, ps, len)
-memory.memmove(pd, ps, len)
-memory.strcpy(pd, [ps, string])
-memory.memstr(p, len) -> string
-memory.tostring(p) -> string
-memory.setUInt8(p, uint8)
-memory.setUInt16(p, uint16)
-memory.setUInt32(p, uint32)
-memory.getUInt8(p)
-memory.getUInt16(p)
-memory.getUInt32(p)
-memory.setBytes(p, ...)
-memory.memobj.destroy()
-memory.memobj.size() -> number
-memory.memobj.clear()
-memory.memobj.buf() -> userdata
+util.newMemory(size) ->  LuaObject (memory)
+util.offset(p, offset) -> userdata
+util.memset(p, v, len)
+util.memcpy(pd, ps, len)
+util.memmove(pd, ps, len)
+util.strcpy(pd, [ps, string])
+util.memstr(p, len) -> string
+util.tostring(p) -> string
+util.setUInt8(p, uint8)
+util.setUInt16(p, uint16)
+util.setUInt32(p, uint32)
+util.getUInt8(p)
+util.getUInt16(p)
+util.getUInt32(p)
+util.setBytes(p, ...)
+util.memobj.delete()
+util.memobj.size() -> number
+util.memobj.clear()
+util.memobj.buf() -> userdata

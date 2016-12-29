@@ -1,6 +1,6 @@
-if strContains(platformInfo(), "unix", false) then
+if util.strContains(platformInfo(), "unix", false) then
     os.execute("cocos run -p linux")
-elseif strContains(platformInfo(), "windows", false) then
+elseif util.strContains(platformInfo(), "windows", false) then
     os.execute("cocos run -p win32")
 else
     print("cannot compile")

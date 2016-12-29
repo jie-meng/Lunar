@@ -19,11 +19,11 @@ function parseSupplementApiCurrent(filename, apis)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "%") or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "%") or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
             
-                if regex.match(re_func, strTrim(line)) then
+                if regex.match(re_func, util.strTrim(line)) then
                     local api = regex.getMatchedGroupByName(re_func, "api")
                     if api ~= "" then
                         table.insert(apis, api)
@@ -42,10 +42,10 @@ end
 
 function parseSupplementApiInPath(filename, apis)
 
-    local dir, name = file.splitPathname(filename)
+    local dir, name = util.splitPathname(filename)
     local re_func = regex.create(kRegexFunctionOctave)
     
-    local files = file.findFilesInDir(dir, "m")
+    local files = util.findFilesInDir(dir, "m")
     for key, value in pairs(files) do
         local f = io.open(value, "r")
         local line = f:read("*line")
@@ -53,14 +53,14 @@ function parseSupplementApiInPath(filename, apis)
             local break_while = false
             
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "%") or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "%") or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
                 
-                if regex.match(re_func, strTrim(line)) then
+                if regex.match(re_func, util.strTrim(line)) then
                     local param = regex.getMatchedGroupByName(re_func, "param")
                     if param ~= "" then
-                        table.insert(apis, file.fileBaseName(value) .. param)
+                        table.insert(apis, util.fileBaseName(value) .. param)
                     end
                     break_while = true
                     break

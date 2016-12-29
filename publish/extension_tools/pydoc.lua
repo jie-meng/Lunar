@@ -1,6 +1,6 @@
 -- Generate cmd
 local pydoc_gen_cmd = 'pydoc'
-if strContains(platformInfo(), 'windows', false) then
+if util.strContains(util.platformInfo(), 'windows', false) then
     pydoc_gen_cmd = 'python -m pydoc'
 end
 
@@ -9,7 +9,7 @@ local target = io.read()
 print(target)
 print()
 
-if string.len(strTrim(target)) == 0 then
+if string.len(util.strTrim(target)) == 0 then
     print('Error: Input nothing')
     os.exit(0)
 end

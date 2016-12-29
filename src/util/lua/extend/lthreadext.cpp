@@ -1,4 +1,4 @@
-#include "lthreadlib.hpp"
+#include "lthreadext.hpp"
 #include <vector>
 #include "util/luaextend.hpp"
 #include "util/thread.hpp"
@@ -40,8 +40,8 @@ static void threadFunc(std::string file, std::string func, std::vector<any> args
 
 static int threadCreate(lua_State* plua_state)
 {
-    luaExtendAssert(plua_state, kLuaExtendLibThread, "create", luaGetTop(plua_state) >= 2, "file and threadfunc needed");
-    luaExtendAssert(plua_state, kLuaExtendLibThread, "create",
+    luaExtendAssert(plua_state, kLuaExtendLibUtil, "create", luaGetTop(plua_state) >= 2, "file and threadfunc needed");
+    luaExtendAssert(plua_state, kLuaExtendLibUtil, "create",
         LuaString == luaGetType(plua_state, 1) && LuaString == luaGetType(plua_state, 2), "file and threadfunc must be string type");
 
     std::string file = luaGetString(plua_state, 1, "");
@@ -182,11 +182,11 @@ static int lockToString(lua_State* plua_state)
     return luaObjectToString<Lock>(plua_state, kLockHandle);
 }
 
-static const u_luaL_Reg thread_lib[] =
+static const LuaReg thread_lib[] =
 {
-    {"createThread", threadCreate},
-    {"createMutex", mutexCreate},
-    {"createLock", lockCreate},
+    {"newThread", threadCreate},
+    {"newMutex", mutexCreate},
+    {"newLock", lockCreate},
     
     {"getThreadId", getThreadId},
     {"sleep", sleep},
@@ -195,8 +195,8 @@ static const u_luaL_Reg thread_lib[] =
     {0, 0}
 };
 
-static const u_luaL_Reg thread_obj_lib[] = {
-    {"destroy", threadDestroy},
+static const LuaReg thread_obj_lib[] = {
+    {"delete", threadDestroy},
     {"start", threadStart},
     {"join", threadJoin},
     {"kill", threadKill},
@@ -206,8 +206,8 @@ static const u_luaL_Reg thread_obj_lib[] = {
     {0, 0}
 };
 
-static const u_luaL_Reg mutex_obj_lib[] = {
-    {"destroy", mutexDestroy},
+static const LuaReg mutex_obj_lib[] = {
+    {"delete", mutexDestroy},
     {"lock", mutexLock},
     {"unlock", mutexUnlock},
     {"__gc", mutexDestroy},
@@ -216,8 +216,8 @@ static const u_luaL_Reg mutex_obj_lib[] = {
     {0, 0}
 };
 
-static const u_luaL_Reg lock_obj_lib[] = {
-    {"destroy", lockDestroy},
+static const LuaReg lock_obj_lib[] = {
+    {"delete", lockDestroy},
     {"wait", lockWait},
     {"timedWait", lockTimedWait},
     {"notify", lockNotify},
@@ -227,13 +227,12 @@ static const u_luaL_Reg lock_obj_lib[] = {
     {0, 0}
 };
 
-int lualibThreadCreate(lua_State* plua_state) {
-
-    luaCreateLib(plua_state, (u_luaL_Reg*)thread_lib);
-    luaCreateMeta(plua_state, kThreadHandle, (u_luaL_Reg*)thread_obj_lib);
-    luaCreateMeta(plua_state, kMutexHandle, (u_luaL_Reg*)mutex_obj_lib);
-    luaCreateMeta(plua_state, kLockHandle, (u_luaL_Reg*)lock_obj_lib);
-    return 1;
+void extendThread(lua_State* plua_state) 
+{
+    LuaRegCombUtilLib::getInstance().addRegArray((LuaReg*)thread_lib);
+    luaCreateMeta(plua_state, kThreadHandle, (LuaReg*)thread_obj_lib);
+    luaCreateMeta(plua_state, kMutexHandle, (LuaReg*)mutex_obj_lib);
+    luaCreateMeta(plua_state, kLockHandle, (LuaReg*)lock_obj_lib);
 }
 
 } // namespace util

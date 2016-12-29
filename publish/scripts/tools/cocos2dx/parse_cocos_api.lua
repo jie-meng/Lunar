@@ -47,9 +47,9 @@ function ApiModule:setName(name)
 end
 
 function ApiModule:setExtend(extend)
-    self.extend_ = strSplit(extend, ",")
+    self.extend_ = util.strSplit(extend, ",")
     for i, v in ipairs(self.extend_) do
-        self.extend_[i] = strTrim(v)
+        self.extend_[i] = util.strTrim(v)
     end
 end
 
@@ -85,7 +85,7 @@ end
 function ApiModule:AddParamToFunc(param)
     if self.tmp_function_ then
         local prefix = ""
-        if not strEndWith(self.tmp_function_, "(") then
+        if not util.strEndWith(self.tmp_function_, "(") then
             prefix = ", "
         end
         self.tmp_function_ = self.tmp_function_ .. prefix .. "[" .. param .. "]"
@@ -111,10 +111,10 @@ function createCocosApis()
     
     local apis = {}
     
-    local t1 = file.findFilesInDirRecursively(file.currentPath() .. "/src/cocos", "lua")
-    local t2 = file.findFilesInDirRecursively(file.currentPath() .. "/src/package", "lua")
-    local t3 = file.findFilesInDirRecursively(file.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/auto/api", "lua")
-    local t4 = file.findFilesInDirRecursively(file.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/manual", "cpp")
+    local t1 = util.findFilesInDirRecursively(util.currentPath() .. "/src/cocos", "lua")
+    local t2 = util.findFilesInDirRecursively(util.currentPath() .. "/src/package", "lua")
+    local t3 = util.findFilesInDirRecursively(util.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/auto/api", "lua")
+    local t4 = util.findFilesInDirRecursively(util.currentPath() .. "/frameworks/cocos2d-x/cocos/scripting/lua-bindings/manual", "cpp")
     
     -- lua api
     for k, v in pairs(t1) do
@@ -162,8 +162,8 @@ function createCocosApis()
     
     print("parsed " .. tostring(#apis) .. " functions.")
     
-    content = strJoin(apis, "\n")
-    file.writeTextFile("cocos.api", content)
+    content = util.strJoin(apis, "\n")
+    util.writeTextFile("cocos.api", content)
 end
 
 function parseApi(filename, apis)
@@ -175,7 +175,7 @@ function parseApi(filename, apis)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "--") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "--") then
                     break
                 end
             
@@ -215,7 +215,7 @@ function parseAutoApi(filename)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strTrim(line) == "" then
+                if util.strTrim(line) == "" then
                     break
                 end
                 
@@ -242,7 +242,7 @@ function parseAutoApi(filename)
                     break
                 end
                 
-                local test_extend = string.match(strTrim(line), pattern_extend)
+                local test_extend = string.match(util.strTrim(line), pattern_extend)
                 if test_extend then
                     --print(test_extend)
                     api_module:setExtend(test_extend)
@@ -285,13 +285,13 @@ function parseManualApi(filename)
         local line = f:read("*line")
         while (line ~= nil) do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "--") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "--") then
                     break
                 end
             
                 local tolua_function = string.match(line, pattern_tolua_function)
                 if #begin_modules > 0 and tolua_function then
-                    table.insert(tb, strJoin(begin_modules, ".") .. "." .. tolua_function .. "(?)")
+                    table.insert(tb, util.strJoin(begin_modules, ".") .. "." .. tolua_function .. "(?)")
                     push_string = nil
                     break
                 end
@@ -307,7 +307,7 @@ function parseManualApi(filename)
                     break
                 end
                 
-                if strStartWith(line, "lua_pushcfunction") then
+                if util.strStartWith(line, "lua_pushcfunction") then
                     if prefix_class and push_string then
                         table.insert(tb, prefix_class .. "." .. push_string .. "(?)")
                         push_string = nil
@@ -315,7 +315,7 @@ function parseManualApi(filename)
                     break
                 end
                 
-                if strStartWith(line, "lua_pop") then
+                if util.strStartWith(line, "lua_pop") then
                     prefix_class = nil
                     push_string = nil
                     break

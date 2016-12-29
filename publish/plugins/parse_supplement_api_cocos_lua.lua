@@ -61,7 +61,7 @@ function Class:makeFunctionApi(func)
 end
 
 function Class:makeSuperMethodApi(func)
-    if string.len(strTrim(func.args)) == 0 then
+    if string.len(util.strTrim(func.args)) == 0 then
         return string.format("super.%s(self)", func.name)
     else
         return string.format("super.%s(self, %s)", func.name, func.args)
@@ -128,22 +128,22 @@ end
 --[[ functions ]]
 function parseClass(current_file_dir, import_path)
     local filename = nil
-    if strStartWith(strTrimLeft(import_path), ".") then
+    if util.strStartWith(util.strTrimLeft(import_path), ".") then
         filename = current_file_dir .. strRelaceAll(import_path, ".", "/") .. ".lua"
     else
-        filename = file.currentPath() .. "/src/" .. strRelaceAll(import_path, ".", "/") .. ".lua"
+        filename = util.currentPath() .. "/src/" .. strRelaceAll(import_path, ".", "/") .. ".lua"
     end
     
     local class = nil
     local f = io.open(filename, "r")
-    current_file_dir = file.splitPathname(filename)
+    current_file_dir = util.splitPathname(filename)
     if f then
         class = Class:new()
         
         local line = f:read("*line")
         while line do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "--") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "--") then
                     break
                 end
                 
@@ -163,18 +163,18 @@ function parseClass(current_file_dir, import_path)
                 
                 local name, path = string.match(line, pattern_import_lua)
                 if name and path then
-                    class:addImport(name, strTrim(path))
+                    class:addImport(name, util.strTrim(path))
                     break
                 end
                 
                 local name, extends = string.match(line, pattern_class_lua)
                 if name and extends then
                     class:setName(name)
-                    local tb = strSplit(extends, ",")
+                    local tb = util.strSplit(extends, ",")
                     for k, v in pairs(tb) do
-                        local import = strTrim(v)
+                        local import = util.strTrim(v)
                         if string.len(import) > 0 then
-                            local import_path = class:getImport(strTrim(v))
+                            local import_path = class:getImport(util.strTrim(v))
                             --print(string.format("class: %s  extends: %s  path: %s", class:getName(), v, tostring(import_path)))
                             if import_path then
                                 local super_class = parseClass(current_file_dir, import_path)
@@ -200,8 +200,8 @@ end
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
   
-    local path, name = file.splitPathname(filename)
-    local class = parseClass(path, "." .. file.fileBaseName(filename))
+    local path, name = util.splitPathname(filename)
+    local class = parseClass(path, "." .. util.fileBaseName(filename))
 
     if class then
         local t_api = class:createApis()

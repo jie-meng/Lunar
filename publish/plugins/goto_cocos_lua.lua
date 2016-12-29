@@ -5,11 +5,11 @@ function gotoDefinition(text, line, filename, project_src_dir)
     local imports = {}
     findImports(filename, imports, true)
     
-    local find_path = file.currentPath()
-    if strTrim(project_src_dir) ~= "" then
+    local find_path = util.currentPath()
+    if util.strTrim(project_src_dir) ~= "" then
         find_path = find_path .. "/" .. project_src_dir
     end
-    local all_files_in_project = file.findFilesInDirRecursively(find_path, "lua")
+    local all_files_in_project = util.findFilesInDirRecursively(find_path, "lua")
     
     local files = {}
     for _, v in ipairs(all_files_in_project) do
@@ -35,8 +35,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
             local line_index = 1
             while readline do
                 repeat
-                    local trimmed_line = strTrim(readline)
-                    if trimmed_line == "" or strStartWith(trimmed_line, "--") then
+                    local trimmed_line = util.strTrim(readline)
+                    if trimmed_line == "" or util.strStartWith(trimmed_line, "--") then
                         break
                     end
                     
@@ -52,7 +52,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
                     end
                     
                     if matched then
-                        local _, j = string.find(v, file.currentPath())
+                        local _, j = string.find(v, util.currentPath())
                         if j then
                             table.insert(results, string.format("%s\n%d\n%s", string.sub(v, j+2), line_index, readline))
                         end
@@ -76,19 +76,19 @@ function findImports(filename, out_imports, current_file)
         local readline = f:read("*line")
         while readline do
             repeat
-                local trimmed_line = strTrim(readline)
-                if trimmed_line == "" or strStartWith(trimmed_line, "--") then
+                local trimmed_line = util.strTrim(readline)
+                if trimmed_line == "" or util.strStartWith(trimmed_line, "--") then
                     break
                 end
                 
-                local current_file_path = file.splitPathname(filename)
+                local current_file_path = util.splitPathname(filename)
                 local name, path = string.match(trimmed_line, pattern_import_lua)
                 if name and path then
                     local import_file = nil
-                    if strStartWith(strTrimLeft(path), ".") then
+                    if util.strStartWith(util.strTrimLeft(path), ".") then
                         import_file = current_file_path .. strRelaceAll(path, ".", "/") .. ".lua"
                     else
-                        import_file = file.currentPath() .. "/src/" .. strRelaceAll(path, ".", "/") .. ".lua"
+                        import_file = util.currentPath() .. "/src/" .. strRelaceAll(path, ".", "/") .. ".lua"
                     end
                     import_files[name] = import_file
                     if current_file then
@@ -98,9 +98,9 @@ function findImports(filename, out_imports, current_file)
                 
                 local name, extends = string.match(readline, pattern_class_lua)
                 if name and extends then
-                    local tb = strSplit(extends, ",")
+                    local tb = util.strSplit(extends, ",")
                     for _, v in ipairs(tb) do
-                        local extend = strTrim(v)
+                        local extend = util.strTrim(v)
                         if string.len(extend) > 0 and import_files[extend] then
                             out_imports[import_files[extend]] = true
                             findImports(import_files[extend], out_imports, false)

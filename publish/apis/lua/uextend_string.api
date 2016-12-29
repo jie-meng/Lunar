@@ -1,0 +1,19 @@
+util.strTrim(s) -> string
+util.strTrimLeft(s) -> string
+util.strTrimRight(s) -> string
+util.strTrimEx(s, chstr) -> string
+util.strTrimLeftEx(s, chstr) -> string
+util.strTrimRightEx(s, chstr) -> string
+util.strReplace(s, find, replace) -> string
+util.strRelaceAll(s, find, replace) -> string
+util.strLeft(s, n) -> string
+util.strRight(s, n) -> string
+util.strMid(s, pos, n) -> string
+util.strAreEqual(s1, s2, [case_sensitive = true]) -> boolean
+util.strContains(s, contain, [case_sensitive = true]) -> boolean
+util.strCompare(s1, s2, [case_sensitive = true]) -> number
+util.strStartWith(s, start, [case_sensitive = true]) -> boolean
+util.strEndWith(s, end, [case_sensitive = true]) -> boolean
+util.strJoin(t, del) -> string
+util.strSplit(s, del, [limit = 0]) -> table
+util.strSplitEx(s, del, start_flag, end_flag, [limit = 0]) -> table

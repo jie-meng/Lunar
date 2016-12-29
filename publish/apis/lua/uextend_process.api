@@ -1,7 +1,7 @@
-process.create() -> LuaObject (process)
-process.executeProcess(cmdline, path) -> number
-process.executeProcessAsyn(cmdline, path) -> boolean
-process.processobj.destroy()
-process.processobj.start(cmdline, path, input, output, file, func) -> boolean
-process.processobj.kill()
-process.processobj.input(str) -> boolean
+util.newProcess() -> LuaObject (process)
+util.executeProcess(cmdline, path) -> number
+util.executeProcessAsyn(cmdline, path) -> boolean
+util.processobj.delete()
+util.processobj.start(cmdline, path, input, output, file, func) -> boolean
+util.processobj.kill()
+util.processobj.input(str) -> boolean

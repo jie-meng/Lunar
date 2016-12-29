@@ -1,11 +1,11 @@
-csv.create([file = ""], [delimiter = ','], [enclosure = '"']) -> LuaObject (csv)
-csv.csvobj.destroy()
-csv.csvobj.read(file) -> boolean
-csv.csvobj.write([file = ""]) -> boolean
-csv.csvobj.empty() -> boolean
-csv.csvobj.clear()
-csv.csvobj.rows() -> number
-csv.csvobj.cols() -> number
-csv.csvobj.getCellValue(row, col) -> string
-csv.csvobj.setCellValue(row, col, value) -> boolean
-csv.csvobj.addRow(...) -> boolean
+util.newCsv([file = ""], [delimiter = ','], [enclosure = '"']) -> LuaObject (csv)
+util.csvobj.delete()
+util.csvobj.read(file) -> boolean
+util.csvobj.write([file = ""]) -> boolean
+util.csvobj.empty() -> boolean
+util.csvobj.clear()
+util.csvobj.rows() -> number
+util.csvobj.cols() -> number
+util.csvobj.getCellValue(row, col) -> string
+util.csvobj.setCellValue(row, col, value) -> boolean
+util.csvobj.addRow(...) -> boolean

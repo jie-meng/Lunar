@@ -6,7 +6,7 @@ function parseApi(mfiles_path)
     
     local apis = {}
     
-    local files = file.findFilesInDirRecursively(mfiles_path, "m")
+    local files = util.findFilesInDirRecursively(mfiles_path, "m")
     for _, v in ipairs(files) do
         parseApiInPath(v, apis)
     end
@@ -16,9 +16,9 @@ end
 
 function parseApiInPath(filename, apis)
 
-    local dir, name = file.splitPathname(filename)
+    local dir, name = util.splitPathname(filename)
     
-    local files = file.findFilesInDir(dir, "m")
+    local files = util.findFilesInDir(dir, "m")
     for key, value in pairs(files) do
         local f = io.open(value, "r")
         local line = f:read("*line")
@@ -26,7 +26,7 @@ function parseApiInPath(filename, apis)
             local break_while = false
             
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "%") or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "%") or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
                 

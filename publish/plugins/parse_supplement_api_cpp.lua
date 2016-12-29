@@ -75,7 +75,7 @@ function tryGetMacro(line_str)
 end
 
 function tryGetTypedef(line_str)
-    return strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
+    return util.strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
 end
 
 function tryGetFunc(line_str, previous_line_str)
@@ -96,15 +96,15 @@ end
 
 function tryGetInclude(line_str)
     local file = string.match(line_str, '#%s*include%s+[<"]([%w_%./]+)[>"]')
-    local directive = strContains(line_str, "<")
+    local directive = util.strContains(line_str, "<")
     return file, directive
 end
 
 function getProjectSrcAbsoluteDir(project_src_dir)
-    if strTrim(project_src_dir) == "" then
-        return file.currentPath()
+    if util.strTrim(project_src_dir) == "" then
+        return util.currentPath()
     else
-        return string.format("%s/%s", file.currentPath(), project_src_dir)
+        return string.format("%s/%s", util.currentPath(), project_src_dir)
     end
 end
 
@@ -122,13 +122,13 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
         local inc_coll = {}
         while readline do
             repeat
-                local trimmed_line = strTrim(readline)
-                if trimmed_line == "" or strStartWith(trimmed_line, "//") then
+                local trimmed_line = util.strTrim(readline)
+                if trimmed_line == "" or util.strStartWith(trimmed_line, "//") then
                     break
                 end
                 
                 local get_value = nil
-                if strStartWith(trimmed_line, "#") then
+                if util.strStartWith(trimmed_line, "#") then
                     local inc, directive = tryGetInclude(trimmed_line)
                     if inc then
                         table.insert(inc_coll, { file = inc, find = directive })
@@ -173,12 +173,12 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 end
             else
                 -- relative path ""
-                local current_file_path, current_file_name = file.splitPathname(filename)
+                local current_file_path, current_file_name = util.splitPathname(filename)
                 local project_dir_absolute = getProjectSrcAbsoluteDir(project_src_dir)
                 
-                if file.isPathFile(current_file_path .. "/" .. inc.file) then
+                if util.isPathFile(current_file_path .. "/" .. inc.file) then
                     parseFile(coll, parsed_files, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, inc_path, true)
-                elseif file.isPathFile(project_dir_absolute .. "/" .. inc.file) then
+                elseif util.isPathFile(project_dir_absolute .. "/" .. inc.file) then
                     parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. inc.file, current_line_index, inc_path, true)
                 else                        
                     for _, v in ipairs(inc_path) do
@@ -203,8 +203,8 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
         local readline = cfg:read("*line")
         while readline do
             repeat
-                local trimmed_line = strTrim(readline)
-                if trimmed_line == "" or strStartWith(trimmed_line, "#") then
+                local trimmed_line = util.strTrim(readline)
+                if trimmed_line == "" or util.strStartWith(trimmed_line, "#") then
                     break
                 end 
                 
@@ -212,7 +212,7 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
                     region = "INCLUDEPATH"
                 else
                     if region == "INCLUDEPATH" then
-                        if strStartWith(trimmed_line, "/") or ( string.len(trimmed_line) > 2 and string.sub(trimmed_line, 2, 2) == ":") then
+                        if util.strStartWith(trimmed_line, "/") or ( string.len(trimmed_line) > 2 and string.sub(trimmed_line, 2, 2) == ":") then
                             table.insert(inc_path, { path = trimmed_line, find = true})
                         else
                             table.insert(inc_path, { path = trimmed_line, find = false})

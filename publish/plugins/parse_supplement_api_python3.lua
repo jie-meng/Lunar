@@ -175,11 +175,11 @@ end
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
     
-    local path, name = file.splitPathname(filename)
-    local base = file.fileBaseName(name)
+    local path, name = util.splitPathname(filename)
+    local base = util.fileBaseName(name)
     
-    local search_path = file.currentPath()
-    if strTrim(project_src_dir) ~= "" then
+    local search_path = util.currentPath()
+    if util.strTrim(project_src_dir) ~= "" then
         search_path = search_path .. "/" .. project_src_dir
     end
     
@@ -225,7 +225,7 @@ function findCtorInClass(cls)
 end
 
 function getStartSpaceCount(line)
-    return string.len(line) - string.len(strTrimLeft(line))
+    return string.len(line) - string.len(util.strTrimLeft(line))
 end
 
 function getCurrentClassInScopeStack(stack)
@@ -249,15 +249,15 @@ function getCurrentScopeFullName(stack)
 end
 
 function removeSelfFromParams(params)
-    local params = strTrim(params)
-    if strStartWith(params, "self") then
-        params = strReplace(params, "self", "")
+    local params = util.strTrim(params)
+    if util.strStartWith(params, "self") then
+        params = util.strReplace(params, "self", "")
     end
-    params = strTrim(params)
-    if strStartWith(params, ",") then
-        params = strReplace(params, ",", "")
+    params = util.strTrim(params)
+    if util.strStartWith(params, ",") then
+        params = util.strReplace(params, ",", "")
     end
-    return strTrim(params)
+    return util.strTrim(params)
 end
 
 function parseCtorApis(apis, imports, cls)
@@ -310,9 +310,9 @@ function findClass(class_desc, classes)
 end
 
 function getModuleFile(module_name, path, search_path)
-    if strStartWith(module_name, ".") then
+    if util.strStartWith(module_name, ".") then
         -- python 3 package relative path parse
-        local trdot_left = strTrimLeftEx(module_name, ".")
+        local trdot_left = util.strTrimLeftEx(module_name, ".")
         local rep_dots = string.len(module_name) - string.len(trdot_left) - 1
         local relative_path = strRelaceAll(trdot_left, ".", "/")
         if rep_dots > 0 then
@@ -321,14 +321,14 @@ function getModuleFile(module_name, path, search_path)
             end
         end
         local filename = string.format("%s/%s.py", path, relative_path)
-        if file.isPathFile(filename) then
+        if util.isPathFile(filename) then
             return filename
         end
     else
         -- current path parse
         local relative_path = strRelaceAll(module_name, ".", "/")
         local filename = string.format("%s/%s.py", search_path, relative_path)
-        if file.isPathFile(filename) then
+        if util.isPathFile(filename) then
             return filename
         end
     end
@@ -344,7 +344,7 @@ function parseImports(filename)
         local line = f:read("*line")
         while line do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
                 
@@ -352,7 +352,7 @@ function parseImports(filename)
                     break
                 end
                 
-                if (not strStartWith(line, "import")) and (not strStartWith(line, "from")) then
+                if (not util.strStartWith(line, "import")) and (not util.strStartWith(line, "from")) then
                     break
                 end
                 
@@ -388,11 +388,11 @@ function parseFunctions(module_name, path, search_path, add_module_prefix, recur
     
     local f = io.open(filename, "r")
     if f then
-        local filepath = file.splitPathname(filename)
+        local filepath = util.splitPathname(filename)
         local line = f:read("*line")
         while line do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
                 
@@ -450,11 +450,11 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
             module_name = ""
         end
     
-        local filepath = file.splitPathname(filename)
+        local filepath = util.splitPathname(filename)
         local line = f:read("*line")
         while line do
             repeat
-                if strTrim(line) == "" or strStartWith(strTrimLeft(line), "#") then
+                if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
                 
@@ -480,9 +480,9 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                 local class_name2, extends = string.match(line, pattern_class_extend)
                 if class_name2 and extends then
                     local c = Class:new(class_name2, module_name, getStartSpaceCount(line))
-                    local t_extends = strSplit(extends, ",")
+                    local t_extends = util.strSplit(extends, ",")
                     for i, v in ipairs(t_extends) do
-                        local super_name = strTrim(v)
+                        local super_name = util.strTrim(v)
                         if super_name ~= "object" then
                             local super = findClass(super_name, classes)
                             if super then
@@ -506,7 +506,7 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                     
                     local func, param = string.match(line, pattern_func)
                     if func and param then
-                        if not strStartWith(func, "__") then
+                        if not util.strStartWith(func, "__") then
                             local current_class = getCurrentClassInScopeStack(class_scope_stack)
                             current_class:addFunction(string.format("%s(%s)", func, removeSelfFromParams(param)))
                         end

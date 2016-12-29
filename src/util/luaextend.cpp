@@ -3,14 +3,7 @@
 #include "thread.hpp"
 #include "net.hpp"
 #include "lua/src/lua.hpp"
-#include "lua/extend/lmemorylib.hpp"
-#include "lua/extend/lregexlib.hpp"
-#include "lua/extend/lnetlib.hpp"
-#include "lua/extend/lthreadlib.hpp"
-#include "lua/extend/lfilelib.hpp"
-#include "lua/extend/lprocesslib.hpp"
-#include "lua/extend/lcsvlib.hpp"
-#include "lua/extend/lcfglib.hpp"
+#include "lua/extend/lutillib.hpp"
 
 namespace util
 {
@@ -18,8 +11,20 @@ namespace util
 using namespace std;
 
 const string kLuaExtendTag = "LuaExtend";
+    
+    //LuaRegComb
+void LuaRegComb::addRegArray(LuaReg* reg)
+{
+    lib_reg_comb_.pop_back();
+    while (reg->name != 0)
+    {
+        lib_reg_comb_.push_back(LuaReg(reg->name, reg->func));
+        ++reg;
+    }
+    lib_reg_comb_.push_back(LuaReg());
+}
 
-void luaCreateMeta(lua_State* plua_state, const std::string& handleName, u_luaL_Reg* lr)
+void luaCreateMeta(lua_State* plua_state, const std::string& handleName, LuaReg* lr)
 {
     luaL_newmetatable(plua_state, handleName.c_str());  /* create metatable for specified handles */
     lua_pushvalue(plua_state, -1);  /* push metatable */
@@ -67,14 +72,7 @@ private:
 
     void addUtilExtendLibs()
     {
-        addLib(kLuaExtendLibMemory, lualibMemoryCreate);
-        addLib(kLuaExtendLibFile, lualibFileCreate);
-        addLib(kLuaExtendLibRegex, lualibRegexCreate);
-        addLib(kLuaExtendLibNet, lualibNetCreate);
-        addLib(kLuaExtendLibThread, lualibThreadCreate);
-        addLib(kLuaExtendLibProcess, lualibProcessCreate);
-        addLib(kLuaExtendLibCsv, lualibCsvCreate);
-        addLib(kLuaExtendLibCfg, lualibCfgCreate);
+        addLib(kLuaExtendLibUtil, lualibUtilCreate);
     }
 private:
     LuaExtender lua_extender_;
@@ -82,7 +80,7 @@ private:
     DISALLOW_COPY_AND_ASSIGN(LuaUtilLibsExtender)
 };
 
-void luaCreateLib(lua_State* plua_state, u_luaL_Reg* lr)
+void luaCreateLib(lua_State* plua_state, LuaReg* lr)
 {
     luaL_newlib(plua_state, (luaL_Reg*)lr);
 }

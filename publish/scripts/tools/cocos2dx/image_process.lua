@@ -16,7 +16,7 @@ function ImageProcess.appendImages(output, vertical, ...)
 end
 
 function ImageProcess.appendAllImagesInPath(output, vertical, path)
-    local t = file.findFilesInDir(path)
+    local t = util.findFilesInDir(path)
     table.sort(t)
     for k, v in pairs(t) do
         print("append " .. k .. " " .. v)

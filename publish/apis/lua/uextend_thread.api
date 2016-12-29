@@ -1,17 +1,17 @@
-thread.createThread(file, func, ...) -> LuaObject (thread)
-thread.createMutex() -> LuaObject (mutex)
-thread.createLock() -> LuaObject (lock)
-thread.getThreadId() -> number
-thread.sleep(s)
-thread.msleep(ms)
-thread.threadobj.destroy()
-thread.threadobj.start([stack_size = 0]) -> boolean
-thread.threadobj.join()
-thread.threadobj.kill()
-thread.mutexobj.destroy()
-thread.mutexobj.lock()
-thread.mutexobj.unlock()
-thread.lockobj.destroy()
-thread.lockobj.wait([reset = true])
-thread.lockobj.timedWait([ms = 2000], [reset = true]) -> boolean
-thread.lockobj.notify()
+util.newThread(file, func, ...) -> LuaObject (thread)
+util.newMutex() -> LuaObject (mutex)
+util.newLock() -> LuaObject (lock)
+util.getThreadId() -> number
+util.sleep(s)
+util.msleep(ms)
+util.threadobj.delete()
+util.threadobj.start([stack_size = 0]) -> boolean
+util.threadobj.join()
+util.threadobj.kill()
+util.mutexobj.delete()
+util.mutexobj.lock()
+util.mutexobj.unlock()
+util.lockobj.delete()
+util.lockobj.wait([reset = true])
+util.lockobj.timedWait([ms = 2000], [reset = true]) -> boolean
+util.lockobj.notify()

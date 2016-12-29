@@ -97,7 +97,7 @@ end
 
 function isInclude(line_str)
     local file = string.match(line_str, '#%s*include%s+[<"]([%w_%./]+)[>"]')
-    local directive = strContains(line_str, "<")
+    local directive = util.strContains(line_str, "<")
     return file, directive
 end
 
@@ -160,7 +160,7 @@ function tryGetMacro(line_str)
 end
 
 function tryGetTypedef(line_str)
-    return strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
+    return util.strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
 end
 
 function tryGetFunc(line_str, previous_line_str)
@@ -180,10 +180,10 @@ function tryGetFunc(line_str, previous_line_str)
 end
 
 function getProjectSrcAbsoluteDir(project_src_dir)
-    if strTrim(project_src_dir) == "" then
-        return file.currentPath()
+    if util.strTrim(project_src_dir) == "" then
+        return util.currentPath()
     else
-        return string.format("%s/%s", file.currentPath(), project_src_dir)
+        return string.format("%s/%s", util.currentPath(), project_src_dir)
     end
 end
 
@@ -196,7 +196,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
     local found = false
     local f = io.open(filename, "r")
     if f then
-        local current_file_path, current_file_name = file.splitPathname(filename)
+        local current_file_path, current_file_name = util.splitPathname(filename)
         local project_dir_absolute = getProjectSrcAbsoluteDir(project_src_dir)
         local readline = f:read("*line")
         local line_index = 1
@@ -204,8 +204,8 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
         local inc_coll = {}
         while readline do
             repeat
-                local trimmed_line = strTrim(readline)
-                if trimmed_line == "" or strStartWith(trimmed_line, "//") then
+                local trimmed_line = util.strTrim(readline)
+                if trimmed_line == "" or util.strStartWith(trimmed_line, "//") then
                     break
                 end
                 
@@ -214,11 +214,11 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 if inc then
                     if not recuresive and current_line_index == line_index then
                         --goto include file directly
-                        if file.isPathFile(current_file_path .. "/" .. inc) then
+                        if util.isPathFile(current_file_path .. "/" .. inc) then
                             local item = string.format("%s\n%d\n%s", current_file_path .. "/" .. inc, 1, inc)
                             coll[item] = true
                             found = true
-                        elseif file.isPathFile(project_dir_absolute .. "/" .. inc) then
+                        elseif util.isPathFile(project_dir_absolute .. "/" .. inc) then
                             local item = string.format("%s\n%d\n%s", project_dir_absolute .. "/" .. inc, 1, inc)
                             coll[item] = true
                             found = true
@@ -226,13 +226,13 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                             for _, v in ipairs(inc_path) do
                                 if v.find == directive then
                                     if directive then
-                                        if file.isPathFile(v.path .. "/" .. inc) then
+                                        if util.isPathFile(v.path .. "/" .. inc) then
                                             local item = string.format("%s\n%d\n%s", v.path .. "/" .. inc, 1, inc)
                                             coll[item] = true
                                             found = true
                                         end
                                     else
-                                        if file.isPathFile(project_dir_absolute .. "/" .. v.path .. "/" .. inc) then
+                                        if util.isPathFile(project_dir_absolute .. "/" .. v.path .. "/" .. inc) then
                                             local item = string.format("%s\n%d\n%s", project_dir_absolute .. "/" .. v.path .. "/" .. inc, 1, inc)
                                             coll[item] = true
                                             found = true
@@ -248,7 +248,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                     matched = true
                 elseif isMethodWithReturnType(trimmed_line, text) then
                     matched = true
-                elseif not strEndWith(trimmed_line, ";") and isClassOrStruct(trimmed_line, text) and tryGetClassOrStruct(trimmed_line) == text then
+                elseif not util.strEndWith(trimmed_line, ";") and isClassOrStruct(trimmed_line, text) and tryGetClassOrStruct(trimmed_line) == text then
                     matched = true
                 elseif isMacro(trimmed_line, text) and tryGetMacro(trimmed_line) == text then
                     matched = true
@@ -294,11 +294,11 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                     end
                 else
                     -- relative path ""
-                    if file.isPathFile(current_file_path .. "/" .. inc.file) then
+                    if util.isPathFile(current_file_path .. "/" .. inc.file) then
                         if parseFile(coll, parsed_files, project_src_dir, current_file_path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
-                    elseif file.isPathFile(project_dir_absolute .. "/" .. inc.file) then
+                    elseif util.isPathFile(project_dir_absolute .. "/" .. inc.file) then
                         if parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
@@ -334,8 +334,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
         local readline = cfg:read("*line")
         while readline do
             repeat
-                local trimmed_line = strTrim(readline)
-                if trimmed_line == "" or strStartWith(trimmed_line, "#") then
+                local trimmed_line = util.strTrim(readline)
+                if trimmed_line == "" or util.strStartWith(trimmed_line, "#") then
                     break
                 end 
                 
@@ -343,7 +343,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
                     region = "INCLUDEPATH"
                 else
                     if region == "INCLUDEPATH" then
-                        if strStartWith(trimmed_line, "/") or ( string.len(trimmed_line) > 2 and string.sub(trimmed_line, 2, 2) == ":") then
+                        if util.strStartWith(trimmed_line, "/") or ( string.len(trimmed_line) > 2 and string.sub(trimmed_line, 2, 2) == ":") then
                             table.insert(inc_path, { path = trimmed_line, find = true})
                         else
                             table.insert(inc_path, { path = trimmed_line, find = false})
@@ -367,8 +367,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
     end
     table.sort(results, 
         function (a, b)
-            local array_a = strSplit(a, "\n")
-            local array_b = strSplit(b, "\n")
+            local array_a = util.strSplit(a, "\n")
+            local array_b = util.strSplit(b, "\n")
             
             if array_a[1] == array_b[1] then
                 return  tonumber(array_a[2]) < tonumber(array_b[2])

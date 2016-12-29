@@ -1,49 +1,49 @@
-net.createUdp([family = 1]) -> LuaObject (udp object)
-net.createTcp([family = 1]) -> LuaObject (tcp)
-net.createRaw([family = 1], protocol) -> LuaObject (raw-socket)
-net.ipArrayToStr(family, p, len) -> string
-net.ipStrToArray(family, s, p, len) -> userdata
-net.htons(uint16) -> number
-net.ntohs(uint16) -> number
-net.htonl(uint32) -> number
-net.ntohl(uint32) -> number
-net.closeSocket(socket) -> number
-net.udpobj.destroy()
-net.udpobj.getSocket() -> number
-net.udpobj.init() -> boolean
-net.udpobj.isOk() -> boolean
-net.udpobj.setBlock([block = true]) -> number
-net.udpobj.bind(ip, port) -> boolean
-net.udpobj.recvFrom() -> number, string (ip), number (port)
-net.udpobj.sendTo([p, s], len, ip, port) -> number
-net.udpobj.getRecvBuf() -> userdata
-net.udpobj.close() -> boolean
-net.tcpobj.destroy()
-net.tcpobj.getSocket() -> number
-net.tcpobj.init() -> boolean
-net.tcpobj.isOk() -> boolean
-net.tcpobj.setBlock([block = true]) -> number
-net.tcpobj.bind(ip, port) -> boolean
-net.tcpobj.listen(n) -> boolean
-net.tcpobj.accept() -> number
-net.tcpobj.connect(ip, port) -> boolean
-net.tcpobj.clientRecv() -> number
-net.tcpobj.clientSend([p, s], len) -> number
-net.tcpobj.serverRecv(client_socket) -> number
-net.tcpobj.serverSend(client_socket, [p, s], len) -> number
-net.tcpobj.getRecvBuf() -> userdata
-net.tcpobj.close() -> boolean
-net.rawobj.destroy()
-net.rawobj.getSocket() -> number
-net.rawobj.init() -> boolean
-net.rawobj.isOk() -> boolean
-net.rawobj.setBlock([block = true]) -> number
-net.rawobj.bind(ip, port) -> boolean
-net.rawobj.recvFrom(buf, len) -> number, string (ip), number (port)
-net.rawobj.sendTo([p, s], len, ip, port) -> number
-net.rawobj.listen(n) -> boolean
-net.rawobj.accept() -> string (ip), number (port) 
-net.rawobj.connect(ip, port) -> boolean
-net.rawobj.recv(sock, buf, len) -> number
-net.rawobj.send(sock, [p, s], len) -> number
-net.rawobj.close() -> boolean
+util.newUdpSocket([family = 1]) -> LuaObject (udp object)
+util.newTcpSocket([family = 1]) -> LuaObject (tcp)
+util.newRawSocket([family = 1], protocol) -> LuaObject (raw-socket)
+util.ipArrayToStr(family, p, len) -> string
+util.ipStrToArray(family, s, p, len) -> userdata
+util.htons(uint16) -> number
+util.ntohs(uint16) -> number
+util.htonl(uint32) -> number
+util.ntohl(uint32) -> number
+util.closeSocket(socket) -> number
+util.udpsocketobj.delete()
+util.udpsocketobj.getSocket() -> number
+util.udpsocketobj.init() -> boolean
+util.udpsocketobj.isOk() -> boolean
+util.udpsocketobj.setBlock([block = true]) -> number
+util.udpsocketobj.bind(ip, port) -> boolean
+util.udpsocketobj.recvFrom() -> number, string (ip), number (port)
+util.udpsocketobj.sendTo([p, s], len, ip, port) -> number
+util.udpsocketobj.getRecvBuf() -> userdata
+util.udpsocketobj.close() -> boolean
+util.tcpsocketobj.delete()
+util.tcpsocketobj.getSocket() -> number
+util.tcpsocketobj.init() -> boolean
+util.tcpsocketobj.isOk() -> boolean
+util.tcpsocketobj.setBlock([block = true]) -> number
+util.tcpsocketobj.bind(ip, port) -> boolean
+util.tcpsocketobj.listen(n) -> boolean
+util.tcpsocketobj.accept() -> number
+util.tcpsocketobj.connect(ip, port) -> boolean
+util.tcpsocketobj.clientRecv() -> number
+util.tcpsocketobj.clientSend([p, s], len) -> number
+util.tcpsocketobj.serverRecv(client_socket) -> number
+util.tcpsocketobj.serverSend(client_socket, [p, s], len) -> number
+util.tcpsocketobj.getRecvBuf() -> userdata
+util.tcpsocketobj.close() -> boolean
+util.rawsocketobj.delete()
+util.rawsocketobj.getSocket() -> number
+util.rawsocketobj.init() -> boolean
+util.rawsocketobj.isOk() -> boolean
+util.rawsocketobj.setBlock([block = true]) -> number
+util.rawsocketobj.bind(ip, port) -> boolean
+util.rawsocketobj.recvFrom(buf, len) -> number, string (ip), number (port)
+util.rawsocketobj.sendTo([p, s], len, ip, port) -> number
+util.rawsocketobj.listen(n) -> boolean
+util.rawsocketobj.accept() -> string (ip), number (port) 
+util.rawsocketobj.connect(ip, port) -> boolean
+util.rawsocketobj.recv(sock, buf, len) -> number
+util.rawsocketobj.send(sock, [p, s], len) -> number
+util.rawsocketobj.close() -> boolean
