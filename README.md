@@ -104,8 +104,12 @@ On MacOS
 
 - 2016.05.20
 
-    V1.5.3 support MacOS.
+    V1.5.3 Support MacOS.
 
 - 2016.6.28
     
-    V1.5.8 support cpp plugins.
+    V1.5.8 Support cpp plugins.
+
+- 2016.12.29
+	
+    V1.7.2 Update util to V1.0.5. All util extend api reformed.
