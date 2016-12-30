@@ -1,18 +1,18 @@
 util.newMemory(size) ->  LuaObject (Memory)
-util.offset(p, offset) -> userdata
+util.strcpy(pd, [ps, string])
 util.memset(p, v, len)
 util.memcpy(pd, ps, len)
 util.memmove(pd, ps, len)
-util.strcpy(pd, [ps, string])
-util.memstr(p, len) -> string
-util.tostring(p) -> string
-util.setUInt8(p, uint8)
-util.setUInt16(p, uint16)
-util.setUInt32(p, uint32)
-util.getUInt8(p)
-util.getUInt16(p)
-util.getUInt32(p)
-util.setBytes(p, ...)
+util.memOffset(p, offset) -> userdata
+util.memContent(p, len) -> string
+util.memToString(p) -> string
+util.memSetUInt8(p, uint8)
+util.memSetUInt16(p, uint16)
+util.memSetUInt32(p, uint32)
+util.memGetUInt8(p)
+util.memGetUInt16(p)
+util.memGetUInt32(p)
+util.memSetBytes(p, ...)
 util.memobj.delete()
 util.memobj.size() -> number
 util.memobj.clear()
