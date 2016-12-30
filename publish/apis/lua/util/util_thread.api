@@ -1,17 +1,2 @@
-util.newThread(file, func, ...) -> LuaObject (Thread)
-util.newMutex() -> LuaObject (Mutex)
-util.newLock() -> LuaObject (Lock)
-util.getThreadId() -> number
 util.sleep(s)
 util.msleep(ms)
-util.threadobj.delete()
-util.threadobj.start([stack_size = 0]) -> boolean
-util.threadobj.join()
-util.threadobj.kill()
-util.mutexobj.delete()
-util.mutexobj.lock()
-util.mutexobj.unlock()
-util.lockobj.delete()
-util.lockobj.wait([reset = true])
-util.lockobj.timedWait([ms = 2000], [reset = true]) -> boolean
-util.lockobj.notify()
