@@ -62,8 +62,8 @@ end
 function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_func, re_require, re_return_module)
     
     if (not util.strContains(require_name, "/")) and (not util.strContains(require_name, "\\")) then
-        require_name = strRelaceAll(require_name, ".", "/")
-        require_name = strRelaceAll(require_name, "//", "../")
+        require_name = util.strRelaceAll(require_name, ".", "/")
+        require_name = util.strRelaceAll(require_name, "//", "../")
     end
     
     local require_file = dir .. "/" .. require_name .. ".lua"
