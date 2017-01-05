@@ -19,7 +19,6 @@ public:
     explicit FileExplorerWidget(QWidget *parent = 0);
     virtual ~FileExplorerWidget();
     QString getCurrentSelectedDir();
-    void loadRoot();
 signals:
     void openFile(const QString&);
     void executeExtensionTool(const QString& tool_script, const QString& execute_path, const QString& additional_args);
@@ -29,6 +28,7 @@ signals:
     void removeDir(const QString&);
     void widthChanged(int width);
 public slots:
+    void loadRoot();
     void onFileSaved(const QString& file);
     void onAllFilesSaved();
 protected:
