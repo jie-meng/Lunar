@@ -1,0 +1,20 @@
+util.newCmdLineParser([is_case_sensitive=false], [params_del=' -'], [key_value_del=' '], [value_start_flag='"'],[value_end_flag='"'], [param_format_word=true]) -> LuaObject (CmdLineParser)
+util.newCmdLineMaker([is_case_sensitive = false], [params_del = ' -'], [key_value_del = ' ']) -> LuaObject (CmdLineMaker)
+util.cmdlineparserobj.delete()
+util.cmdlineparserobj.isCaseSensitive() -> boolean
+util.cmdlineparserobj.getCmd() -> string
+util.cmdlineparserobj.getCmdLine() -> string
+util.cmdlineparserobj.getRet() -> string
+util.cmdlineparserobj.getContent() -> string
+util.cmdlineparserobj.parse(cmdline) -> boolean
+util.cmdlineparserobj.hasKey(key) -> boolean
+util.cmdlineparserobj.removeKey(key)
+util.cmdlineparserobj.getValue(key, [default_value = '']) -> string
+util.cmdlinemakerobj.delete()
+util.cmdlinemakerobj.isCaseSensitive() -> boolean
+util.cmdlinemakerobj.getCmd() -> string
+util.cmdlinemakerobj.setCmd(cmd)
+util.cmdlinemakerobj.getCmdLine() -> string
+util.cmdlinemakerobj.removeKey(key)
+util.cmdlinemakerobj.addKeyValue(key, value)
+util.cmdlinemakerobj.sort(key1, key2, ...)

@@ -311,7 +311,7 @@ function findClass(class_desc, classes)
 end
 
 function getModuleFile(module_name, path, search_path)
-    local relative_path = strRelaceAll(module_name, ".", "/")
+    local relative_path = util.strReplaceAll(module_name, ".", "/")
     
     -- check relative path first
     local filename = string.format("%s/%s.py", path, relative_path)

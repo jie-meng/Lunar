@@ -16,4 +16,4 @@ util.memSetBytes(p, ...)
 util.memobj.delete()
 util.memobj.size() -> number
 util.memobj.clear()
-util.memobj.buf() -> userdata
+util.memobj.buf([index = 0]) -> userdata

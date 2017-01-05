@@ -23,7 +23,7 @@ local tb = util.findFilesInDirRecursively(util.currentPath(), ext)
 for _, v in ipairs(tb) do
     local text = util.readTextFile(v)
     if util.strContains(text, find_text) then
-        local replace = util.strRelaceAll(text, find_text, replace_text)
+        local replace = util.strReplaceAll(text, find_text, replace_text)
         if util.writeTextFile(v, replace) then
             print(string.format("Replace in file %s ok.", v))
         end

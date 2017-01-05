@@ -25,7 +25,7 @@ local tb = util.strSplit(dst, ",")
 for _, v in ipairs(tb) do
     v = util.strTrim(v)
     local v_class = util.fileBaseName(v)
-    util.writeTextFile(v, strRelaceAll(util.readTextFile(src), src_class, v_class))
+    util.writeTextFile(v, strReplaceAll(util.readTextFile(src), src_class, v_class))
     
     print(string.format([[Cocos copy class "%s" to "%s" in path <%s> ok.]], src_class, v_class, util.currentPath()))
 end

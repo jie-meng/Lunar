@@ -314,7 +314,7 @@ function getModuleFile(module_name, path, search_path)
         -- python 3 package relative path parse
         local trdot_left = util.strTrimLeftEx(module_name, ".")
         local rep_dots = string.len(module_name) - string.len(trdot_left) - 1
-        local relative_path = strRelaceAll(trdot_left, ".", "/")
+        local relative_path = util.strReplaceAll(trdot_left, ".", "/")
         if rep_dots > 0 then
             for i=1, rep_dots, 1 do
                 relative_path = "../" .. relative_path
@@ -326,7 +326,7 @@ function getModuleFile(module_name, path, search_path)
         end
     else
         -- current path parse
-        local relative_path = strRelaceAll(module_name, ".", "/")
+        local relative_path = util.strReplaceAll(module_name, ".", "/")
         local filename = string.format("%s/%s.py", search_path, relative_path)
         if util.isPathFile(filename) then
             return filename

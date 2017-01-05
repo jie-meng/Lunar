@@ -5,7 +5,7 @@ util.strTrimEx(s, chstr) -> string
 util.strTrimLeftEx(s, chstr) -> string
 util.strTrimRightEx(s, chstr) -> string
 util.strReplace(s, find, replace) -> string
-util.strRelaceAll(s, find, replace) -> string
+util.strReplaceAll(s, find, replace) -> string
 util.strLeft(s, n) -> string
 util.strRight(s, n) -> string
 util.strMid(s, pos, n) -> string

@@ -129,9 +129,9 @@ end
 function parseClass(current_file_dir, import_path)
     local filename = nil
     if util.strStartWith(util.strTrimLeft(import_path), ".") then
-        filename = current_file_dir .. strRelaceAll(import_path, ".", "/") .. ".lua"
+        filename = current_file_dir .. util.strReplaceAll(import_path, ".", "/") .. ".lua"
     else
-        filename = util.currentPath() .. "/src/" .. strRelaceAll(import_path, ".", "/") .. ".lua"
+        filename = util.currentPath() .. "/src/" .. util.strReplaceAll(import_path, ".", "/") .. ".lua"
     end
     
     local class = nil

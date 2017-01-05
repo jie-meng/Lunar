@@ -86,9 +86,9 @@ function findImports(filename, out_imports, current_file)
                 if name and path then
                     local import_file = nil
                     if util.strStartWith(util.strTrimLeft(path), ".") then
-                        import_file = current_file_path .. strRelaceAll(path, ".", "/") .. ".lua"
+                        import_file = current_file_path .. util.strReplaceAll(path, ".", "/") .. ".lua"
                     else
-                        import_file = util.currentPath() .. "/src/" .. strRelaceAll(path, ".", "/") .. ".lua"
+                        import_file = util.currentPath() .. "/src/" .. util.strReplaceAll(path, ".", "/") .. ".lua"
                     end
                     import_files[name] = import_file
                     if current_file then
