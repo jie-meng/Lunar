@@ -17,12 +17,12 @@ function isKeyWord(str)
 end
 
 function isFuncWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+(' .. text .. ')%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
     
-    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
@@ -31,12 +31,12 @@ function isFuncWithReturnType(line_str, text)
 end
 
 function isMethodWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+[%w_]+%s*::%s*(' .. text .. ')%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+[%w_]+%s*::%s*(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
     
-    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end

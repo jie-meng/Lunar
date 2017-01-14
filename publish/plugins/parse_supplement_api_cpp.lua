@@ -17,12 +17,12 @@ function isKeyWord(str)
 end
 
 function tryGetFuncWithReturnType(line_str)
-    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+([%w_:]+)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return func_name
     end
     
-    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return func_name
     end
