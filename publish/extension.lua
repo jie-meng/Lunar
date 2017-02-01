@@ -64,9 +64,9 @@ function parseFileType(filename)
 		return 
             {
                 type = "javascript", 
-                auto_complete_type = 0,
+                auto_complete_type = 1,
                 api = "apis/javascript", 
-                executor = "", 
+                executor = "node --use_strict", 
                 comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
@@ -227,51 +227,49 @@ function fileFilter()
 	return filter
 end
 
+local legalFileExtTable = {}
+legalFileExtTable["lua"] = true
+legalFileExtTable["sh"] = true
+legalFileExtTable["m"] = true
+legalFileExtTable["bat"] = true
+legalFileExtTable["cmd"] = true
+legalFileExtTable["txt"] = true
+legalFileExtTable["cmake"] = true
+legalFileExtTable["tcl"] = true
+legalFileExtTable["java"] = true
+legalFileExtTable["cs"] = true
+legalFileExtTable["xml"] = true
+legalFileExtTable["axml"] = true
+legalFileExtTable["xaml"] = true
+legalFileExtTable["tmx"] = true
+legalFileExtTable["xsd"] = true
+legalFileExtTable["html"] = true
+legalFileExtTable["c"] = true
+legalFileExtTable["h"] = true
+legalFileExtTable["cpp"] = true
+legalFileExtTable["hpp"] = true
+legalFileExtTable["cxx"] = true
+legalFileExtTable["hxx"] = true
+legalFileExtTable["js"] = true
+legalFileExtTable["css"] = true
+legalFileExtTable["inf"] = true
+legalFileExtTable["mk"] = true
+legalFileExtTable["json"] = true
+legalFileExtTable["api"] = true
+legalFileExtTable["properties"] = true
+legalFileExtTable["gitignores"] = true
+legalFileExtTable["projects"] = true
+legalFileExtTable["classpath"] = true
+legalFileExtTable["md"] = true
+legalFileExtTable["cfg"] = true
+legalFileExtTable["gradle"] = true
+legalFileExtTable["log"] = true
+
 function isLegalFile(filename)
-	local ext = util.fileExtension(filename)
-    if ext == "lua" or
-        ext == "m" or
-        ext == "sh" or
-		ext == "bat" or
-		ext == "cmd" or
-        ext == "txt" or
-        ext == "cmake" or
-        ext == "py" or
-        ext == "rb" or
-        ext == "tcl" or
-        ext == "java" or
-        ext == "cs" or
-        ext == "xml" or
-        ext == "axml" or
-        ext == "xaml" or
-        ext == "tmx" or
-		ext == "xsd" or
-		ext == "jxl" or
-		ext == "rxl" or
-        ext == "html" or
-        ext == "c" or
-        ext == "h" or
-        ext == "cpp" or
-        ext == "cxx" or
-        ext == "hpp" or
-        ext == "hxx" or
-        ext == "js" or
-		ext == "css" or
-        ext == "inf" or
-		ext == "json" or
-		ext == "mk" or
-		ext == "api" or
-		ext == "properties" or
-		ext == "gitignore" or
-		ext == "project" or
-		ext == "classpath" or
-		ext == "md" or
-		ext == "cfg" or
-        ext == "log" then
-        
+    if (legalFileExtTable[string.lower(util.fileExtension(filename))]) then
         return true
-    end
-    
+    end 
+
     local base  = util.fileBaseName(filename)
     if string.lower(base) == "makefile" then
         return true
