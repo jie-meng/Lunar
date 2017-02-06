@@ -105,8 +105,8 @@ private:
     QAction* pfile_close_all_action_;
     QAction* pfile_goto_next_action_;
     QAction* pfile_goto_prev_action_;
-    QAction* pfile_recent_project_path_action_;
     QAction* pfile_recent_docs_action_;
+    QAction* pfile_recent_project_path_action_;
     QAction* pedit_select_cursor_word_action_;
     QAction* pedit_find_action_;
     QAction* pedit_search_action_;
