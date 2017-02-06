@@ -569,12 +569,8 @@ void MainWindow::fileSaveAll()
 
 void MainWindow::fileClose()
 {
-    auto old_doc = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
+    addCurrentDocToRecent();
     pmain_tabwidget_->closeCurDocViewTab();
-    auto new_doc = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
-    
-    if (isPathFile(old_doc) && old_doc != new_doc)
-        LunarGlobal::getInstance().addRecentDoc(old_doc);
 }
 
 void MainWindow::fileCloseAll()
