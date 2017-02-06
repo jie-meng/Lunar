@@ -245,7 +245,7 @@ void MainWindow::initActions()
 
     pfile_recent_docs_action_ =  new QAction(tr("Recent documents"));
     pfile_recent_docs_action_->setStatusTip(tr("Recent documents."));
-    pfile_recent_docs_action_->setShortcut(Qt::CTRL + Qt::Key_M);
+    pfile_recent_docs_action_->setShortcut(Qt::CTRL + Qt::Key_E);
     pfile_recent_docs_action_->setIcon(QIcon(tr(":/res/documents.png")));
 
     pfile_recent_project_path_action_ = new QAction(tr("Reset project path"), this);
@@ -255,7 +255,7 @@ void MainWindow::initActions()
 
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
-    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_E);
+    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_M);
     pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
 
     pedit_find_action_ = new QAction(tr("Find"), this);
@@ -526,6 +526,7 @@ void MainWindow::initConnections()
 
 void MainWindow::fileNew()
 {
+    addCurrentDocToRecent();
     pmain_tabwidget_->addDocViewTab("");
 }
 
@@ -568,7 +569,12 @@ void MainWindow::fileSaveAll()
 
 void MainWindow::fileClose()
 {
+    auto old_doc = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
     pmain_tabwidget_->closeCurDocViewTab();
+    auto new_doc = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
+    
+    if (isPathFile(old_doc) && old_doc != new_doc)
+        LunarGlobal::getInstance().addRecentDoc(old_doc);
 }
 
 void MainWindow::fileCloseAll()
@@ -930,9 +936,7 @@ bool MainWindow::openDoc(const QString& filepath)
     if (!Extension::getInstance().isLegalFile(file_path))
         return false;
 
-    string cur_file = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
-    if (isPathFile(cur_file))
-        LunarGlobal::getInstance().addRecentDoc(cur_file);
+    addCurrentDocToRecent();
 
     pmain_tabwidget_->addDocViewTab(filepath);
 
@@ -1080,6 +1084,13 @@ void MainWindow::initExtension()
         LunarMsgBox(Extension::getInstance().errorInfo());
 
     LunarGlobal::getInstance().parseExtensionFileFilter();
+}
+
+void MainWindow::addCurrentDocToRecent()
+{
+    string cur_file = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
+    if (isPathFile(cur_file))
+        LunarGlobal::getInstance().addRecentDoc(cur_file);
 }
 
 } // namespace gui
