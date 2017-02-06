@@ -249,9 +249,9 @@ void MainWindow::initActions()
     pfile_recent_project_path_action_->setIcon(QIcon(tr(":/res/project_path.png")));
 
     pfile_recent_docs_action_ =  new QAction(tr("Recent documents"));
-    pfile_recent_docs_action_->setStatusTip(tr("Recent documents"));
+    pfile_recent_docs_action_->setStatusTip(tr("Recent documents."));
     pfile_recent_docs_action_->setShortcut(Qt::CTRL + Qt::Key_M);
-    pfile_recent_docs_action_->setIcon(QIcon(tr(":/res/project_path.png")));
+    pfile_recent_docs_action_->setIcon(QIcon(tr(":/res/documents.png")));
 
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));

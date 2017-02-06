@@ -229,6 +229,7 @@ end
 
 local legalFileExtTable = {}
 legalFileExtTable["lua"] = true
+legalFileExtTable["py"] = true
 legalFileExtTable["sh"] = true
 legalFileExtTable["m"] = true
 legalFileExtTable["bat"] = true
