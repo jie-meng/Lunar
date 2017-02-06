@@ -264,6 +264,19 @@ void LunarGlobal::parseExtensionFileFilter()
     file_filter_ += "All Files(*.*)";
 }
 
+void LunarGlobal::addRecentDoc(const std::string& doc)
+{
+    auto it = find(recent_docs_.begin(), recent_docs_.end(), doc);
+    if (it != recent_docs_.end())
+        recent_docs_.erase(it);
+
+    recent_docs_.push_front(doc);
+
+    if (recent_docs_.size() > 64)
+        recent_docs_.pop_back();
+}
+
+
 void LunarGlobal::quit()
 {
     writeCfg();

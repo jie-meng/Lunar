@@ -27,6 +27,12 @@ RecentProjectPathDialog::~RecentProjectPathDialog()
 
 void RecentProjectPathDialog::init()
 {
+    initGui();
+    initConnections();
+}
+
+void RecentProjectPathDialog::initGui()
+{
     plabel_recent_ = new QLabel();
     plabel_recent_->setText(tr("Recent project path"));
 
@@ -38,12 +44,6 @@ void RecentProjectPathDialog::init()
     pnew_button_ = new QPushButton();
     pnew_button_->setText(tr("New"));
 
-    initGui();
-    initConnections();
-}
-
-void RecentProjectPathDialog::initGui()
-{
     QVBoxLayout* pcenter_layout = new QVBoxLayout;
     pcenter_layout->addWidget(plabel_recent_, 0, Qt::AlignLeft);
     pcenter_layout->addWidget(ptree_view_);

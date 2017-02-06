@@ -6,6 +6,7 @@
 #include <list>
 #include <QtCore/QString>
 #include <QtGui/QFont>
+#include "util/iterator.hpp"
 #include "util/net.hpp"
 
 struct lua_State;
@@ -90,6 +91,8 @@ public:
     inline bool isLogEnable() const { return is_log_enable_; }
     inline std::string getRecentProjectPath() const { return recent_project_path_; }
     inline size_t getRecentProjectPathCnt() const { return recent_project_path_cnt_; }
+    inline util::Iterator<std::string> recentDocsIterator() { return util::createIterator<std::string>(recent_docs_); }
+    void addRecentDoc(const std::string& doc);
     void parseExtensionFileFilter();
 private:
     LunarGlobal();
@@ -114,6 +117,7 @@ private:
     bool is_log_enable_;
     size_t  recent_project_path_cnt_;
     std::string recent_project_path_;
+    std::list<std::string> recent_docs_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

@@ -20,6 +20,7 @@
 #include "maintabwidget.h"
 #include "finddialog.h"
 #include "recentprojectpathdialog.h"
+#include "recentdocdialog.h"
 #include "aboutdialog.h"
 #include "fileexplorerwidget.h"
 #include "outputwidget.h"
@@ -47,7 +48,8 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_close_all_action_(NULL),
     pfile_goto_next_action_(NULL),
     pfile_goto_prev_action_(NULL),
-    pfile_recent_project_path_(NULL),
+    pfile_recent_project_path_action_(NULL),
+    pfile_recent_docs_action_(NULL),
     pedit_select_cursor_word_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
@@ -241,10 +243,15 @@ void MainWindow::initActions()
 #endif
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
-    pfile_recent_project_path_ = new QAction(tr("Reset project path"), this);
-    pfile_recent_project_path_->setStatusTip(tr("Reset project path."));
-    pfile_recent_project_path_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
-    pfile_recent_project_path_->setIcon(QIcon(tr(":/res/project_path.png")));
+    pfile_recent_project_path_action_ = new QAction(tr("Reset project path"), this);
+    pfile_recent_project_path_action_->setStatusTip(tr("Reset project path."));
+    pfile_recent_project_path_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
+    pfile_recent_project_path_action_->setIcon(QIcon(tr(":/res/project_path.png")));
+
+    pfile_recent_docs_action_ =  new QAction(tr("Recent documents"));
+    pfile_recent_docs_action_->setStatusTip(tr("Recent documents"));
+    pfile_recent_docs_action_->setShortcut(Qt::CTRL + Qt::Key_M);
+    pfile_recent_docs_action_->setIcon(QIcon(tr(":/res/project_path.png")));
 
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
@@ -337,7 +344,8 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_close_all_action_);
     pfile_menu->addAction(pfile_goto_next_action_);
     pfile_menu->addAction(pfile_goto_prev_action_);
-    pfile_menu->addAction(pfile_recent_project_path_);
+    pfile_menu->addAction(pfile_recent_project_path_action_);
+    pfile_menu->addAction(pfile_recent_docs_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_select_cursor_word_action_);
@@ -372,7 +380,8 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_save_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
-    ptoolbar->addAction(pfile_recent_project_path_);
+    ptoolbar->addAction(pfile_recent_project_path_action_);
+    ptoolbar->addAction(pfile_recent_docs_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_select_cursor_word_action_);
@@ -421,7 +430,8 @@ void MainWindow::initConnections()
     connect(pfile_close_all_action_, SIGNAL(triggered()), this, SLOT(fileCloseAll()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
-    connect(pfile_recent_project_path_, SIGNAL(triggered()), this, SLOT(recentProjectPath()));
+    connect(pfile_recent_project_path_action_, SIGNAL(triggered()), this, SLOT(recentProjectPath()));
+    connect(pfile_recent_docs_action_, SIGNAL(triggered()), this, SLOT(recentDocs()));
 
     connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
@@ -598,6 +608,14 @@ void MainWindow::recentProjectPath()
     connect(&dlg, SIGNAL(selectRecentProjectPath(const QString&)),
             this, SLOT(resetCurrentPath(const QString&)));
     connect(&dlg, SIGNAL(newProjectPath()), this, SLOT(resetCurrentPath()));
+    dlg.exec();
+}
+
+void MainWindow::recentDocs()
+{
+    RecentDocDialog dlg;
+    connect(&dlg, SIGNAL(selectDoc(const QString&)),
+            this, SLOT(openDoc(const QString&)));
     dlg.exec();
 }
 
@@ -911,6 +929,10 @@ bool MainWindow::openDoc(const QString& filepath)
 
     if (!Extension::getInstance().isLegalFile(file_path))
         return false;
+
+    string cur_file = QStringToStdString(pmain_tabwidget_->getCurrentDocPathname());
+    if (isPathFile(cur_file))
+        LunarGlobal::getInstance().addRecentDoc(cur_file);
 
     pmain_tabwidget_->addDocViewTab(filepath);
 
