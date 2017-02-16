@@ -1,7 +1,7 @@
 local Tools = {}
 
 function Tools.isPlatformWindows()
-    return util.strContains(platformInfo(), "win", false)
+    return util.strContains(util.platformInfo(), "win", false)
 end
 
 function Tools.getAppName()
