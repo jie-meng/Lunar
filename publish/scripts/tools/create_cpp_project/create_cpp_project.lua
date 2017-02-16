@@ -24,7 +24,7 @@ local mfiles = util.findFilesInDir(model_path)
 for _, v in ipairs(mfiles) do
     local d, f = util.splitPathname(v)
     local content = util.readTextFile(v)
-    content = strRelaceAll(content, 'CppApplicationName', app_name)
+    content = util.strReplaceAll(content, 'CppApplicationName', app_name)
     local dst_file = dst_path .. '/' .. f
     if util.writeTextFile(dst_file, content) then
         print(string.format('Generate file "%s" ok.', dst_file))
