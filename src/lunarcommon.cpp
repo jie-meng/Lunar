@@ -276,6 +276,10 @@ void LunarGlobal::addRecentDoc(const std::string& doc)
         recent_docs_.pop_back();
 }
 
+void LunarGlobal::trimRecentDocs()
+{
+    recent_docs_.erase(remove_if(recent_docs_.begin(), recent_docs_.end(), [](string& file) { return !isPathFile(file); }), recent_docs_.end());
+}
 
 void LunarGlobal::quit()
 {

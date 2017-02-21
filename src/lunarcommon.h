@@ -93,6 +93,7 @@ public:
     inline size_t getRecentProjectPathCnt() const { return recent_project_path_cnt_; }
     inline util::Iterator<std::string> recentDocsIterator() { return util::createIterator<std::string>(recent_docs_); }
     void addRecentDoc(const std::string& doc);
+    void trimRecentDocs();
     void parseExtensionFileFilter();
 private:
     LunarGlobal();

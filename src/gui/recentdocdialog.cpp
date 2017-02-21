@@ -34,9 +34,7 @@ void RecentDocDialog::initGui()
     header.append(tr("Path"));
     ptree_view_ = new TreeView(header);
 
-    list<string> ls;
-    getRecentProjectPath(ls);
-
+    LunarGlobal::getInstance().trimRecentDocs();
     auto it = LunarGlobal::getInstance().recentDocsIterator();
     while (it.hasNext())
     {
