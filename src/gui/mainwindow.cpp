@@ -616,8 +616,17 @@ void MainWindow::recentProjectPath()
 void MainWindow::recentDocs()
 {
     RecentDocDialog dlg;
-    connect(&dlg, SIGNAL(selectDoc(const QString&)),
-            this, SLOT(openDoc(const QString&)));
+    connect(&dlg, &RecentDocDialog::selectDoc, [this](const QString& file)
+    {
+        //take a record
+        auto record_pos = getCurrentPosition();
+        if (openDoc(file) && QStringToStdString(file) != record_pos.first)
+        {
+            if (0 != record_pos.first.length() && record_pos.second > 0)
+                JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
+        }
+    });
+    
     dlg.exec();
 }
 
