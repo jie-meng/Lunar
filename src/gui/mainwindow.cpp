@@ -616,17 +616,7 @@ void MainWindow::recentProjectPath()
 void MainWindow::recentDocs()
 {
     RecentDocDialog dlg;
-    connect(&dlg, &RecentDocDialog::selectDoc, [this](const QString& file)
-    {
-        //take a record
-        auto record_pos = getCurrentPosition();
-        if (openDoc(file) && QStringToStdString(file) != record_pos.first)
-        {
-            if (0 != record_pos.first.length() && record_pos.second > 0)
-                JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
-        }
-    });
-    
+    connect(&dlg, SIGNAL(selectDoc(const QString&)), this, SLOT(openDoc(const QString&)));
     dlg.exec();
 }
 
@@ -685,9 +675,6 @@ void MainWindow::gotoSearchResult(const QString& file, int line)
     if (openDoc(doc_path))
     {
         pmain_tabwidget_->currentDocGotoLine(line);
-
-        if (0 != record_pos.first.length() && record_pos.second > 0)
-            JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
     }
 }
 
@@ -942,9 +929,14 @@ bool MainWindow::openDoc(const QString& filepath)
         return false;
 
     addCurrentDocToRecent();
-
-    pmain_tabwidget_->addDocViewTab(filepath);
-
+    auto record_pos = getCurrentPosition();
+    if (pmain_tabwidget_->addDocViewTab(filepath))
+    {
+        //Open new doc would save old doc to jumplist
+        if (0 != record_pos.first.length() && record_pos.second > 0)
+            JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
+    }
+    
     if (this->isMinimized())
         this->showNormal();
     this->activateWindow();

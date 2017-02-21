@@ -39,10 +39,11 @@ int MainTabWidget::getTabIndex(const QString& pathname)
     return -1;
 }
 
-int MainTabWidget::addDocViewTab(const QString& pathname)
+bool MainTabWidget::addDocViewTab(const QString& pathname)
 {
     QString formatPathName = pathname;
     formatPathName.replace("\\", "/");
+    bool create_new = false;
 
     int tab_index = getTabIndex(formatPathName);
     if (tab_index < 0 || "" == formatPathName)
@@ -54,13 +55,14 @@ int MainTabWidget::addDocViewTab(const QString& pathname)
 
         connect(pdocview, SIGNAL(updateTitle(DocView*)), this, SLOT(updateTabTitleAndTip(DocView*)));
         connect(pdocview, SIGNAL(textModified(DocView*)), this, SLOT(updateTabTitleAndTip(DocView*)));
+        create_new = true;
     }
 
     setCurrentIndex(tab_index);
     if (currentWidget())
         dynamic_cast<DocView*>(currentWidget())->focusOnText();
 
-    return tab_index;
+    return create_new;
 }
 
 std::pair<bool, QString> MainTabWidget::saveCurDocViewTab(const QString& save_dialog_init_dir)
