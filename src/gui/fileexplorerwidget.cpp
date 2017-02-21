@@ -418,40 +418,32 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
     }
 
     string fullpathname = splitPathname(currentPath()).first + "/" + QStringToStdString(filename);
-
-    if (item->childCount() == 0)
-    {
-        if (QMessageBox::No == QMessageBox::question(this, "", "Are you sure to delete " + filename + "?",
-                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
-        {
-            return;
-        }
-        else
-        {
-            if (pathRemove(fullpathname))
-            {
-                QTreeWidgetItem* pparent = item->parent();
-                pparent->removeChild(item);
-                delete item;
-                emit removeFile(StdStringToQString(fullpathname));
-            }
-        }
-    }
-    else
+    if (isPathDir(fullpathname))
     {
         if (QMessageBox::No == QMessageBox::question(this, "question", "Are you sure to delete " + filename + "?",
                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
-        {
             return;
-        }
-        else
-        {
-            //emit this signal before remove file, because slot hoster would check the files in dir
-            emit removeDir(StdStringToQString(fullpathname));
+        
 
-            pathRemoveAll(fullpathname);
-            item->parent()->removeChild(item);
+        //emit this signal before remove file, because slot hoster would check the files in dir
+        emit removeDir(StdStringToQString(fullpathname));
+
+        pathRemoveAll(fullpathname);
+        item->parent()->removeChild(item);
+        delete item;
+    }
+    else
+    {
+        if (QMessageBox::No == QMessageBox::question(this, "", "Are you sure to delete " + filename + "?",
+                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
+            return;
+
+        if (pathRemove(fullpathname))
+        {
+            QTreeWidgetItem* pparent = item->parent();
+            pparent->removeChild(item);
             delete item;
+            emit removeFile(StdStringToQString(fullpathname));
         }
     }
 }
