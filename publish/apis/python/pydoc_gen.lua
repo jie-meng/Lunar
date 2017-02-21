@@ -40,12 +40,12 @@ function LineParser:parse(line)
 end
 
 function LineParser:generatePrefix()
-    return strJoin(self:getPackage(), '.')
+    return util.strJoin(self:getPackage(), '.')
 end
 
 function LineParser:addApi(api)
     if self:getColl() then
-        if strStartWith(api, '(') then
+        if util.strStartWith(api, '(') then
             if not self:getColl()[self:generatePrefix()] then
                 self:getColl()[self:generatePrefix()] = self:generatePrefix() .. api
             end
@@ -79,28 +79,28 @@ function ClassParser:new(coll, package)
 end
 
 function ClassParser:parse(line)
-    local trimmed_line = strTrim(line)
+    local trimmed_line = util.strTrim(line)
     local name, args = string.match(trimmed_line, pattern_class_lua)
     if name and args then
         self.class_name_ = name
     else
         if self.class_name_ then
-            local class_member_trimmed_line = strTrimLeft(strTrimLeftEx(trimmed_line, '|'))
+            local class_member_trimmed_line = util.strTrimLeft(util.strTrimLeftEx(trimmed_line, '|'))
             local name, args = string.match(class_member_trimmed_line, pattern_function_lua)
             if name and args then
-                if not strStartWith(name, '__') or name == '__init__' then                    
-                    local args = strTrim(args)
-                    if strStartWith(args, 'self') then
-                        args = strTrimLeft(strTrimLeftEx(strReplace(args, 'self', ''), ','))
+                if not util.strStartWith(name, '__') or name == '__init__' then                    
+                    local args = util.strTrim(args)
+                    if util.strStartWith(args, 'self') then
+                        args = util.strTrimLeft(util.strTrimLeftEx(util.strReplace(args, 'self', ''), ','))
                     end
-                    self:addApi(name .. '(' .. strTrimLeft(args) .. ')')
+                    self:addApi(name .. '(' .. util.strTrimLeft(args) .. ')')
                     if name == '__init__' then
-                        self:addApi('(' .. strTrimLeft(args) .. ')')
+                        self:addApi('(' .. util.strTrimLeft(args) .. ')')
                     end
                 end
             else
                 local name, args = string.match(class_member_trimmed_line, pattern_data_lua)
-                if name and not strStartWith(name, '__') then
+                if name and not util.strStartWith(name, '__') then
                     self:addApi(name)
                 end
             end
@@ -109,7 +109,7 @@ function ClassParser:parse(line)
 end
 
 function ClassParser:generatePrefix()
-    local package = strJoin(self.package_, '.')
+    local package = util.strJoin(self.package_, '.')
     if string.len(package) == 0 then
         return self.class_name_
     end
@@ -133,9 +133,9 @@ function FunctionParser:new(coll, package)
 end
 
 function FunctionParser:parse(line)
-    local trimmed_line = strTrim(line)
+    local trimmed_line = util.strTrim(line)
     local name, args = string.match(trimmed_line, pattern_function_lua)
-    if name and args and not strStartWith(name, '__') then
+    if name and args and not util.strStartWith(name, '__') then
         self:addApi(name .. '(' .. args .. ')')
     end
 end
@@ -152,9 +152,9 @@ function DataParser:new(coll, package)
 end
 
 function DataParser:parse(line)
-    local trimmed_line = strTrim(line)
+    local trimmed_line = util.strTrim(line)
     local name, args = string.match(trimmed_line, pattern_data_lua)
-    if name and not strStartWith(name, '__') then
+    if name and not util.strStartWith(name, '__') then
         self:addApi(name)
     end
 end
@@ -177,7 +177,7 @@ end
 function PackageContentsParser:parse(line)
     if self.parse_doc_func_ then
         local name = string.match(line, pattern_package_contents_lua)
-        if name and not strStartWith(name, '__') then
+        if name and not util.strStartWith(name, '__') then
             local module = self:generatePrefix() .. '.' .. name
             local gen_doc = self.gen_root_dir_ .. '/' .. module
             os.execute(string.format('%s %s > %s', self.pydoc_gen_cmd_, module, gen_doc))
@@ -188,12 +188,12 @@ end
 
 --[[function: getIndent]]
 function getIndent(line)
-    return string.len(line) - string.len(strTrimLeft(line))
+    return string.len(line) - string.len(util.strTrimLeft(line))
 end
 
 --[[function: labelMatches]]
 function labelMatches(label, line)
-    return label == strTrim(line)
+    return label == util.strTrim(line)
 end
 
 --[[function: parseDoc]]
@@ -201,7 +201,7 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
     print(string.format('ParseDoc <%s>', doc))
     local f = io.open(doc, "r")
     if f then
-        local _, file_basename = file.splitPathname(doc)
+        local _, file_basename = util.splitPathname(doc)
         if file_basename == 'builtins' or file_basename == '__builtin__' then
             file_basename = ''
         end
@@ -209,19 +209,19 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
         local line = f:read("*line")
         while line do
             repeat
-                if strTrim(line) == "" then
+                if util.strTrim(line) == "" then
                     break
                 end
                 
                 if getIndent(line) == 0 then
                     if labelMatches(kLabelClasses, line) then
-                        line_parser = ClassParser:new(apis, strSplit(file_basename, '.'))
+                        line_parser = ClassParser:new(apis, util.strSplit(file_basename, '.'))
                     elseif labelMatches(kLabelFunctions, line) then
-                        line_parser = FunctionParser:new(apis, strSplit(file_basename, '.'))
+                        line_parser = FunctionParser:new(apis, util.strSplit(file_basename, '.'))
                     elseif labelMatches(kLabelData, line) then
-                        line_parser = DataParser:new(apis, strSplit(file_basename, '.'))
+                        line_parser = DataParser:new(apis, util.strSplit(file_basename, '.'))
                     elseif labelMatches(kLabelPackageContents, line) then
-                        line_parser = PackageContentsParser:new(apis, strSplit(file_basename, '.'), pydoc_gen_cmd, gen_root_dir, parseDoc)
+                        line_parser = PackageContentsParser:new(apis, util.strSplit(file_basename, '.'), pydoc_gen_cmd, gen_root_dir, parseDoc)
                     else
                         line_parser = nil
                     end
@@ -278,7 +278,7 @@ table.insert(modules, 'email')
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
 print('Is python 3.x? (y/n)')
-if strStartWith(io.read(), 'y', false) then
+if util.strStartWith(io.read(), 'y', false) then
     python_version = '3'
     print("Parse python 3 ...")
     table.insert(modules, 'builtins')
@@ -289,13 +289,13 @@ end
 
 -- Generate cmd
 local pydoc_gen_cmd = 'pydoc' .. python_version
-if strContains(platformInfo(), 'windows', false) then
+if util.strContains(util.platformInfo(), 'windows', false) then
     pydoc_gen_cmd = 'python -m pydoc'
 end
 
-local gen_root_dir = file.currentPath() .. '/' .. 'pydoc_gen'
-file.pathRemoveAll(gen_root_dir)
-if not file.mkDir(gen_root_dir) then
+local gen_root_dir = util.currentPath() .. '/' .. 'pydoc_gen'
+util.pathRemoveAll(gen_root_dir)
+if not util.mkDir(gen_root_dir) then
     print(string.format('Error: [%s] already exists', gen_root_dir))
     os.exit(0)
 end
@@ -304,13 +304,13 @@ local apis = {}
 for _, m in pairs(modules) do
     local gen_doc = gen_root_dir .. '/' .. m
     os.execute(string.format('%s %s > %s', pydoc_gen_cmd, m, gen_doc))
-    if file.isPathFile(gen_doc) then
+    if util.isPathFile(gen_doc) then
         parseDoc(apis, gen_doc, pydoc_gen_cmd, gen_root_dir)
     end
 end
 
 print('Remove tmp dir [' .. gen_root_dir .. '] ...')
-file.pathRemoveAll(gen_root_dir)
+util.pathRemoveAll(gen_root_dir)
 print('Ok')
 
 -- sort
