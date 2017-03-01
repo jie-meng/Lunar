@@ -211,8 +211,7 @@ function parseFileType(filename)
         return
             {
                 type = "markdown",
-                auto_complete_type = 0,
-                comment_line = "[//]: # "
+                auto_complete_type = 0
             }
     end
 

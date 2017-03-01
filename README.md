@@ -114,6 +114,6 @@ On MacOS
 	
     V1.7.2 Update util to V1.0.5. All util extend api reformed.
 
-[comment]: <> - 2017.03.01
+- 2017.03.01
 
-[comment]: <>     V1.7.7 Support Markdown & JSON.
+    V1.7.7 Support Markdown & JSON.
