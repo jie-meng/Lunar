@@ -206,6 +206,27 @@ function parseFileType(filename)
 				comment_block_end = "*/"
             }
     end
+
+    if string.lower(util.fileExtension(name)) == "md" then
+        return
+            {
+                type = "markdown",
+                auto_complete_type = 0,
+                comment_line = "[//]: # "
+            }
+    end
+
+    if string.lower(util.fileExtension(name)) == "json" then
+        return
+        {
+            type = "json",
+            api = "apis/json",
+            auto_completion_type = 0,
+            comment_line = "//",
+            comment_block_begin = "/*",
+            comment_block_end = "*/"
+        }
+    end
 end
 
 function fileFilter()
@@ -217,6 +238,8 @@ function fileFilter()
 	table.insert(filter, "Bash Files(*.sh)")
 	table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Tcl Files(*.tcl)")
+    table.insert(filter, "Markdown Files(*.md)")
+    table.insert(filter, "JSON Files(*.json)")
     table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
 	table.insert(filter, "C# Files(*.csharp)")
 	table.insert(filter, "Java Files(*.java)")

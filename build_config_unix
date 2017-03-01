@@ -10,7 +10,7 @@ DEFINES += _PLATFORM_UNIX_ \
 INCLUDEPATH += src
 
 LIBS += -lpthread \
-        -lqscintilla2
+        -lqscintilla2_qt5
 
 RC_FILE += Lunar.rc
 

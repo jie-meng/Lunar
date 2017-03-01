@@ -24,9 +24,11 @@
 #include <Qsci/qscilexeridl.h>
 #include <Qsci/qscilexerjava.h>
 #include <Qsci/qscilexerjavascript.h>
+#include <Qsci/qscilexerjson.h>
 #include <Qsci/qscilexerlua.h>
 #include <Qsci/qscilexermakefile.h>
 #include <Qsci/qscilexermatlab.h>
+#include <Qsci/qscilexermarkdown.h>
 #include <Qsci/qscilexeroctave.h>
 #include <Qsci/qscilexerpascal.h>
 #include <Qsci/qscilexerperl.h>
@@ -327,221 +329,233 @@ QString DocView::getTitleFromPath(const QString& path) const
 
 QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype)
 {
-    std::string name_trimed = util::strTrim(type_name);
-    if ("" == name_trimed)
+    std::string name_trimmed = util::strTrim(type_name);
+    if ("" == name_trimmed)
         return NULL;
 
-    if (util::strAreEqual(name_trimed, "avs", false))
+    if (util::strAreEqual(name_trimmed, "avs", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Avs;
         return new QsciLexerAVS(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "bash", false))
+    else if (util::strAreEqual(name_trimmed, "bash", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Bash;
         return new QsciLexerBash(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "batch", false))
+    else if (util::strAreEqual(name_trimmed, "batch", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Batch;
         return new QsciLexerBatch(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "cmake", false))
+    else if (util::strAreEqual(name_trimmed, "cmake", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = CMake;
         return new QsciLexerCMake(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "coffeescript", false))
+    else if (util::strAreEqual(name_trimmed, "coffeescript", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = CoffeeSript;
         return new QsciLexerCoffeeScript(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "cpp", false))
+    else if (util::strAreEqual(name_trimmed, "cpp", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = CPP;
         return new QsciLexerCPP(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "csharp", false))
+    else if (util::strAreEqual(name_trimmed, "csharp", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = CSharp;
         return new QsciLexerCSharp(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "css", false))
+    else if (util::strAreEqual(name_trimmed, "css", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = CSS;
         return new QsciLexerCSS(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "d", false))
+    else if (util::strAreEqual(name_trimmed, "d", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = D;
         return new QsciLexerD(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "diff", false))
+    else if (util::strAreEqual(name_trimmed, "diff", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Diff;
         return new QsciLexerDiff(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "fortran", false))
+    else if (util::strAreEqual(name_trimmed, "fortran", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Fortran;
         return new QsciLexerFortran(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "fortran77", false))
+    else if (util::strAreEqual(name_trimmed, "fortran77", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Fortran77;
         return new QsciLexerFortran77(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "html", false))
+    else if (util::strAreEqual(name_trimmed, "html", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Html;
         return new QsciLexerHTML(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "idl", false))
+    else if (util::strAreEqual(name_trimmed, "idl", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Idl;
         return new QsciLexerIDL(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "java", false))
+    else if (util::strAreEqual(name_trimmed, "java", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Java;
         return new QsciLexerJava(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "javascript", false))
+    else if (util::strAreEqual(name_trimmed, "javascript", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = JavaScript;
         return new QsciLexerJavaScript(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "lua", false))
+    else if (util::strAreEqual(name_trimmed, "json", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Json;
+        return new QsciLexerJSON(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimmed, "lua", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Lua;
         return new QsciLexerLua(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "makefile", false))
+    else if (util::strAreEqual(name_trimmed, "makefile", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Makefile;
         return new QsciLexerMakefile(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "matlab", false))
+    else if (util::strAreEqual(name_trimmed, "matlab", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Matlab;
         return new QsciLexerMatlab(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "octave", false))
+    else if (util::strAreEqual(name_trimmed, "markdown", false))
+    {
+        if (NULL != pout_filetype)
+            *pout_filetype = Markdown;
+        return new QsciLexerMarkdown(ptext_edit_);
+    }
+    else if (util::strAreEqual(name_trimmed, "octave", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Octave;
         return new QsciLexerOctave(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "pascal", false))
+    else if (util::strAreEqual(name_trimmed, "pascal", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Pascal;
         return new QsciLexerPascal(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "perl", false))
+    else if (util::strAreEqual(name_trimmed, "perl", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Perl;
         return new QsciLexerPerl(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "po", false))
+    else if (util::strAreEqual(name_trimmed, "po", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Po;
         return new QsciLexerPO(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "postscript", false))
+    else if (util::strAreEqual(name_trimmed, "postscript", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = PostScript;
         return new QsciLexerPostScript(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "pov", false))
+    else if (util::strAreEqual(name_trimmed, "pov", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Pov;
         return new QsciLexerPOV(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "properties", false))
+    else if (util::strAreEqual(name_trimmed, "properties", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Properties;
         return new QsciLexerProperties(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "python", false))
+    else if (util::strAreEqual(name_trimmed, "python", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Python;
         return new QsciLexerPython(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "ruby", false))
+    else if (util::strAreEqual(name_trimmed, "ruby", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Ruby;
         return new QsciLexerRuby(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "spice", false))
+    else if (util::strAreEqual(name_trimmed, "spice", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Spice;
         return new QsciLexerSpice(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "sql", false))
+    else if (util::strAreEqual(name_trimmed, "sql", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Sql;
         return new QsciLexerSQL(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "tcl", false))
+    else if (util::strAreEqual(name_trimmed, "tcl", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Tcl;
         return new QsciLexerTCL(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "tex", false))
+    else if (util::strAreEqual(name_trimmed, "tex", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Tex;
         return new QsciLexerTeX(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "verilog", false))
+    else if (util::strAreEqual(name_trimmed, "verilog", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Verilog;
         return new QsciLexerVerilog(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "vhdl", false))
+    else if (util::strAreEqual(name_trimmed, "vhdl", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Vhdl;
         return new QsciLexerVHDL(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "xml", false))
+    else if (util::strAreEqual(name_trimmed, "xml", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Xml;
         return new QsciLexerXML(ptext_edit_);
     }
-    else if (util::strAreEqual(name_trimed, "yaml", false))
+    else if (util::strAreEqual(name_trimmed, "yaml", false))
     {
         if (NULL != pout_filetype)
             *pout_filetype = Yaml;
