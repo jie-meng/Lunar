@@ -116,4 +116,4 @@ On MacOS
 
 - 2017.03.01
 
-    V1.7.7 Support Markdown & JSON.
+    V1.7.7 Update QScintilla2 to 2.10. Support Markdown & JSON.
