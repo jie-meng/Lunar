@@ -47,7 +47,7 @@ function rebuild(pro_file, append_to_pro_file, makefile, make)
 	os.execute(make .. " -f " .. makefile)   
 end
 
--- main
+-- start 
 PRO = "Lunar.pro"
 
 if util.strContains(util.platformInfo(), "unix", false) then
