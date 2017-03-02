@@ -73,7 +73,8 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(util.fileExtension(name)) == "html" then
+	if string.lower(util.fileExtension(name)) == "html" or
+       string.lower(util.fileExtension(name)) == "htm" then
 		return 
             {
                 type = "html", 
