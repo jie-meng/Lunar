@@ -243,7 +243,7 @@ function fileFilter()
 	table.insert(filter, "C# Files(*.csharp)")
 	table.insert(filter, "Java Files(*.java)")
     table.insert(filter, "Xml Files(*.xml)")
-    table.insert(filter, "Html Files(*.html)")
+    table.insert(filter, "Html Files(*.html;*.htm)")
 	table.insert(filter, "CSS Files(*.css)")
     
 	return filter
@@ -268,6 +268,7 @@ legalFileExtTable["xaml"] = true
 legalFileExtTable["tmx"] = true
 legalFileExtTable["xsd"] = true
 legalFileExtTable["html"] = true
+legalFileExtTable["htm"] = true
 legalFileExtTable["c"] = true
 legalFileExtTable["h"] = true
 legalFileExtTable["cpp"] = true
