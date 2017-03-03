@@ -12,7 +12,7 @@ A cross-platform (MacOS, Linux, Windows) script editor
 - [Qt](https://www.qt.io/)
 - [QScintilla](https://www.riverbankcomputing.com/software/qscintilla/download)
 
-Download Qt5 and QScintilla 2.9.
+Download Qt5 and QScintilla 2.10.
 
 Install Qt, add Qt compiler directory to environment variable.
 
