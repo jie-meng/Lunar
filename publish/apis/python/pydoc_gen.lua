@@ -318,6 +318,28 @@ local tb = {}
 for _, v in pairs(apis) do
     table.insert(tb, v)
 end
+--append file object methods
+table.insert(tb, 'file.close()')
+table.insert(tb, 'file.flush()')
+table.insert(tb, 'file.fileno()')
+table.insert(tb, 'file.isatty()')
+table.insert(tb, 'file.next()')
+table.insert(tb, 'file.read([size])')
+table.insert(tb, 'file.readline([size])')
+table.insert(tb, 'file.readlines([sizehint])')
+table.insert(tb, 'file.xreadlines()')
+table.insert(tb, 'file.seek(offset[, whence])')
+table.insert(tb, 'file.tell()')
+table.insert(tb, 'file.truncate([size])')
+table.insert(tb, 'file.write(str)')
+table.insert(tb, 'file.writelines(sequence)')
+table.insert(tb, 'file.closed')
+table.insert(tb, 'file.encoding')
+table.insert(tb, 'file.errors')
+table.insert(tb, 'file.mode')
+table.insert(tb, 'file.name')
+table.insert(tb, 'file.newlines')
+table.insert(tb, 'file.softspace')
 table.sort(tb)
 
 print('Save api file to python.api ...')
