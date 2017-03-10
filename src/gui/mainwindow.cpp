@@ -813,7 +813,7 @@ void MainWindow::editJumpForward()
 
 bool MainWindow::gotoPosition(const std::string& file, int line)
 {
-    if (openDoc(StdStringToQString(file)))
+    if (openDoc(file, false))
     {
         pmain_tabwidget_->currentDocGotoLine(line);
         return true;
@@ -910,10 +910,13 @@ void MainWindow::helpAbout()
     about_dlg.exec();
 }
 
-bool MainWindow::openDoc(const QString& filepath)
+bool MainWindow::openDoc(const QString& file_path)
 {
-    std::string file_path = QStringToStdString(filepath);
+    return openDoc(QStringToStdString(file_path), true);
+}
 
+bool MainWindow::openDoc(const std::string& file_path, bool is_record_position)
+{
     if(file_path.empty())
     {
         if (this->isMinimized())
@@ -929,13 +932,14 @@ bool MainWindow::openDoc(const QString& filepath)
         return false;
 
     addCurrentDocToRecent();
-    auto record_pos = getCurrentPosition();
-    if (pmain_tabwidget_->addDocViewTab(filepath))
-    {
-        //Open new doc would save old doc to jumplist
-        if (0 != record_pos.first.length() && record_pos.second > 0)
+    if (is_record_position)
+    {        
+        auto record_pos = getCurrentPosition();      
+        if (!record_pos.first.empty() && record_pos.second > 0)
             JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
     }
+    
+    pmain_tabwidget_->addDocViewTab(StdStringToQString(file_path));
     
     if (this->isMinimized())
         this->showNormal();

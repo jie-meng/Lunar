@@ -97,6 +97,7 @@ private:
     bool gotoPosition(const std::string& file, int line);
     std::pair<std::string, int> getCurrentPosition();
     void addCurrentDocToRecent();
+    bool openDoc(const std::string& file_path, bool is_record_position);
 private:
     QAction* pfile_new_action_;
     QAction* pfile_open_action_;
