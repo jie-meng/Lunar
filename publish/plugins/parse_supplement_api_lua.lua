@@ -1,25 +1,28 @@
-local kRegexFunctionLua = [[function\s+(?<api>(\w+((\.|:)\w+)*\s*\(.*\)))]]
-local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require[\(\s]\s*\"(?<path>.+)\"\)?]]
+local kRegexFunctionLua = [[function\s+(?<api>\w+((\.|:)\w+)*)\s*(?<args>\(.*\))]]
+local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require[\(\s]\s*[\"\'](?<path>.+)[\"\']\)?]]
 local kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
-function parseSupplementApi(filename, cursor_line, project_src_dir)
+local re_func = util.newRegex(kRegexFunctionLua)
+local re_require = util.newRegex(kRegexRequireLua)
+local re_return_module = util.newRegex(kRegexReturnModuleLua)
+
+function parseSupplementApi(filename, cursor_line, project_src_dir) 
     
-    local re_func = util.newRegex(kRegexFunctionLua)
-    local re_require = util.newRegex(kRegexRequireLua)
-    local re_return_module = util.newRegex(kRegexReturnModuleLua)
-    
-    local apis = {}    
-    parseSupplementApiMain(filename, util.currentPath(), apis, re_func, re_require, re_return_module)
-    
-    re_func:delete()
-    re_require:delete()
-    re_return_module:delete()
+    local proj_path = util.currentPath()
+    if util.strTrim(project_src_dir) ~= "" then
+        proj_path = proj_path .. "/" .. project_src_dir
+    end 
+
+    local apis = {}
+    parseSupplementApiMain(filename, proj_path, apis, re_func, re_require, re_return_module)
+
+    local lib_path = util.splitPathname(util.appPath()) .. '/apis/lua/lib'
+    parseSupplementApiMain(filename, lib_path, apis, re_func, re_require, re_return_module)
     
     return apis
 end
 
 function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_return_module)
-
     local f = io.open(filename, "r")
     if f ~= nil then
         local line = f:read("*line")
@@ -30,15 +33,15 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
                 if line_format == "" or util.strStartWith(line_format, "--") then
                     break
                 end
-            
+
                 if re_func:match(line_format) then
                     local api = re_func:getMatchedGroupByName("api")
-                    if api ~= "" then
-                        local api_format, _ = string.gsub(api, ":", ".")
-                        table.insert(apis, api_format)
+                    local args = re_func:getMatchedGroupByName("args")
+                    if api ~= "" and args ~= "" then
+                        table.insert(apis, api .. args)
                     end
                     break
-                end    
+                end
                 
                 if re_require:match(line_format) then
                     parseSupplementApiRequire(
@@ -85,13 +88,11 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     break
                 end
                 
-                return_module = ""
-                
                 if re_func:match(line_format) then
                     local api = re_func:getMatchedGroupByName("api")
-                    if api ~= "" then
-                        local api_format, _ = string.gsub(api, ":", ".")
-                        table.insert(tmp_t, api_format)
+                    local args = re_func:getMatchedGroupByName("args")
+                    if api ~= "" and args ~= "" then
+                        table.insert(tmp_t, api .. args)
                     end
                     break
                 end   
@@ -109,6 +110,7 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     break
                 end
                 
+                return_module = ""
                 if re_return_module:match(line_format) then
                     return_module = re_return_module:getMatchedGroupByName("module")
                     break
@@ -138,3 +140,8 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         io.close(f)
     end
 end
+
+--local apiss = parseSupplementApi("./test.lua", 0, "")
+--for _, v in ipairs(apiss) do
+--    print(v)
+--end
