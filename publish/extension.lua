@@ -80,7 +80,7 @@ function parseFileType(filename)
                 type = "html", 
                 auto_complete_type = 0,
 				api = "apis/html", 
-                executor = "firefox",
+                executor = "w3m",
 				comment_block_begin = "<!--",
 				comment_block_end = "-->"
             }
