@@ -101,8 +101,8 @@ function parseFileType(filename)
         return { type = "bash", comment_line = "#", api = "apis/bash" }
     end
     
-	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
-		return { type = "cmake", comment_line = "#", api = "apis/cmake" }
+    if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
+		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
 	end
     
     if string.lower(util.fileExtension(name)) == "py" then
