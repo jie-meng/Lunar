@@ -1,0 +1,12 @@
+RegExp.constructor
+RegExp.global
+RegExp.ignoreCase
+RegExp.lastIndex
+RegExp.multiline
+RegExp.source
+RegExp.RegExp Object Methods
+RegExp.Method
+RegExp.compile()
+RegExp.exec()
+RegExp.test()
+RegExp.toString()

@@ -1,0 +1,4 @@
+history.length
+history.back()
+history.forward()
+history.go()

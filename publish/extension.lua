@@ -1,3 +1,16 @@
+function checkJavaScriptType(content)
+    if util.strContains(content, "document.")
+        or util.strContains(content, "alert(") 
+        or util.strContains(content, ".getElementById(") 
+        or util.strContains(content, ".getElementsByClassName(") 
+        or util.strContains(content, ".getElementsByName(") 
+        or util.strContains(content, ".getElementsByTagName(") then
+        return "web"
+    else
+        return "node"
+    end
+end
+
 function parseFileType(filename)
 
 	local path, name = util.splitPathname(filename)
@@ -61,16 +74,29 @@ function parseFileType(filename)
 	end
 	
 	if string.lower(util.fileExtension(name)) == "js" then
-		return 
-            {
-                type = "javascript", 
-                auto_complete_type = 1,
-                api = "apis/javascript", 
-                executor = "node --use_strict", 
-                comment_line = "//",
-				comment_block_begin = "/*",
-				comment_block_end = "*/"
-            }
+        local js_type = checkJavaScriptType(util.readTextFile(filename))
+        if js_type == "web" then
+            return 
+                {
+                    type = "javascript", 
+                    auto_complete_type = 1,
+                    api = "apis/javascript/js,apis/javascript/web",
+                    comment_line = "//",
+                    comment_block_begin = "/*",
+                    comment_block_end = "*/"
+                }
+        elseif js_type == "node" then
+            return 
+                {
+                    type = "javascript", 
+                    auto_complete_type = 1,
+                    api = "apis/javascript/js", 
+                    executor = "node --use_strict", 
+                    comment_line = "//",
+                    comment_block_begin = "/*",
+                    comment_block_end = "*/"
+                }
+        end
 	end
 	
 	if string.lower(util.fileExtension(name)) == "html" or
@@ -101,7 +127,7 @@ function parseFileType(filename)
         return { type = "bash", comment_line = "#", api = "apis/bash" }
     end
     
-    if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
+	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
 		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
 	end
     

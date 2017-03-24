@@ -1,0 +1,16 @@
+Number.constructor
+Number.MAX_VALUE
+Number.MIN_VALUE
+Number.NEGATIVE_INFINITY
+Number.NaN
+Number.POSITIVE_INFINITY
+Number.prototype
+Number.isFinite()
+Number.isInteger()
+Number.isNaN()
+Number.isSafeInteger()
+Number.toExponential(x)
+Number.toFixed(x)
+Number.toPrecision(x)
+Number.toString()
+Number.valueOf()

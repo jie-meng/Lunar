@@ -1,0 +1,12 @@
+navigator.appCodeName
+navigator.appName
+navigator.appVersion
+navigator.cookieEnabled
+navigator.geolocation
+navigator.language
+navigator.onLine
+navigator.platform
+navigator.product
+navigator.userAgent
+navigator.javaEnabled()
+navigator.taintEnabled()

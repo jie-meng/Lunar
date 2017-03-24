@@ -1,0 +1,4 @@
+Boolean.constructor
+Boolean.prototype
+Boolean.toString()
+Boolean.valueOf()
