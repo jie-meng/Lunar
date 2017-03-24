@@ -1,4 +1,3 @@
-Boolean.constructor
-Boolean.prototype
+Boolean.toSource()
 Boolean.toString()
 Boolean.valueOf()

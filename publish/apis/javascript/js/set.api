@@ -1,0 +1,8 @@
+Set.size
+Set.add()
+Set.clear()
+Set.delete()
+Set.entries()
+Set.forEach()
+Set.has()
+Set.values()

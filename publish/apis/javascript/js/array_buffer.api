@@ -1,0 +1,4 @@
+ArrayBuffer.byteLength
+ArrayBuffer.isView()
+ArrayBuffer.slice()
+ArrayBuffer.transfer()

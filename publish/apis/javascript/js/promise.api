@@ -1,0 +1,6 @@
+Promise.all()
+Promise.catch()
+Promise.then()
+Promise.race()
+Promise.reject()
+Promise.resolve()

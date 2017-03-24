@@ -1,0 +1,10 @@
+Map.size
+Map.clear()
+Map.delete()
+Map.entries()
+Map.forEach()
+Map.get()
+Map.has()
+Map.keys()
+Map.set()
+Map.values()

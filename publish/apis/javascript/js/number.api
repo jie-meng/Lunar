@@ -1,5 +1,7 @@
-Number.constructor
+Number.EPSILON
+Number.MAX_SAFE_INTEGER
 Number.MAX_VALUE
+Number.MIN_SAFE_INTEGER
 Number.MIN_VALUE
 Number.NEGATIVE_INFINITY
 Number.NaN
@@ -9,8 +11,12 @@ Number.isFinite()
 Number.isInteger()
 Number.isNaN()
 Number.isSafeInteger()
-Number.toExponential(x)
-Number.toFixed(x)
-Number.toPrecision(x)
+Number.parseFloat()
+Number.parseInt()
+Number.toExponential()
+Number.toFixed()
+Number.toLocaleString()
+Number.toPrecision()
+Number.toSource()
 Number.toString()
 Number.valueOf()

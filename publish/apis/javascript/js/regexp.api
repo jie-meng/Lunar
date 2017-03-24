@@ -1,12 +1,19 @@
-RegExp.constructor
+RegExp.input
+RegExp.lastMatch
+RegExp.lastParen
+RegExp.leftContext
+RegExp.prototype
+RegExp.flags
 RegExp.global
 RegExp.ignoreCase
-RegExp.lastIndex
 RegExp.multiline
 RegExp.source
-RegExp.RegExp Object Methods
-RegExp.Method
+RegExp.sticky
+RegExp.unicode
+RegExp.rightContext
+regexp.lastIndex
 RegExp.compile()
 RegExp.exec()
 RegExp.test()
+RegExp.toSource()
 RegExp.toString()
