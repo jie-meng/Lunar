@@ -11,6 +11,7 @@ tls.server.connections
 tls.server.getTicketKeys()
 tls.server.listen(port[, hostname][, callback])
 tls.server.setTicketKeys(keys)
+tls.TLSSocket(socket[, options])
 OCSPResponse
 secureConnect
 tls.tlsSocket.address()
@@ -36,4 +37,4 @@ tls.connect(port[, host][, options][, callback])
 tls.createSecureContext(options)
 tls.createServer([options][, secureConnectionListener])
 tls.getCiphers()
-tls.DEFAULT_ECDH_CURVEserver.addContext(hostname, context)
+tls.DEFAULT_ECDH_CURVE

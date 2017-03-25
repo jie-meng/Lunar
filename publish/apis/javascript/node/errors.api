@@ -1,7 +1,12 @@
+Error(message)
 Error.captureStackTrace(targetObject[, constructorOpt])
 Error.stackTraceLimit
 error.message
 error.stack
+RangeError
+ReferenceError
+SyntaxError
+TypeError
 system_error.code
 system_error.errno
 system_error.syscall

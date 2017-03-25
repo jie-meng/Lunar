@@ -90,7 +90,7 @@ function parseFileType(filename)
                 {
                     type = "javascript", 
                     auto_complete_type = 1,
-                    api = "apis/javascript/js", 
+                    api = "apis/javascript/js,apis/javascript/node", 
                     executor = "node --use_strict", 
                     comment_line = "//",
                     comment_block_begin = "/*",

@@ -15,7 +15,7 @@ net.server.listening
 net.server.maxConnections
 net.server.ref()
 net.server.unref()
-net.Socket
+net.Socket([options])
 close
 connect
 data

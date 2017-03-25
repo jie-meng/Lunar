@@ -1,4 +1,4 @@
-stream.Writable
+stream.Writable([options])
 close
 drain
 error
@@ -10,7 +10,7 @@ stream.writable.end([chunk][, encoding][, callback])
 stream.writable.setDefaultEncoding(encoding)
 stream.writable.uncork()
 stream.writable.write(chunk[, encoding][, callback])
-stream.Readable
+stream.Readable([options])
 close
 data
 end
@@ -25,8 +25,8 @@ stream.readable.setEncoding(encoding)
 stream.readable.unpipe([destination])
 stream.readable.unshift(chunk)
 stream.readable.wrap(stream)
-stream.Duplex
-stream.Transform
+stream.Duplex([options])
+stream.Transform([options])
 stream.writable._write(chunk, encoding, callback)
 stream.writable._writev(chunks, callback)
 stream.readable._read(size)

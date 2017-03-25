@@ -1,4 +1,4 @@
-http.Agent
+http.Agent([options])
 http.agent.createConnection(options[, callback])
 http.agent.destroy()
 http.agent.freeSockets
@@ -63,18 +63,18 @@ http.response.writeHead(statusCode[, statusMessage][, headers])
 http.IncomingMessage
 aborted
 close
-http.message.destroy([error])
-http.message.headers
-http.message.httpVersion
-http.message.method
-http.message.rawHeaders
-http.message.rawTrailers
-http.message.setTimeout(msecs, callback)
-http.message.socket
-http.message.statusCode
-http.message.statusMessage
-http.message.trailers
-http.message.url
+http.incoming_message.destroy([error])
+http.incoming_message.headers
+http.incoming_message.httpVersion
+http.incoming_message.method
+http.incoming_message.rawHeaders
+http.incoming_message.rawTrailers
+http.incoming_message.setTimeout(msecs, callback)
+http.incoming_message.socket
+http.incoming_message.statusCode
+http.incoming_message.statusMessage
+http.incoming_message.trailers
+http.incoming_message.url
 http.METHODS
 http.STATUS_CODES
 http.createServer([requestListener])
