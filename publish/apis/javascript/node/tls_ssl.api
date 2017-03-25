@@ -1,0 +1,39 @@
+tls.Server
+newSession
+OCSPRequest
+resumeSession
+secureConnection
+tlsClientError
+tls.server.addContext(hostname, context)
+tls.server.address()
+tls.server.close([callback])
+tls.server.connections
+tls.server.getTicketKeys()
+tls.server.listen(port[, hostname][, callback])
+tls.server.setTicketKeys(keys)
+OCSPResponse
+secureConnect
+tls.tlsSocket.address()
+tls.tlsSocket.authorizationError
+tls.tlsSocket.authorized
+tls.tlsSocket.encrypted
+tls.tlsSocket.getCipher()
+tls.tlsSocket.getEphemeralKeyInfo()
+tls.tlsSocket.getPeerCertificate([ detailed ])
+tls.tlsSocket.getProtocol()
+tls.tlsSocket.getSession()
+tls.tlsSocket.getTLSTicket()
+tls.tlsSocket.localAddress
+tls.tlsSocket.localPort
+tls.tlsSocket.remoteAddress
+tls.tlsSocket.remoteFamily
+tls.tlsSocket.remotePort
+tls.tlsSocket.renegotiate(options, callback)
+tls.tlsSocket.setMaxSendFragment(size)
+tls.connect(options[, callback])
+tls.connect(path[, options][, callback])
+tls.connect(port[, host][, options][, callback])
+tls.createSecureContext(options)
+tls.createServer([options][, secureConnectionListener])
+tls.getCiphers()
+tls.DEFAULT_ECDH_CURVEserver.addContext(hostname, context)

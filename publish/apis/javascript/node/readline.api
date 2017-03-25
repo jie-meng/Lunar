@@ -1,0 +1,20 @@
+close
+line
+pause
+resume
+SIGCONT
+SIGINT
+SIGTSTP
+readline.interface.close()
+readline.interface.pause()
+readline.interface.prompt([preserveCursor])
+readline.interface.question(query, callback)
+readline.interface.resume()
+readline.interface.setPrompt(prompt)
+readline.interface.write(data[, key])
+readline.cleareadline.interfaceine(stream, dir)
+readline.clearScreenDown(stream)
+readline.createInterface(options)
+readline.cursorTo(stream, x, y)
+readline.emitKeypressEvents(stream[, interface])
+readline.moveCursor(stream, dx, dy)

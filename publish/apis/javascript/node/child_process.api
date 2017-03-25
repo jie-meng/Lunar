@@ -1,0 +1,24 @@
+child_process.exec(command[, options][, callback])
+child_process.execFile(file[, args][, options][, callback])
+child_process.fork(modulePath[, args][, options])
+child_process.spawn(command[, args][, options])
+child_process.execFileSync(file[, args][, options])
+child_process.execSync(command[, options])
+child_process.spawnSync(command[, args][, options])
+detached
+stdio
+close
+disconnect
+error
+exit
+message
+child_process.child.channel
+child_process.child.connected
+child_process.child.disconnect()
+child_process.child.kill([signal])
+child_process.child.pid
+child_process.child.send(message[, sendHandle[, options]][, callback])
+child_process.child.stderr
+child_process.child.stdin
+child_process.child.stdio
+child_process.child.stdout

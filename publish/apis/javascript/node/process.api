@@ -1,0 +1,53 @@
+beforeExit
+disconnect
+exit
+message
+rejectionHandled
+uncaughtException
+unhandledRejection
+warning
+process.abort()
+process.arch
+process.argv
+process.argv0
+process.channel
+process.chdir(directory)
+process.config
+process.connected
+process.cpuUsage([previousValue])
+process.cwd()
+process.disconnect()
+process.emitWarning(warning[, name][, ctor])
+process.env
+process.execArgv
+process.execPath
+process.exit([code])
+process.exitCode
+process.getegid()
+process.geteuid()
+process.getgid()
+process.getgroups()
+process.getuid()
+process.hrtime([time])
+process.initgroups(user, extra_group)
+process.kill(pid[, signal])
+process.mainModule
+process.memoryUsage()
+process.nextTick(callback[, ...args])
+process.pid
+process.platform
+process.release
+process.send(message[, sendHandle[, options]][, callback])
+process.setegid(id)
+process.seteuid(id)
+process.setgid(id)
+process.setgroups(groups)
+process.setuid(id)
+process.stderr
+process.stdin
+process.stdout
+process.title
+process.umask([mask])
+process.uptime()
+process.version
+process.versions

@@ -1,0 +1,36 @@
+stream.Writable
+close
+drain
+error
+finish
+pipe
+unpipe
+stream.writable.cork()
+stream.writable.end([chunk][, encoding][, callback])
+stream.writable.setDefaultEncoding(encoding)
+stream.writable.uncork()
+stream.writable.write(chunk[, encoding][, callback])
+stream.Readable
+close
+data
+end
+error
+readable
+stream.readable.isPaused()
+stream.readable.pause()
+stream.readable.pipe(destination[, options])
+stream.readable.read([size])
+stream.readable.resume()
+stream.readable.setEncoding(encoding)
+stream.readable.unpipe([destination])
+stream.readable.unshift(chunk)
+stream.readable.wrap(stream)
+stream.Duplex
+stream.Transform
+stream.writable._write(chunk, encoding, callback)
+stream.writable._writev(chunks, callback)
+stream.readable._read(size)
+stream.readable.push(chunk[, encoding])
+stream.transform._flush(callback)
+stream.transform._transform(chunk, encoding, callback)
+stream.PassThrough

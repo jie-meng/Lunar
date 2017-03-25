@@ -1,0 +1,33 @@
+zlib.Deflate
+zlib.DeflateRaw
+zlib.Gunzip
+zlib.Gzip
+zlib.Inflate
+zlib.InflateRaw
+zlib.Unzip
+zlib.Zlib
+zlib.zlib.flush([kind], callback)
+zlib.zlib.params(level, strategy, callback)
+zlib.zlib.reset()
+zlib.constants
+zlib.createDeflate([options])
+zlib.createDeflateRaw([options])
+zlib.createGunzip([options])
+zlib.createGzip([options])
+zlib.createInflate([options])
+zlib.createInflateRaw([options])
+zlib.createUnzip([options])
+zlib.deflate(buf[, options], callback)
+zlib.deflateSync(buf[, options])
+zlib.deflateRaw(buf[, options], callback)
+zlib.deflateRawSync(buf[, options])
+zlib.gunzip(buf[, options], callback)
+zlib.gunzipSync(buf[, options])
+zlib.gzip(buf[, options], callback)
+zlib.gzipSync(buf[, options])
+zlib.inflate(buf[, options], callback)
+zlib.inflateSync(buf[, options])
+zlib.inflateRaw(buf[, options], callback)
+zlib.inflateRawSync(buf[, options])
+zlib.unzip(buf[, options], callback)
+zlib.unzipSync(buf[, options])

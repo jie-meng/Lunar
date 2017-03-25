@@ -1,0 +1,21 @@
+dgram.Socket
+close
+error
+listening
+message
+dgram.socket.addMembership(multicastAddress[, multicastInterface])
+dgram.socket.address()
+dgram.socket.bind([port][, address][, callback])
+dgram.socket.bind(options[, callback])
+dgram.socket.close([callback])
+dgram.socket.dropMembership(multicastAddress[, multicastInterface])
+dgram.socket.ref()
+dgram.socket.send(msg, [offset, length,] port, address[, callback])
+dgram.socket.setBroadcast(flag)
+dgram.socket.setMulticastLoopback(flag)
+dgram.socket.setMulticastTTL(ttl)
+dgram.socket.setTTL(ttl)
+dgram.socket.unref()
+dgram module functions
+dgram.createSocket(options[, callback])
+dgram.createSocket(type[, callback])

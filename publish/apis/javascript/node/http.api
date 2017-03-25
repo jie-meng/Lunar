@@ -1,0 +1,83 @@
+http.Agent
+http.agent.createConnection(options[, callback])
+http.agent.destroy()
+http.agent.freeSockets
+http.agent.getName(options)
+http.agent.maxFreeSockets
+http.agent.maxSockets
+http.agent.requests
+http.agent.sockets
+http.ClientRequest
+abort
+aborted
+connect
+continue
+response
+socket
+upgrade
+http.request.abort()
+http.request.aborted
+http.request.end([data][, encoding][, callback])
+http.request.flushHeaders()
+http.request.setNoDelay([noDelay])
+http.request.setSocketKeepAlive([enable][, initialDelay])
+http.request.setTimeout(timeout[, callback])
+http.request.write(chunk[, encoding][, callback])
+http.Server
+checkContinue
+checkExpectation
+clientError
+close
+connect
+connection
+request
+upgrade
+http.server.close([callback])
+http.server.listen(handle[, callback])
+http.server.listen(path[, callback])
+http.server.listen([port][, hostname][, backlog][, callback])
+http.server.listening
+http.server.maxHeadersCount([limit])
+http.server.setTimeout([msecs][, callback])
+http.server.timeout([msecs])
+http.ServerResponse
+close
+finish
+http.response.addTrailers(headers)
+http.response.end([data][, encoding][, callback])
+http.response.finished
+http.response.getHeader(name)
+http.response.getHeaderNames()
+http.response.getHeaders()
+http.response.hasHeader(name)
+http.response.headersSent
+http.response.removeHeader(name)
+http.response.sendDate
+http.response.setHeader(name, value)
+http.response.setTimeout(msecs[, callback])
+http.response.statusCode
+http.response.statusMessage
+http.response.write(chunk[, encoding][, callback])
+http.response.writeContinue()
+http.response.writeHead(statusCode[, statusMessage][, headers])
+http.IncomingMessage
+aborted
+close
+http.message.destroy([error])
+http.message.headers
+http.message.httpVersion
+http.message.method
+http.message.rawHeaders
+http.message.rawTrailers
+http.message.setTimeout(msecs, callback)
+http.message.socket
+http.message.statusCode
+http.message.statusMessage
+http.message.trailers
+http.message.url
+http.METHODS
+http.STATUS_CODES
+http.createServer([requestListener])
+http.get(options[, callback])
+http.globalAgent
+http.request(options[, callback])

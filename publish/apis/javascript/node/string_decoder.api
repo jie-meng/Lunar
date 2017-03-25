@@ -1,0 +1,2 @@
+stringDecoder.end([buffer])
+stringDecoder.write(buffer)

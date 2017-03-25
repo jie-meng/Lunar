@@ -1,0 +1,10 @@
+Error.captureStackTrace(targetObject[, constructorOpt])
+Error.stackTraceLimit
+error.message
+error.stack
+system_error.code
+system_error.errno
+system_error.syscall
+system_error.path
+system_error.address
+system_error.port

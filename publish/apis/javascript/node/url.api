@@ -1,0 +1,47 @@
+urlObject.auth
+urlObject.hash
+urlObject.host
+urlObject.hostname
+urlObject.href
+urlObject.path
+urlObject.pathname
+urlObject.port
+urlObject.protocol
+urlObject.query
+urlObject.search
+urlObject.slashes
+url.format(urlObject)
+url.format(URL[, options])
+url.parse(urlString[, parseQueryString[, slashesDenoteHost]])
+url.resolve(from, to)
+url.URL(input[, base])
+url.url.hash
+url.url.host
+url.url.hostname
+url.url.href
+url.url.origin
+url.url.password
+url.url.pathname
+url.url.port
+url.url.protocol
+url.url.search
+url.url.searchParams
+url.url.username
+url.url.toString()
+url.url.toJSON()
+url.URLSearchParams([init])
+url.urlSearchParams.append(name, value)
+url.urlSearchParams.delete(name)
+url.urlSearchParams.entries()
+url.urlSearchParams.forEach(fn[, thisArg])
+url.urlSearchParams.get(name)
+url.urlSearchParams.getAll(name)
+url.urlSearchParams.has(name)
+url.urlSearchParams.keys()
+url.urlSearchParams.set(name, value)
+url.urlSearchParams.sort()
+url.url.urlSearchParams.toString()
+url.urlSearchParams.values()
+url.urlSearchParams[@@iterator]()
+url.domainToASCII(domain)
+url.domainToUnicode(domain)

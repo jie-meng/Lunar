@@ -1,0 +1,7 @@
+module.children
+module.exports
+module.filename
+module.id
+module.loaded
+module.parent
+module.require(id)

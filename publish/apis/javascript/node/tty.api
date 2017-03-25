@@ -1,0 +1,8 @@
+tty.ReadStream
+tty.readStream.isRaw
+tty.readStream.setRawMode(mode)
+tty.WriteStream
+resize
+tty.writeStream.columns
+tty.writeStream.rows
+tty.isatty(fd)

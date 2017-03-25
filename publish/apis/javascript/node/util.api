@@ -1,0 +1,7 @@
+util.debuglog(section)
+util.deprecate(function, string)
+util.format(format[, ...args])
+util.inherits(constructor, superConstructor)
+util.inspect(object[, options])
+util.inspect.custom
+util.inspect.defaultOptions

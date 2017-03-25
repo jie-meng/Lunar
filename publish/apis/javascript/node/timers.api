@@ -1,0 +1,8 @@
+timeout.ref()
+timeout.unref()
+setImmediate(callback[, ...args])
+setInterval(callback, delay[, ...args])
+setTimeout(callback, delay[, ...args])
+clearImmediate(immediate)
+clearInterval(timeout)
+clearTimeout(timeout)

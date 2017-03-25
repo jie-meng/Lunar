@@ -1,0 +1,10 @@
+domain.create()
+domain.members
+domain.add(emitter)
+domain.bind(callback)
+domain.dispose()
+domain.enter()
+domain.exit()
+domain.intercept(callback)
+domain.remove(emitter)
+domain.run(fn[, ...args])

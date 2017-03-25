@@ -1,0 +1,12 @@
+https.Agent
+https.Server
+https.server.setTimeout([msecs][, callback])
+https.server.timeout([msecs])
+https.createServer(options[, requestListener])
+https.server.close([callback])
+https.server.listen(handle[, callback])
+https.server.listen(path[, callback])
+https.server.listen([port][, host][, backlog][, callback])
+https.get(options[, callback])
+https.globalAgent
+https.request(options[, callback])

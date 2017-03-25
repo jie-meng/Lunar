@@ -1,0 +1,5 @@
+exit
+reset
+repl.replServer.defineCommand(keyword, cmd)
+repl.replServer.displayPrompt([preserveCursor])
+repl.start([options])

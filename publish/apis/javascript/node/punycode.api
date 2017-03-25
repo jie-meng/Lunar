@@ -1,0 +1,8 @@
+punycode.decode(string)
+punycode.encode(string)
+punycode.toASCII(domain)
+punycode.toUnicode(domain)
+punycode.ucs2
+punycode.ucs2.decode(string)
+punycode.ucs2.encode(codePoints)
+punycode.version
