@@ -1,8 +1,8 @@
-Error.columnNumber
-Error.fileName
-Error.lineNumber
-Error.message
-Error.name
-Error.stack
-Error.toSource()
-Error.toString()
+error.columnNumber
+error.fileName
+error.lineNumber
+error.message
+error.name
+error.stack
+error.toSource()
+error.toString()

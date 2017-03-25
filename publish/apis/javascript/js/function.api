@@ -4,10 +4,9 @@ Function.caller
 Function.displayName
 Function.length
 Function.name
-Function.prototype
-Function.apply()
-Function.bind()
-Function.call()
-Function.isGenerator()
-Function.toSource()
-Function.toString()
+function.apply()
+function.bind()
+function.call()
+function.isGenerator()
+function.toSource()
+function.toString()

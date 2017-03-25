@@ -7,9 +7,9 @@ RangeError
 ReferenceError
 SyntaxError
 TypeError
-system_error.code
-system_error.errno
-system_error.syscall
-system_error.path
-system_error.address
-system_error.port
+systemError.code
+systemError.errno
+systemError.syscall
+systemError.path
+systemError.address
+systemError.port
