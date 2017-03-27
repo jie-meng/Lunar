@@ -1,0 +1,16 @@
+FileReader()
+fileReader.error
+fileReader.onload
+fileReader.readyState
+fileReader.result
+fileReader.abort()
+fileReader.readAsArrayBuffer()
+fileReader.readAsBinaryString()
+fileReader.readAsDataURL()
+fileReader.readAsText()
+fileReader.onloadstart
+fileReader.onprogress
+fileReader.onabort
+fileReader.onerror
+fileReader.onload
+fileReader.onloadend

@@ -206,6 +206,7 @@ function parseFileType(filename)
 	   string.lower(util.fileExtension(name)) == "jxl" or
 	   string.lower(util.fileExtension(name)) == "rxl" or
        string.lower(util.fileExtension(name)) == "tmx" or
+       string.lower(util.fileExtension(name)) == "svg" or
 	   string.lower(util.fileExtension(name)) == "project" then
         return 
 			{ 
@@ -315,6 +316,7 @@ legalFileExtTable["md"] = true
 legalFileExtTable["cfg"] = true
 legalFileExtTable["gradle"] = true
 legalFileExtTable["log"] = true
+legalFileExtTable["svg"] = true
 
 function isLegalFile(filename)
     if (legalFileExtTable[string.lower(util.fileExtension(filename))]) then

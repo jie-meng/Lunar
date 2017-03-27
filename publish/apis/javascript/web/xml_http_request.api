@@ -1,0 +1,33 @@
+XMLHttpRequest()
+xmlHttpRequest.onreadystatechange
+xmlHttpRequest.readyState
+xmlHttpRequest.response
+xmlHttpRequest.responseText
+xmlHttpRequest.responseType
+xmlHttpRequest.responseURL
+xmlHttpRequest.responseXML
+xmlHttpRequest.status
+xmlHttpRequest.statusText
+xmlHttpRequest.timeout
+xmlHttpRequest.ontimeout
+xmlHttpRequest.upload
+xmlHttpRequest.withCredentials
+xmlHttpRequest.channelRead only
+xmlHttpRequest.mozAnonRead only
+xmlHttpRequest.mozSystemRead only
+xmlHttpRequest.mozBackgroundRequest
+xmlHttpRequest.abort()
+xmlHttpRequest.getAllResponseHeaders()
+xmlHttpRequest.getResponseHeader()
+xmlHttpRequest.open()
+xmlHttpRequest.overrideMimeType()
+xmlHttpRequest.send()
+xmlHttpRequest.setRequestHeader()
+xmlHttpRequest.onloadstart
+xmlHttpRequest.onprogress
+xmlHttpRequest.onabort
+xmlHttpRequest.onerror
+xmlHttpRequest.onload
+xmlHttpRequest.ontimeout
+xmlHttpRequest.onloadend
+xmlHttpRequest.onreadystatechange
