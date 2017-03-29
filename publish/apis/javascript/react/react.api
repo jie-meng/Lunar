@@ -1,0 +1,50 @@
+React.createClass(specification)
+React.createElement(type, [props], [...children])
+React.cloneElement(element, [props], [...children])
+React.createFactory(type)
+React.isValidElement(object)
+React.Children.map(children, function[(thisArg)])
+React.Children.forEach(children, function[(thisArg)])
+React.Children.count(children)
+React.Children.only(children)
+React.Children.toArray(children)
+React.PropTypes.array.isRequired
+React.PropTypes.bool.isRequired
+React.PropTypes.func.isRequired
+React.PropTypes.number.isRequired
+React.PropTypes.object.isRequired
+React.PropTypes.string.isRequired
+React.PropTypes.symbol.isRequired
+React.PropTypes.node.isRequired
+React.PropTypes.element.isRequired
+React.PropTypes.instanceOf(class)
+React.PropTypes.oneOf(arrayOfValues)
+React.PropTypes.oneOfType(arrayOfPropTypes)
+React.PropTypes.arrayOf(propType)
+React.PropTypes.objectOf(propType)
+React.PropTypes.shape(object)
+React.PropTypes.any.isRequired
+React.addons
+React.Component.constructor(props)
+React.Component.componentWillMount()
+React.Component.render()
+React.Component.componentDidMount()
+React.Component.componentWillReceiveProps(nextProps)
+React.Component.shouldComponentUpdate(nextProps, nextState)
+React.Component.componentWillUpdate(nextProps, nextState)
+React.Component.componentDidUpdate(prevProps, prevState)
+React.Component.componentWillUnmount()
+React.Component.setState(nextState, callback)
+React.Component.setState({})
+React.Component.setState((prevState, props) => ({}))
+React.Component.forceUpdate(callback)
+React.Component.defaultProps
+React.Component.displayName
+React.Component.propTypes
+React.Component.props
+React.Component.state
+ReactDOM.render(element, container, [callback])
+ReactDOM.unmountComponentAtNode(container)
+ReactDOM.findDOMNode(component)
+ReactDOMServer.renderToString(element)
+ReactDOMServer.renderToStaticMarkup(element)

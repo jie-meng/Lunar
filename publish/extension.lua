@@ -1,4 +1,13 @@
-function checkJavaScriptType(content)
+function checkJavaScriptType(filename)
+    local content = util.readTextFile(filename)
+    local path = util.splitPathname(filename)
+    
+    if util.strContains(content, "</")
+        or util.strContains("/>")
+        or util.strContains("React.Component") then
+        return "react"
+    end
+
     if util.strContains(content, "document.")
         or util.strContains(content, "alert(") 
         or util.strContains(content, ".getElementById(") 
@@ -6,9 +15,9 @@ function checkJavaScriptType(content)
         or util.strContains(content, ".getElementsByName(") 
         or util.strContains(content, ".getElementsByTagName(") then
         return "web"
-    else
-        return "node"
     end
+    
+    return "node"
 end
 
 function parseFileType(filename)
@@ -74,29 +83,29 @@ function parseFileType(filename)
 	end
 	
 	if string.lower(util.fileExtension(name)) == "js" then
-        local js_type = checkJavaScriptType(util.readTextFile(filename))
-        if js_type == "web" then
-            return 
-                {
-                    type = "javascript", 
-                    auto_complete_type = 1,
-                    api = "apis/javascript/js,apis/javascript/web",
-                    comment_line = "//",
-                    comment_block_begin = "/*",
-                    comment_block_end = "*/"
-                }
-        elseif js_type == "node" then
-            return 
-                {
-                    type = "javascript", 
-                    auto_complete_type = 1,
-                    api = "apis/javascript/js,apis/javascript/node", 
-                    executor = "node --use_strict", 
-                    comment_line = "//",
-                    comment_block_begin = "/*",
-                    comment_block_end = "*/"
-                }
+        local js_type = checkJavaScriptType(filename)
+        local js_tb = {
+            type = "javascript", 
+            auto_complete_type = 1,
+            api = "apis/javascript/js",
+            comment_line = "//",
+            comment_block_begin = "/*",
+            comment_block_end = "*/"
+        }
+        
+        if js_type == "react" then
+            js_tb.api = js_tb.api .. ',apis/javascript/react'
         end
+        
+        if js_type == "web" then
+            js_tb.api = js_tb.api .. ',apis/javascript/web'
+        end
+        
+        if js_type == "node" then
+            js_tb.api = js_tb.api .. ',apis/javascript/node'
+        end
+        
+        return js_tb
 	end
 	
 	if string.lower(util.fileExtension(name)) == "html" or
