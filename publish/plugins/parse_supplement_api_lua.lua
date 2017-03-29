@@ -7,7 +7,6 @@ local re_require = util.newRegex(kRegexRequireLua)
 local re_return_module = util.newRegex(kRegexReturnModuleLua)
 
 function parseSupplementApi(filename, cursor_line, project_src_dir) 
-    
     local proj_path = util.currentPath()
     if util.strTrim(project_src_dir) ~= "" then
         proj_path = proj_path .. "/" .. project_src_dir
@@ -16,8 +15,13 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
     parseSupplementApiMain(filename, proj_path, apis, re_func, re_require, re_return_module)
 
-    local lib_path = util.splitPathname(util.appPath()) .. '/apis/lua/lib'
-    parseSupplementApiMain(filename, lib_path, apis, re_func, re_require, re_return_module)
+    local idx = string.find(package.path, ';')
+    if idx then
+        local first_dir = util.splitPathname(string.sub(package.path, 1, idx-1))
+        if util.isPathDir(first_dir) then
+            parseSupplementApiMain(filename, first_dir, apis, re_func, re_require, re_return_module)
+        end
+    end    
     
     return apis
 end
