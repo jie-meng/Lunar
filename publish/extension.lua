@@ -3,8 +3,8 @@ function checkJavaScriptType(filename)
     local path = util.splitPathname(filename)
     
     if util.strContains(content, "</")
-        or util.strContains("/>")
-        or util.strContains("React.Component") then
+        or util.strContains(content, "/>")
+        or util.strContains(content, "React.Component") then
         return "react"
     end
 
@@ -103,6 +103,7 @@ function parseFileType(filename)
         
         if js_type == "node" then
             js_tb.api = js_tb.api .. ',apis/javascript/node'
+            js_tb.executor = 'node'
         end
         
         return js_tb
