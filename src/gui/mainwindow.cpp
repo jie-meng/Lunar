@@ -539,7 +539,7 @@ void MainWindow::fileOpen()
     }
     else
     {
-        if (!Extension::getInstance().isLegalFile(QStringToStdString(path)))
+        if (!isTextFile(QStringToStdString(path)))
             return;
 
         pmain_tabwidget_->addDocViewTab(path);
@@ -925,10 +925,7 @@ bool MainWindow::openDoc(const std::string& file_path, bool is_record_position)
         return true;
     }
 
-    if(!util::isPathFile(file_path))
-        return false;
-
-    if (!Extension::getInstance().isLegalFile(file_path))
+    if (!isTextFile(file_path))
         return false;
 
     addCurrentDocToRecent();

@@ -15,7 +15,6 @@ public:
     inline bool isOk() const { return lua_state_ok_; }
     bool parseFilename(const std::string& filename, std::map<std::string, std::string>& out_map);
     std::string fileFilter();
-    bool isLegalFile(const std::string& filename);
 private:
     bool initLuaState();
 private:

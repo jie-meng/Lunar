@@ -296,7 +296,3 @@ function fileFilter()
     
 	return filter
 end
-
-function isLegalFile(filename)
-    return util.isTextFile(filename)
-end

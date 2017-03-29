@@ -72,7 +72,6 @@ public:
     inline std::string getExtensionFile() const { return "extension.lua"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
-    inline std::string getExtensionFuncIsLegalFile() const { return extension_func_is_legal_file_; }
     inline std::string getFileFilter() const { return file_filter_; }
     inline std::string getExtensionToolsPath() const { return extension_tools_path_; }
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
@@ -99,7 +98,6 @@ private:
     size_t mainwindow_height_;
     std::string extension_func_parsefiletype_;
     std::string extension_func_filefilter_;
-    std::string extension_func_is_legal_file_;
     std::string file_filter_;
     std::string extension_tools_path_;
     unsigned short log_sock_port_;
