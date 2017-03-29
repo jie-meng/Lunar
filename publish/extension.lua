@@ -2,6 +2,10 @@ function checkJavaScriptType(filename)
     local content = util.readTextFile(filename)
     local path = util.splitPathname(filename)
     
+    if util.strContains(content, "phantom.exit()") then
+        return "phantom"
+    end
+    
     if util.strContains(content, "</")
         or util.strContains(content, "/>")
         or util.strContains(content, "React.Component") then
@@ -92,6 +96,11 @@ function parseFileType(filename)
             comment_block_begin = "/*",
             comment_block_end = "*/"
         }
+        
+        if js_type == "phantom" then
+            js_tb.api = js_tb.api .. ',apis/javascript/node'
+            js_tb.executor = 'phantomjs'
+        end
         
         if js_type == "react" then
             js_tb.api = js_tb.api .. ',apis/javascript/react'
