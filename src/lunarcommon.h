@@ -31,12 +31,6 @@ void getRecentProjectPath(std::list<std::string>& out);
 void addNewRecentProjectPath(const std::string& path);
 void saveRecentProjectPath(const std::list<std::string>& paths);
 
-////////////////////////////////////////////////////
-// class name : LogSocket
-// description :
-// author :
-// time : 2012-01-17-10.47
-////////////////////////////////////////////////////
 class LogSocket
 {
 public:
@@ -50,12 +44,6 @@ private:
     DISALLOW_COPY_AND_ASSIGN(LogSocket)
 };
 
-////////////////////////////////////////////////////
-// class name : LunarGlobal
-// description :
-// author :
-// time : 2012-01-19-09.16
-////////////////////////////////////////////////////
 class LunarGlobal
 {
 public:

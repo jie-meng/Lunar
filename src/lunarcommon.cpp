@@ -147,12 +147,6 @@ void saveRecentProjectPath(const std::list<std::string>& paths)
     LunarGlobal::getInstance().setRecentProjectPath(strJoin(ls, ","));
 }
 
-////////////////////////////////////////////////////
-// class name : LogSocket
-// description :
-// author :
-// time : 2012-01-17-10.47
-////////////////////////////////////////////////////
 LogSocket::LogSocket() :
     log_sock_(util::Family_IPv4)
 {
@@ -164,23 +158,15 @@ void LogSocket::sendLog(const std::string& log, const std::string& ip, unsigned 
         log_sock_.sendTo(log.c_str(), log.length(), ip, port);
 }
 
-////////////////////////////////////////////////////
-// class name : LunarGlobal
-// description :
-// author :
-// time : 2012-01-19-09.19
-////////////////////////////////////////////////////
 const string kCfg = "cfg";
 
 LunarGlobal::LunarGlobal() :
     file_filter_("Lua Files(*.lua);;")
 {
-
 }
 
 LunarGlobal::~LunarGlobal()
 {
-
 }
 
 void LunarGlobal::init(int argc, char* argv[])
@@ -224,32 +210,7 @@ function fileFilter()\n\
 end\n\
 \n\
 function isLegalFile(filename)\n\
-\tlocal ext = file.fileExtension(filename)\n\
-\tif ext == \"lua\" or\n\
-\t\text == \"m\" or\n\
-\t\text == \"sh\" or\n\
-\t\text == \"js\" or\n\
-\t\text == \"py\" or\n\
-\t\text == \"tcl\" or\n\
-\t\text == \"xml\" or\n\
-\t\text == \"axml\" or\n\
-\t\text == \"tmx\" or\n\
-\t\text == \"java\" or\n\
-\t\text == \"cs\" or\n\
-\t\text == \"c\" or\n\
-\t\text == \"h\" or\n\
-\t\text == \"cpp\" or\n\
-\t\text == \"hpp\" or\n\
-\t\text == \"cxx\" or\n\
-\t\text == \"hxx\" or\n\
-\t\text == \"txt\" or\n\
-\t\text == \"cmake\" or\n\
-\t\text == \"inf\" or\n\
-\t\text == \"log\" then\n\
-\t\treturn true\n\
-\tend\n\
-\n\
-\treturn false\n\
+\treturn util.isTextFile(filename)\n\
 end\n";
 
         writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
