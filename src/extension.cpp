@@ -79,7 +79,7 @@ bool Extension::parseFilename(const std::string& filename, std::map<std::string,
     {
         if (luaGetTop(lua_state_.getState()) > 0 && luaGetType(lua_state_.getState(), 1) == LuaTable)
         {
-            std::vector< pair<any, any> > vec = luaGetTable(lua_state_.getState(), 1);
+            std::vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
             for (size_t i = 0; i<vec.size(); ++i)
                 out_map[vec[i].first.toString()] = vec[i].second.toString();
         }
@@ -116,7 +116,7 @@ std::string Extension::fileFilter()
 
             if(luaGetType(lua_state_.getState(), 1) == LuaTable)
             {
-                vector< pair<any, any> > vec = luaGetTable(lua_state_.getState(), 1);
+                vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
                 vector< pair<any, any> >::iterator it;
                 for (it=vec.begin(); it != vec.end(); ++it)
                 {
@@ -125,7 +125,7 @@ std::string Extension::fileFilter()
             }
             else if (luaGetType(lua_state_.getState(), 1) == LuaString)
             {
-                result = luaGetString(lua_state_.getState(), 1);
+                result = luaToString(lua_state_.getState(), 1);
                 error_information_ = "";
             }
 
@@ -164,7 +164,7 @@ bool Extension::isLegalFile(const std::string& filename)
         int ret_cnt = luaGetTop(lua_state_.getState());
         if (ret_cnt > 0)
         {
-            bool ret = luaGetBoolean(lua_state_.getState(), 1, false);
+            bool ret = luaToBoolean(lua_state_.getState(), 1, false);
             luaPop(lua_state_.getState(), -1);
             return ret;
         }

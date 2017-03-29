@@ -335,7 +335,7 @@ bool ApiLoader::parseSupplementApi(const std::string& parse_supplement_api_func,
 
         vector< pair<any, any> > vec;
         if (ret_cnt > 0)
-            vec = luaGetTable(lua_state_.getState(), 1);
+            vec = luaToArray(lua_state_.getState(), 1);
 
         if (!vec.empty())
         {
