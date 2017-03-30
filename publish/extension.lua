@@ -8,6 +8,8 @@ function checkJavaScriptType(filename)
     
     if util.strContains(content, "</")
         or util.strContains(content, "/>")
+        or util.strContains(content, "React.")
+        or util.strContains(content, "ReactDOM")
         or util.strContains(content, "React.Component") then
         return "react"
     end
@@ -103,7 +105,7 @@ function parseFileType(filename)
         end
         
         if js_type == "react" then
-            js_tb.api = js_tb.api .. ',apis/javascript/react'
+            js_tb.api = js_tb.api .. ',apis/javascript/react,apis/javascript/node,apis/javascript/web'
         end
         
         if js_type == "web" then
@@ -119,7 +121,7 @@ function parseFileType(filename)
 	end
 	
 	if string.lower(util.fileExtension(name)) == "html" or
-       string.lower(util.fileExtension(name)) == "htm" then
+        string.lower(util.fileExtension(name)) == "htm" then
 		return 
             {
                 type = "html", 
@@ -131,7 +133,8 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(util.fileExtension(name)) == "css" then
+	if string.lower(util.fileExtension(name)) == "css" or
+        string.lower(util.fileExtension(name)) == "scss" then
 		return 
             {
                 type = "css", 
@@ -219,15 +222,15 @@ function parseFileType(filename)
     end
     
     if string.lower(util.fileExtension(name)) == "xml" or
-       string.lower(util.fileExtension(name)) == "axml" or
-       string.lower(util.fileExtension(name)) == "xaml" or
-	   string.lower(util.fileExtension(name)) == "xsd" or
-	   string.lower(util.fileExtension(name)) == "jxl" or
-	   string.lower(util.fileExtension(name)) == "rxl" or
-       string.lower(util.fileExtension(name)) == "tmx" or
-       string.lower(util.fileExtension(name)) == "svg" or
-       string.lower(util.fileExtension(name)) == "iml" or
-	   string.lower(util.fileExtension(name)) == "project" then
+        string.lower(util.fileExtension(name)) == "axml" or
+        string.lower(util.fileExtension(name)) == "xaml" or
+        string.lower(util.fileExtension(name)) == "xsd" or
+        string.lower(util.fileExtension(name)) == "jxl" or
+        string.lower(util.fileExtension(name)) == "rxl" or
+        string.lower(util.fileExtension(name)) == "tmx" or
+        string.lower(util.fileExtension(name)) == "svg" or
+        string.lower(util.fileExtension(name)) == "iml" or
+        string.lower(util.fileExtension(name)) == "project" then
         return 
 			{ 
 				type = "xml",
@@ -237,11 +240,11 @@ function parseFileType(filename)
     end
     
     if string.lower(util.fileExtension(name)) == "c" or
-       string.lower(util.fileExtension(name)) == "h" or
-       string.lower(util.fileExtension(name)) == "cpp" or
-       string.lower(util.fileExtension(name)) == "hpp" or
-       string.lower(util.fileExtension(name)) == "cxx" or
-       string.lower(util.fileExtension(name)) == "hxx" then
+        string.lower(util.fileExtension(name)) == "h" or
+        string.lower(util.fileExtension(name)) == "cpp" or
+        string.lower(util.fileExtension(name)) == "hpp" or
+        string.lower(util.fileExtension(name)) == "cxx" or
+        string.lower(util.fileExtension(name)) == "hxx" then
         return 
             { 
                 type = "cpp",
