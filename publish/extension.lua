@@ -300,6 +300,56 @@ function fileFilter()
 	return filter
 end
 
+local legalFileExtTable = {}
+legalFileExtTable["lua"] = true
+legalFileExtTable["py"] = true
+legalFileExtTable["rb"] = true
+legalFileExtTable["sh"] = true
+legalFileExtTable["m"] = true
+legalFileExtTable["bat"] = true
+legalFileExtTable["cmd"] = true
+legalFileExtTable["txt"] = true
+legalFileExtTable["cmake"] = true
+legalFileExtTable["tcl"] = true
+legalFileExtTable["java"] = true
+legalFileExtTable["cs"] = true
+legalFileExtTable["xml"] = true
+legalFileExtTable["axml"] = true
+legalFileExtTable["xaml"] = true
+legalFileExtTable["tmx"] = true
+legalFileExtTable["xsd"] = true
+legalFileExtTable["html"] = true
+legalFileExtTable["htm"] = true
+legalFileExtTable["c"] = true
+legalFileExtTable["h"] = true
+legalFileExtTable["cpp"] = true
+legalFileExtTable["hpp"] = true
+legalFileExtTable["cxx"] = true
+legalFileExtTable["hxx"] = true
+legalFileExtTable["js"] = true
+legalFileExtTable["css"] = true
+legalFileExtTable["inf"] = true
+legalFileExtTable["mk"] = true
+legalFileExtTable["json"] = true
+legalFileExtTable["api"] = true
+legalFileExtTable["properties"] = true
+legalFileExtTable["gitignore"] = true
+legalFileExtTable["classpath"] = true
+legalFileExtTable["md"] = true
+legalFileExtTable["cfg"] = true
+legalFileExtTable["gradle"] = true
+legalFileExtTable["log"] = true
+legalFileExtTable["svg"] = true
+
 function isLegalFile(filename)
+    if (legalFileExtTable[string.lower(util.fileExtension(filename))]) then
+        return true
+    end
+
+    local base  = util.fileBaseName(filename)
+    if string.lower(base) == "makefile" then
+        return true
+    end
+
     return util.isTextFile(filename)
 end

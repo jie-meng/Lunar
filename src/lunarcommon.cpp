@@ -182,39 +182,6 @@ void LunarGlobal::init(int argc, char* argv[])
 
     readCfg();
     writeCfg();
-
-    if (!isPathFile(getAppPath() + "/" + getExtensionFile()))
-    {
-        string str =
-"function parseFileType(filename)\n\
-\n\
-\tlocal path, name = file.splitPathname(filename)\n\
-\n\
-\t-- Lunar extension\n\
-\tif name == \"extension.lua\" then\n\
-\t\tif file.isPathFile(path .. \"/Lunar\") or file.isPathFile(path .. \"/Lunar.exe\") then\n\
-\t\t\treturn { type = \"lua\", auto_complete_type = 1, api = \"apis/lua\" }\n\
-\t\tend\n\
-\tend\n\
-\n\
-\t-- lua\n\
-\tif string.lower(file.fileExtension(name)) == \"lua\" then\n\
-\t\treturn { type = \"lua\", auto_complete_type = 1, api = \"apis/lua\", executor = \"luaexec\" }\n\
-\tend\n\
-end\n\
-\n\
-function fileFilter()\n\
-\tfilter = {}\n\
-\ttable.insert(filter, \"Lua Files(*.lua)\")\n\
-\treturn filter\n\
-end\n\
-\n\
-function isLegalFile(filename)\n\
-\treturn util.isTextFile(filename)\n\
-end\n";
-
-        writeTextFile(getAppPath() + "/" + getExtensionFile(), str);
-    }
 }
 
 void LunarGlobal::parseExtensionFileFilter()
