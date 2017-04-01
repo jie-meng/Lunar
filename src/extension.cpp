@@ -139,3 +139,39 @@ std::string Extension::fileFilter()
         }
     }
 }
+
+bool Extension::isLegalFile(const std::string& filename)
+{
+    if (!lua_state_ok_)
+        return false;
+
+    error_information_ = "";
+
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncIsLegalFile());
+    luaPushString(lua_state_.getState(), filename);
+
+    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    if (0 != err)
+    {
+        error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
+        luaPop(lua_state_.getState(), -1);
+
+        return false;
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+        if (ret_cnt > 0)
+        {
+            bool ret = luaToBoolean(lua_state_.getState(), 1, false);
+            luaPop(lua_state_.getState(), -1);
+            return ret;
+        }
+        else
+        {
+            luaPop(lua_state_.getState(), -1);
+            return false;
+        }
+    }
+}

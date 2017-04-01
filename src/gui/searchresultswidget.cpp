@@ -25,7 +25,7 @@ public:
 
     virtual bool filter(const std::string& path)
     {
-        if (!isTextFile(path))
+        if (!isPathFile(path) || !Extension::getInstance().isLegalFile(path))
             return false;
 
         if (vec_.empty())
