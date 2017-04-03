@@ -289,12 +289,12 @@ void MainWindow::initActions()
 
     pedit_jump_back_action_ = new QAction(tr("Jump back"), this);
     pedit_jump_back_action_->setStatusTip(tr("Jump back."));
-    pedit_jump_back_action_->setShortcut(Qt::CTRL + Qt::Key_J);
+    pedit_jump_back_action_->setShortcut(Qt::CTRL + Qt::Key_Comma);
     pedit_jump_back_action_->setIcon(QIcon(tr(":/res/jump_back.png")));
 
     pedit_jump_forward_action_ = new QAction(tr("Jump forward"), this);
     pedit_jump_forward_action_->setStatusTip(tr("Jump forward."));
-    pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_K);
+    pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_Period);
     pedit_jump_forward_action_->setIcon(QIcon(tr(":/res/jump_forward.png")));
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
