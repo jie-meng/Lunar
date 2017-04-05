@@ -1,4 +1,8 @@
 function checkJavaScriptType(filename)
+    if string.lower(util.fileExtension(fileBaseName)) == "jsx" then
+        return "react"
+    end
+    
     local content = util.readTextFile(filename)
     local path = util.splitPathname(filename)
     
@@ -88,7 +92,8 @@ function parseFileType(filename)
             }
 	end
 	
-	if string.lower(util.fileExtension(name)) == "js" then
+	if string.lower(util.fileExtension(name)) == "js" or
+        string.lower(util.fileExtension(name)) == "jsx" then
         local js_type = checkJavaScriptType(filename)
         local js_tb = {
             type = "javascript", 
@@ -283,7 +288,7 @@ function fileFilter()
 	filter = {}
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Python Files(*.py)")
-	table.insert(filter, "JavaScript Files(*.js)")
+	table.insert(filter, "JavaScript Files(*.js;*.jsx)")
     table.insert(filter, "Ruby Files(*.rb)")
 	table.insert(filter, "Bash Files(*.sh)")
 	table.insert(filter, "Octave Files(*.m)")
@@ -327,6 +332,7 @@ legalFileExtTable["hpp"] = true
 legalFileExtTable["cxx"] = true
 legalFileExtTable["hxx"] = true
 legalFileExtTable["js"] = true
+legalFileExtTable["jsx"] = true
 legalFileExtTable["css"] = true
 legalFileExtTable["inf"] = true
 legalFileExtTable["mk"] = true
