@@ -31,6 +31,7 @@ public slots:
     void loadRoot();
     void onFileSaved(const QString& file);
     void onAllFilesSaved();
+    void showContextMenu();
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void contextMenuEvent(QContextMenuEvent *e);
@@ -44,6 +45,7 @@ private:
     QString getNodeAbsolutePath(QTreeWidgetItem* item);
     QString getNodeRelativePath(QTreeWidgetItem* item);
     void onClickExtensionTool(const std::string& str);
+    void showContextMenu(const QPoint &pos);
 private Q_SLOTS:
     void newFolder();
     void newFolderOk(const QString& folder_name);

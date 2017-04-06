@@ -59,6 +59,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_goto_definition_action_(NULL),
     pedit_jump_back_action_(NULL),
     pedit_jump_forward_action_(NULL),
+    pedit_file_explorer_context_menu_action_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
     pview_documents_action_(NULL),
@@ -297,6 +298,10 @@ void MainWindow::initActions()
     pedit_jump_forward_action_->setShortcut(Qt::CTRL + Qt::Key_Period);
     pedit_jump_forward_action_->setIcon(QIcon(tr(":/res/jump_forward.png")));
 
+    pedit_file_explorer_context_menu_action_ = new QAction(tr("Show File Explorer context menu"), this);
+    pedit_file_explorer_context_menu_action_->setStatusTip(tr("Show File Explorer context menu."));
+    pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_J);
+
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_E);
@@ -357,6 +362,7 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_goto_definition_action_);
     pedit_menu->addAction(pedit_jump_back_action_);
     pedit_menu->addAction(pedit_jump_forward_action_);
+    pedit_menu->addAction(pedit_file_explorer_context_menu_action_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -442,6 +448,7 @@ void MainWindow::initConnections()
     connect(pedit_goto_definition_action_, SIGNAL(triggered()), this, SLOT(editGotoDefinition()));
     connect(pedit_jump_back_action_, SIGNAL(triggered()), this, SLOT(editJumpBack()));
     connect(pedit_jump_forward_action_, SIGNAL(triggered()), this, SLOT(editJumpForward()));
+    connect(pedit_file_explorer_context_menu_action_, SIGNAL(triggered()), pfile_explorer_widget_, SLOT(showContextMenu()));
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));

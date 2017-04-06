@@ -63,39 +63,7 @@ void FileExplorerWidget::keyPressEvent(QKeyEvent *event)
 
 void FileExplorerWidget::contextMenuEvent(QContextMenuEvent *e)
 {
-    QMenu* menu = new QMenu();
-
-    QAction* act_refresh = menu->addAction(tr("Refresh"));
-    menu->addSeparator();
-    QAction* act_new_folder = menu->addAction(tr("New Folder"));
-    QAction* act_rename = menu->addAction(tr("Rename"));
-    QAction* act_delete = menu->addAction(tr("Delete"));
-
-    string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionToolsPath();
-    if (isPathDir(extension_tools_path))
-    {
-        FileFilter ff;
-        vector<string> extension_tools_files;
-        if (listFiles(extension_tools_path, extension_tools_files, &ff) > 0)
-        {
-            sort(extension_tools_files.begin(), extension_tools_files.end()); 
-            QMenu* extension_tool_menu = menu->addMenu("Extension Tools");
-            for (vector<string>::iterator it = extension_tools_files.begin(); it != extension_tools_files.end(); ++it)
-            {
-                QAction* act = extension_tool_menu->addAction(StdStringToQString(fileBaseName(*it)));
-                connect(act, &QAction::triggered, UtilBind(&FileExplorerWidget::onClickExtensionTool, this, *it));
-            }
-        }
-    }
-
-    connect(act_refresh, SIGNAL(triggered()),this,SLOT(loadRoot()));
-    connect(act_new_folder, SIGNAL(triggered()), this, SLOT(newFolder()));
-    connect(act_rename, SIGNAL(triggered()),this, SLOT(renameCurrentItem()));
-    connect(act_delete, SIGNAL(triggered()),this, SLOT(deleteCurrentItem()));
-
-    menu->exec(e->globalPos());
-    delete menu;
-
+    showContextMenu(e->globalPos());
     QTreeWidget::contextMenuEvent(e);
 }
 
@@ -525,6 +493,47 @@ QTreeWidgetItem* FileExplorerWidget::findDirNodeItemWithFile(const QString& file
     }
 
     return pnode;
+}
+
+void FileExplorerWidget::showContextMenu()
+{
+    showContextMenu(mapToGlobal(pos()));
+}
+
+void FileExplorerWidget::showContextMenu(const QPoint &pos)
+{
+    QMenu* menu = new QMenu();
+
+    QAction* act_refresh = menu->addAction(tr("Refresh"));
+    menu->addSeparator();
+    QAction* act_new_folder = menu->addAction(tr("New Folder"));
+    QAction* act_rename = menu->addAction(tr("Rename"));
+    QAction* act_delete = menu->addAction(tr("Delete"));
+
+    string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionToolsPath();
+    if (isPathDir(extension_tools_path))
+    {
+        FileFilter ff;
+        vector<string> extension_tools_files;
+        if (listFiles(extension_tools_path, extension_tools_files, &ff) > 0)
+        {
+            sort(extension_tools_files.begin(), extension_tools_files.end());
+            QMenu* extension_tool_menu = menu->addMenu("Extension Tools");
+            for (vector<string>::iterator it = extension_tools_files.begin(); it != extension_tools_files.end(); ++it)
+            {
+                QAction* act = extension_tool_menu->addAction(StdStringToQString(fileBaseName(*it)));
+                connect(act, &QAction::triggered, UtilBind(&FileExplorerWidget::onClickExtensionTool, this, *it));
+            }
+        }
+    }
+
+    connect(act_refresh, SIGNAL(triggered()),this,SLOT(loadRoot()));
+    connect(act_new_folder, SIGNAL(triggered()), this, SLOT(newFolder()));
+    connect(act_rename, SIGNAL(triggered()),this, SLOT(renameCurrentItem()));
+    connect(act_delete, SIGNAL(triggered()),this, SLOT(deleteCurrentItem()));
+
+    menu->exec(pos);
+    delete menu;
 }
 
 }
