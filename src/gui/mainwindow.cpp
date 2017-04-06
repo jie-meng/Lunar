@@ -448,7 +448,13 @@ void MainWindow::initConnections()
     connect(pedit_goto_definition_action_, SIGNAL(triggered()), this, SLOT(editGotoDefinition()));
     connect(pedit_jump_back_action_, SIGNAL(triggered()), this, SLOT(editJumpBack()));
     connect(pedit_jump_forward_action_, SIGNAL(triggered()), this, SLOT(editJumpForward()));
-    connect(pedit_file_explorer_context_menu_action_, SIGNAL(triggered()), pfile_explorer_widget_, SLOT(showContextMenu()));
+    connect(pedit_file_explorer_context_menu_action_, &QAction::triggered, [this]()
+    {
+        if (pleft_widget_->isHidden())
+            return;
+
+        pfile_explorer_widget_->showContextMenu();
+    });
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
