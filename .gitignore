@@ -35,6 +35,7 @@ libqscintilla2.so.12.0.0
 /[Dd]ebug/*
 /[Rr]elease/*
 /Lunar.app
+/.vscode/
 
 # QtCreator
 Lunar.pro
