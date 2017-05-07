@@ -1,13 +1,14 @@
-local json = require('json')
+local table_ext = require('table_ext')
 
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
+local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
     if f then
         local line = f:read('*line')
-        local curent_class = nil
+        local current_class = nil
         local line_number = 1
         while line do
             repeat
@@ -20,17 +21,26 @@ function parseFile(filename, classes)
                 --match class start
                 local class, super = string.match(trim_line, pattern_class_begin)
                 if class and super then
-                    curent_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-                    table.insert(curent_class.extends, super)
+                    current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+                    table.insert(current_class.extends, super)
                     break
                 end
                 
-                if curent_class then
+                if current_class then
                     local method, params = string.match(trim_line, pattern_method)
                     if method and params then
-                        table.insert(curent_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                         if method == 'ctor' then
-                            table.insert(curent_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_arrow_method)
+                    if method and params then
+                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                        if method == 'ctor' then
+                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
                         end
                         break
                     end
@@ -38,9 +48,9 @@ function parseFile(filename, classes)
                 
                 --match class end
                 if util.strStartWith(line, '});') then
-                    if curent_class then
-                        classes[curent_class.name] = curent_class
-                        curent_class = nil
+                    if current_class then
+                        classes[current_class.name] = current_class
+                        current_class = nil
                     end
                     break
                 end
@@ -82,9 +92,9 @@ for _, path in ipairs(api_paths) do
     end
 end
 
---generate api json
-util.writeTextFile('api.json', json.encode(classes))
-print('generate "api.json"')
+--generate cocos_api_tb
+table_ext.save(classes, 'cocos_api_tb')
+print('generate "cocos_api_tb"')
 
 --do not need generate api file because supplement api would include cocos api
 --process extends for api

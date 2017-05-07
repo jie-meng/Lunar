@@ -1,13 +1,14 @@
-local json = require('json')
+local table_ext = require('table_ext')
 
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
+local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
     if f then
         local line = f:read('*line')
-        local curent_class = nil
+        local current_class = nil
         local line_number = 1
         while line do
             repeat
@@ -20,17 +21,26 @@ function parseFile(filename, classes)
                 --match class start
                 local class, super = string.match(trim_line, pattern_class_begin)
                 if class and super then
-                    curent_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-                    table.insert(curent_class.extends, super)
+                    current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+                    table.insert(current_class.extends, super)
                     break
                 end
                 
-                if curent_class then
+                if current_class then
                     local method, params = string.match(trim_line, pattern_method)
                     if method and params then
-                        table.insert(curent_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                         if method == 'ctor' then
-                            table.insert(curent_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_arrow_method)
+                    if method and params then
+                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                        if method == 'ctor' then
+                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
                         end
                         break
                     end
@@ -38,9 +48,9 @@ function parseFile(filename, classes)
                 
                 --match class end
                 if util.strStartWith(line, '});') then
-                    if curent_class then
-                        classes[curent_class.name] = curent_class
-                        curent_class = nil
+                    if current_class then
+                        classes[current_class.name] = current_class
+                        current_class = nil
                     end
                     break
                 end
@@ -69,48 +79,58 @@ end
 
 function inClassRange(filename, current_line_number)
     local f = io.open(filename, "r")
+    local return_class = nil
+    local out_of_range = false
     if f then
         local line = f:read('*line')
-        local curent_class = nil
+        local current_class = nil
         local line_number = 1
         while line do
             repeat
+                if current_class and line_number == current_line_number then
+                    return_class = current_class
+                    break
+                end
+                
                 local trim_line = util.strTrim(line)
                 --comments
                 if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
                     break
                 end
-                
-                if curent_class and line_number == current_line_number then
-                    return curent_class
-                end
-                
+
                 --match class start
                 local class, super = string.match(trim_line, pattern_class_begin)
                 if class and super then
-                    curent_class = class
+                    current_class = class
+                    if line_number > current_line_number then
+                        out_of_range = true
+                    end
                     break
                 end
                 
                 --match class end
                 if util.strStartWith(line, '});') then
-                    if curent_class then
-                        curent_class = nil
+                    if current_class then
+                        current_class = nil
                     end
                     break
                 end
             until true
             line = f:read("*line")
             line_number = line_number + 1
+            
+            if return_class or out_of_range then
+                break
+            end
         end
         io.close(f)
     end
     
-    return nil
+    return return_class
 end
 
 function gotoDefinition(text, line, filename, project_src_dir)
-    local classes = {}
+    local classes = table_ext.load('cocos_api_tb')
     local js_files = util.findFilesInDirRecursively(project_src_dir, 'js')
     for _, v in ipairs(js_files) do
         parseFile(v, classes)

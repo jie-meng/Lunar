@@ -1,7 +1,8 @@
-local json = require('json')
+local table_ext = require('table_ext')
 
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
+local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
@@ -27,6 +28,15 @@ function parseFile(filename, classes)
                 
                 if current_class then
                     local method, params = string.match(trim_line, pattern_method)
+                    if method and params then
+                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                        if method == 'ctor' then
+                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_arrow_method)
                     if method and params then
                         table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                         if method == 'ctor' then
@@ -66,26 +76,32 @@ end
 
 function inClassRange(filename, current_line_number)
     local f = io.open(filename, "r")
+    local return_class = nil
+    local out_of_range = false
     if f then
         local line = f:read('*line')
         local current_class = nil
         local line_number = 1
         while line do
             repeat
+                if current_class and line_number == current_line_number then
+                    return_class = current_class
+                    break
+                end
+                
                 local trim_line = util.strTrim(line)
                 --comments
                 if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
                     break
                 end
-                
-                if current_class and line_number == current_line_number then
-                    return current_class
-                end
-                
+
                 --match class start
                 local class, super = string.match(trim_line, pattern_class_begin)
                 if class and super then
                     current_class = class
+                    if line_number > current_line_number then
+                        out_of_range = true
+                    end
                     break
                 end
                 
@@ -99,17 +115,21 @@ function inClassRange(filename, current_line_number)
             until true
             line = f:read("*line")
             line_number = line_number + 1
+            
+            if return_class or out_of_range then
+                break
+            end
         end
         io.close(f)
     end
     
-    return nil
+    return return_class
 end
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
     
-    local classes = json.decode(util.readTextFile('api.json'))
+    local classes = table_ext.load('cocos_api_tb')
     local js_files = util.findFilesInDirRecursively(project_src_dir, 'js')
     for _, v in ipairs(js_files) do
         parseFile(v, classes)
@@ -120,7 +140,9 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     if range_class_name then
         local range_class = classes[range_class_name]
         if range_class then
-            classes['this'] = { name = 'this', extends = range_class.extends, methods = range_class.methods, fields = range_class.fields, file = range_class.file, line_number = range_class.line_number, line = range_class.line }
+            local this_tb = table_ext.shallowCopy(range_class)
+            this_tb.name = 'this'
+            classes['this'] = this_tb
         end
     end
 
