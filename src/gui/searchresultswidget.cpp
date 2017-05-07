@@ -25,7 +25,7 @@ public:
 
     virtual bool filter(const std::string& path)
     {
-        if (!isPathFile(path) || !Extension::getInstance().isLegalFile(path))
+        if (!isPathFile(path))
             return false;
 
         if (vec_.empty())
@@ -33,7 +33,7 @@ public:
 
         for (vector<string>::iterator it = vec_.begin(); it != vec_.end(); ++it)
         {
-            if (strAreEqual(fileExtension(path), strTrim(*it), false))
+            if (strAreEqual(fileExtension(path), strTrim(*it), false) && Extension::getInstance().isLegalFile(path)) 
                 return true;
         }
         return false;
@@ -178,6 +178,10 @@ void SearchResultsWidget::searchInPath(const QString& path,
     }
 
     clear();
+    
+    if (text.isEmpty())
+        return;
+
     search_thread_.start(path, text, exts, case_sensitive, use_regexp);
 }
 
