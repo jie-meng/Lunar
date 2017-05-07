@@ -8,6 +8,7 @@ function parseFile(filename, classes)
     if f then
         local line = f:read('*line')
         local curent_class = nil
+        local line_number = 1
         while line do
             repeat
                 local trim_line = util.strTrim(line)
@@ -19,7 +20,7 @@ function parseFile(filename, classes)
                 --match class start
                 local class, super = string.match(trim_line, pattern_class_begin)
                 if class and super then
-                    curent_class = { name = class, extends = {}, methods = {}, fields = {} }
+                    curent_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
                     table.insert(curent_class.extends, super)
                     break
                 end
@@ -27,9 +28,9 @@ function parseFile(filename, classes)
                 if curent_class then
                     local method, params = string.match(trim_line, pattern_method)
                     if method and params then
-                        table.insert(curent_class.methods, string.format('%s(%s)', method, params))
+                        table.insert(curent_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                         if method == 'ctor' then
-                            table.insert(curent_class.methods, string.format('create(%s)', params))
+                            table.insert(curent_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
                         end
                         break
                     end
@@ -45,6 +46,7 @@ function parseFile(filename, classes)
                 end
             until true
             line = f:read("*line")
+            line_number = line_number + 1
         end
         io.close(f)
     end
@@ -55,7 +57,7 @@ function processExtends(class, extends, classes, apis)
         local extend_class = classes[e]
         if extend_class then
                 for _, v in ipairs(extend_class.methods) do
-                    apis[class.name .. '.' .. v] = true
+                    apis[string.format('%s.%s(%s)', class.name, v.name, v.args)] = true
                 end
             processExtends(class, extend_class.extends, classes, apis)
         end
@@ -84,20 +86,22 @@ end
 util.writeTextFile('api.json', json.encode(classes))
 print('generate "api.json"')
 
---generate api file
-local apis = {}
-for _, c in pairs(classes) do
-    for _, v in ipairs(c.methods) do
-        apis[c.name .. '.' .. v] = true
-    end
-    processExtends(c, c.extends, classes, apis)
-end
+--do not need generate api file because supplement api would include cocos api
+--process extends for api
+--local apis = {}
+--for _, c in pairs(classes) do
+--    for _, v in ipairs(c.methods) do
+--        apis[string.format('%s.%s(%s)', c.name, v.name, v.args)] = true
+--    end
+--    processExtends(c, c.extends, classes, apis)
+--end
 
-local array = {}
-for k, _ in pairs(apis) do
-    table.insert(array, k)
-end
+----generate api file
+--local array = {}
+--for k, _ in pairs(apis) do
+--    table.insert(array, k)
+--end
 
-table.sort(array)
-util.writeTextFile('cocos.api', util.strJoin(array, '\n'))
-print('generate "cocos.api"')
+--table.sort(array)
+--util.writeTextFile('cocos.api', util.strJoin(array, '\n'))
+--print('generate "cocos.api"')

@@ -75,6 +75,8 @@ function parseFileType(filename)
                     api = "apis/javascript/js,cocos.api",
                     executor = "luaexec",
                     project_src_dir = "src",
+                    plugin_goto = "plugins/goto_cocos_js.lua",
+                    plugin_parse_api = "plugins/parse_supplement_api_cocos_js.lua", 
                     comment_line = "//",
                     comment_block_begin = "/*",
                     comment_block_end = "*/"
