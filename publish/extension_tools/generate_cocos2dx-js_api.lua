@@ -3,8 +3,11 @@ local table_ext = require('table_ext')
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
 local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
+local pattern_cc_method = [[(cc.[%w_%.]+)%s*=%s*function%s*%((.*)%)]]
+local pattern_cc_arrow_method = [[(cc.[%w_%.]+)%s*=%s*%((.*)%)%s*=>]]
+local pattern_cc_field = [[(cc.[%w_%.]+)%s*=]]
 
-function parseFile(filename, classes)
+function parseFile(filename, classes, apis)
     local f = io.open(filename, "r")
     if f then
         local line = f:read('*line')
@@ -13,6 +16,7 @@ function parseFile(filename, classes)
         while line do
             repeat
                 local trim_line = util.strTrim(line)
+
                 --comments
                 if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
                     break
@@ -42,6 +46,24 @@ function parseFile(filename, classes)
                         if method == 'ctor' then
                             table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
                         end
+                        break
+                    end
+                else
+                    local method, params = string.match(trim_line, pattern_cc_method)
+                    if method and params then
+                        apis[string.format('%s(%s)', method, params)] = true
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_cc_arrow_method)
+                    if method and params then
+                        apis[string.format('%s(%s)', method, params)] = true
+                        break
+                    end
+                    
+                    local field = string.match(trim_line, pattern_cc_field)
+                    if field then
+                        apis[field] = true
                         break
                     end
                 end
@@ -78,17 +100,26 @@ end
 --main
 local api_paths = {}
 
-table.insert(api_paths, 'frameworks/cocos2d-html5/cocos2d')
-table.insert(api_paths, 'frameworks/cocos2d-html5/extensions')
+table.insert(api_paths, { name = 'frameworks/cocos2d-html5', recursive = false })
+table.insert(api_paths, { name = 'frameworks/cocos2d-html5/cocos2d', recursive = true })
+table.insert(api_paths, { name = 'frameworks/cocos2d-html5/extensions', recursive = true })
 
+local apis = {}
 local classes = {}
 
 for _, path in ipairs(api_paths) do
-    if util.isPathDir(path) then
-        local js_files = util.findFilesInDirRecursively(path, 'js')
-        for _, file in ipairs(js_files) do
-            parseFile(file, classes)
+    if util.isPathDir(path.name) then
+        local js_files = nil
+        if path.recursive then
+            js_files = util.findFilesInDirRecursively(path.name, 'js')
+        else
+            js_files = util.findFilesInDir(path.name, 'js')
         end
+        for _, file in ipairs(js_files) do
+            parseFile(file, classes, apis)
+        end
+    elseif util.isPathFile(path.name) then
+        parseFile(path.name, classes, apis)
     end
 end
 
@@ -96,22 +127,12 @@ end
 table_ext.save(classes, 'cocos_api_tb')
 print('generate "cocos_api_tb"')
 
---do not need generate api file because supplement api would include cocos api
---process extends for api
---local apis = {}
---for _, c in pairs(classes) do
---    for _, v in ipairs(c.methods) do
---        apis[string.format('%s.%s(%s)', c.name, v.name, v.args)] = true
---    end
---    processExtends(c, c.extends, classes, apis)
---end
+--generate api file (non-class api only)
+local array = {}
+for k, _ in pairs(apis) do
+    table.insert(array, k)
+end
 
-----generate api file
---local array = {}
---for k, _ in pairs(apis) do
---    table.insert(array, k)
---end
-
---table.sort(array)
---util.writeTextFile('cocos.api', util.strJoin(array, '\n'))
---print('generate "cocos.api"')
+table.sort(array)
+util.writeTextFile('cocos.api', util.strJoin(array, '\n'))
+print('generate "cocos.api"')
