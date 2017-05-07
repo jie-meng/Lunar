@@ -3,6 +3,9 @@ local table_ext = require('table_ext')
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
 local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
+local pattern_static_method = [[([%w_%.]+)%s*=%s*function%s*%((.*)%)]]
+local pattern_static_arrow_method = [[([%w_%.]+)%s*=%s*%((.*)%)%s*=>]]
+local pattern_static_variable = [[([%w_%.]+)%s*=]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
@@ -30,17 +33,39 @@ function parseFile(filename, classes)
                     local method, params = string.match(trim_line, pattern_method)
                     if method and params then
                         table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        if method == 'ctor' then
-                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
-                        end
                         break
                     end
                     
                     method, params = string.match(trim_line, pattern_arrow_method)
                     if method and params then
                         table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        if method == 'ctor' then
-                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                        break
+                    end
+                else
+                    --static methods, variables
+                    local method, params = string.match(trim_line, pattern_static_method)
+                    if method and params then
+                        local cls = classes[util.fileBaseName(method)]
+                        if cls then
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_static_arrow_method)
+                    if method and params then
+                        local cls = classes[util.fileBaseName(method)]
+                        if cls then
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    local variable = string.match(trim_line, pattern_static_variable)
+                    if variable then
+                        local cls = classes[util.fileBaseName(variable)]
+                        if cls then
+                            table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
                         end
                         break
                     end
@@ -66,9 +91,12 @@ function processExtends(class, extends, classes, apis)
     for _, e in ipairs(extends) do
         local extend_class = classes[e]
         if extend_class then
-                for _, v in ipairs(extend_class.methods) do
-                    apis[string.format('%s.%s(%s)', class.name, v.name, v.args)] = true
-                end
+            for _, v in ipairs(extend_class.methods) do
+                apis[string.format('%s.%s(%s)', class.name, v.name, v.args)] = true
+            end
+            for _, v in ipairs(extend_class.fields) do
+                apis[string.format('%s.%s', class.name, v.name)] = true
+            end
             processExtends(class, extend_class.extends, classes, apis)
         end
     end
@@ -151,6 +179,9 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     for _, c in pairs(classes) do
         for _, v in ipairs(c.methods) do
             apis[string.format('%s.%s(%s)', c.name, v.name, v.args)] = true
+        end
+        for _, v in ipairs(c.fields) do
+            apis[string.format('%s.%s', c.name, v.name)] = true
         end
         processExtends(c, c.extends, classes, apis)
     end

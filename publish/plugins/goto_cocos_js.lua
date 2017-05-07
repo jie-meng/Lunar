@@ -3,6 +3,9 @@ local table_ext = require('table_ext')
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
 local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
+local pattern_static_method = [[([%w_%.]+)%s*=%s*function%s*%((.*)%)]]
+local pattern_static_arrow_method = [[([%w_%.]+)%s*=%s*%((.*)%)%s*=>]]
+local pattern_static_variable = [[([%w_%.]+)%s*=]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
@@ -30,17 +33,39 @@ function parseFile(filename, classes)
                     local method, params = string.match(trim_line, pattern_method)
                     if method and params then
                         table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        if method == 'ctor' then
-                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
-                        end
                         break
                     end
                     
                     method, params = string.match(trim_line, pattern_arrow_method)
                     if method and params then
                         table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        if method == 'ctor' then
-                            table.insert(current_class.methods, { name = 'create', args = params, file = filename, line_number = line_number, line = line })
+                        break
+                    end
+                else
+                    --static methods, variables
+                    local method, params = string.match(trim_line, pattern_static_method)
+                    if method and params then
+                        local cls = classes[util.fileBaseName(method)]
+                        if cls then
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    method, params = string.match(trim_line, pattern_static_arrow_method)
+                    if method and params then
+                        local cls = classes[util.fileBaseName(method)]
+                        if cls then
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
+                        end
+                        break
+                    end
+                    
+                    local variable = string.match(trim_line, pattern_static_variable)
+                    if variable then
+                        local cls = classes[util.fileBaseName(variable)]
+                        if cls then
+                            table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
                         end
                         break
                     end
@@ -66,6 +91,11 @@ function findInExtends(text, class, classes, results)
     for _, m in ipairs(class.methods) do
         if text == m.name then
             table.insert(results, string.format("%s\n%d\n%s", m.file, m.line_number, m.line)) 
+        end
+    end
+    for _, f in ipairs(class.fields) do
+        if text == f.name then
+            table.insert(results, string.format("%s\n%d\n%s", f.file, f.line_number, f.line)) 
         end
     end
 
@@ -142,12 +172,20 @@ function gotoDefinition(text, line, filename, project_src_dir)
         --find class
         table.insert(results, string.format("%s\n%d\n%s", class.file, class.line_number, class.line))
     else
-        --find method in range
-        local range_class_name = inClassRange(filename, line)
-        if range_class_name then
-            local range_class = classes[range_class_name]
-            if range_class then
-                findInExtends(text, range_class, classes, results)
+        if util.strContains(text, '.') then
+            --absolute method/fields
+            local cls = classes[util.fileBaseName(text)]
+            if cls then
+                findInExtends(util.fileExtension(text), cls, classes, results)
+            end
+        else    
+            --relative (local) method/fields, find in self range
+            local range_class_name = inClassRange(filename, line)
+            if range_class_name then
+                local range_class = classes[range_class_name]
+                if range_class then
+                    findInExtends(text, range_class, classes, results)
+                end
             end
         end
     end
