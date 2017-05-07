@@ -5,7 +5,7 @@ if util.strContains(util.platformInfo(), "unix", false) then
         os.execute("make")
         if util.isPathDir(util.currentPath() .. "/Lunar.app") == true then
                 print("make success")
-        -- else
+        else
             print("make fail")
         end
     else
