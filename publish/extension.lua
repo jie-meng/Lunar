@@ -48,23 +48,40 @@ function parseFileType(filename)
                 }
 		end
 	end
-
-    if string.lower(util.fileExtension(name)) == "lua" and util.isPathFile("./cocos_run.lua") then
-		return 
-            {
-                type = "lua", 
-                auto_complete_type = 1, 
-                api = "apis/lua/standard,cocos.api", 
-                executor = "luaexec",
-                project_src_dir = "src/app",
-                plugin_goto = "plugins/goto_cocos_lua.lua",
-                plugin_parse_api = "plugins/parse_supplement_api_cocos_lua.lua", 
-                comment_line = "--",
-				comment_block_begin = "--[[",
-				comment_block_end = "]]"
-            }
-	end
-
+    
+    --cocos2dx project
+    if util.isPathFile('.cocos-project.json') then
+        if string.lower(util.fileExtension(name)) == "lua" then
+            return 
+                {
+                    type = "lua", 
+                    auto_complete_type = 1, 
+                    api = "apis/lua/standard,cocos.api", 
+                    executor = "luaexec",
+                    project_src_dir = "src/app",
+                    plugin_goto = "plugins/goto_cocos_lua.lua",
+                    plugin_parse_api = "plugins/parse_supplement_api_cocos_lua.lua", 
+                    comment_line = "--",
+                    comment_block_begin = "--[[",
+                    comment_block_end = "]]"
+                }
+        end
+        
+        if string.lower(util.fileExtension(name)) == "js" then
+            return 
+                {
+                    type = "javascript",
+                    auto_complete_type = 1,
+                    api = "apis/javascript/js,cocos.api",
+                    executor = "luaexec",
+                    project_src_dir = "src",
+                    comment_line = "//",
+                    comment_block_begin = "/*",
+                    comment_block_end = "*/"
+                }
+        end
+    end
+    
 	if string.lower(util.fileExtension(name)) == "lua" then
 		return 
             {
