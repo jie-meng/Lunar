@@ -50,7 +50,10 @@ function parseFile(filename, classes, apis)
                         if cls then
                             table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                         else
-                            apis[string.format('%s(%s)', method, params)] = true
+                            if not util.strStartWith(method, '.') then
+                                apis[string.format('%s(%s)', method, params)] = true
+                            end
+
                         end
                         break
                     end
@@ -61,7 +64,9 @@ function parseFile(filename, classes, apis)
                         if cls then
                             table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                         else
-                            apis[string.format('%s(%s)', method, params)] = true
+                            if not util.strStartWith(method, '.') then
+                                apis[string.format('%s(%s)', method, params)] = true
+                            end
                         end
                         break
                     end
@@ -72,7 +77,9 @@ function parseFile(filename, classes, apis)
                         if cls then
                             table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
                         else
-                            apis[variable] = true
+                            if not util.strStartWith(variable, '.') and util.strContains(variable, '.') then
+                                apis[variable] = true
+                            end
                         end
                         break
                     end
