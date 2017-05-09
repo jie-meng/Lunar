@@ -6,6 +6,8 @@ local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
 local pattern_static_method = [[([%w_%.]+)%s*=%s*function%s*%((.*)%)]]
 local pattern_static_arrow_method = [[([%w_%.]+)%s*=%s*%((.*)%)%s*=>]]
 local pattern_static_variable = [[([%w_%.]+)%s*=]]
+local pattern_res_begin = [[var%s+res%s*=%s*{]]
+local pattern_res_name = [[([%w_]+)%s*:]]
 
 function parseFile(filename, classes)
     local f = io.open(filename, "r")
@@ -159,12 +161,65 @@ function inClassRange(filename, current_line_number)
     return return_class
 end
 
+function parseResourceFile(classes)
+    local f = io.open('src/resource.js', "r")
+    if f then
+        local cls = { name = 'res', extends = {}, methods = {}, fields = {}, file = 'src/resource.js', line_number = 0, line = '' }
+        classes['res'] = cls
+        local line = f:read('*line')
+        local line_number = 1
+        local in_range = false
+        local finish = false
+        while line do
+            repeat
+                local trim_line = util.strTrim(line)
+                --comments
+                if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
+                    break
+                end
+                
+                if not finish and in_range then
+                    local name = string.match(trim_line, pattern_res_name)
+                    if name then
+                        table.insert(cls.fields, { name = name, file = cls.file, line_number = line_number, line = line })
+                        break
+                    end
+                end
+
+                --match class start
+                if string.match(trim_line, pattern_res_begin) then
+                    in_range = true
+                    cls.line_number = line_number
+                    cls.line = line
+                    break
+                end
+                
+                --match class end
+                if util.strEndWith(trim_line, '};') then
+                    in_range = false
+                    finish = true
+                    break
+                end
+            until true
+            line = f:read("*line")
+            line_number = line_number + 1
+        end
+        io.close(f)
+    end
+end
+
 function gotoDefinition(text, line, filename, project_src_dir)
+    --load index
     local classes = table_ext.load('cocos_api_tb')
+    
+    --parse src
     local js_files = util.findFilesInDirRecursively(project_src_dir, 'js')
     for _, v in ipairs(js_files) do
         parseFile(v, classes)
     end
+    
+    --parse resource
+    parseResourceFile(classes)
     
     local results = {}
     local class = classes[text]
