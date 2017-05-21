@@ -4,7 +4,6 @@ const path = require('path');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
 const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
-const OUTPUT_DIR = path.resolve(__dirname, 'dist');
 
 var npmModules = require('./package.json').dependencies;
 var vendorLibs = [];
