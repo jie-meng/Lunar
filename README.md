@@ -5,7 +5,7 @@
 A cross-platform (MacOS, Linux, Windows) script editor
 
 - Customize your script api, auto-completion & goto-definition plugins.
-- Currently supported: lua with extensions, cocos2dx_lua, python2 & 3, cpp, octave 
+- Currently supported: lua with extensions, cocos2dx_lua, cocos2dx_js, python2 & 3, cpp, octave 
 
 ### Preparations ###
 
@@ -117,3 +117,8 @@ On MacOS
 - 2017.03.01
 
     V1.7.7 Update QScintilla2 to 2.10. Support Markdown & JSON.
+    
+- 2017.05.21
+    
+    V1.8.1 Support cocos2dx-js.
+    

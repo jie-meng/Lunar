@@ -68,8 +68,7 @@ function parseFileType(filename)
         end
         
         if string.lower(util.fileExtension(name)) == "js" then
-            return 
-                {
+            local conf = {
                     type = "javascript",
                     auto_complete_type = 1,
                     api = "apis/javascript/js,cocos.api",
@@ -81,6 +80,13 @@ function parseFileType(filename)
                     comment_block_begin = "/*",
                     comment_block_end = "*/"
                 }
+            
+            if util.isPathFile('webpack.config.js') then
+                conf.plugin_goto = "plugins/goto_cocos_js_webpack.lua"
+                conf.plugin_parse_api = "plugins/parse_supplement_api_cocos_js_webpack.lua"
+            end
+            
+            return conf
         end
     end
     
