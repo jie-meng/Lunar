@@ -1,0 +1,90 @@
+# Compiled Lua sources
+luac.out
+
+# luarocks build files
+*.src.rock
+*.zip
+*.tar.gz
+
+# Object files
+*.o
+*.os
+*.ko
+*.obj
+*.elf
+*.luac
+
+# Precompiled Headers
+*.gch
+#*.pch
+
+# Libraries
+#*.lib
+#*.a
+#*.la
+#*.lo
+#*.def
+#*.exp
+
+# Shared objects (inc. Windows DLLs)
+#*.dll
+#*.so
+#*.so.*
+#*.dylib
+libcocos2dlua.so
+gdbserver
+gdb.setup
+
+# Executables
+*.exe
+*.out
+*.app
+*.i*86
+*.x86_64
+*.hex
+*.ilk
+*.pdb
+
+#webpack
+/src/bundle.js
+/src/vendor.js
+
+#lunar
+/cocos.api
+/cocos_api_tb
+
+# dirs
+[Dd]bug/
+[Rr]elease/
+publish/
+/node_modules/
+frameworks/cocos2d-x/tools/simulator/libsimulator/proj.ios_mac/build/
+
+# project files
+*.suo
+*.htm
+
+#simulator files
+dgph
+dgph~
+
+#cocos
+linux-build/
+Debug.win32/
+/runtime/linux/
+/runtime/win32/config.json
+/runtime/win32/libcocos2d.dll
+/runtime/win32/linux/
+/runtime/win32/res/
+/runtime/win32/src/
+/runtime/android/
+frameworks/cocos2d-x/build/build/
+/frameworks/runtime-src/proj.win32/Backup*/
+/frameworks/runtime-src/proj.ios_mac/build/
+/frameworks/cocos2d-x/cocos/scripting/lua-bindings/proj.ios_mac/build/
+/frameworks/runtime-src/proj.ios_mac/BattleOfCrab.xcodeproj/project.xcworkspace/xcuserdata/joshua.xcuserdatad/UserInterfaceState.xcuserstate
+/simulator/
+bin/
+gen/
+assets/
+obj/

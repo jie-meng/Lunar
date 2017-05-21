@@ -1,0 +1,12 @@
+{
+  "scripts": {
+      "start": "webpack && cocos run -p web"
+  },
+  "dependencies": {
+    "lodash": "^4.17.4"
+  },
+  "devDependencies": {
+    "webpack": "^2.5.1",
+    "webpack-dev-server": "^2.4.5"
+  }
+}
