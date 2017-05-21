@@ -3,6 +3,8 @@ const webpack = require('webpack');
 const path = require('path');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
+const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
+const OUTPUT_DIR = path.resolve(__dirname, 'dist');
 
 var npmModules = require('./package.json').dependencies;
 var vendorLibs = [];
@@ -25,4 +27,11 @@ module.exports = {
         new webpack.optimize.CommonsChunkPlugin({ name: 'vendor', filename: 'vendor.js' })
     ],
     devtool: 'eval',
+    resolve: {
+        extensions: ['.js', '.json'],
+        modules: [
+            SRC_DIR,
+            NODE_MODULES_DIR
+        ]
+    }
 };

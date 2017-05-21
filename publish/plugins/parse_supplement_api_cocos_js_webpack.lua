@@ -36,13 +36,18 @@ function parseFile(filename, classes, import)
                 
                 --match import
                 local import_class, import_path = string.match(trim_line, pattern_import)
-                if import_class and import_path and util.strStartWith(import_path, '.') then
-                    local cur_filepath = util.splitPathname(filename)
+                if import_class and import_path then
+                    local relative_path = util.currentPath() .. '/src'
+                    
+                    if util.strStartWith(import_path, '.') then
+                        relative_path = util.splitPathname(filename)
+                    end
+                    
                     local imp, imf = util.splitPathname(import_path)
                     if util.fileExtension(imf) == '' then
                         import_path = import_path .. '.js'
                     end
-                    parseFile(cur_filepath .. '/' .. import_path, classes, import_class)
+                    parseFile(relative_path .. '/' .. import_path, classes, import_class)                 
                 end
                 
                 --match class start
