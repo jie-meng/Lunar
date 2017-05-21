@@ -1,4 +1,4 @@
-import res from './resource';
+import res from 'resource';
 
 let HelloWorldLayer = cc.Layer.extend({
     sprite:null,
