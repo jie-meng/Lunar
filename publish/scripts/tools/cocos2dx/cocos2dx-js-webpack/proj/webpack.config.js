@@ -3,6 +3,7 @@ const webpack = require('webpack');
 const path = require('path');
 
 const SRC_DIR = path.resolve(__dirname, 'src');
+const MY_SRC_DIR = path.resolve(__dirname, 'mysrc');
 const NODE_MODULES_DIR = path.resolve(__dirname, 'node_modules');
 
 var npmModules = require('./package.json').dependencies;
@@ -15,7 +16,7 @@ if (npmModules) {
 
 module.exports = {
     entry: {
-        app: `${SRC_DIR}/init.js`,
+        app: `${MY_SRC_DIR}/init.js`,
         vendor: vendorLibs
     },
     output: {
@@ -29,7 +30,7 @@ module.exports = {
     resolve: {
         extensions: ['.js', '.json'],
         modules: [
-            SRC_DIR,
+            MY_SRC_DIR,
             NODE_MODULES_DIR
         ]
     }

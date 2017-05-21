@@ -1,6 +1,6 @@
 import _ from 'lodash';
-import res from './resource';
-import HelloWorldScene from './HelloWorldScene';
+import res from 'resource';
+import HelloWorldScene from 'HelloWorldScene';
 
 var g_resources = [];
 _.each(res, function(item) {

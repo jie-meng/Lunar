@@ -1,0 +1,1 @@
+os.execute('webpack')

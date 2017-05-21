@@ -37,7 +37,7 @@ function parseFile(filename, classes, import)
                 --match import
                 local import_class, import_path = string.match(trim_line, pattern_import)
                 if import_class and import_path then
-                    local relative_path = util.currentPath() .. '/src'
+                    local relative_path = util.currentPath() .. '/mysrc'
                     
                     if util.strStartWith(import_path, '.') then
                         relative_path = util.splitPathname(filename)
@@ -216,9 +216,9 @@ function inClassRange(filename, current_line_number)
 end
 
 function parseResourceFile(classes)
-    local f = io.open('src/resource.js', "r")
+    local f = io.open('mysrc/resource.js', "r")
     if f then
-        local cls = { name = 'res', extends = {}, methods = {}, fields = {}, file = 'src/resource.js', line_number = 0, line = '' }
+        local cls = { name = 'res', extends = {}, methods = {}, fields = {}, file = 'mysrc/resource.js', line_number = 0, line = '' }
         classes['res'] = cls
         local line = f:read('*line')
         local line_number = 1
@@ -289,7 +289,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
     if line_str then
         local import_class, import_path = string.match(getLineStringFromLineNo(filename, line), pattern_import)
         if import_class and import_path then
-            local relative_path = util.currentPath() .. '/src'
+            local relative_path = util.currentPath() .. '/mysrc'
                     
             if util.strStartWith(import_path, '.') then
                 relative_path = util.splitPathname(filename)
