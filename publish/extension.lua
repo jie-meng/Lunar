@@ -308,18 +308,18 @@ function fileFilter()
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Python Files(*.py)")
 	table.insert(filter, "JavaScript Files(*.js;*.jsx)")
+	table.insert(filter, "CSS Files(*.css;*.scss)")
+    table.insert(filter, "JSON Files(*.json)")
+    table.insert(filter, "Html Files(*.html;*.htm)")
     table.insert(filter, "Ruby Files(*.rb)")
 	table.insert(filter, "Bash Files(*.sh)")
 	table.insert(filter, "Octave Files(*.m)")
     table.insert(filter, "Tcl Files(*.tcl)")
     table.insert(filter, "Markdown Files(*.md)")
-    table.insert(filter, "JSON Files(*.json)")
     table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
 	table.insert(filter, "C# Files(*.csharp)")
 	table.insert(filter, "Java Files(*.java)")
     table.insert(filter, "Xml Files(*.xml)")
-    table.insert(filter, "Html Files(*.html;*.htm)")
-	table.insert(filter, "CSS Files(*.css)")
     
 	return filter
 end
@@ -353,6 +353,7 @@ legalFileExtTable["hxx"] = true
 legalFileExtTable["js"] = true
 legalFileExtTable["jsx"] = true
 legalFileExtTable["css"] = true
+legalFileExtTable["scss"] = true
 legalFileExtTable["inf"] = true
 legalFileExtTable["mk"] = true
 legalFileExtTable["json"] = true
