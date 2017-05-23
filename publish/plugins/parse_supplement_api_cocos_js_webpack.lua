@@ -116,12 +116,33 @@ function parseFileClasses(filename, classes, import)
             return
         end
         
-        --match class begin
-        local class, super = string.match(trim_line, pattern_class_begin)
-        if class and super then
-            info.current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-            table.insert(info.current_class.extends, super)
-            return
+        if string.len(util.strTrimLeft(line)) == string.len(line) then
+            --match class begin
+            local class, super = string.match(trim_line, pattern_class_begin)
+            if  class and super then
+                info.current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+                table.insert(info.current_class.extends, super)
+                return
+            end
+            
+            --match class end
+            if util.strStartWith(trim_line, '});') then
+                if info.current_class then
+                    if export_module then
+                        local is_export, is_default = isExportModule(info.current_class.name, export_module)
+                        if is_export then
+                            if is_default then
+                                info.current_class.name = import
+                            end
+                            classes[info.current_class.name] = info.current_class
+                        end
+                    else
+                        classes[info.current_class.name] = info.current_class
+                    end
+                    info.current_class = nil
+                end
+                return
+            end
         end
         
         if info.current_class then
@@ -204,25 +225,6 @@ function parseFileClasses(filename, classes, import)
                 return
             end
         end
-        
-        --match class end
-        if util.strStartWith(line, '});') then
-            if info.current_class then
-                if export_module then
-                    local is_export, is_default = isExportModule(info.current_class.name, export_module)
-                    if is_export then
-                        if is_default then
-                            info.current_class.name = import
-                        end
-                        classes[info.current_class.name] = info.current_class
-                    end
-                else
-                    classes[info.current_class.name] = info.current_class
-                end
-                info.current_class = nil
-            end
-            return
-        end
     end)
 end
 
@@ -284,20 +286,41 @@ function parseFileObjects(filename, objects, import)
             return
         end
         
-        --match class begin
-        if string.match(trim_line, pattern_class_begin) then
-            info.current_class = true
-        end
-        --match class end
-        if util.strStartWith(trim_line, '});') then
-            info.current_class = nil
-        end
-        
-        --match object begin
-        local keyword, object = string.match(trim_line, pattern_object_begin)
-        if keyword and object and object_keywords[keyword] then
-            info.current_object = { name = object, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-            return
+        if string.len(util.strTrimLeft(line)) == string.len(line) then
+            --match class begin
+            if string.match(trim_line, pattern_class_begin) then
+                info.current_class = true
+            end
+            --match class end
+            if util.strStartWith(trim_line, '});') then
+                info.current_class = nil
+            end
+            
+            --match object begin
+            local keyword, object = string.match(trim_line, pattern_object_begin)
+            if keyword and object and object_keywords[keyword] then
+                info.current_object = { name = object, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+                return
+            end
+            
+            --match object end
+            if util.strStartWith(trim_line, '};') then
+                if info.current_object then
+                    if export_module then
+                        local is_export, is_default = isExportModule(info.current_object.name, export_module)
+                        if is_export then
+                            if is_default then
+                                info.current_object.name = import
+                            end
+                            objects[info.current_object.name] = info.current_object
+                        end
+                    else
+                        objects[info.current_object.name] = info.current_object
+                    end
+                    info.current_object = nil
+                end
+                return
+            end
         end
         
         if not info.current_class and info.current_object then
@@ -318,25 +341,6 @@ function parseFileObjects(filename, objects, import)
                 table.insert(info.current_object.fields, { name = field, file = filename, line_number = line_number, line = line })
                 return
             end
-        end
-                   
-        --match object end
-        if util.strStartWith(line, '};') then
-            if info.current_object then
-                if export_module then
-                    local is_export, is_default = isExportModule(info.current_object.name, export_module)
-                    if is_export then
-                        if is_default then
-                            info.current_object.name = import
-                        end
-                        objects[info.current_object.name] = info.current_object
-                    end
-                else
-                    objects[info.current_object.name] = info.current_object
-                end
-                info.current_object = nil
-            end
-            return
         end
     end)
 end
