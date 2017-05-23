@@ -1,4 +1,5 @@
 local table_ext = require('table_ext')
+local file_ext = require('file_ext')
 
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
@@ -10,6 +11,16 @@ local pattern_res_begin = [[const%s+res%s*=%s*{]]
 local pattern_res_name = [[([%w_]+)%s*:]]
 local pattern_import = [[import%s+([%w_]+)%s+from%s+'([%w_-%/%.]+)']]
 local pattern_export_default = [[export%s+default%s+([%w_]+)]]
+local pattern_import_multiple = [[import%s+{([%w%s_,]+)}%s+from%s+'([%w_-%/%.]+)']]
+local pattern_export_multiple = [[export%s+{([%w%s_,]+)}]]
+
+function extractMultipleImports(imports)
+    return nil
+end
+
+function extractMultipleExports(filename)
+    return nil
+end
 
 function extractExportDefaultModule(filename)
     return string.match(util.readTextFile(filename), pattern_export_default)
@@ -21,126 +32,115 @@ function parseFile(filename, classes, import)
         export_module = extractExportDefaultModule(filename)
     end
     
-    local f = io.open(filename, "r")
-    if f then
-        local line = f:read('*line')
-        local current_class = nil
-        local line_number = 1
-        while line do
-            repeat
-                local trim_line = util.strTrim(line)
-                --comments
-                if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
-                    break
-                end
-                
-                --match import
-                local import_class, import_path = string.match(trim_line, pattern_import)
-                if import_class and import_path then
-                    local relative_path = util.currentPath() .. '/mysrc'
-                    
-                    if util.strStartWith(import_path, '.') then
-                        relative_path = util.splitPathname(filename)
-                    end
-                    
-                    local imp, imf = util.splitPathname(import_path)
-                    if util.fileExtension(imf) == '' then
-                        import_path = import_path .. '.js'
-                    end
-                    parseFile(relative_path .. '/' .. import_path, classes, import_class)          
-                end
-                
-                --match class start
-                local class, super = string.match(trim_line, pattern_class_begin)
-                if class and super then
-                    current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-                    table.insert(current_class.extends, super)
-                    break
-                end
-                
-                if current_class then
-                    local method, params = string.match(trim_line, pattern_method)
-                    if method and params then
-                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        break
-                    end
-                    
-                    method, params = string.match(trim_line, pattern_arrow_method)
-                    if method and params then
-                        table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
-                        break
+    file_ext.foreachLine(filename, function (line, line_number, info)
+        local trim_line = util.strTrim(line)
+        --comments
+        if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
+            return
+        end
+        
+        --match import
+        local import_class, import_path = string.match(trim_line, pattern_import)
+        if import_class and import_path then
+            local relative_path = util.currentPath() .. '/mysrc'
+            
+            if util.strStartWith(import_path, '.') then
+                relative_path = util.splitPathname(filename)
+            end
+            
+            local imp, imf = util.splitPathname(import_path)
+            if util.fileExtension(imf) == '' then
+                import_path = import_path .. '.js'
+            end
+            parseFile(relative_path .. '/' .. import_path, classes, import_class)          
+        end
+        
+        --match class start
+        local class, super = string.match(trim_line, pattern_class_begin)
+        if class and super then
+            current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+            table.insert(current_class.extends, super)
+            return
+        end
+        
+        if current_class then
+            local method, params = string.match(trim_line, pattern_method)
+            if method and params then
+                table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                return
+            end
+            
+            method, params = string.match(trim_line, pattern_arrow_method)
+            if method and params then
+                table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                return
+            end
+        else
+            --static methods, variables
+            local method, params = string.match(trim_line, pattern_static_method)
+            if method and params then
+                if import and export_module then
+                    if util.fileBaseName(method) == export_module then
+                        local cls = classes[import]
+                        if cls then
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
+                        end
                     end
                 else
-                    --static methods, variables
-                    local method, params = string.match(trim_line, pattern_static_method)
-                    if method and params then
-                        if import and export_module then
-                            if util.fileBaseName(method) == export_module then
-                                local cls = classes[import]
-                                if cls then
-                                    table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
-                                end
-                            end
-                        else
-                            local cls = classes[util.fileBaseName(method)]
-                            if cls then
-                                table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
-                            end
-                        end
-
-                        break
+                    local cls = classes[util.fileBaseName(method)]
+                    if cls then
+                        table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                     end
-                    
-                    method, params = string.match(trim_line, pattern_static_arrow_method)
-                    if method and params then
-                        if import and export_module then
-                            if util.fileBaseName(method) == export_module then
-                                local cls = classes[import]
-                                if cls then
-                                    table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
-                                end
-                            end
-                        else
-                            local cls = classes[util.fileBaseName(method)]
-                            if cls then
-                                table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
-                            end
-                        end
+                end
 
-                        break
-                    end
-                    
-                    local variable = string.match(trim_line, pattern_static_variable)
-                    if variable then
-                        local cls = classes[util.fileBaseName(variable)]
+                return
+            end
+            
+            method, params = string.match(trim_line, pattern_static_arrow_method)
+            if method and params then
+                if import and export_module then
+                    if util.fileBaseName(method) == export_module then
+                        local cls = classes[import]
                         if cls then
-                            table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
+                            table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                         end
-                        break
+                    end
+                else
+                    local cls = classes[util.fileBaseName(method)]
+                    if cls then
+                        table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                     end
                 end
-                
-                --match class end
-                if util.strStartWith(line, '});') then
-                    if current_class then
-                        if import then
-                            if current_class.name == export_module then
-                                current_class.name = import
-                                classes[current_class.name] = current_class
-                            end
-                        else
-                            classes[current_class.name] = current_class
-                        end
-                        current_class = nil
-                    end
-                    break
+
+                return
+            end
+            
+            local variable = string.match(trim_line, pattern_static_variable)
+            if variable then
+                local cls = classes[util.fileBaseName(variable)]
+                if cls then
+                    table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
                 end
-            until true
-            line = f:read("*line")
-            line_number = line_number + 1
+                return
+            end
         end
-        io.close(f)
-    end
+        
+        --match class end
+        if util.strStartWith(line, '});') then
+            if current_class then
+                if import then
+                    if current_class.name == export_module then
+                        current_class.name = import
+                        classes[current_class.name] = current_class
+                    end
+                else
+                    classes[current_class.name] = current_class
+                end
+                current_class = nil
+            end
+            return
+        end
+    end)
 end
 
 function findInExtends(text, class, classes, results)
