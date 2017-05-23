@@ -206,7 +206,7 @@ function parseFileClasses(filename, classes, import)
         end
         
         --match class end
-        if util.strStartWith(trim_line, '});') then
+        if util.strStartWith(line, '});') then
             if info.current_class then
                 if export_module then
                     local is_export, is_default = isExportModule(info.current_class.name, export_module)
@@ -321,7 +321,7 @@ function parseFileObjects(filename, objects, import)
         end
                    
         --match object end
-        if util.strStartWith(trim_line, '};') then
+        if util.strStartWith(line, '};') then
             if info.current_object then
                 if export_module then
                     local is_export, is_default = isExportModule(info.current_object.name, export_module)
