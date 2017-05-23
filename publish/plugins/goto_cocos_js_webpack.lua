@@ -13,6 +13,13 @@ local pattern_import = [[import%s+([%w_]+)%s+from%s+'([%w_-%/%.]+)']]
 local pattern_export_default = [[export%s+default%s+([%w_]+)]]
 local pattern_import_multiple = [[import%s+{([%w%s_,]+)}%s+from%s+'([%w_-%/%.]+)']]
 local pattern_export_multiple = [[export%s+{([%w%s_,]+)}]]
+local pattern_object_begin = [[(%w+)%s+([%w_]+)%s*=%s*{]]
+local pattern_field = [[([%w_]+)%s*:%s*.+]]
+
+local object_keywords = {}
+object_keywords['const'] = true
+object_keywords['let'] = true
+object_keywords['var'] = true
 
 function extractMultipleImports(import_str)
     local imports = util.strSplit(import_str, ',')
@@ -61,7 +68,7 @@ function isExportModule(module, export_module)
     end
 end
 
-function parseFile(filename, classes, import)
+function parseFileClasses(filename, classes, import)
     local export_module = extractExportModule(import, filename)
     file_ext.foreachLine(filename, function (line, line_number, info)
         local trim_line = util.strTrim(line)
@@ -83,7 +90,7 @@ function parseFile(filename, classes, import)
             if util.fileExtension(imf) == '' then
                 import_path = import_path .. '.js'
             end
-            parseFile(relative_path .. '/' .. import_path, classes, import_class)
+            parseFileClasses(relative_path .. '/' .. import_path, classes, import_class)
             return
         end
         
@@ -105,11 +112,11 @@ function parseFile(filename, classes, import)
             if util.fileExtension(imf) == '' then
                 import_path = import_path .. '.js'
             end
-            parseFile(relative_path .. '/' .. import_path, classes, imports)
+            parseFileClasses(relative_path .. '/' .. import_path, classes, imports)
             return
         end
         
-        --match class start
+        --match class begin
         local class, super = string.match(trim_line, pattern_class_begin)
         if class and super then
             info.current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
@@ -199,7 +206,7 @@ function parseFile(filename, classes, import)
         end
         
         --match class end
-        if util.strStartWith(line, '});') then
+        if util.strStartWith(trim_line, '});') then
             if info.current_class then
                 if export_module then
                     local is_export, is_default = isExportModule(info.current_class.name, export_module)
@@ -213,6 +220,121 @@ function parseFile(filename, classes, import)
                     classes[info.current_class.name] = info.current_class
                 end
                 info.current_class = nil
+            end
+            return
+        end
+    end)
+end
+
+function parseFileObjects(filename, objects, import)
+    local export_module = extractExportModule(import, filename)
+    file_ext.foreachLine(filename, function (line, line_number, info)
+        local trim_line = util.strTrim(line)
+        --comments
+        if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
+            return
+        end
+        
+        --match import
+        local import_class, import_path = string.match(trim_line, pattern_import)
+        if import_class and import_path then
+            --already in level-1 import file
+            if import then
+                return
+            end
+            
+            local relative_path = util.currentPath() .. '/mysrc'
+            
+            if util.strStartWith(import_path, '.') then
+                relative_path = util.splitPathname(filename)
+            end
+            
+            local imp, imf = util.splitPathname(import_path)
+            if util.fileExtension(imf) == '' then
+                import_path = import_path .. '.js'
+            end
+            parseFileObjects(relative_path .. '/' .. import_path, objects, import_class)
+            return
+        end
+        
+        --match multiple imports
+        local import_str, import_path = string.match(trim_line, pattern_import_multiple)
+        if import_str and import_path then
+            --already in level-1 import file
+            if import then
+                return
+            end
+        
+            local imports = extractMultipleImports(import_str)
+            if not imports then
+                return
+            end
+            
+            local relative_path = util.currentPath() .. '/mysrc'
+            
+            if util.strStartWith(import_path, '.') then
+                relative_path = util.splitPathname(filename)
+            end
+            
+            local imp, imf = util.splitPathname(import_path)
+            if util.fileExtension(imf) == '' then
+                import_path = import_path .. '.js'
+            end
+            parseFileObjects(relative_path .. '/' .. import_path, objects, imports)
+            return
+        end
+        
+        --match class begin
+        if string.match(trim_line, pattern_class_begin) then
+            info.current_class = true
+        end
+        --match class end
+        if util.strStartWith(trim_line, '});') then
+            info.current_class = nil
+        end
+        
+        --match object begin
+        local keyword, object = string.match(trim_line, pattern_object_begin)
+        if keyword and object and object_keywords[keyword] then
+            info.current_object = { name = object, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+            return
+        end
+        
+        if not info.current_class and info.current_object then
+            local method, params = string.match(trim_line, pattern_method)
+            if method and params then
+                table.insert(info.current_object.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                return
+            end
+            
+            method, params = string.match(trim_line, pattern_arrow_method)
+            if method and params then
+                table.insert(info.current_object.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                return
+            end
+            
+            local field = string.match(trim_line, pattern_field)
+            if field then
+                table.insert(info.current_object.fields, { name = field, file = filename, line_number = line_number, line = line })
+                return
+            end
+        end
+                   
+        --match object end
+        if util.strStartWith(trim_line, '};') then
+            if info.current_object then
+                if export_module then
+                    local is_export, is_default = isExportModule(info.current_object.name, export_module)
+                    if is_export then
+                        if is_default then
+                            info.current_object.name = import
+                        end
+                        objects[info.current_object.name] = info.current_object
+                    end
+                else
+                    objects[info.current_object.name] = info.current_object
+                end
+                info.current_object = nil
             end
             return
         end
@@ -235,6 +357,19 @@ function findInExtends(text, class, classes, results)
         local extend_class = classes[e]
         if extend_class then
             findInExtends(text, extend_class, classes, results)
+        end
+    end
+end
+
+function findInObject(text, object, results)
+    for _, m in ipairs(object.methods) do
+        if text == m.name then
+            table.insert(results, string.format("%s\n%d\n%s", m.file, m.line_number, m.line)) 
+        end
+    end
+    for _, f in ipairs(object.fields) do
+        if text == f.name then
+            table.insert(results, string.format("%s\n%d\n%s", f.file, f.line_number, f.line)) 
         end
     end
 end
@@ -291,53 +426,6 @@ function inClassRange(filename, current_line_number)
     return return_class
 end
 
-function parseResourceFile(classes)
-    local f = io.open('mysrc/resource.js', "r")
-    if f then
-        local cls = { name = 'res', extends = {}, methods = {}, fields = {}, file = 'mysrc/resource.js', line_number = 0, line = '' }
-        classes['res'] = cls
-        local line = f:read('*line')
-        local line_number = 1
-        local in_range = false
-        local finish = false
-        while line do
-            repeat
-                local trim_line = util.strTrim(line)
-                --comments
-                if string.len(trim_line) == 0 or util.strStartWith(trim_line, '/') or util.strStartWith(trim_line, '*') then
-                    break
-                end
-                
-                if not finish and in_range then
-                    local name = string.match(trim_line, pattern_res_name)
-                    if name then
-                        table.insert(cls.fields, { name = name, file = cls.file, line_number = line_number, line = line })
-                        break
-                    end
-                end
-
-                --match class start
-                if string.match(trim_line, pattern_res_begin) then
-                    in_range = true
-                    cls.line_number = line_number
-                    cls.line = line
-                    break
-                end
-                
-                --match class end
-                if util.strEndWith(trim_line, '};') then
-                    in_range = false
-                    finish = true
-                    break
-                end
-            until true
-            line = f:read("*line")
-            line_number = line_number + 1
-        end
-        io.close(f)
-    end
-end
-
 function getLineStringFromLineNo(filename, line_no)
     local line_str = nil
     local f = io.open(filename, "r")
@@ -385,15 +473,9 @@ function gotoDefinition(text, line, filename, project_src_dir)
         end
     end
 
-    --load index
+    --load index, parse classes
     local classes = table_ext.load('cocos_api_tb')
-    
-    --parse src
-    parseFile(filename, classes)
-    
-    --parse resource
-    parseResourceFile(classes)
-    
+    parseFileClasses(filename, classes)
     local class = classes[text]
     if class then
         --find class
@@ -413,6 +495,22 @@ function gotoDefinition(text, line, filename, project_src_dir)
                 if range_class then
                     findInExtends(text, range_class, classes, results)
                 end
+            end
+        end
+    end
+    
+    local objects = {}
+    parseFileObjects(filename, objects)
+    local object = objects[text]
+    if object then
+        --find object
+        table.insert(results, string.format("%s\n%d\n%s", object.file, object.line_number, object.line))
+    else
+        if util.strContains(text, '.') then
+            --absolute method/fields
+            local object = objects[util.fileBaseName(text)]
+            if object then
+                findInObject(util.fileExtension(text), object, results)
             end
         end
     end
