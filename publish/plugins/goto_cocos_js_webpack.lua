@@ -14,24 +14,55 @@ local pattern_export_default = [[export%s+default%s+([%w_]+)]]
 local pattern_import_multiple = [[import%s+{([%w%s_,]+)}%s+from%s+'([%w_-%/%.]+)']]
 local pattern_export_multiple = [[export%s+{([%w%s_,]+)}]]
 
-function extractMultipleImports(imports)
-    return nil
+function extractMultipleImports(import_str)
+    local imports = util.strSplit(import_str, ',')
+    local ret = {}
+    table_ext.foreach(imports, function (k, v)
+        ret[util.strTrim(v)] = true
+    end)
+    
+    return ret
 end
 
 function extractMultipleExports(filename)
-    return nil
+    local export_str = string.match(util.readTextFile(filename), pattern_export_multiple)
+    local exports = util.strSplit(export_str, ',')
+    local ret = {}
+    table_ext.foreach(exports, function (k, v)
+        ret[util.strTrim(v)] =  true
+    end)
+    
+    return ret
 end
 
 function extractExportDefaultModule(filename)
     return string.match(util.readTextFile(filename), pattern_export_default)
 end
 
-function parseFile(filename, classes, import)
-    local export_module = nil
+function extractExportModule(import, filename)
     if import then
-        export_module = extractExportDefaultModule(filename)
+        if type(import) == 'table' then
+            return extractMultipleExports(filename)
+        else
+            return extractExportDefaultModule(filename)
+        end
+    else
+        return nil
     end
-    
+end
+
+function isExportModule(module, export_module)
+    if type(export_module) == 'table' then
+        return export_module[module], false
+    elseif type(export_module) == 'string' then
+        return module == export_module, true
+    else
+        return false, false
+    end
+end
+
+function parseFile(filename, classes, import)
+    local export_module = extractExportModule(import, filename)
     file_ext.foreachLine(filename, function (line, line_number, info)
         local trim_line = util.strTrim(line)
         --comments
@@ -52,36 +83,63 @@ function parseFile(filename, classes, import)
             if util.fileExtension(imf) == '' then
                 import_path = import_path .. '.js'
             end
-            parseFile(relative_path .. '/' .. import_path, classes, import_class)          
+            parseFile(relative_path .. '/' .. import_path, classes, import_class)
+            return
+        end
+        
+        --match multiple imports
+        local import_str, import_path = string.match(trim_line, pattern_import_multiple)
+        if import_str and import_path then
+            local imports = extractMultipleImports(import_str)
+            if not imports then
+                return
+            end
+            
+            local relative_path = util.currentPath() .. '/mysrc'
+            
+            if util.strStartWith(import_path, '.') then
+                relative_path = util.splitPathname(filename)
+            end
+            
+            local imp, imf = util.splitPathname(import_path)
+            if util.fileExtension(imf) == '' then
+                import_path = import_path .. '.js'
+            end
+            parseFile(relative_path .. '/' .. import_path, classes, imports)
+            return
         end
         
         --match class start
         local class, super = string.match(trim_line, pattern_class_begin)
         if class and super then
-            current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
-            table.insert(current_class.extends, super)
+            info.current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+            table.insert(info.current_class.extends, super)
             return
         end
         
-        if current_class then
+        if info.current_class then
             local method, params = string.match(trim_line, pattern_method)
             if method and params then
-                table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                table.insert(info.current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                 return
             end
             
             method, params = string.match(trim_line, pattern_arrow_method)
             if method and params then
-                table.insert(current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
+                table.insert(info.current_class.methods, { name = method, args = params, file = filename, line_number = line_number, line = line })
                 return
             end
         else
             --static methods, variables
             local method, params = string.match(trim_line, pattern_static_method)
             if method and params then
-                if import and export_module then
-                    if util.fileBaseName(method) == export_module then
-                        local cls = classes[import]
+                if export_module then
+                    local is_export, is_default = isExportModule(util.fileBaseName(method), export_module)
+                    if is_export then
+                        local cls = classes[util.fileBaseName(method)]
+                        if is_default then
+                            cls = classes[import]
+                        end
                         if cls then
                             table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                         end
@@ -92,15 +150,18 @@ function parseFile(filename, classes, import)
                         table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                     end
                 end
-
                 return
             end
             
             method, params = string.match(trim_line, pattern_static_arrow_method)
             if method and params then
-                if import and export_module then
-                    if util.fileBaseName(method) == export_module then
-                        local cls = classes[import]
+                if export_module then
+                    local is_export, is_default = isExportModule(util.fileBaseName(method), export_module)
+                    if is_export then
+                        local cls = classes[util.fileBaseName(method)]
+                        if is_default then
+                            cls = classes[import]
+                        end
                         if cls then
                             table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                         end
@@ -111,15 +172,27 @@ function parseFile(filename, classes, import)
                         table.insert(cls.methods, { name = util.fileExtension(method), args = params, file = filename, line_number = line_number, line = line })
                     end
                 end
-
                 return
             end
             
             local variable = string.match(trim_line, pattern_static_variable)
             if variable then
-                local cls = classes[util.fileBaseName(variable)]
-                if cls then
-                    table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
+                if export_module then
+                    local is_export, is_default = isExportModule(util.fileBaseName(variable), export_module)
+                    if is_export then
+                        local cls = classes[util.fileBaseName(variable)]
+                        if is_default then
+                            cls = classes[import]
+                        end
+                        if cls then
+                            table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
+                        end
+                    end
+                else
+                    local cls = classes[util.fileBaseName(variable)]
+                    if cls then
+                        table.insert(cls.fields, { name = util.fileExtension(variable), file = filename, line_number = line_number, line = line })
+                    end
                 end
                 return
             end
@@ -127,16 +200,19 @@ function parseFile(filename, classes, import)
         
         --match class end
         if util.strStartWith(line, '});') then
-            if current_class then
-                if import then
-                    if current_class.name == export_module then
-                        current_class.name = import
-                        classes[current_class.name] = current_class
+            if info.current_class then
+                if export_module then
+                    local is_export, is_default = isExportModule(info.current_class.name, export_module)
+                    if is_export then
+                        if is_default then
+                            info.current_class.name = import
+                        end
+                        classes[info.current_class.name] = info.current_class
                     end
                 else
-                    classes[current_class.name] = current_class
+                    classes[info.current_class.name] = info.current_class
                 end
-                current_class = nil
+                info.current_class = nil
             end
             return
         end
