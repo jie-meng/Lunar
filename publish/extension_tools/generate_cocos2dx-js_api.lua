@@ -1,6 +1,7 @@
 local table_ext = require('table_ext')
 
 local pattern_class_begin = [[([%w_%.]+)%s*=%s*([%w_%.]+)%.extend%s*%(]]
+local pattern_object_begin = [[([%w_%.]+)%s*=%s*.+%@lends]]
 local pattern_method = [[([%w_]+)%s*:%s*function%s*%((.*)%)]]
 local pattern_arrow_method = [[([%w_]+)%s*:%s*%((.*)%)%s*=>]]
 local pattern_static_method = [[([%w_%.]+)%s*=%s*function%s*%((.*)%)]]
@@ -27,6 +28,13 @@ function parseFile(filename, classes, apis)
                 if class and super then
                     current_class = { name = class, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
                     table.insert(current_class.extends, super)
+                    break
+                end
+                
+                local object = string.match(trim_line, pattern_object_begin)
+                if object then
+                    current_class = { name = object, extends = {}, methods = {}, fields = {}, file = filename, line_number = line_number, line = line }
+                    table.insert(current_class.extends, '')
                     break
                 end
                 
