@@ -44,5 +44,4 @@ let HelloWorldScene = cc.Scene.extend({
     }
 });
 
-// module.exports = HelloWorldScene;
 export default HelloWorldScene;
