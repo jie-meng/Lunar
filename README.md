@@ -20,7 +20,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 #### Build luaexec ####
 
-1. Get Util project from [Util: Cross-platform C++ library](https://github.com/joshua-meng/Util)
+1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util)
 
 2. Build luaexec follow the README.MD of Util. 
 
