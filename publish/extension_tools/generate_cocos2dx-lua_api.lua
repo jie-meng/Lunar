@@ -47,7 +47,7 @@ function ApiModule:setName(name)
 end
 
 function ApiModule:setExtend(extend)
-    self.extend_ = strSplit(extend, ",")
+    self.extend_ = util.strSplit(extend, ",")
     for i, v in ipairs(self.extend_) do
         self.extend_[i] = util.strTrim(v)
     end
@@ -162,7 +162,7 @@ function createCocosApis()
     
     print("parsed " .. tostring(#apis) .. " functions.")
     
-    content = strJoin(apis, "\n")
+    content = util.strJoin(apis, "\n")
     util.writeTextFile("cocos.api", content)
 end
 
@@ -289,7 +289,7 @@ function parseManualApi(filename)
             
                 local tolua_function = string.match(line, pattern_tolua_function)
                 if #begin_modules > 0 and tolua_function then
-                    table.insert(tb, strJoin(begin_modules, ".") .. "." .. tolua_function .. "(?)")
+                    table.insert(tb, util.strJoin(begin_modules, ".") .. "." .. tolua_function .. "(?)")
                     push_string = nil
                     break
                 end
