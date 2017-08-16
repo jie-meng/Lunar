@@ -209,6 +209,23 @@ void LunarGlobal::trimRecentDocs()
     recent_docs_.erase(remove_if(recent_docs_.begin(), recent_docs_.end(), [](string& file) { return !isPathFile(file); }), recent_docs_.end());
 }
 
+void LunarGlobal::addRecentRunDoc(const std::string& doc)
+{
+    auto it = find(recent_run_docs_.begin(), recent_run_docs_.end(), doc);
+    if (it != recent_run_docs_.end())
+        recent_run_docs_.erase(it);
+
+    recent_run_docs_.push_front(doc);
+
+    if (recent_run_docs_.size() > 32)
+        recent_run_docs_.pop_back();
+}
+
+void LunarGlobal::trimRecentRunDoc()
+{
+    recent_run_docs_.erase(remove_if(recent_run_docs_.begin(), recent_run_docs_.end(), [](string& file) { return !isPathFile(file); }), recent_run_docs_.end());
+}
+
 void LunarGlobal::quit()
 {
     writeCfg();

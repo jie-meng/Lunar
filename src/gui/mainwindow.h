@@ -73,6 +73,8 @@ private Q_SLOTS:
     void replace(const QString&, bool find_in_output);
     void replaceAll(const QString& str, const QString& replace_with_text, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool find_in_output);
     void run();
+    void runDoc(const QString& doc);
+    void runRecent();
     void executeScriptInPath(const QString& script, const QString& execute_path, const QString& additional_args);
     void stop();
     void searchTextInPath(const QString& dir,
@@ -125,6 +127,7 @@ private:
     QAction* pview_documents_action_;
     QAction* pview_close_docks_action_;
     QAction* prun_run_action_;
+    QAction* prun_run_recent_action_;
     QAction* prun_stop_action_;
     QAction* phelp_about_action_;
     QLabel* pstatus_text_;

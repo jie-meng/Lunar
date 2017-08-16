@@ -21,6 +21,7 @@
 #include "finddialog.h"
 #include "recentprojectpathdialog.h"
 #include "recentdocdialog.h"
+#include "recentrundocdialog.h"
 #include "aboutdialog.h"
 #include "fileexplorerwidget.h"
 #include "outputwidget.h"
@@ -65,6 +66,7 @@ MainWindow::MainWindow(QWidget* parent)
     pview_documents_action_(NULL),
     pview_close_docks_action_(NULL),
     prun_run_action_(NULL),
+    prun_run_recent_action_(NULL),
     prun_stop_action_(NULL),
     phelp_about_action_(NULL),
     pstatus_text_(NULL),
@@ -327,6 +329,11 @@ void MainWindow::initActions()
     prun_run_action_->setIcon(QIcon(tr(":/res/run.png")));
     prun_run_action_->setShortcut(Qt::Key_F5);
 
+    prun_run_recent_action_ = new QAction(tr("Run recent"), this);
+    prun_run_recent_action_->setStatusTip(tr("Run recent."));
+    prun_run_recent_action_->setIcon(QIcon(tr(":/res/run_recent.png")));
+    prun_run_recent_action_->setShortcut(Qt::Key_F6);
+
     prun_stop_action_ = new QAction(tr("Stop"), this);
     prun_stop_action_->setStatusTip(tr("Stop."));
     prun_stop_action_->setIcon(QIcon(tr(":/res/stop.png")));
@@ -372,6 +379,7 @@ void MainWindow::initMenubar()
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
+    prun_menu->addAction(prun_run_recent_action_);
     prun_menu->addAction(prun_stop_action_);
 
     QMenu* phelp_menu = menuBar()->addMenu(tr("&Help"));
@@ -389,6 +397,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_recent_docs_action_);
     ptoolbar->addAction(pfile_recent_project_path_action_);
     ptoolbar->addAction(prun_run_action_);
+    ptoolbar->addAction(prun_run_recent_action_);
     ptoolbar->addAction(prun_stop_action_);
     ptoolbar->addAction(pedit_select_cursor_word_action_);
     ptoolbar->addAction(pedit_find_action_);
@@ -461,6 +470,7 @@ void MainWindow::initConnections()
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
     connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
+    connect(prun_run_recent_action_, SIGNAL(triggered()), this, SLOT(runRecent()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));
     connect(phelp_about_action_, SIGNAL(triggered()), this, SLOT(helpAbout()));
     //finddialog
@@ -476,7 +486,6 @@ void MainWindow::initConnections()
     connect(pfile_explorer_widget_, SIGNAL(executeExtensionTool(QString,QString,QString)), this, SLOT(executeScriptInPath(QString,QString,QString)));
     connect(pfile_explorer_widget_, &FileExplorerWidget::widthChanged, [this](int width)
     {
-        //LogSocket::getInstance().sendLog(strFormat("%d", width), "127.0.0.1", LunarGlobal::getInstance().getLogSockPort());
         if (width > 0)
         {
             pleft_widget_->setFixedWidth(width);
@@ -1051,9 +1060,70 @@ void MainWindow::run()
         bool ret = plua_executor_->execute(script, addtional_args,
                                     runPath, pdoc_view->getExecutor());
 
+        LunarGlobal::getInstance().addRecentRunDoc(script);
+
         if (!ret)
             addOutput("Run failed");
     }
+}
+
+void MainWindow::runDoc(const QString& doc)
+{
+    if (plua_executor_->isRunning())
+    {
+        if (QMessageBox::No == QMessageBox::question(this, "question", "A script is running, will you still want to run current script?",
+                                        QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
+        {
+            return;
+        }
+        else
+        {
+            plua_executor_->stop();
+        }
+    }
+
+    if (pbottom_widget_->isHidden())
+        pbottom_widget_->show();
+    pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
+    poutput_widget_->setFocusOnInput();
+
+    clearOutput();
+
+    string script = QStringToStdString(doc);
+    if (script.empty())
+        return;
+
+    pair<string, string> path_name = util::splitPathname(script);
+    std::string runPath = path_name.first;
+
+    //for windows disk root, there gonna be an error when excute if path is "X:"
+    if (strEndWith(runPath, ":"))
+        runPath += "/";
+
+    map<string, string> dict;
+    string executor;
+    if (Extension::getInstance().parseFilename(script, dict)) 
+        executor = getValueFromMap<string>(dict, "executor", "");
+    
+    if (executor.empty())
+    {
+        addOutput("Cannot find support executor.");
+        return;
+    }
+
+    bool ret = plua_executor_->execute(script, "", runPath, executor);
+    
+    LunarGlobal::getInstance().addRecentRunDoc(script);
+
+    if (!ret)
+        addOutput("Run failed");
+}
+
+void MainWindow::runRecent()
+{
+    RecentRunDocDialog dlg;
+    connect(&dlg, SIGNAL(runDoc(const QString&)), this, SLOT(runDoc(const QString&)));
+    dlg.exec();
 }
 
 void MainWindow::executeScriptInPath(const QString& script, const QString& execute_path, const QString& additional_args)

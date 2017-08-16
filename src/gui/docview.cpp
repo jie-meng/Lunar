@@ -752,19 +752,13 @@ void DocView::commentSelectionLine()
 
 QString DocView::getSelectedText() const
 {
-    if (ptext_edit_)
-        return ptext_edit_->selectedText();
-    else
-        return tr("");
+    return ptext_edit_ ? ptext_edit_->selectedText() : tr("");
 }
 
 void DocView::gotoLine(int line)
 {
-    if (ptext_edit_)
-    {
-        if (line-1 >=0 && line-1<ptext_edit_->lines())
-            ptext_edit_->setCursorPosition(line-1, 0);
-    }
+    if (ptext_edit_ && line-1 >=0 && line-1 < ptext_edit_->lines())
+        ptext_edit_->setCursorPosition(line-1, 0);
 }
 
 void DocView::focusOnEdit()

@@ -4,7 +4,7 @@
 #include <QWidget>
 #include <QFont>
 #include <map>
-#include "util/lexicalcast.hpp"
+#include "util/base.hpp"
 #include "filetype.h"
 
 class QsciLexer;
@@ -81,16 +81,7 @@ private:
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
     size_t getStartSpaceCount(const QString& str);
-    template<typename T>
-    static inline T getValueFromMap(const std::map<std::string, std::string>& from_map, const std::string& key, T default_value)
-    {
-        std::map<std::string, std::string>::const_iterator it = from_map.find(key);
-        if (it == from_map.end())
-            return default_value;
-        else
-            return util::lexicalCastDefault<T>(it->second, default_value);
-    }
-
+    
     QString save_dialog_init_dir_;
     QString pathname_;
     QString title_;

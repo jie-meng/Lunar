@@ -6,6 +6,7 @@
 #include <list>
 #include <QtCore/QString>
 #include <QtGui/QFont>
+#include "util/lexicalcast.hpp"
 #include "util/iterator.hpp"
 #include "util/net.hpp"
 
@@ -16,6 +17,16 @@ const std::string kGotoDefinition = "gotoDefinition";
 
 QString StdStringToQString(const std::string &s);
 std::string QStringToStdString(const QString &s);
+
+template<typename T>
+T getValueFromMap(const std::map<std::string, std::string>& from_map, const std::string& key, T default_value)
+{
+    std::map<std::string, std::string>::const_iterator it = from_map.find(key);
+    if (it == from_map.end())
+        return default_value;
+    else
+        return util::lexicalCastDefault<T>(it->second, default_value);
+}
 
 QString qtReadFile(const QString& filename, const char* codec = "UTF-8");
 bool qtWriteFile(const QString& filename, const QString& content, bool append = false, const char* codec = "UTF-8");
@@ -83,6 +94,9 @@ public:
     void addRecentDoc(const std::string& doc);
     void trimRecentDocs();
     void parseExtensionFileFilter();
+    inline util::Iterator<std::string> recentRunDocsIterator() { return util::createIterator<std::string>(recent_run_docs_); }
+    void addRecentRunDoc(const std::string& doc);
+    void trimRecentRunDoc();
 private:
     LunarGlobal();
     ~LunarGlobal();
@@ -107,6 +121,7 @@ private:
     size_t  recent_project_path_cnt_;
     std::string recent_project_path_;
     std::list<std::string> recent_docs_;
+    std::list<std::string> recent_run_docs_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };
