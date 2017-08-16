@@ -196,12 +196,13 @@ void DocView::setLexerApi()
 
 void DocView::refreshSupplementApi()
 {
-    if (papi_loader_ && ptext_edit_)
+    if (papi_loader_ && ptext_edit_) {
         papi_loader_->loadSupplementApiAsync(
             parse_api_script_,
             kParseSupplementApi,
             getCurrentLine(),
             project_src_dir_);
+    }
 }
 
 void DocView::apisPreparationFinished()

@@ -74,6 +74,7 @@ public:
                                 const std::string& project_src_dir);
     inline std::string errorInformation() const { return error_information_; }
     inline QsciAPIsEx* getApis() { return papis_; }
+    inline void resetLuaState() { lua_state_ok_ = false; }
 private:
     bool initLuaState(const std::string& parse_supplement_api_script);
     void loadCommonApi(const std::string& api_dirs);

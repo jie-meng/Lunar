@@ -114,6 +114,7 @@ void ApiLoadThread::onPrepareFinish()
 
 void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
 {
+    loading_ = false;
     if (result)
     {
         if (papi_loader_)
@@ -122,6 +123,8 @@ void ApiLoadThread::onLoadFinish(bool result, const QString& error_info)
     else
     {
         LunarMsgBoxQ(error_info);
+        if (papi_loader_)
+            papi_loader_->resetLuaState();
     }
 }
 
