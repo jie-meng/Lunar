@@ -1,4 +1,5 @@
 local pattern_import_lua = [[([%w_]+)%s*=%s*import%(["']([%w_%.%s]+)["']%)]]
+local pattern_importer_lua = [[([%w_]+)%s*=%s*[%w]+%.import%(["']([%w_%.%s]+)["']%)]]
 local pattern_class_lua = [[([%w_]+)%s*=%s*class%(["'][%w_]+["'](["%%()%,%.%s%w_]*)%)]]
 local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*%((.*)%)]]
 local pattern_field_lua = [[([%w_]+)%.([%w_]+)%s=]]
@@ -162,6 +163,12 @@ function parseClass(current_file_dir, import_path)
                 end
                 
                 local name, path = string.match(line, pattern_import_lua)
+                if name and path then
+                    class:addImport(name, util.strTrim(path))
+                    break
+                end
+                
+                local name, path = string.match(line, pattern_importer_lua)
                 if name and path then
                     class:addImport(name, util.strTrim(path))
                     break

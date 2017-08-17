@@ -1,4 +1,5 @@
 local pattern_import_lua = [[([%w_]+)%s*=%s*import%(["']([%w_%.%s]+)["']%)]]
+local pattern_importer_lua = [[([%w_]+)%s*=%s*[%w]+%.import%(["']([%w_%.%s]+)["']%)]]
 local pattern_class_lua = [[([%w_]+)%s*=%s*class%(["'][%w_]+["'](["%%()%,%.%s%w_]*)%)]]
 
 function gotoDefinition(text, line, filename, project_src_dir)
@@ -94,6 +95,24 @@ function findImports(filename, out_imports, current_file)
                     if current_file then
                         out_imports[import_file] = true
                     end
+                    
+                    break
+                end
+                
+                local name, path = string.match(trimmed_line, pattern_importer_lua)
+                if name and path then
+                    local import_file = nil
+                    if util.strStartWith(util.strTrimLeft(path), ".") then
+                        import_file = current_file_path .. util.strReplaceAll(path, ".", "/") .. ".lua"
+                    else
+                        import_file = util.currentPath() .. "/src/" .. util.strReplaceAll(path, ".", "/") .. ".lua"
+                    end
+                    import_files[name] = import_file
+                    if current_file then
+                        out_imports[import_file] = true
+                    end
+                    
+                    break
                 end
                 
                 local name, extends = string.match(readline, pattern_class_lua)
@@ -106,6 +125,7 @@ function findImports(filename, out_imports, current_file)
                             findImports(import_files[extend], out_imports, false)
                         end
                     end
+                    
                     break
                 end
                 
