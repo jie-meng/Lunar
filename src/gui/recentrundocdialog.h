@@ -17,13 +17,12 @@ class RecentRunDocDialog : public QDialog
 public:
     explicit RecentRunDocDialog(QWidget *parent = 0);
     virtual ~RecentRunDocDialog();
+signals:
+    void runDoc(const QString&);
+private:
     void init();
     void initConnections();
     void initGui();
-signals:
-    void runDoc(const QString&);
-public slots:
-    void onSelectRecentDocItem(const QStringList& item, int number);
 private:
     TreeView* ptree_view_;
 private:

@@ -60,14 +60,16 @@ void RecentDocDialog::initGui()
 
 void RecentDocDialog::initConnections()
 {
-    connect(ptree_view_, SIGNAL(itemSelected(const QStringList&, int)),
-            this, SLOT(onSelectRecentDocItem(const QStringList&, int)));
-}
+    connect(ptree_view_, &TreeView::itemSelected, [this](const QStringList& item, int number)
+    {
+        Q_EMIT selectDoc(item.at(1));
+        close();
+    });
 
-void RecentDocDialog::onSelectRecentDocItem(const QStringList& item, int number)
-{
-    Q_EMIT selectDoc(item.at(1));
-    close();
+    connect(ptree_view_, &TreeView::itemDeleted, [this](const QStringList& item, int number)
+    {
+        LunarGlobal::getInstance().removeRecentDoc(QStringToStdString(item.at(1)));        
+    });
 }
 
 } //namespace gui

@@ -93,10 +93,12 @@ public:
     inline util::Iterator<std::string> recentDocsIterator() { return util::createIterator<std::string>(recent_docs_); }
     void addRecentDoc(const std::string& doc);
     void trimRecentDocs();
+    void removeRecentDoc(const std::string& doc);
     void parseExtensionFileFilter();
     inline util::Iterator<std::string> recentRunDocsIterator() { return util::createIterator<std::string>(recent_run_docs_); }
     void addRecentRunDoc(const std::string& doc);
     void trimRecentRunDoc();
+    void removeRecentRunDoc(const std::string& doc);
 private:
     LunarGlobal();
     ~LunarGlobal();
