@@ -1,5 +1,5 @@
-local pattern_import_lua = [[([%w_]+)%s*=%s*import%("([%w_%.%s]+)"%)]]
-local pattern_class_lua = [[([%w_]+)%s*=%s*class%("[%w_]+"(["%%()%,%.%s%w_]*)%)]]
+local pattern_import_lua = [[([%w_]+)%s*=%s*import%(["']([%w_%.%s]+)["']%)]]
+local pattern_class_lua = [[([%w_]+)%s*=%s*class%(["'][%w_]+["'](["%%()%,%.%s%w_]*)%)]]
 
 function gotoDefinition(text, line, filename, project_src_dir)
     local imports = {}

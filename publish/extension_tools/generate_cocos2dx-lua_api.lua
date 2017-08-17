@@ -155,6 +155,10 @@ function createCocosApis()
         end
     end
     
+    local extfunctions = util.currentPath() .. "/src/extfunctions.lua"
+    print("parse file " .. extfunctions)
+    parseApi(extfunctions, apis)
+    
     if #apis == 0 then
         print("no api found")
         return
