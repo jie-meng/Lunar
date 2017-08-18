@@ -14,6 +14,7 @@ function parseFile(filename, classes, apis)
         local line = f:read('*line')
         local current_class = nil
         local line_number = 1
+
         while line do
             repeat
                 local trim_line = util.strTrim(line)

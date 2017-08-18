@@ -199,7 +199,7 @@ function parseApi(filename, apis, index_tb)
                 func, param = string.match(line, pattern_function_lua)
                 if func and param then
                     table.insert(apis, string.format("%s%s", func, param))
-                    index_tb[func] = { file = filename, line = line_number }
+                    index_tb[func] = { file = filename, line_number = line_number, line = line }
                     break
                 end
             
