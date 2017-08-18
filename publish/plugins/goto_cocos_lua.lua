@@ -1,3 +1,5 @@
+local table_ext = require('table_ext')
+
 local pattern_import_lua = [[([%w_]+)%s*=%s*import%(["']([%w_%.%s]+)["']%)]]
 local pattern_importer_lua = [[([%w_]+)%s*=%s*[%w]+%.import%(["']([%w_%.%s]+)["']%)]]
 local pattern_class_lua = [[([%w_]+)%s*=%s*class%(["'][%w_]+["'](["%%()%,%.%s%w_]*)%)]]
@@ -63,6 +65,15 @@ function gotoDefinition(text, line, filename, project_src_dir)
                 line_index = line_index+1
             end
             io.close(f)
+        end
+    end
+    
+    local api_index_tb = table_ext.load('api_index_tb')
+    local index_found = api_index_tb[text] or nil
+    if index_found then
+        local _, j = string.find(index_found.file, util.currentPath())
+        if j then
+            table.insert(results, string.format("%s\n%d\n%s", string.sub(index_found.file, j+2), index_found.line_number, index_found.line))
         end
     end
     

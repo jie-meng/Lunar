@@ -1,3 +1,5 @@
+local table_ext = require('table_ext')
+
 --[[ ApiModule start --]]
 
 local ApiModule = {
@@ -110,6 +112,7 @@ end
 function createCocosApis()
     
     local apis = {}
+    local api_index_tb = {}
     
     local t1 = util.findFilesInDirRecursively(util.currentPath() .. "/src/cocos", "lua")
     local t2 = util.findFilesInDirRecursively(util.currentPath() .. "/src/package", "lua")
@@ -119,12 +122,12 @@ function createCocosApis()
     -- lua api
     for k, v in pairs(t1) do
         print("parse file " .. v)
-        parseApi(v, apis)
+        parseApi(v, apis, api_index_tb)
     end
     
     for k, v in pairs(t2) do
         print("parse file " .. v)
-        parseApi(v, apis)
+        parseApi(v, apis, api_index_tb)
     end
     
     -- auto api
@@ -157,7 +160,7 @@ function createCocosApis()
     
     local extfunctions = util.currentPath() .. "/src/extfunctions.lua"
     print("parse file " .. extfunctions)
-    parseApi(extfunctions, apis)
+    parseApi(extfunctions, apis, api_index_tb)
     
     if #apis == 0 then
         print("no api found")
@@ -168,16 +171,19 @@ function createCocosApis()
     
     content = util.strJoin(apis, "\n")
     util.writeTextFile("cocos.api", content)
+    
+    table_ext.save(api_index_tb, 'api_index_tb')
 end
 
-function parseApi(filename, apis)
+function parseApi(filename, apis, index_tb)
     
     local pattern_tb_function_lua = [[function%s+([%w_]+)[.:]([%w_]+)%s*(%(.*%))]]
     local pattern_function_lua = [[function%s+([%w_]+)%s*(%(.*%))]]
     local f = io.open(filename, "r")
     if f ~= nil then
         local line = f:read("*line")
-        while (line ~= nil) do
+        local line_number = 1
+        while (line) do
             repeat
                 if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "--") then
                     break
@@ -186,18 +192,21 @@ function parseApi(filename, apis)
                 local tb, func, param = string.match(line, pattern_tb_function_lua)
                 if tb and func and param then
                     table.insert(apis, string.format("%s.%s%s", tb, func, param))
+                    index_tb[tb .. '.' .. func] = { file = filename, line_number = line_number, line = line }
                     break
                 end
                 
                 func, param = string.match(line, pattern_function_lua)
                 if func and param then
                     table.insert(apis, string.format("%s%s", func, param))
+                    index_tb[func] = { file = filename, line = line_number }
                     break
                 end
             
             until true
             
             line = f:read("*line")
+            line_number = line_number + 1
         end
         io.close(f)
     end
