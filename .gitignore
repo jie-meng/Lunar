@@ -52,5 +52,8 @@ Lunar.pro
 # vim
 tags
 
-#script
+# script
 *.pyc
+
+# mac
+*.dmg

@@ -10,7 +10,7 @@ A cross-platform (MacOS, Linux, Windows) script editor
 ### Preparations ###
 
 - [Qt](https://www.qt.io/)
-- [QScintilla](https://www.riverbankcomputing.com/software/qscintilla/download)
+- [QScintilla](https://github.com/jie-meng/QScintilla)
 
 Download Qt5 and QScintilla 2.10.
 
@@ -58,17 +58,9 @@ On MacOS
 
 1. Put luaexec to /usr/local/bin
 
-2. Use command "otool -L Lunar.app/Contents/MacOS/Lunar" to check the library dependency
+2. Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
 
-3. Use command "install_name_tool -change libqscintilla2.12.dylib(found in result of otool command) {absolute_path_of_libqscintilla2.12.dylib} Lunar.app/Contents/MacOS/Lunar" to change the load path of special dylibs
-
-4. Use command "macdeployqt Lunar.app"
-
-5. Put all the files and folders in publish to Lunar.app/Contents/MacOS
-
-6. Put Lunar.app to /Applications/
-
-(Run postbuild_mac.lua can do steps 2~5 automatically)
+3. Install Lunar from Lunar.dmg
 
 ### Notes ###
 
@@ -122,3 +114,6 @@ On MacOS
     
     V1.8.1 Support cocos2dx-js.
     
+- 2017.08.17
+
+	V1.8.3 Support run recent script with F6.
