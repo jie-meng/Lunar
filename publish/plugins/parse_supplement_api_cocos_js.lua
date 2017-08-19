@@ -223,7 +223,7 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     if range_class_name then
         local range_class = classes[range_class_name]
         if range_class then
-            local this_tb = table_ext.shallowCopy(range_class)
+            local this_tb = table_ext.copy(range_class)
             this_tb.name = 'this'
             classes['this'] = this_tb
         end
