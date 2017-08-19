@@ -54,11 +54,9 @@ On windows extras (You can find all the dlls in Qt installation directory):
 
 On MacOS
 
-1. Put luaexec to /usr/local/bin
-
-2. Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
-
-3. Install Lunar from Lunar.dmg
+- Put luaexec to /usr/local/bin
+- Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
+- Install Lunar from Lunar.dmg
 
 ### Notes ###
 
