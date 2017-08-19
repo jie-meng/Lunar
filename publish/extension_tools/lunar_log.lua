@@ -1,18 +1,19 @@
-local ds = net.udpCreate(1)
+local ds = util.newUdpSocket(1)
 
 local port = 9966
-if net.udpBind(ds, "", port) then
+if ds:bind("", port) then
     print(string.format("Recv log on port %d start:\n", port))
     while true do
-        local len = net.udpRecvFrom(ds)
+        local len = ds:recvFrom()
         if len > 0 then
-            print(memory.tostring(net.udpGetRecvBuf(ds)))
+            print(util.memToString(ds:getRecvBuf(ds)))
         else
             break
         end
     end    
 end
 
-net.udpDestroy(ds)
+ds:close()
+ds:delete()
 
 print(string.format("Recv log on port %d end.", port))
