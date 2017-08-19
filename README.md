@@ -22,10 +22,8 @@ Install Qt, add Qt compiler directory to environment variable.
 
 1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util)
 
-2. Build luaexec follow the README.MD of Util. 
-
-3. luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv) which Lunar needs.
-
+2. Build luaexec and install luaexeclib follow the README.MD of Util. ( luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv) which Lunar needs.)
+ 
 #### Build Qscintilla ####
 
 1. cd QScintilla-gpl-version_xxx\Qt4Qt5
