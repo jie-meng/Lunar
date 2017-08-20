@@ -62,7 +62,7 @@ On MacOS
 
 - 2015.03.10
 
-	Support octave .m file. Set the path of octave cmdline application to the cfg parameter "Run.Runner.Octave", then you can run octave files in Lunar.
+	Support octave .m file. Set the path of octave cmdline application to the lunar.cfg parameter "Run.Runner.Octave", then you can run octave files in Lunar.
 
 - 2015.05.15
 

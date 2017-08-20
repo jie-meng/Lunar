@@ -158,7 +158,7 @@ void LogSocket::sendLog(const std::string& log, const std::string& ip, unsigned 
         log_sock_.sendTo(log.c_str(), log.length(), ip, port);
 }
 
-const string kCfg = "cfg";
+const string kCfg = "lunar.cfg";
 
 LunarGlobal::LunarGlobal() :
     file_filter_("Lua Files(*.lua);;")
@@ -259,7 +259,7 @@ void LunarGlobal::readCfg()
     log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
     is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
     recent_project_path_ = text_cfg.getValue("Path.RecentProject", "");
-    recent_project_path_cnt_ = text_cfg.getValue("Path.RecentProject.Count", 10);
+    recent_project_path_cnt_ = text_cfg.getValue("Path.RecentProject.Count", 30);
 }
 
 void LunarGlobal::writeCfg()
