@@ -114,7 +114,7 @@ void MainTabWidget::closeAllDocViewTabs()
 void MainTabWidget::setDocViewFont()
 {
     bool ok;
-    QFont font = QFontDialog::getFont(&ok, QFont("Consolas", 10), this);
+    QFont font = QFontDialog::getFont(&ok, LunarGlobal::getInstance().getFont(), this);
     if (ok) {
         for (int i=0; i<count(); i++)    
             dynamic_cast<DocView*>(widget(i))->setEditTextFont(font);
