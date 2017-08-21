@@ -1,0 +1,39 @@
+MonkeyRunner.alert(string message, string title, string okTitle)
+MonkeyRunner.choice(string message, iterable choices, string title) -> integer
+MonkeyRunner.help(string format)
+MonkeyRunner.input(string message, string initialValue, string title, string okTitle, string cancelTitle) -> string
+MonkeyRunner.sleep(float seconds)
+MonkeyRunner.waitForConnection(float timeout, string deviceId) -> MonkeyDevice
+MonkeyDevice.broadcastIntent(string uri, string action, string data, string mimetype, iterable categories dictionary extras, component component, iterable flags)
+MonkeyDevice.drag(tuple start, tuple end, float duration, integer steps)
+MonkeyDevice.getProperty(string key) -> object
+MonkeyDevice.getSystemProperty(string key) -> object
+MonkeyDevice.installPackage(string path)
+MonkeyDevice.instrument(string className, dictionary args) -> dictionary
+MonkeyDevice.press(string name, dictionary type)
+MonkeyDevice.reboot(string into)
+MonkeyDevice.removePackage(string package)
+MonkeyDevice.shell(string cmd) -> object
+MonkeyDevice.startActivity(string uri, string action, string data, string mimetype, iterable categories dictionary extras, component component, flags)
+MonkeyDevice.takeSnapshot() -> MonkeyImage
+MonkeyDevice.touch(integer x, integer y, integer type)
+MonkeyDevice.type(string message)
+MonkeyDevice.wake()
+MonkeyDevice.DOWN
+MonkeyDevice.UP
+MonkeyDevice.DOWN_AND_UP
+MonkeyImage.convertToBytes (string format) -> string
+MonkeyImage.getRawPixel(integer x, integer y) -> tuple
+MonkeyImage.getRawPixelInt(integer x, integer y) -> integer
+MonkeyImage.getSubImage(tuple rect) -> MonkeyImage
+MonkeyImage.sameAs(MonkeyImage other, float percent) -> boolean
+MonkeyImage.writeToFile(string path, string format)
+EasyMonkeyDevice(device)
+EasyMonkeyDevice.touch(By selector,TouchPressType type)
+EasyMonkeyDevice.type(By selector, String text)
+EasyMonkeyDevice.exists(By selector)
+EasyMonkeyDevice.visible(By selector)
+EasyMonkeyDevice.getText(By selector)
+EasyMonkeyDevice.getFocusedWindowId()
+EasyMonkeyDevice.locate(By selector)
+By.id(id)

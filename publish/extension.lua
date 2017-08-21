@@ -184,6 +184,20 @@ function parseFileType(filename)
 	end
     
     if string.lower(util.fileExtension(name)) == "py" then
+        local content = util.readTextFile(filename)
+        if util.strContains(content, 'monkeyrunner', false) then
+            return
+            {
+                type = "python",
+                auto_complete_type = 1,
+                api = "apis/python",
+                executor = "monkeyrunner",
+                plugin_goto = "plugins/goto_python.lua",
+                plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
+                comment_line = "#"
+            }
+        end
+        
         local python3 = "python3"
         if util.strContains(util.platformInfo(), "win", false) then
             python3 = "python"
@@ -203,7 +217,7 @@ function parseFileType(filename)
                 -- python2
                 --type = "python",
                 --auto_complete_type = 1,
-                --api = "apis/python/python",
+                --api = "apis/python",
                 --executor = "python -u",
                 --plugin_goto = "plugins/goto_python.lua",
                 --plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
