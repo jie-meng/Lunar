@@ -95,8 +95,12 @@ void MainWindow::processCmdParam()
         for (int i=1; i<LunarGlobal::getInstance().getArgCnt(); i++)
         {
             std::string filepath = util::relativePathToAbsolutePath(LunarGlobal::getInstance().getArg(i));
-            if(util::isPathFile(filepath))
+            if (util::isPathFile(filepath)) {
                 pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
+            } else if (util::isPathDir(filepath)) {
+                LunarMsgBox(filepath);
+                setCurrentPath(filepath);
+            }
         }
     }
 }
