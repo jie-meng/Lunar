@@ -98,7 +98,6 @@ void MainWindow::processCmdParam()
             if (util::isPathFile(filepath)) {
                 pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
             } else if (util::isPathDir(filepath)) {
-                LunarMsgBox(filepath);
                 setCurrentPath(filepath);
             }
         }
