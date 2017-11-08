@@ -99,6 +99,7 @@ void MainWindow::processCmdParam()
                 pmain_tabwidget_->addDocViewTab(StdStringToQString(filepath));
             } else if (util::isPathDir(filepath)) {
                 setCurrentPath(filepath);
+                addNewRecentProjectPath(filepath);
             }
         }
     }
@@ -140,6 +141,7 @@ void MainWindow::initLuaExecutor()
 
 bool MainWindow::init()
 {
+    processCmdParam();
     initActions();
     initMenubar();
     initToolbar();
@@ -151,7 +153,6 @@ bool MainWindow::init()
     initLuaExecutor();
     initConnections();
     initExtension();
-    processCmdParam();
 
     pmain_tabwidget_->setAcceptDrops(false);
     setAcceptDrops(true);

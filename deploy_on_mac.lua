@@ -7,6 +7,9 @@ os.execute("cp -r publish/. Lunar.app/Contents/MacOS")
 print("Copy *.dylib to executable path ..")
 os.execute(string.format("cp %s/*.dylib Lunar.app/Contents/MacOS", libdir))
 
+print("Copy start lunar from command line sh ..")
+os.execute("cp ./luna Lunar.app/Contents/MacOS")
+
 print("install name tool")
 os.execute("install_name_tool -change libqscintilla2_qt5.13.dylib @executable_path/libqscintilla2_qt5.13.dylib Lunar.app/Contents/MacOS/Lunar")
 
