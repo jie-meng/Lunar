@@ -57,6 +57,7 @@ On MacOS
 - Put luaexec to /usr/local/bin
 - Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
 - Install Lunar from Lunar.dmg
+- Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
 
 ### Notes ###
 
@@ -113,3 +114,7 @@ On MacOS
 - 2017.08.17
 
 	V1.8.3 Support run recent script with F6.
+	
+- 2.17.11.08
+	
+	V1.8.6 Support start from MAC terminal with command 'luna'
