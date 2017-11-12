@@ -166,15 +166,13 @@ void FindFileDialog::initGui()
 void FindFileDialog::initConnections()
 {
     connect(pfile_name_, &QLineEdit::textChanged, [this](const QString& text)
-    {
-        ptree_view_->clear();
-            
+    {       
         if (find_file_thread_.isRunning())
         {
             find_file_thread_.terminate();
-            find_file_thread_.wait();
-            return;
         }
+        
+        ptree_view_->clear();
 
         if (!text.isEmpty())
         {
@@ -188,8 +186,8 @@ void FindFileDialog::initConnections()
 
     connect(ptree_view_, &TreeView::itemSelected, [this](const QStringList& item, int number)
     {
-        //Q_EMIT selectDoc(item.at(1));
-        //close();
+        Q_EMIT selectDoc(item.at(1));
+        close();
     });
 }
 

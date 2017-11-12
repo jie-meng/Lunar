@@ -606,9 +606,7 @@ void MainWindow::fileSaveAll()
 void MainWindow::fileFind()
 {
     FindFileDialog dlg;
-    //connect(&dlg, SIGNAL(selectRecentProjectPath(const QString&)),
-    //        this, SLOT(resetCurrentPath(const QString&)));
-    //connect(&dlg, SIGNAL(newProjectPath()), this, SLOT(resetCurrentPath()));
+    connect(&dlg, SIGNAL(selectDoc(const QString&)), this, SLOT(openDoc(const QString&)));
     dlg.exec();
 }
 
