@@ -79,6 +79,7 @@ public:
     inline void setMainwindowHeight(size_t height) { mainwindow_height_ = height; }
     inline void setRecentProjectPath(const std::string& path_list) { recent_project_path_ = path_list; }
     inline void setRecentProjectPathCnt(size_t cnt) { recent_project_path_cnt_ = cnt; }
+    inline void setLastFindFileText(const std::string& last_find_file_text) { last_find_file_text_ = last_find_file_text; }
 
     inline std::string getExtensionFile() const { return "extension.lua"; }
     inline std::string getExtensionFuncParseFileType() const { return extension_func_parsefiletype_; }
@@ -87,6 +88,7 @@ public:
     inline std::string getExtensionFuncFindFiles() const { return extension_func_find_files_; }
     inline std::string getFileFilter() const { return file_filter_; }
     inline std::string getExtensionToolsPath() const { return extension_tools_path_; }
+    inline std::string getLastFindFileText() const { return last_find_file_text_; }
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
     inline bool isLogEnable() const { return is_log_enable_; }
     inline std::string getRecentProjectPath() const { return recent_project_path_; }
@@ -126,6 +128,7 @@ private:
     std::string recent_project_path_;
     std::list<std::string> recent_docs_;
     std::list<std::string> recent_run_docs_;
+    std::string last_find_file_text_;
 private:
     DISALLOW_COPY_AND_ASSIGN(LunarGlobal)
 };

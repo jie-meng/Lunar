@@ -143,7 +143,8 @@ void FindFileDialog::init()
 
 void FindFileDialog::initGui()
 {
-    pfile_name_ = new QLineEdit(tr(""));
+    pfile_name_ = new QLineEdit(StdStringToQString(LunarGlobal::getInstance().getLastFindFileText()));
+    pfile_name_->setSelection(0, LunarGlobal::getInstance().getLastFindFileText().length());
     
     QStringList header;
     header.append(tr("Name"));
@@ -177,6 +178,7 @@ void FindFileDialog::initConnections()
         if (!pfile_name_->text().isEmpty())
         {
             find_file_thread_.start(pfile_name_->text());
+            LunarGlobal::getInstance().setLastFindFileText(QStringToStdString(pfile_name_->text()));
         }
     });
     
