@@ -2,6 +2,9 @@
 #include <QKeyEvent>
 #include "lunarcommon.h"
 
+using namespace std;
+using namespace util;
+
 namespace gui {
 
 TreeView::TreeView(const QStringList& header, QWidget *parent) : QTreeWidget(parent)

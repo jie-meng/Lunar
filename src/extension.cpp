@@ -114,7 +114,7 @@ std::string Extension::fileFilter()
         {
             string result = "";
 
-            if(luaGetType(lua_state_.getState(), 1) == LuaTable)
+            if (luaGetType(lua_state_.getState(), 1) == LuaTable)
             {
                 vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
                 vector< pair<any, any> >::iterator it;
@@ -174,4 +174,42 @@ bool Extension::isLegalFile(const std::string& filename)
             return false;
         }
     }
+}
+
+void Extension::findFiles(const string& find_with_text, vector<string>& out_files_found)
+{
+    out_files_found.clear();
+    
+    if (!lua_state_ok_)
+        return;
+    
+    error_information_ = "";
+    
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncFindFiles());
+    luaPushString(lua_state_.getState(), find_with_text);
+    
+    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    if (0 != err)
+    {
+        error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+        if (ret_cnt > 0)
+        {
+            if (luaGetType(lua_state_.getState(), 1) == LuaTable)
+            {   
+                vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
+                vector< pair<any, any> >::iterator it;
+                for (it=vec.begin(); it != vec.end(); ++it)
+                {
+                    out_files_found.push_back(it->second.toString());
+                }
+            }   
+        }
+    }
+    
+    luaPop(lua_state_.getState(), -1);
 }

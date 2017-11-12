@@ -47,6 +47,7 @@ private Q_SLOTS:
     void fileSave();
     void fileSaveAs();
     void fileSaveAll();
+    void fileFind();
     void fileClose();
     void fileCloseAll();
     void fileGotoNext();
@@ -106,6 +107,7 @@ private:
     QAction* pfile_save_action_;
     QAction* pfile_save_as_action_;
     QAction* pfile_save_all_action_;
+    QAction* pfile_find_action_;
     QAction* pfile_close_action_;
     QAction* pfile_close_all_action_;
     QAction* pfile_goto_next_action_;

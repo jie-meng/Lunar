@@ -21,6 +21,7 @@
 #include "finddialog.h"
 #include "recentprojectpathdialog.h"
 #include "recentdocdialog.h"
+#include "findfiledialog.h"
 #include "recentrundocdialog.h"
 #include "aboutdialog.h"
 #include "fileexplorerwidget.h"
@@ -45,6 +46,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_save_action_(NULL),
     pfile_save_as_action_(NULL),
     pfile_save_all_action_(NULL),
+    pfile_find_action_(NULL),
     pfile_close_action_(NULL),
     pfile_close_all_action_(NULL),
     pfile_goto_next_action_(NULL),
@@ -221,6 +223,11 @@ void MainWindow::initActions()
 
     pfile_save_all_action_ = new QAction(tr("Save all"), this);
     pfile_save_all_action_->setStatusTip(tr("Save all files."));
+    
+    pfile_find_action_ = new QAction(tr("Find file"), this);
+    pfile_find_action_->setStatusTip(tr("Find file."));
+    pfile_find_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_O);
+    pfile_find_action_->setIcon(QIcon(tr(":/res/select_cursor_word.png")));    
 
     pfile_close_action_ = new QAction(tr("Close"), this);
     pfile_close_action_->setStatusTip(tr("Close current file."));
@@ -356,6 +363,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_save_action_);
     pfile_menu->addAction(pfile_save_as_action_);
     pfile_menu->addAction(pfile_save_all_action_);
+    pfile_menu->addAction(pfile_find_action_);
     pfile_menu->addAction(pfile_close_action_);
     pfile_menu->addAction(pfile_close_all_action_);
     pfile_menu->addAction(pfile_goto_next_action_);
@@ -396,6 +404,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_new_action_);
     ptoolbar->addAction(pfile_open_action_);
     ptoolbar->addAction(pfile_save_action_);
+    ptoolbar->addAction(pfile_find_action_);
     ptoolbar->addAction(pfile_goto_prev_action_);
     ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(pfile_recent_docs_action_);
@@ -445,6 +454,7 @@ void MainWindow::initConnections()
     connect(pfile_save_action_, SIGNAL(triggered()), this, SLOT(fileSave()));
     connect(pfile_save_as_action_, SIGNAL(triggered()), this, SLOT(fileSaveAs()));
     connect(pfile_save_all_action_, SIGNAL(triggered()), this, SLOT(fileSaveAll()));
+    connect(pfile_find_action_, SIGNAL(triggered()), this, SLOT(fileFind()));
     connect(pfile_close_action_, SIGNAL(triggered()), this, SLOT(fileClose()));
     connect(pfile_close_all_action_, SIGNAL(triggered()), this, SLOT(fileCloseAll()));
     connect(pfile_goto_next_action_, SIGNAL(triggered()), this, SLOT(fileGotoNext()));
@@ -591,6 +601,15 @@ void MainWindow::fileSaveAll()
 {
     pmain_tabwidget_->saveAllViewTabs(pfile_explorer_widget_->getCurrentSelectedDir());
     Q_EMIT allFilesSaved();
+}
+
+void MainWindow::fileFind()
+{
+    FindFileDialog dlg;
+    //connect(&dlg, SIGNAL(selectRecentProjectPath(const QString&)),
+    //        this, SLOT(resetCurrentPath(const QString&)));
+    //connect(&dlg, SIGNAL(newProjectPath()), this, SLOT(resetCurrentPath()));
+    dlg.exec();
 }
 
 void MainWindow::fileClose()

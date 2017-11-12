@@ -3,6 +3,7 @@ QT       += core gui
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 DEFINES += _PLATFORM_WINDOWS_ \
+            LUA_USE_WINDOWS \
 			_GUI_ \
 			_CPP11_
 

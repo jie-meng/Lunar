@@ -45,12 +45,8 @@ Lunar.pro
 *.qmlproject.user
 *.qmlproject.user.*
 
-# CodeBlocks
-*.layout
-*.depend
-
-# vim
-tags
+# Lunar
+lunar_cpp.cfg
 
 # script
 *.pyc

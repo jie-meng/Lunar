@@ -2,6 +2,7 @@
 #define EXTENSION_H
 
 #include "util/luax.hpp"
+#include <vector>
 #include <map>
 
 class Extension
@@ -16,6 +17,7 @@ public:
     bool parseFilename(const std::string& filename, std::map<std::string, std::string>& out_map);
     std::string fileFilter();
     bool isLegalFile(const std::string& filename);
+    void findFiles(const std::string& find_with_text, std::vector<std::string>& out_files_found);
 private:
     bool initLuaState();
 private:

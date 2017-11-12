@@ -6,7 +6,6 @@
 #include <QtCore/QObject>
 #include <QThread>
 #include <QMutex>
-#include "util/base.hpp"
 #include "util/luaextend.hpp"
 
 namespace gui

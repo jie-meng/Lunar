@@ -399,3 +399,14 @@ function isLegalFile(filename)
 
     return util.isTextFile(filename)
 end
+
+function findFiles(findWithText)
+    local file = assert(io.popen(string.format("find %s -name '%s*'", util.currentPath(), findWithText), 'r'))
+    local output = file:read('*all')
+    file:close()
+    local result = util.strSplit(output, '\n', 10)
+    if #result == 10 then
+        table.remove(result)
+    end
+    return result
+end
