@@ -227,7 +227,7 @@ void MainWindow::initActions()
     pfile_find_action_ = new QAction(tr("Find file"), this);
     pfile_find_action_->setStatusTip(tr("Find file."));
     pfile_find_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_O);
-    pfile_find_action_->setIcon(QIcon(tr(":/res/select_cursor_word.png")));    
+    pfile_find_action_->setIcon(QIcon(tr(":/res/find_files.png")));    
 
     pfile_close_action_ = new QAction(tr("Close"), this);
     pfile_close_action_->setStatusTip(tr("Close current file."));

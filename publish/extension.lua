@@ -406,12 +406,12 @@ function findFiles(findWithText)
     if util.strContains(util.platformInfo(), "windows", false) then
         
     else
-        local file = assert(io.popen(string.format("find %s -name '%s*'", util.currentPath(), findWithText), 'r'))
+        local file = assert(io.popen(string.format("find %s -iname '%s*'", util.currentPath(), findWithText), 'r'))
         local output = file:read('*all')
         file:close()
         
-        result = util.strSplit(output, '\n', 50)
-        if #result == 50 then
+        result = util.strSplit(output, '\n', 100)
+        if #result == 100 then
             table.remove(result)
         end
     end

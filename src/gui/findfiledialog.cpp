@@ -164,9 +164,9 @@ void FindFileDialog::initGui()
 }
 
 void FindFileDialog::initConnections()
-{
-    connect(pfile_name_, &QLineEdit::textChanged, [this](const QString& text)
-    {       
+{   
+    connect(pfile_name_, &QLineEdit::returnPressed, [this]()
+    {
         if (find_file_thread_.isRunning())
         {
             find_file_thread_.terminate();
@@ -174,10 +174,10 @@ void FindFileDialog::initConnections()
         
         ptree_view_->clear();
 
-        if (!text.isEmpty())
+        if (!pfile_name_->text().isEmpty())
         {
-            find_file_thread_.start(text);
-        }       
+            find_file_thread_.start(pfile_name_->text());
+        }
     });
     
     connect(&find_file_thread_, SIGNAL(found(const QStringList&)), ptree_view_, SLOT(addItem(const QStringList&)));
@@ -197,6 +197,8 @@ void FindFileDialog::resizeColumns()
     ptree_view_->resizeColumnToContents(1);
     setFixedWidth(ptree_view_->columnWidth(0) + ptree_view_->columnWidth(1));
     setFixedHeight(sizeHint().height());
+    
+    ptree_view_->setFocus();
 }
 
 } //namespace gui
