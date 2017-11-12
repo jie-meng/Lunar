@@ -401,19 +401,18 @@ function isLegalFile(filename)
 end
 
 function findFiles(findWithText)
-    local result = {}
-
+    local command = string.format("find %s -iname '%s*'", util.currentPath(), findWithText)
     if util.strContains(util.platformInfo(), "windows", false) then
-        
-    else
-        local file = assert(io.popen(string.format("find %s -iname '%s*'", util.currentPath(), findWithText), 'r'))
-        local output = file:read('*all')
-        file:close()
-        
-        result = util.strSplit(output, '\n', 100)
-        if #result == 100 then
-            table.remove(result)
-        end
+        command = string.format("dir %s* /b /s", findWithText)
+    end
+
+    local file = assert(io.popen(command, 'r'))
+    local output = file:read('*all')
+    file:close()
+
+    local result = util.strSplit(output, '\n', 100)
+    if #result == 100 then
+        table.remove(result)
     end
 
     return result
