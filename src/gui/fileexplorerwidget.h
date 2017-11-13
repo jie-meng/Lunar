@@ -32,6 +32,7 @@ public slots:
     void onFileSaved(const QString& file);
     void onAllFilesSaved();
     void showContextMenu();
+    void locateFile(const QString& file);
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
     virtual void contextMenuEvent(QContextMenuEvent *e);

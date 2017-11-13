@@ -33,6 +33,7 @@
     <file>res/jump_forward.png</file>
 	<file>res/project_path.png</file>
 	<file>res/documents.png</file>
+    <file>res/locate.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>

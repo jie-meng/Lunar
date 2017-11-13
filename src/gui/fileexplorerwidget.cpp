@@ -86,6 +86,69 @@ void FileExplorerWidget::loadRoot()
     Q_EMIT widthChanged(200);
 }
 
+void FileExplorerWidget::locateFile(const QString& file)
+{
+    string path = QStringToStdString(file);
+    std::pair<string, string> path_name = splitPathname(path);
+    if (!strContains(path_name.first, currentPath()))
+        return;
+
+    QTreeWidgetItem* proot = topLevelItem(0);
+    if (proot == NULL)
+        return;
+
+    string relative_dir = strReplace(path_name.first, currentPath(), "");
+    if (relative_dir.length() == 0)
+        return;
+
+    if (strStartWith(relative_dir, "/"))
+        relative_dir = strRight(relative_dir, relative_dir.length()-1);
+
+    vector<string> vec;
+    strSplit(relative_dir, "/", vec);
+    QTreeWidgetItem* pnode = proot;
+    proot->setExpanded(true);
+    for (int i=0; i<(int)vec.size(); ++i)
+    {
+        if (pnode != NULL)
+        {
+            bool found = false;
+            for (int j=0; j<pnode->childCount(); ++j)
+            {
+                if (QStringToStdString(pnode->child(j)->text(0)) == vec[i])
+                {
+                    pnode = pnode->child(j);
+                    if (pnode->childCount() == 0)
+                        onItemReturn(pnode, currentColumn());
+                    pnode->setExpanded(true);
+                    
+                    found = true;
+                    break;
+                }
+            }
+
+            if (found)
+                continue;
+            else
+                break;
+        }
+        else
+        {
+            break;
+        }
+    }
+    
+    if (pnode != NULL && pnode->childCount() > 0)
+    {
+        for (int i=0; i<pnode->childCount(); ++i)
+        {
+            if (QStringToStdString(pnode->child(i)->text(0)) == path_name.second)
+                scrollToItem(pnode->child(i));
+                setCurrentItem(pnode->child(i));
+        }
+    }
+}
+
 bool FileExplorerWidget::loadNode(QTreeWidgetItem* item)
 {
     QString path = getNodeAbsolutePath(item);

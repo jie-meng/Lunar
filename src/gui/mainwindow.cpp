@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_file_explorer_context_menu_action_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
+    pview_locate_current_file_(NULL),
     pview_documents_action_(NULL),
     pview_close_docks_action_(NULL),
     prun_run_action_(NULL),
@@ -324,6 +325,11 @@ void MainWindow::initActions()
     pview_search_results_action_->setStatusTip((tr("Go to search results.")));
     pview_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
     pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
+    
+    pview_locate_current_file_ = new QAction(tr("Locate current file"), this);
+    pview_locate_current_file_->setStatusTip((tr("Locate current file.")));
+    pview_locate_current_file_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_K);
+    pview_locate_current_file_->setIcon(QIcon(tr(":/res/locate.png")));
 
     pview_documents_action_ = new QAction(tr("Documents"), this);
     pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
@@ -386,6 +392,7 @@ void MainWindow::initMenubar()
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
     pview_menu->addAction(pview_search_results_action_);
+    pview_menu->addAction(pview_locate_current_file_);
     pview_menu->addAction(pview_documents_action_);
     pview_menu->addAction(pview_close_docks_action_);
 
@@ -422,6 +429,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pedit_jump_forward_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pview_search_results_action_);
+    ptoolbar->addAction(pview_locate_current_file_);
     ptoolbar->addAction(pview_documents_action_);
     ptoolbar->addAction(pview_close_docks_action_);
     ptoolbar->addAction(pfile_close_action_);
@@ -481,6 +489,7 @@ void MainWindow::initConnections()
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
+    connect(pview_locate_current_file_, SIGNAL(triggered()), this, SLOT(viewLocateCurrentFile()));
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
     connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
@@ -569,17 +578,12 @@ void MainWindow::fileNew()
 void MainWindow::fileOpen()
 {
     QString path = QFileDialog::getOpenFileName(this, tr("Open File"), pfile_explorer_widget_->getCurrentSelectedDir(), StdStringToQString(LunarGlobal::getInstance().getFileFilter()));
-    if(path.length() == 0)
-    {
-        //QMessageBox::information(NULL, tr("Path"), tr("You didn't select any files."));
-    }
-    else
+    if(path.length() > 0)
     {
         if (!Extension::getInstance().isLegalFile(QStringToStdString(path)))
             return;
 
         pmain_tabwidget_->addDocViewTab(path);
-        //QMessageBox::information(NULL, tr("Path"), tr("You selected ") + path);
     }
 }
 
@@ -881,6 +885,12 @@ void MainWindow::viewSearchResultsWidget()
         pbottom_widget_->show();
     pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
     psearch_results_widget_->setFocus();
+}
+
+void MainWindow::viewLocateCurrentFile()
+{
+    if (pmain_tabwidget_ && !pmain_tabwidget_->getCurrentDocPathname().isEmpty())
+        pfile_explorer_widget_->locateFile(pmain_tabwidget_->getCurrentDocPathname());
 }
 
 void MainWindow::viewDocuments()
