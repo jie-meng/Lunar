@@ -203,6 +203,7 @@ void SearchResultsWidget::initConnections()
 {
     connect(this, SIGNAL(itemDoubleClicked(QTreeWidgetItem*,int)), this, SLOT(onItemDoubleClicked(QTreeWidgetItem *, int)));
     connect(&search_thread_, SIGNAL(found(const QString&, const QString&, const QString&)), this, SLOT(addItem(const QString&, const QString&, const QString&)));
+    connect(&search_thread_, SIGNAL(finished()), this, SLOT(findFinish()));
 }
 
 void SearchResultsWidget::addItem(const QString& file, const QString& line, const QString& text)
@@ -213,6 +214,14 @@ void SearchResultsWidget::addItem(const QString& file, const QString& line, cons
     list.append(text);
     QTreeWidgetItem* pnode = new QTreeWidgetItem((QTreeWidget*)0, list);
     addTopLevelItem(pnode);
+}
+
+
+void SearchResultsWidget::findFinish()
+{   
+    resizeColumnToContents(0);
+    resizeColumnToContents(1);
+    resizeColumnToContents(2);
 }
 
 void SearchResultsWidget::onItemReturn(QTreeWidgetItem *item, int column)

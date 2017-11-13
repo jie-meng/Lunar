@@ -57,6 +57,7 @@ public slots:
                       bool case_sensitive = true,
                       bool use_regexp = false);
     void addItem(const QString& file, const QString& line, const QString& text);
+    void findFinish();
 protected:
     virtual void keyPressEvent(QKeyEvent *event);
 private slots:
