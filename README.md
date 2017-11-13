@@ -115,6 +115,10 @@ On MacOS
 
 	V1.8.3 Support run recent script with F6.
 	
-- 2.17.11.08
+- 2017.11.08
 	
 	V1.8.6 Support start from MAC terminal with command 'luna'
+
+- 2017.11.12
+    
+    V1.8.7 Support find files.
