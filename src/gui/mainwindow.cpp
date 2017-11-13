@@ -257,7 +257,7 @@ void MainWindow::initActions()
 #endif
     pfile_goto_prev_action_->setIcon(QIcon(tr(":/res/prev.png")));
 
-    pfile_recent_docs_action_ =  new QAction(tr("Recent documents"));
+    pfile_recent_docs_action_ = new QAction(tr("Recent documents"), this);
     pfile_recent_docs_action_->setStatusTip(tr("Recent documents."));
     pfile_recent_docs_action_->setShortcut(Qt::CTRL + Qt::Key_E);
     pfile_recent_docs_action_->setIcon(QIcon(tr(":/res/documents.png")));
