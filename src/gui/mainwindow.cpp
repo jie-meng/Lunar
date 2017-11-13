@@ -890,7 +890,10 @@ void MainWindow::viewSearchResultsWidget()
 void MainWindow::viewLocateCurrentFile()
 {
     if (pmain_tabwidget_ && !pmain_tabwidget_->getCurrentDocPathname().isEmpty())
+    {
+        viewFileExplorer();
         pfile_explorer_widget_->locateFile(pmain_tabwidget_->getCurrentDocPathname());
+    }
 }
 
 void MainWindow::viewDocuments()
