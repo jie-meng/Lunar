@@ -11,7 +11,7 @@ INCLUDEPATH += src
 
 LIBS += -lws2_32 \
 		-lShlwapi \
-        -lqscintilla2
+        -lqscintilla2_qt5
 
 RC_FILE += Lunar.rc
 
