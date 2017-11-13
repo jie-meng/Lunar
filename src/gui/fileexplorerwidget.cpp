@@ -143,8 +143,10 @@ void FileExplorerWidget::locateFile(const QString& file)
         for (int i=0; i<pnode->childCount(); ++i)
         {
             if (QStringToStdString(pnode->child(i)->text(0)) == path_name.second)
+            {    
                 scrollToItem(pnode->child(i));
                 setCurrentItem(pnode->child(i));
+            }
         }
     }
 }
