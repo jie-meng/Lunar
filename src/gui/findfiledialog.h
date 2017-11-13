@@ -20,7 +20,6 @@ public:
     void start(const QString& find_with_text);
 signals:
     void found(const QStringList&);
-    void finish();
 protected:
     virtual void run();
 private:
@@ -48,7 +47,9 @@ public:
 signals:
     void selectDoc(const QString&);
 public Q_SLOTS:
-    void resizeColumns();
+    void findFinish();
+    void startFinding(const QString& findWithText);
+    bool checkPending();
 private:
     void init();
     void initConnections();
@@ -57,6 +58,7 @@ private:
     QLineEdit* pfile_name_;
     TreeView* ptree_view_;
     FindFileThread find_file_thread_;
+    QString pending_find_text_;
 private:
     DISALLOW_COPY_AND_ASSIGN(FindFileDialog)
 };

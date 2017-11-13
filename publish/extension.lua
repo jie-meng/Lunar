@@ -401,7 +401,7 @@ function isLegalFile(filename)
 end
 
 function findFiles(findWithText)
-    local command = string.format("find %s -iname '%s*'", util.currentPath(), findWithText)
+    local command = string.format("find %s -iname '%s*' -type f", util.currentPath(), findWithText)
     if util.strContains(util.platformInfo(), "windows", false) then
         command = string.format("dir %s* /b /s", findWithText)
     end

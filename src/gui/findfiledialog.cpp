@@ -63,9 +63,8 @@ bool FindFileThread::initLuaState()
 
 void FindFileThread::run()
 {
-    if (!initLuaState()) {
+    if (!initLuaState())
         return;
-    }
     
     findFiles(QStringToStdString(find_with_text_));
     if (!files_found_.empty())
@@ -79,8 +78,6 @@ void FindFileThread::run()
             
             Q_EMIT found(qls);
         }
-        
-        Q_EMIT finish();
     }
 }
 
@@ -112,9 +109,7 @@ void FindFileThread::findFiles(const string& find_with_text)
                 vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
                 vector< pair<any, any> >::iterator it;
                 for (it=vec.begin(); it != vec.end(); ++it)
-                {
                     files_found_.push_back(it->second.toString());
-                }
             }   
         }
     }
@@ -139,6 +134,9 @@ void FindFileDialog::init()
 {
     initGui();
     initConnections();
+    
+    if (!pfile_name_->text().isEmpty())
+        startFinding(pfile_name_->text());
 }
 
 void FindFileDialog::initGui()
@@ -166,25 +164,13 @@ void FindFileDialog::initGui()
 
 void FindFileDialog::initConnections()
 {   
-    connect(pfile_name_, &QLineEdit::returnPressed, [this]()
-    {
-        if (find_file_thread_.isRunning())
-        {
-            find_file_thread_.terminate();
-        }
-        
-        ptree_view_->clear();
-
-        if (!pfile_name_->text().isEmpty())
-        {
-            find_file_thread_.start(pfile_name_->text());
-            LunarGlobal::getInstance().setLastFindFileText(QStringToStdString(pfile_name_->text()));
-        }
-    });
+    connect(pfile_name_, &QLineEdit::textChanged, [this] (const QString& text) { startFinding(text); });
+    
+    connect(pfile_name_, &QLineEdit::returnPressed, [this] () { ptree_view_->setFocus(); });
     
     connect(&find_file_thread_, SIGNAL(found(const QStringList&)), ptree_view_, SLOT(addItem(const QStringList&)));
     
-    connect(&find_file_thread_, SIGNAL(finish()), this, SLOT(resizeColumns()));
+    connect(&find_file_thread_, SIGNAL(finished()), this, SLOT(findFinish()));
 
     connect(ptree_view_, &TreeView::itemSelected, [this](const QStringList& item, int number)
     {
@@ -193,14 +179,40 @@ void FindFileDialog::initConnections()
     });
 }
 
-void FindFileDialog::resizeColumns()
+void FindFileDialog::findFinish()
 {
+    if (checkPending())
+        return;
+    
     ptree_view_->resizeColumnToContents(0);
     ptree_view_->resizeColumnToContents(1);
     setFixedWidth(ptree_view_->columnWidth(0) + ptree_view_->columnWidth(1));
     setFixedHeight(sizeHint().height());
-    
-    ptree_view_->setFocus();
 }
 
+void FindFileDialog::startFinding(const QString& findWithText)
+{
+    if (find_file_thread_.isRunning())
+    {
+        pending_find_text_ = findWithText;
+        return;
+    }
+
+    ptree_view_->clear();
+    if (!findWithText.isEmpty())
+        find_file_thread_.start(findWithText);
+    
+    LunarGlobal::getInstance().setLastFindFileText(QStringToStdString(findWithText));    
+}
+
+bool FindFileDialog::checkPending()
+{
+    if (pending_find_text_.isEmpty())
+        return false;
+    
+    startFinding(pending_find_text_);
+    pending_find_text_ = "";
+    return true;
+}
+    
 } //namespace gui
