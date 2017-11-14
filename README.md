@@ -61,6 +61,10 @@ On MacOS
 
 ### Notes ###
 
+- 2017.11.14
+    
+    V1.8.8 Support locate current file in file explorer.
+
 - 2017.11.12
     
     V1.8.7 Support find files.
