@@ -22,7 +22,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util)
 
-2. Build luaexec and install luaexeclib follow the README.MD of Util. ( luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, process, regex, thread, csv) which Lunar needs.)
+2. Build luaexec and install luaexeclib follow the README.MD of Util. ( luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, regex, csv) which Lunar needs.)
  
 #### Build Qscintilla ####
 
@@ -48,7 +48,7 @@ On Linux and Windows
 
 On windows extras (You can find all the dlls in Qt installation directory):
 
-- Put libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), libwinpthread-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll,  Qt5PrintSupport.dll, Qt5Widgets.dll, qscintilla2.dll, icudt54, icuin54.dll, icuuc54.dll to LUNAR_HOME.
+- Put libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), libwinpthread-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll,  Qt5PrintSupport.dll, Qt5Widgets.dll, qscintilla2_qt5.dll, icudt54, icuin54.dll, icuuc54.dll to LUNAR_HOME.
 - Put qtaccessiblewidgets.dll to LUNAR_HOME/accessible
 - Put qwindows.dll to LUNAR_HOME/platforms
 
@@ -61,10 +61,50 @@ On MacOS
 
 ### Notes ###
 
-- 2015.03.10
+- 2017.11.12
+    
+    V1.8.7 Support find files.
+    
+- 2017.11.08
+	
+	V1.8.6 Support start from MAC terminal with command 'luna'
 
-	Support octave .m file. Set the path of octave cmdline application to the lunar.cfg parameter "Run.Runner.Octave", then you can run octave files in Lunar.
+- 2017.08.17
 
+	V1.8.3 Support run recent script with F6.
+    
+- 2017.05.21
+    
+    V1.8.1 Support cocos2dx-js.
+    
+- 2017.03.01
+
+    V1.7.7 Update QScintilla2 to 2.10. Support Markdown & JSON.
+
+- 2016.12.29
+	
+    V1.7.2 Update util to V1.0.5. All util extend api reformed.
+    
+- 2016.6.28
+    
+    V1.5.8 Support cpp plugins.
+
+- 2016.05.20
+
+    V1.5.3 Support MacOS. 
+    
+- 2016.01.10
+    
+    Support goto_definition, jump list.
+
+    You can make your goto definition plugin for your own needs. Use plugins/goto_lua.lua as an example.
+   
+- 2016.01.08
+
+	Support extension_tools, right-click mouse on directory of file explore, you can use extension tools.
+	
+	You can make your extension_tools of you own. The extension_tools can be programmed in any script language you Lunar supported.
+    
 - 2015.05.15
 
 	Support more than 36 types of languages.
@@ -79,46 +119,6 @@ On MacOS
 
 	If you want better programming experience of auto-completion. Try make a plugin follow the lua example in plugins.
 
-- 2016.01.08
+- 2015.03.10
 
-	Support extension_tools, right-click mouse on directory of file explore, you can use extension tools.
-	
-	You can make your extension_tools of you own. The extension_tools can be programmed in any script language you Lunar supported.
-
-- 2016.01.10
-    
-    Support goto_definition, jump list.
-
-    You can make your goto definition plugin for your own needs. Use plugins/goto_lua.lua as an example.
-
-- 2016.05.20
-
-    V1.5.3 Support MacOS.
-
-- 2016.6.28
-    
-    V1.5.8 Support cpp plugins.
-
-- 2016.12.29
-	
-    V1.7.2 Update util to V1.0.5. All util extend api reformed.
-
-- 2017.03.01
-
-    V1.7.7 Update QScintilla2 to 2.10. Support Markdown & JSON.
-    
-- 2017.05.21
-    
-    V1.8.1 Support cocos2dx-js.
-    
-- 2017.08.17
-
-	V1.8.3 Support run recent script with F6.
-	
-- 2017.11.08
-	
-	V1.8.6 Support start from MAC terminal with command 'luna'
-
-- 2017.11.12
-    
-    V1.8.7 Support find files.
+	Support octave .m file. Set the path of octave cmdline application to the lunar.cfg parameter "Run.Runner.Octave", then you can run octave files in Lunar.
