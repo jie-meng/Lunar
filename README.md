@@ -57,7 +57,7 @@ On MacOS
 - Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
 - Install Lunar from Lunar.dmg
 - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
-- Go to `/Application/Lunar.app/Content/MacOS` on terminal, run 'luaexec install_luaexeclib.lua' to install luaexec extend libs.
+- Go to `/Application/Lunar.app/Content/MacOS` on terminal, run `luaexec install_luaexeclib.lua` to install luaexec extend libs.
 
 ### Notes ###
 
