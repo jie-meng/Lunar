@@ -99,7 +99,19 @@ void FileExplorerWidget::locateFile(const QString& file)
 
     string relative_dir = strReplace(path_name.first, currentPath(), "");
     if (relative_dir.length() == 0)
+    {
+        //file in root direct children
+        proot->setExpanded(true);
+        for (int i=0; i<proot->childCount(); ++i)
+        {
+            if (QStringToStdString(proot->child(i)->text(0)) == path_name.second)
+            {    
+                scrollToItem(proot->child(i));
+                setCurrentItem(proot->child(i));
+            }
+        }
         return;
+    }
 
     if (strStartWith(relative_dir, "/"))
         relative_dir = strRight(relative_dir, relative_dir.length()-1);
