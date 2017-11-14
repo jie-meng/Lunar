@@ -47,6 +47,7 @@ Lunar.pro
 
 # Lunar
 lunar_cpp.cfg
+deploytmp/
 
 # script
 *.pyc

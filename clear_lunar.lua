@@ -7,6 +7,13 @@ print("remove dir release")
 util.pathRemoveAll("Lunar.app")
 print("remove dir Lunar.app")
 
+util.pathRemoveAll("deploytmp")
+print("remove dir deploytmp")
+
+if util.pathRemove("Lunar.dmg") then
+    print("remove Lunar.dmg")
+end
+
 if util.pathRemove("Makefile") then
     print("remove Makefile")
 end
