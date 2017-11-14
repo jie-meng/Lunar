@@ -400,20 +400,44 @@ function isLegalFile(filename)
     return util.isTextFile(filename)
 end
 
-function findFiles(findWithText)
-    local command = string.format("find %s -iname '%s*' -type f", util.currentPath(), findWithText)
-    if util.strContains(util.platformInfo(), "windows", false) then
-        command = string.format("dir %s* /b /s", findWithText)
+function compareFileWithLength(a, b)
+    local path_a, name_a = util.splitPathname(a)
+    local path_b, name_b = util.splitPathname(b)
+    if string.len(name_a) == string.len(name_b) then
+        return string.len(a) < string.len(b)
+    else
+        return string.len(name_a) < string.len(name_b)
+    end
+end
+
+function findFiles(find_with_text)
+    find_with_text = string.lower(find_with_text)
+    local files = util.findFilesInDirRecursively(util.currentPath());
+    local result1 = {}
+    local result2 = {}
+    for _, v in ipairs(files) do
+        v = util.strReplaceAll(v, '\\', '/')
+        
+        local path, name = util.splitPathname(v)
+        if string.match(string.lower(name), find_with_text) then
+            if util.strStartWith(string.lower(name), find_with_text) then
+                table.insert(result1, v)
+            else
+                table.insert(result2, v)
+            end
+        end
+        
+        if #result1 + #result2 >= 100 then
+            break
+        end
+    end
+    
+    table.sort(result1, compareFileWithLength)
+    table.sort(result2, compareFileWithLength)
+    
+    for _, v in ipairs(result2) do
+        table.insert(result1, v)
     end
 
-    local file = assert(io.popen(command, 'r'))
-    local output = file:read('*all')
-    file:close()
-
-    local result = util.strSplit(output, '\n', 100)
-    if #result == 100 then
-        table.remove(result)
-    end
-
-    return result
+    return result1
 end
