@@ -790,6 +790,8 @@ void MainWindow::editGotoDefinition()
                         }
                     }
                 }
+                
+                psearch_results_widget_->findFinish();
 
                 if (result_count == 1)
                     gotoSearchResult(StdStringToQString(file), line);
@@ -805,8 +807,7 @@ void MainWindow::editJumpBack()
     auto position = JumpManager::getInstance().getBackPosition();
     auto current_positon = getCurrentPosition();
 
-    while (
-           !position.first.empty() &&
+    while (!position.first.empty() &&
            position.second > 0 &&
            !current_positon.first.empty() &&
            current_positon.second > 0)

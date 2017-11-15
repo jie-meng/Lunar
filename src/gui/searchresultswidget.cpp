@@ -102,8 +102,6 @@ void SearchThread::searchInFile(const std::string& file, const std::string& text
     strSplit(content, "\n", vec);
     for (size_t i = 0; i<vec.size(); ++i)
     {
-        //LogSocket::getInstance().sendLog(strFormat("%d -- %s", i+1, vec[i].c_str()), "127.0.0.1", 9966);
-
         bool match = false;
         if (!use_regexp)
         {
