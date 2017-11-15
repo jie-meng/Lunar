@@ -1,43 +1,30 @@
 print("Copy plugins/apis/extension_tools/scripts/config ..")
 os.execute("cp -r publish/. Lunar.app/Contents/MacOS")
 
-if not util.isPathDir("deploytmp") then
-    util.mkDir("deploytmp")
+if not util.isPathDir("deploylibs") then
+    util.mkDir("deploylibs")
 end
 
-if #util.findFilesInDir("deploytmp", "dylib") == 0 then
+if #util.findFilesInDir("deploylibs", "dylib") == 0 then
     print("Please input libqscintilla2_qt5.13.dylib dir:")
     local libdir = io.read()
     
-    print("Copy *.dylib to deploytmp ..")
-    os.execute(string.format("cp %s/*.dylib deploytmp", libdir))    
+    print("Copy *.dylib to deploylibs ..")
+    os.execute(string.format("cp %s/*.dylib deploylibs", libdir))    
 end
 
 print("Copy *.dylib to executable path ..")
-os.execute("cp deploytmp/*.dylib Lunar.app/Contents/MacOS")
+os.execute("cp deploylibs/*.dylib Lunar.app/Contents/MacOS")
 
-if not util.isPathFile("deploytmp/luaexec") then
-    print("Please input Util project dir:")
-    local prev_dir = util.currentPath()
-    local util_dir = io.read()
-    util.setCurrentPath(util_dir)
-    print("Make luaexec ...")
-    os.execute("python make.py")
-    if not util.isPathFile("luaexec") then
-        os.exit(-1)
-    end
-    util.setCurrentPath(prev_dir)
-    
-    print("Copy luaexec & luaexeclib to deploytmp ...")
-    os.execute(string.format("cp %s/luaexec deploytmp", util_dir))
-    os.execute(string.format("cp -r %s/luaexeclib deploytmp", util_dir))
-    os.execute(string.format("cp %s/install_luaexeclib.lua deploytmp", util_dir))
+if not util.isPathFile("./luaexec") or not util.isPathDir("./luaexeclib") or not util.isPathFile("./install_luaexeclib.lua") then
+    print("Cannot find luaexec locally, please run 'python3 install_build_tool_here.py' first.")
+    os.exit(-1)
 end
 
 print("Copy luaexec & luaexeclib to executable path ...")
-os.execute("cp deploytmp/luaexec Lunar.app/Contents/MacOS")
-os.execute("cp -r deploytmp/luaexeclib Lunar.app/Contents/MacOS")
-os.execute("cp deploytmp/install_luaexeclib.lua Lunar.app/Contents/MacOS")
+os.execute("cp luaexec Lunar.app/Contents/MacOS")
+os.execute("cp install_luaexeclib.lua Lunar.app/Contents/MacOS")
+os.execute("cp -r luaexeclib Lunar.app/Contents/MacOS")
 
 print("Install luaexeclib ...")
 local prev_dir = util.currentPath()

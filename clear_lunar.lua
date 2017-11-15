@@ -7,8 +7,11 @@ print("remove dir release")
 util.pathRemoveAll("Lunar.app")
 print("remove dir Lunar.app")
 
-util.pathRemoveAll("deploytmp")
-print("remove dir deploytmp")
+util.pathRemoveAll("deploylibs")
+print("remove dir deploylibs")
+
+util.pathRemoveAll("luaexeclib")
+print("remove dir luaexeclib")
 
 if util.pathRemove("Lunar.dmg") then
     print("remove Lunar.dmg")
@@ -44,6 +47,14 @@ end
 
 if util.pathRemove("Lunar") then
     print("remove Lunar")
+end
+
+if util.pathRemove("luaexec") then
+    print("remove luaexec")
+end
+
+if util.pathRemove("install_luaexeclib.lua") then
+    print("remove install_luaexeclib.lua")
 end
 
 t = util.findFilesInDir(".")

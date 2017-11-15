@@ -46,8 +46,11 @@ Lunar.pro
 *.qmlproject.user.*
 
 # Lunar
+luaexec
+install_luaexeclib.lua
 lunar_cpp.cfg
-deploytmp/
+luaexeclib/
+deploylibs/
 
 # script
 *.pyc

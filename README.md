@@ -22,7 +22,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util)
 
-2. Build luaexec and install luaexeclib follow the README.MD of Util. ( luaexec is a lua script executor which contains basic lua & extensions (file, memory, net, regex, csv) which Lunar needs.)
+2. Run `python3 install_build_tool_here.py`
  
 #### Build Qscintilla ####
 
@@ -36,7 +36,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 #### Build Lunar ####
 
-luaexec remake_lunar.lua
+Run `./luaexec remake_lunar.lua`
 
 ### Release ###
 
@@ -49,13 +49,13 @@ On Linux and Windows
 On windows extras (You can find all the dlls in Qt installation directory):
 
 - Put libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), libwinpthread-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll,  Qt5PrintSupport.dll, Qt5Widgets.dll, qscintilla2_qt5.dll, icudt54, icuin54.dll, icuuc54.dll to LUNAR_HOME.
-- Put qtaccessiblewidgets.dll to LUNAR_HOME/accessible
+- Put qtaccessiblewidgets.dll to LUNAR_HOME/accessible (No need now)
 - Put qwindows.dll to LUNAR_HOME/platforms
 
 On MacOS
 
-- Run "luaexec deploy_on_mac.lua" on terminal to make Lunar.dmg (Follow command tips to give correct information)
-- Install Lunar from Lunar.dmg
+- Run `./luaexec deploy_on_mac.lua` on terminal to make Lunar.dmg (Follow command tips to give correct information)
+- Install Lunar from Lunar.dmg to `/Applications`
 - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
 - Go to `/Application/Lunar.app/Content/MacOS` on terminal, run `luaexec install_luaexeclib.lua` to install luaexec extend libs.
 
