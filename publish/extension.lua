@@ -410,9 +410,7 @@ function compareFileWithLength(a, b)
     end
 end
 
-function findFiles(find_with_text)
-    find_with_text = string.lower(find_with_text)
-    local files = util.findFilesInDirRecursively(util.currentPath());
+function sortFoundFiles(files, find_with_text)
     local result1 = {}
     local result2 = {}
     for _, v in ipairs(files) do
@@ -438,6 +436,28 @@ function findFiles(find_with_text)
     for _, v in ipairs(result2) do
         table.insert(result1, v)
     end
-
+    
     return result1
+end
+
+function findFiles(find_with_text)
+    find_with_text = string.lower(find_with_text)
+    local files = util.findFilesInDirRecursively(util.currentPath());
+    files = sortFoundFiles(files, find_with_text)
+
+    local result_files = {}
+    local non_legal_files = {}
+    for i, v in ipairs(files) do
+        if legalFileExtTable[util.fileExtension(v)] then
+            table.insert(result_files, v)
+        else
+            table.insert(non_legal_files, v)
+        end
+    end    
+    
+    for _, v in ipairs(non_legal_files) do
+        table.insert(result_files, v)
+    end
+    
+    return result_files
 end
