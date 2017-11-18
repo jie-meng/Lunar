@@ -144,6 +144,7 @@ private:
     QDockWidget* pbottom_widget_;
     QTabWidget* pbottom_tab_widget_;
     SearchResultsWidget* psearch_results_widget_;
+    bool is_closing_;
 private:
     DISALLOW_COPY_AND_ASSIGN(MainWindow)
 };

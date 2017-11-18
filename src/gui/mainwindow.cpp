@@ -81,7 +81,8 @@ MainWindow::MainWindow(QWidget* parent)
     pleft_widget_(NULL),
     pbottom_widget_(NULL),
     pbottom_tab_widget_(NULL),
-    psearch_results_widget_(NULL)
+    psearch_results_widget_(NULL),
+    is_closing_(false)
 {
     //JumpManager init here to make JumpManager's position init at start,
     //or it'll not get correct value when first time use.
@@ -187,6 +188,12 @@ void MainWindow::dropEvent(QDropEvent *event)
 
 void MainWindow::closeEvent(QCloseEvent* e)
 {
+    if (is_closing_)
+    {
+        e->accept();
+        return;
+    }
+    
     if(pmain_tabwidget_->hasUnsavedFiles())
     {
        int ret = QMessageBox::question(this, "question", "Quit without save?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
@@ -200,6 +207,9 @@ void MainWindow::closeEvent(QCloseEvent* e)
         LunarGlobal::getInstance().setMainwindowHeight(this->height());
     }
     LunarGlobal::getInstance().quit();
+    
+    is_closing_ = true;
+    e->accept();
 }
 
 void MainWindow::initActions()
