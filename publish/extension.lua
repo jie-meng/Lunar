@@ -55,7 +55,7 @@ function parseFileType(filename)
             return 
                 {
                     type = "lua", 
-                    auto_complete_type = 1, 
+                    auto_complete_type = 1,
                     api = "apis/lua/standard,cocos.api", 
                     executor = "luaexec",
                     project_src_dir = "src/app",
@@ -424,17 +424,16 @@ function sortFoundFiles(files, find_with_text)
                 table.insert(result2, v)
             end
         end
-        
-        if #result1 + #result2 >= 100 then
-            break
-        end
     end
     
     table.sort(result1, compareFileWithLength)
     table.sort(result2, compareFileWithLength)
     
-    for _, v in ipairs(result2) do
+    for i, v in ipairs(result2) do
         table.insert(result1, v)
+        if i > 100 then
+            break
+        end
     end
     
     return result1
