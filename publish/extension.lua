@@ -416,13 +416,11 @@ function sortFoundFiles(files, find_with_text)
     for _, v in ipairs(files) do
         v = util.strReplaceAll(v, '\\', '/')
         
-        local path, name = util.splitPathname(v)
-        if string.match(string.lower(name), find_with_text) then
-            if util.strStartWith(string.lower(name), find_with_text) then
-                table.insert(result1, v)
-            else
-                table.insert(result2, v)
-            end
+        local path, name = util.splitPathname(v)        
+        if util.strStartWith(string.lower(name), find_with_text) then
+            table.insert(result1, v)
+        else
+            table.insert(result2, v)
         end
     end
     
@@ -431,17 +429,72 @@ function sortFoundFiles(files, find_with_text)
     
     for i, v in ipairs(result2) do
         table.insert(result1, v)
-        if i > 100 then
-            break
-        end
     end
     
     return result1
 end
 
+function findFilesInDir(dir, func)
+    local paths = util.findFilesInDir(dir)
+    local ret = {}
+    for _, v in ipairs(paths) do
+        if not func or func(v) then
+            table.insert(ret, v)
+        end
+    end
+    return ret
+end
+
+function findPathInDir(dir, func)
+    local paths = util.findPathInDir(dir)
+    local ret = {}
+    for _, v in ipairs(paths) do
+        if not func or func(v) then
+            table.insert(ret, v)
+        end    
+    end
+    return ret
+end
+
+function findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit)
+    if #path_deque > 0 then
+        local dir = table.remove(path_deque, 1)
+        local files = findFilesInDir(dir, file_filter)
+        for _, v in ipairs(files) do
+            table.insert(output, v)
+            if limit and #output >= limit then
+                return
+            end
+        end
+        local dirs = findPathInDir(dir, path_filter)
+        for _, v in ipairs(dirs) do
+            table.insert(path_deque, v)
+        end
+        
+        findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit)
+    end
+end
+
+function findFilesFlat(dir, path_filter, file_filter, limit)
+    local output = {}
+    local deque = {}
+    table.insert(deque, dir)
+    findFilesFlatRecursively(deque, path_filter, file_filter, output, limit)
+    return output
+end
+
 function findFiles(find_with_text)
     find_with_text = string.lower(find_with_text)
-    local files = util.findFilesInDirRecursively(util.currentPath());
+    local files = findFilesFlat(util.currentPath(), 
+        function(d)
+            return not util.strStartWith(d, '.')
+        end,
+        function(f)
+            local path, name = util.splitPathname(f)
+            return string.match(string.lower(name), find_with_text)
+        end,
+        100)
+    
     files = sortFoundFiles(files, find_with_text)
 
     local result_files = {}
