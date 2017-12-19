@@ -487,7 +487,8 @@ function findFiles(find_with_text)
     find_with_text = string.lower(find_with_text)
     local files = findFilesFlat(util.currentPath(), 
         function(d)
-            return not util.strStartWith(d, '.')
+            local path, name = util.splitPathname(d)
+            return not util.strStartWith(b, '.') 
         end,
         function(f)
             local path, name = util.splitPathname(f)
