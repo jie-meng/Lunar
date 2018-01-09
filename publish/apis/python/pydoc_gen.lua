@@ -1,4 +1,6 @@
 --[[constants]]
+kSep = '.'
+
 kLabelName = 'NAME'
 kLabelFile = 'FILE'
 kLabelPackageContents = 'PACKAGE CONTENTS'
@@ -40,26 +42,16 @@ function LineParser:parse(line)
 end
 
 function LineParser:generatePrefix()
-    return util.strJoin(self:getPackage(), '.')
+    return util.strJoin(self:getPackage(), kSep)
 end
 
 function LineParser:addApi(api)
     if self:getColl() then
-        if util.strStartWith(api, '(') then
-            if not self:getColl()[self:generatePrefix()] then
-                self:getColl()[self:generatePrefix()] = self:generatePrefix() .. api
-            end
+        local i = string.find(api, '%(')
+        if i then
+            self:getColl()[string.sub(api, 1, i-1)] = api
         else
-            local prefix = self:generatePrefix()
-            if string.len(prefix) > 0 then
-                prefix = prefix .. '.'
-            end
-            local i = string.find(api, '%(')
-            if i then                
-                self:getColl()[prefix .. string.sub(api, 1, i-1)] = prefix .. api
-            else
-                self:getColl()[prefix .. api] = prefix .. api
-            end
+            self:getColl()[api] = api
         end
     end
 end
@@ -93,15 +85,15 @@ function ClassParser:parse(line)
                     if util.strStartWith(args, 'self') then
                         args = util.strTrimLeft(util.strTrimLeftEx(util.strReplace(args, 'self', ''), ','))
                     end
-                    self:addApi(name .. '(' .. util.strTrimLeft(args) .. ')')
+                    self:addApi(self.class_name_ .. '.' .. name .. '(' .. util.strTrimLeft(args) .. ')')
                     if name == '__init__' then
-                        self:addApi('(' .. util.strTrimLeft(args) .. ')')
+                        self:addApi(self.class_name_ .. '(' .. util.strTrimLeft(args) .. ')')
                     end
                 end
             else
                 local name, args = string.match(class_member_trimmed_line, pattern_data_lua)
                 if name and not util.strStartWith(name, '__') then
-                    self:addApi(name)
+                    self:addApi(self.class_name_ .. '.' .. name)
                 end
             end
         end
@@ -109,7 +101,7 @@ function ClassParser:parse(line)
 end
 
 function ClassParser:generatePrefix()
-    local package = util.strJoin(self.package_, '.')
+    local package = util.strJoin(self.package_, kSep)
     if string.len(package) == 0 then
         return self.class_name_
     end
@@ -118,7 +110,7 @@ function ClassParser:generatePrefix()
         return package
     end
     
-    return package .. '.' .. self.class_name_
+    return package .. kSep .. self.class_name_
 end
 
 --[[class: FunctionParser]]
@@ -178,10 +170,12 @@ function PackageContentsParser:parse(line)
     if self.parse_doc_func_ then
         local name = string.match(line, pattern_package_contents_lua)
         if name and not util.strStartWith(name, '__') then
-            local module = self:generatePrefix() .. '.' .. name
+            local module = self:generatePrefix() .. kSep .. name
             local gen_doc = self.gen_root_dir_ .. '/' .. module
-            os.execute(string.format('%s %s > %s', self.pydoc_gen_cmd_, module, gen_doc))
-            self.parse_doc_func_(self:getColl(), gen_doc, self.pydoc_gen_cmd_, self.gen_root_dir_)
+            if not util.isPathFile(gen_doc) then
+                os.execute(string.format('%s %s > %s', self.pydoc_gen_cmd_, module, gen_doc))
+                self.parse_doc_func_(self:getColl(), gen_doc, self.pydoc_gen_cmd_, self.gen_root_dir_)
+            end
         end
     end
 end
@@ -221,7 +215,7 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
                     elseif labelMatches(kLabelData, line) then
                         line_parser = DataParser:new(apis, util.strSplit(file_basename, '.'))
                     elseif labelMatches(kLabelPackageContents, line) then
-                        line_parser = PackageContentsParser:new(apis, util.strSplit(file_basename, '.'), pydoc_gen_cmd, gen_root_dir, parseDoc)
+                        line_parser = PackageContentsParser:new({}, util.strSplit(file_basename, '.'), pydoc_gen_cmd, gen_root_dir, parseDoc)
                     else
                         line_parser = nil
                     end
@@ -234,6 +228,14 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
             line = f:read("*line")
         end
         io.close(f)
+        
+        -- sort
+        local tb = {}
+        for _, v in pairs(apis) do
+            table.insert(tb, v)
+        end
+        table.sort(tb)
+        util.writeTextFile(doc, util.strJoin(tb, '\n'))
     end
 end
 
@@ -271,9 +273,10 @@ table.insert(modules, 'queue')
 table.insert(modules, 'socket')
 table.insert(modules, 'urllib')
 table.insert(modules, 'email')
---table.insert(modules, 'xlrd')
---table.insert(modules, 'xlwt')
---table.insert(modules, 'numpy')
+table.insert(modules, 'PIL')
+table.insert(modules, 'openpyxl')
+table.insert(modules, 'PyQt5')
+table.insert(modules, 'numpy')
 table.insert(modules, '_io')
 
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
@@ -295,37 +298,18 @@ if util.strContains(util.platformInfo(), 'windows', false) then
 end
 
 local gen_root_dir = util.currentPath() .. '/' .. 'pydoc_gen'
-util.pathRemoveAll(gen_root_dir)
-if not util.mkDir(gen_root_dir) then
-    print(string.format('Error: [%s] already exists', gen_root_dir))
-    os.exit(0)
+if not util.isPathDir(gen_root_dir) then
+    util.mkDir(gen_root_dir)
 end
 
-local apis = {}
 for _, m in pairs(modules) do
     local gen_doc = gen_root_dir .. '/' .. m
-    os.execute(string.format('%s %s > %s', pydoc_gen_cmd, m, gen_doc))
-    if util.isPathFile(gen_doc) then
-        parseDoc(apis, gen_doc, pydoc_gen_cmd, gen_root_dir)
+    if not util.isPathFile(gen_doc) then    
+        os.execute(string.format('%s %s > %s', pydoc_gen_cmd, m, gen_doc))
+        if util.isPathFile(gen_doc) then
+            parseDoc({}, gen_doc, pydoc_gen_cmd, gen_root_dir)
+        end
     end
 end
 
-print('Remove tmp dir [' .. gen_root_dir .. '] ...')
-util.pathRemoveAll(gen_root_dir)
-print('Ok')
-
--- sort
-local tb = {}
-for _, v in pairs(apis) do
-    table.insert(tb, v)
-end
-table.sort(tb)
-
-print('Save api file to python.api ...')
-local f = io.open('python.api', 'w')
-if f then
-    for _, v in pairs(tb) do
-        f:write(v .. '\n')
-    end
-end
-print('Done')
+print('\nDone!')

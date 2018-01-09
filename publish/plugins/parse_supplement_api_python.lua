@@ -146,8 +146,8 @@ function Import:new(name, is_from_import)
     setmetatable(o, self)
     self.__index = self
     
-    self.name_ = name
-    self.is_from_import_ = is_from_import
+    o.name_ = name
+    o.is_from_import_ = is_from_import
     
     return o
 end
@@ -204,6 +204,25 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     for _, v in pairs(classes) do
         if imports[v:getModuleName()] then
             parseClassesApis(apis, imports, v, v, false)
+        end
+    end
+    
+    --parse pydoc_gen api
+    for module_name, module in pairs(imports) do
+        local app_path, _ = util.splitPathname(util.appPath())
+        local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen'
+        local f = io.open(pydoc_gen_path .. '/' .. module_name, "r")
+        if f then
+            local line = f:read("*line")
+            while line do
+                if module:isFromImport() then
+                    table.insert(apis, line)
+                else
+                    table.insert(apis, module_name .. '.' .. line)
+                end
+                line = f:read("*line")
+            end
+            io.close()
         end
     end
     
