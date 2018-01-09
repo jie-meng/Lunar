@@ -304,7 +304,11 @@ end
 
 for _, m in pairs(modules) do
     local gen_doc = gen_root_dir .. '/' .. m
-    if not util.isPathFile(gen_doc) then    
+    -- builtin should always be api file which do not need import
+    if m == 'builtins' or m == '__builtin__' then
+        gen_doc = gen_doc .. '.api'
+    end
+    if not util.isPathFile(gen_doc) then
         os.execute(string.format('%s %s > %s', pydoc_gen_cmd, m, gen_doc))
         if util.isPathFile(gen_doc) then
             parseDoc({}, gen_doc, pydoc_gen_cmd, gen_root_dir)

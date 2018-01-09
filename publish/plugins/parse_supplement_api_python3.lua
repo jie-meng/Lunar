@@ -138,16 +138,18 @@ end
 
 local Import = {
     name_ = nil,
-    is_from_import_ =false
+    is_from_import_ = false,
+    from_import_component_ = nil
 }
 
-function Import:new(name, is_from_import)
+function Import:new(name, is_from_import, from_import_component)
     local o = {}
     setmetatable(o, self)
     self.__index = self
     
     o.name_ = name
     o.is_from_import_ = is_from_import
+    o.from_import_component_ = from_import_component
     
     return o
 end
@@ -170,7 +172,61 @@ function Import:setFromImport(is_from_import)
     return self
 end
 
+function Import:getFromImportComponent()
+    return self.from_import_component_
+end
+
+function Import:setFromImportComponent(from_import_component)
+    self.from_import_component_ = from_import_component
+end
+
 --[[ Import end ]]
+
+function parsePydocGenApi(apis, imports)
+    for module_name, module in pairs(imports) do
+        local app_path, _ = util.splitPathname(util.appPath())
+        local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen'
+        if util.isPathFile(pydoc_gen_path .. '/' .. module_name) then
+            if module:isFromImport() then
+                local f = io.open(pydoc_gen_path .. '/' .. module_name, "r")
+                if f then
+                    local line = f:read("*line")
+                    while line do
+                        table.insert(apis, line)
+                        line = f:read("*line")
+                    end
+                    io.close()
+                end
+
+                --parse imported packages
+                if not util.strContains(module:getFromImportComponent(), '*') then
+                    local components = util.strSplit(module:getFromImportComponent(), ',')
+                    for _, v in ipairs(components) do
+                        local f = io.open(pydoc_gen_path .. '/' .. module_name .. '.' .. util.strTrim(v), "r")
+                        if f then
+                            local line = f:read("*line")
+                            while line do
+                                table.insert(apis, line)
+                                line = f:read("*line")
+                            end
+                            io.close()
+                        end
+                    end
+                end
+            else
+                local f = io.open(pydoc_gen_path .. '/' .. module_name, "r")
+                if f then
+                    local line = f:read("*line")
+                    while line do
+                        table.insert(apis, module_name .. '.' .. line)
+                        line = f:read("*line")
+                    end
+                    io.close()
+                end
+            end
+        end
+    end
+end
 
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
@@ -206,24 +262,7 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
         end
     end
     
-    --parse pydoc_gen api
-    for module_name, module in pairs(imports) do
-        local app_path, _ = util.splitPathname(util.appPath())
-        local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen'
-        local f = io.open(pydoc_gen_path .. '/' .. module_name, "r")
-        if f then
-            local line = f:read("*line")
-            while line do
-                if module:isFromImport() then
-                    table.insert(apis, line)
-                else
-                    table.insert(apis, module_name .. '.' .. line)
-                end
-                line = f:read("*line")
-            end
-            io.close()
-        end
-    end
+    parsePydocGenApi(apis, imports)
     
     return apis
 end
@@ -377,7 +416,8 @@ function parseImports(filename)
                 
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
-                    imports[from_import_module] = Import:new(from_import_module, true)
+                    local _, stop = string.find(line, pattern_from_import)
+                    imports[from_import_module] = Import:new(from_import_module, true, string.sub(line, stop + 1))
                     break
                 end
                 
