@@ -183,6 +183,7 @@ end
 --[[ Import end ]]
 
 function parsePydocGenApi(apis, imports)
+    local api_trimmer = {}
     for module_name, module in pairs(imports) do
         local app_path, _ = util.splitPathname(util.appPath())
         local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen'
@@ -193,7 +194,7 @@ function parsePydocGenApi(apis, imports)
                     local line = f:read("*line")
                     while line do
                         if string.len(util.strTrim(line)) > 1 then
-                            table.insert(apis, line)
+                            api_trimmer[line] = line
                         end
                         line = f:read("*line")
                     end
@@ -209,7 +210,7 @@ function parsePydocGenApi(apis, imports)
                             local line = f:read("*line")
                             while line do
                                 if string.len(util.strTrim(line)) > 1 then
-                                    table.insert(apis, line)
+                                    api_trimmer[line] = line
                                 end
                                 line = f:read("*line")
                             end
@@ -223,7 +224,7 @@ function parsePydocGenApi(apis, imports)
                     local line = f:read("*line")
                     while line do
                         if string.len(util.strTrim(line)) > 1 then
-                            table.insert(apis, module_name .. '.' .. line)
+                            api_trimmer[module_name .. '.' .. line] = module_name .. '.' .. line
                         end
                         line = f:read("*line")
                     end
@@ -231,6 +232,11 @@ function parsePydocGenApi(apis, imports)
                 end
             end
         end
+    end
+
+    --insert imports apis
+    for _, v in pairs(api_trimmer) do
+        table.insert(apis, v)
     end
 end
 

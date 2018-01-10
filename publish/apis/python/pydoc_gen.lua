@@ -9,6 +9,7 @@ kLabelClasses = 'CLASSES'
 kLabelData = 'DATA'
 
 local pattern_function_lua = [[^([%w_]+)%s*%((.*)%)$]]
+local pattern_function_with_return_lua = [[^([%w_]+)%s*%((.*)%)%s*->%s*([%w_%[%]%.%,]+)$]]
 local pattern_class_lua = [[^class%s+([%w_]+)%s*%((.*)%)$]]
 local pattern_data_lua = [[^([%w_]+)%s*=%s*(.*)$]]
 local pattern_package_contents_lua = [[([%w_]+)]]
@@ -49,7 +50,14 @@ function LineParser:addApi(api)
     if self:getColl() then
         local i = string.find(api, '%(')
         if i then
-            self:getColl()[string.sub(api, 1, i-1)] = api
+            local key = string.sub(api, 1, i-1)
+            if self:getColl()[key] then
+                if util.strContains(self:getColl()[key], '(...)') then
+                    self:getColl()[key] = api
+                end
+            else
+                self:getColl()[key] = api
+            end
         else
             self:getColl()[api] = api
         end
@@ -80,7 +88,7 @@ function ClassParser:parse(line)
             local class_member_trimmed_line = util.strTrimLeft(util.strTrimLeftEx(trimmed_line, '|'))
             local name, args = string.match(class_member_trimmed_line, pattern_function_lua)
             if name and args then
-                if not util.strStartWith(name, '__') or name == '__init__' then                    
+                if not util.strStartWith(name, '__') or name == '__init__' then
                     local args = util.strTrim(args)
                     if util.strStartWith(args, 'self') then
                         args = util.strTrimLeft(util.strTrimLeftEx(util.strReplace(args, 'self', ''), ','))
@@ -90,11 +98,28 @@ function ClassParser:parse(line)
                         self:addApi(self.class_name_ .. '(' .. util.strTrimLeft(args) .. ')')
                     end
                 end
-            else
-                local name, args = string.match(class_member_trimmed_line, pattern_data_lua)
-                if name and not util.strStartWith(name, '__') then
-                    self:addApi(self.class_name_ .. '.' .. name)
+                return
+            end
+
+            local name, args, ret = string.match(class_member_trimmed_line, pattern_function_with_return_lua)
+            if name and args and ret then
+                if not util.strStartWith(name, '__') or name == '__init__' then
+                    local args = util.strTrim(args)
+                    if util.strStartWith(args, 'self') then
+                        args = util.strTrimLeft(util.strTrimLeftEx(util.strReplace(args, 'self', ''), ','))
+                    end
+                    self:addApi(self.class_name_ .. '.' .. name .. '(' .. args .. ') -> ' .. ret)
+                    if name == '__init__' then
+                        self:addApi(self.class_name_ .. '(' .. util.strTrimLeft(args) .. ')')
+                    end
                 end
+                return
+            end
+
+            local name = string.match(class_member_trimmed_line, pattern_data_lua)
+            if name and not util.strStartWith(name, '__') then
+                self:addApi(self.class_name_ .. '.' .. name)
+                return
             end
         end
     end
@@ -129,6 +154,13 @@ function FunctionParser:parse(line)
     local name, args = string.match(trimmed_line, pattern_function_lua)
     if name and args and not util.strStartWith(name, '__') then
         self:addApi(name .. '(' .. args .. ')')
+        return
+    end
+
+    local name, args, ret = string.match(trimmed_line, pattern_function_with_return_lua)
+    if name and args and ret and not util.strStartWith(name, '__') then
+        self:addApi(name .. '(' .. args .. ') -> ' .. ret)
+        return
     end
 end
 
