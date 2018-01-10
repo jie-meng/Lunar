@@ -192,7 +192,9 @@ function parsePydocGenApi(apis, imports)
                 if f then
                     local line = f:read("*line")
                     while line do
-                        table.insert(apis, line)
+                        if string.len(util.strTrim(line)) > 1 then
+                            table.insert(apis, line)
+                        end
                         line = f:read("*line")
                     end
                     io.close()
@@ -206,7 +208,9 @@ function parsePydocGenApi(apis, imports)
                         if f then
                             local line = f:read("*line")
                             while line do
-                                table.insert(apis, line)
+                                if string.len(util.strTrim(line)) > 1 then
+                                    table.insert(apis, line)
+                                end
                                 line = f:read("*line")
                             end
                             io.close()
@@ -218,7 +222,9 @@ function parsePydocGenApi(apis, imports)
                 if f then
                     local line = f:read("*line")
                     while line do
-                        table.insert(apis, module_name .. '.' .. line)
+                        if string.len(util.strTrim(line)) > 1 then
+                            table.insert(apis, module_name .. '.' .. line)
+                        end
                         line = f:read("*line")
                     end
                     io.close()
