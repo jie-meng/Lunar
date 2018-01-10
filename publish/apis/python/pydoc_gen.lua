@@ -271,6 +271,7 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
         if #tb > 0 then
             util.writeTextFile(doc, util.strJoin(tb, '\n'))
         else
+            print('Remove empty doc: ' .. doc)
             util.pathRemove(doc)
         end
     end
@@ -349,5 +350,17 @@ for _, m in pairs(modules) do
         end
     end
 end
+
+local gen_docs = util.findFilesInDir(gen_root_dir)
+local tb = {}
+for _, v in ipairs(gen_docs) do
+    if not util.strEndWith(v, '.api') then
+        table.insert(tb, util.strReplaceAll(v, gen_root_dir .. '/', ''))
+    end
+end
+table.sort(tb)
+
+print('\nGenerate pydoc_index.api')
+util.writeTextFile('./pydoc_index.api', util.strJoin(tb, '\n'))
 
 print('\nDone!')
