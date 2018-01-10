@@ -45,6 +45,10 @@ if util.pathRemove("Lunar.pro") then
     print("remove Lunar.pro")
 end
 
+if util.pathRemove(".qmake.stash") then
+    print("remove .qmake.stash")
+end
+
 if util.pathRemove("Lunar") then
     print("remove Lunar")
 end
