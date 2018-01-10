@@ -139,17 +139,17 @@ end
 local Import = {
     name_ = nil,
     is_from_import_ = false,
-    from_import_component_ = nil
+    from_import_component_ = nil,
+    import_as_ = nil
 }
 
-function Import:new(name, is_from_import, from_import_component)
+function Import:new(name, is_from_import)
     local o = {}
     setmetatable(o, self)
     self.__index = self
     
     o.name_ = name
     o.is_from_import_ = is_from_import
-    o.from_import_component_ = from_import_component
     
     return o
 end
@@ -178,6 +178,16 @@ end
 
 function Import:setFromImportComponent(from_import_component)
     self.from_import_component_ = from_import_component
+    return self
+end
+
+function Import:getImportAs()
+    return self.import_as_
+end
+
+function Import:setImportAs(import_as)
+    self.import_as_ = import_as
+    return self
 end
 
 --[[ Import end ]]
@@ -224,6 +234,9 @@ function parsePydocGenApi(apis, imports)
                     local line = f:read("*line")
                     while line do
                         if string.len(util.strTrim(line)) > 1 then
+                            if module:getImportAs() then
+                                module_name = module:getImportAs()
+                            end
                             api_trimmer[module_name .. '.' .. line] = module_name .. '.' .. line
                         end
                         line = f:read("*line")
@@ -440,13 +453,20 @@ function parseImports(filename)
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
                     local _, stop = string.find(line, pattern_from_import)
-                    imports[from_import_module] = Import:new(from_import_module, true, string.sub(line, stop + 1))
+                    imports[from_import_module] = Import:new(from_import_module, true)
+                    imports[from_import_module]:setFromImportComponent(string.sub(line, stop + 1))
                     break
                 end
                 
                 local import_module = string.match(line, pattern_import)
                 if import_module then
                     imports[import_module] = Import:new(import_module, false)
+                    local _, stop = string.find(line, pattern_import)
+                    local left_info = util.strTrim(string.sub(line, stop + 1))
+                    if util.strStartWith(left_info, 'as ') then
+                        local as_import = util.strTrim(util.strReplace(left_info, 'as', ''))
+                        imports[import_module]:setImportAs(as_import)
+                    end
                     break
                 end
             
