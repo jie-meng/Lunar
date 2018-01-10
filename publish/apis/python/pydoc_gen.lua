@@ -267,7 +267,12 @@ function parseDoc(apis, doc, pydoc_gen_cmd, gen_root_dir)
             table.insert(tb, v)
         end
         table.sort(tb)
-        util.writeTextFile(doc, util.strJoin(tb, '\n'))
+
+        if #tb > 0 then
+            util.writeTextFile(doc, util.strJoin(tb, '\n'))
+        else
+            util.pathRemove(doc)
+        end
     end
 end
 
@@ -276,6 +281,7 @@ local modules = {}
 table.insert(modules, 'sys')
 table.insert(modules, 'os')
 table.insert(modules, 'os.path')
+table.insert(modules, 'unittest')
 table.insert(modules, 'subprocess')
 table.insert(modules, 'stat')
 table.insert(modules, 'time')
@@ -305,10 +311,6 @@ table.insert(modules, 'queue')
 table.insert(modules, 'socket')
 table.insert(modules, 'urllib')
 table.insert(modules, 'email')
-table.insert(modules, 'PIL')
-table.insert(modules, 'openpyxl')
-table.insert(modules, 'PyQt5')
-table.insert(modules, 'numpy')
 table.insert(modules, '_io')
 
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
