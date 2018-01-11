@@ -654,9 +654,3 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
     
     return classes
 end
-
---[[ test ]]
---local apis = parseSupplementApi("./test.py", 50)
---for _, v in pairs(apis) do
---    print(v)
---end

@@ -2,18 +2,27 @@ local pattern_import = [[import%s+([%w_%.]+)]]
 local pattern_from_import = [[from%s+([%w_%.]+)%s+import]]
 
 function getModuleFile(module_name, path, search_path)
-    local relative_path = util.strReplaceAll(module_name, ".", "/")
-
-    -- check relative path first
-    local filename = string.format("%s/%s.py", path, relative_path)
-    if util.isPathFile(filename) then
-        return filename
-    end
-
-    -- then check from currentpath
-    filename = string.format("%s/%s.py", search_path, relative_path)
-    if util.isPathFile(filename) then
-        return filename
+    if util.strStartWith(module_name, ".") then
+        -- python 3 package relative path parse
+        local trdot_left = util.strTrimLeftEx(module_name, ".")
+        local rep_dots = string.len(module_name) - string.len(trdot_left) - 1
+        local relative_path = util.strReplaceAll(trdot_left, ".", "/")
+        if rep_dots > 0 then
+            for i=1, rep_dots, 1 do
+                relative_path = "../" .. relative_path
+            end
+        end
+        local filename = string.format("%s/%s.py", path, relative_path)
+        if util.isPathFile(filename) then
+            return filename
+        end
+    else
+        -- current path parse
+        local relative_path = util.strReplaceAll(module_name, ".", "/")
+        local filename = string.format("%s/%s.py", search_path, relative_path)
+        if util.isPathFile(filename) then
+            return filename
+        end
     end
 
     return nil
@@ -59,7 +68,7 @@ function parseDoc(results, search_path, filename, text, depth)
                 if depth < 2 and not matched and string.match(trimmed_line, "def%s+" .. text .. "%s*%(") then
                     matched = true
                 end
-                
+
                 if matched then
                     local _, j = string.find(filename, search_path)
                     if j then

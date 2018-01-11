@@ -210,7 +210,7 @@ function parseFileType(filename)
                 auto_complete_type = 1,
                 api = "apis/python",
                 executor =  python3 .. " -u",
-                plugin_goto = "plugins/goto_python.lua",
+                plugin_goto = "plugins/goto_python3.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
                 comment_line = "#"
                 
