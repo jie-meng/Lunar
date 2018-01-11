@@ -26,7 +26,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
                     local matched = false
                     if string.match(trimmed_line, "def%s+" .. text .. "%s*%(") then
                         matched = true
-                    elseif string.match(trimmed_line, "class%s+" .. text .. "%s*%(") then
+                    elseif string.match(trimmed_line, "class%s+" .. text) then
                         matched = true
                     end
                     
