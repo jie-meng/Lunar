@@ -26,7 +26,7 @@ Install Qt, add Qt compiler directory to environment variable.
  
 #### Build Qscintilla ####
 
-1. cd QScintilla-gpl-version_xxx\Qt4Qt5
+1. cd QScintilla/Qt4Qt5
 
 2. qmake qscintilla.pro
 
@@ -60,6 +60,10 @@ On MacOS
 - Go to `/Application/Lunar.app/Content/MacOS` on terminal, run `luaexec install_luaexeclib.lua` to install luaexec extend libs.
 
 ### Notes ###
+
+- 2018.01.11
+
+    V1.9.0 Update Qscintilla version to 2.10.2; python2/3 plugins make greatly enhancement. (use pydoc_gen.lua in apis/python to generate api first)
 
 - 2017.11.14
     
