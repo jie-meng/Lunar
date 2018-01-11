@@ -61,6 +61,10 @@ On MacOS
 
 ### Notes ###
 
+- 2018.01.12
+
+    V1.9.1 Support plugins and tools auto update: Use tools/update_lunar_plugins.lua
+
 - 2018.01.11
 
     V1.9.0 Update Qscintilla version to 2.10.2; python2/3 plugins make greatly enhancement. (use pydoc_gen.lua in apis/python to generate api first)
