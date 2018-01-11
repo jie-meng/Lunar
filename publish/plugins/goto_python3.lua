@@ -94,5 +94,16 @@ function gotoDefinition(text, line, filename, project_src_dir)
 
     parseDoc(results, search_path, filename, text, 0)
 
+    table.sort(results, 
+        function (a, b)
+            local at = util.strSplit(a, '\n')
+            local bt = util.strSplit(b, '\n')
+            if string.len(at[1]) == string.len(bt[1]) then
+                return tonumber(at[2]) < tonumber(bt[2])
+            else
+                return string.len(at[1]) < string.len(bt[1])
+            end
+        end)
+
     return results
 end
