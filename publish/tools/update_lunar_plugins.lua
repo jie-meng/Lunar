@@ -1,11 +1,21 @@
 --[[ To run this script, you should have svn command line installed on your system. For windows, 
     you can install tortoisesvn with its command line]]
 
+function makeDirRecursively(dir)
+    if not util.isPathDir(dir) then
+        if not util.mkDir(dir) then
+            local parent_path, _ = util.splitPathname(dir)
+            makeDirRecursively(parent_path)
+            util.mkDir(dir)
+        end
+    end
+end
+
 function forceCopyFile(src, dst)
     local path, _ = util.splitPathname(dst)
     if not (util.strEndWith(path, '.svn') or util.strEndWith(path, '.git')) then
         if not util.isPathDir(path) then
-            util.mkDir(path)
+            makeDirRecursively(path)
         end
         util.fileCopy(src, dst, false)    
     end
@@ -25,11 +35,11 @@ util.mkDir('download_tmp')
 print('Download latest plugins and tools from github ...')
 util.setCurrentPath(fpath .. '/download_tmp')
 os.execute('svn checkout https://github.com/jie-meng/Lunar/trunk/publish')
-util.pathRemoveAll('download_tmp/publish/.svn')
+util.pathRemoveAll('publish/.svn')
 
 print('Download latest luaexeclib from github ...')
 os.execute('svn checkout https://github.com/jie-meng/Util/trunk/luaexeclib')
-util.pathRemoveAll('download_tmp/luaexeclib/.svn')
+util.pathRemoveAll('luaexeclib/.svn')
 
 util.setCurrentPath(fpath)
 print('Update local plugins and tools ...')
@@ -49,9 +59,12 @@ for _, v in ipairs(files) do
 end
 
 print('Update local luaexeclib ...')
+if not util.isPathDir('luaexeclib') then
+    util.mkDir('luaexeclib')
+end
 local files = util.findFilesInDirRecursively(fpath .. '/download_tmp/luaexeclib')
 for _, v in ipairs(files) do
-    forceCopyFile(v, util.strReplace(v, 'download_tmp/luaexeclib/', ''))
+    forceCopyFile(v, util.strReplace(v, 'download_tmp/', ''))
 end
 
 print('Download latest install_luaexeclib.lua from github ...')
