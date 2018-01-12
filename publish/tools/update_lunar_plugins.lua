@@ -1,6 +1,17 @@
 --[[ To run this script, you should have svn command line installed on your system. For windows, 
     you can install tortoisesvn with its command line]]
 
+function forceCopyFile(src, dst)
+    local path, _ = util.splitPathname(dst)
+    if not util.isPathDir(path) then
+        util.mkDir(path)
+    end
+    util.fileCopy(src, dst, false)
+end
+
+print('Are you sure to replace extension.lua which may change your current settings? (y/n)\n')
+local is_update_exetension_lua = io.read()
+
 local fpath, _ = util.splitPathname(util.appPath())
 
 util.setCurrentPath(fpath)
@@ -23,24 +34,22 @@ print('Update local plugins and tools ...')
 local files = util.findFilesInDirRecursively(fpath .. '/download_tmp/publish')
 for _, v in ipairs(files) do
     if v == fpath .. '/download_tmp/publish/extension.lua' then
-        print('Are you sure to replace extension.lua which may change your current settings? (y/n)\n')
-        local answer = io.read()
-        if util.strStartWith(answer, 'y', false) then
+        if util.strStartWith(is_update_exetension_lua, 'y', false) then
             util.pathRemove(fpath .. '/extension_backup.lua')
             util.pathRename(fpath .. '/extension.lua', fpath .. '/extension_backup.lua')
-            util.fileCopy(v, fpath .. '/extension.lua', false)
+            forceCopyFile(v, fpath .. '/extension.lua')
         else
-            util.fileCopy(v, fpath .. '/extension_latest.lua', false)
+            forceCopyFile(v, fpath .. '/extension_latest.lua')
         end
     else
-        util.fileCopy(v, util.strReplace(v, 'download_tmp/publish/', ''), false)
+        forceCopyFile(v, util.strReplace(v, 'download_tmp/publish/', ''))
     end
 end
 
 print('Update local luaexeclib ...')
 local files = util.findFilesInDirRecursively(fpath .. '/download_tmp/luaexeclib')
 for _, v in ipairs(files) do
-    util.fileCopy(v, util.strReplace(v, 'download_tmp/luaexeclib/', ''), false)
+    forceCopyFile(v, util.strReplace(v, 'download_tmp/luaexeclib/', ''))
 end
 
 print('Download latest install_luaexeclib.lua from github ...')
