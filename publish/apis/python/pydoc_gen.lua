@@ -326,6 +326,20 @@ else
     table.insert(modules, '__builtin__')
 end
 
+-- Add pydoc libs
+if util.isPathFile('pydoc_libs') then
+    local content = util.readTextFile('pydoc_libs')
+    local libs = util.strSplit(content, '\n')
+    for _, v in ipairs(libs) do
+        local lib = util.strTrim(v)
+        if string.len(lib) > 0 then
+            print('Add pydoc lib: ' .. lib)
+            table.insert(modules, lib)
+        end
+    end
+    print('')
+end
+
 -- Generate cmd
 local pydoc_gen_cmd = 'pydoc' .. python_version
 if util.strContains(util.platformInfo(), 'windows', false) then
