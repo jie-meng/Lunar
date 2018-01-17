@@ -312,6 +312,7 @@ table.insert(modules, 'queue')
 table.insert(modules, 'socket')
 table.insert(modules, 'urllib')
 table.insert(modules, 'email')
+table.insert(modules, 'http')
 table.insert(modules, '_io')
 
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
