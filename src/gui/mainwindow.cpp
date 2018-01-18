@@ -490,6 +490,7 @@ void MainWindow::initConnections()
     connect(pfile_settings_action_, &QAction::triggered, [this]()
     {
         resetCurrentPath(StdStringToQString(LunarGlobal::getInstance().getAppPath()));
+        viewFileExplorer();
     });
 
     connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
