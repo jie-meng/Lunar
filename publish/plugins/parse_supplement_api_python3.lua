@@ -196,7 +196,7 @@ function parsePydocGenApi(apis, imports)
     local api_trimmer = {}
     for module_name, module in pairs(imports) do
         local app_path, _ = util.splitPathname(util.appPath())
-        local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen'
+        local pydoc_gen_path = app_path .. '/apis/python/pydoc_gen3'
         if util.isPathFile(pydoc_gen_path .. '/' .. module_name) then
             if module:isFromImport() then
                 local f = io.open(pydoc_gen_path .. '/' .. module_name, "r")

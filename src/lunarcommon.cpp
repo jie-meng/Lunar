@@ -238,29 +238,36 @@ void LunarGlobal::removeRecentRunDoc(const std::string& doc)
 
 void LunarGlobal::quit()
 {
+    readCfg(false);
     writeCfg();
 }
 
-void LunarGlobal::readCfg()
+void LunarGlobal::readCfg(bool read_all)
 {
     TextCfg text_cfg(getAppPath() + "/" + kCfg);
 
+    //These files cannot be changed in App
+    log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
+    is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
     autocompletion_threshold_ = text_cfg.getValue("AutoCompletion.Threshold", 2);
     autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
-    string font_type = text_cfg.getValue("Font.Type", string("Monaco"));
-    int font_size = text_cfg.getValue("Font.Size", 12);
-    font_ = QFont(StdStringToQString(font_type), font_size);
-    mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
-    mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
     extension_tools_path_ = text_cfg.getValue("ExtensionToolsPath", "extension_tools");
     extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     extension_func_find_files_ = text_cfg.getValue("Extension.Func.FindFiles", "findFiles");
-    log_sock_port_ = text_cfg.getValue("Log.SockPort", 9966);
-    is_log_enable_ = text_cfg.getValue<bool>("Log.Enable", false);
-    recent_project_path_ = text_cfg.getValue("Path.RecentProject", "");
-    recent_project_path_cnt_ = text_cfg.getValue("Path.RecentProject.Count", 30);
+    
+    if (read_all) 
+    {
+        //These files can be changed in App
+        string font_type = text_cfg.getValue("Font.Type", string("Monaco"));
+        int font_size = text_cfg.getValue("Font.Size", 12);
+        font_ = QFont(StdStringToQString(font_type), font_size);
+        mainwindow_width_ = text_cfg.getValue("MainWindow.Width", 800);
+        mainwindow_height_ = text_cfg.getValue("MainWindow.Height", 600);
+        recent_project_path_ = text_cfg.getValue("Path.RecentProject", "");
+        recent_project_path_cnt_ = text_cfg.getValue("Path.RecentProject.Count", 30);
+    }
 }
 
 void LunarGlobal::writeCfg()
@@ -269,10 +276,10 @@ void LunarGlobal::writeCfg()
 
     text_cfg.setValue("Font.Type", QStringToStdString(getFont().family()));
     text_cfg.setValue("Font.Size", getFont().pointSize());
-    text_cfg.setValue("AutoCompletion.Threshold", autocompletion_threshold_);
-    text_cfg.setValue("AutoCompletion.WordTip", autocompletion_wordtip_);
     text_cfg.setValue("MainWindow.Width", mainwindow_width_);
     text_cfg.setValue("MainWindow.Height", mainwindow_height_);
+    text_cfg.setValue("AutoCompletion.Threshold", autocompletion_threshold_);
+    text_cfg.setValue("AutoCompletion.WordTip", autocompletion_wordtip_);
     text_cfg.setValue("Extension.Func.ParseFileType", extension_func_parsefiletype_);
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
     text_cfg.setValue("Extension.Func.IsLegalFile", extension_func_is_legal_file_);

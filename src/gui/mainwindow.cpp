@@ -53,6 +53,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_goto_prev_action_(NULL),
     pfile_recent_docs_action_(NULL),
     pfile_recent_project_path_action_(NULL),
+    pfile_settings_action_(NULL),
     pedit_select_cursor_word_action_(NULL),
     pedit_find_action_(NULL),
     pedit_search_action_(NULL),
@@ -278,6 +279,11 @@ void MainWindow::initActions()
     pfile_recent_project_path_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_P);
     pfile_recent_project_path_action_->setIcon(QIcon(tr(":/res/project_path.png")));
 
+    pfile_settings_action_ = new QAction(tr("Lunar settings"), this);
+    pfile_settings_action_->setStatusTip(tr("Go to Lunar config directory. You can edit config, make use of tools or create new plugins."));
+    pfile_settings_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Y);
+    pfile_settings_action_->setIcon(QIcon(tr(":/res/settings.png")));
+    
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
     pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_M);
@@ -386,6 +392,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_goto_prev_action_);
     pfile_menu->addAction(pfile_recent_docs_action_);
     pfile_menu->addAction(pfile_recent_project_path_action_);
+    pfile_menu->addAction(pfile_settings_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_select_cursor_word_action_);
@@ -426,6 +433,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pfile_goto_next_action_);
     ptoolbar->addAction(pfile_recent_docs_action_);
     ptoolbar->addAction(pfile_recent_project_path_action_);
+    ptoolbar->addAction(pfile_settings_action_);
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_run_recent_action_);
     ptoolbar->addAction(prun_stop_action_);
@@ -479,6 +487,10 @@ void MainWindow::initConnections()
     connect(pfile_goto_prev_action_, SIGNAL(triggered()), this, SLOT(fileGotoPrev()));
     connect(pfile_recent_project_path_action_, SIGNAL(triggered()), this, SLOT(recentProjectPath()));
     connect(pfile_recent_docs_action_, SIGNAL(triggered()), this, SLOT(recentDocs()));
+    connect(pfile_settings_action_, &QAction::triggered, [this]()
+    {
+        resetCurrentPath(StdStringToQString(LunarGlobal::getInstance().getAppPath()));
+    });
 
     connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));

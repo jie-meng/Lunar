@@ -57,9 +57,20 @@ On MacOS
 - Run `./luaexec deploy_on_mac.lua` on terminal to make Lunar.dmg (Follow command tips to give correct information)
 - Install Lunar from Lunar.dmg to `/Applications`
 - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
-- Go to `/Application/Lunar.app/Content/MacOS` on terminal, run `luaexec install_luaexeclib.lua` to install luaexec extend libs.
+
+Final step of all platforms
+
+- Open Lunar from command line. (For Linux and Windows, input `Lunar` then press `Enter`. for MacOS input `luna` then press `Enter`)
+
+- Click Menu: `File -> Lunar settings`. Open script `tools/update_lunar_plugins.lua`. Press F5 to Run it (Make sure you have svn command line installed). It will update all plugins and tools to the latest.
+
+- Enjoy it!
 
 ### Notes ###
+
+- 2018.01.18
+
+    V1.9.2 Fix cannot edit and save lunar.cfg in Lunar bug. Support goto Lunar path from menu.
 
 - 2018.01.12
 

@@ -327,9 +327,11 @@ else
     table.insert(modules, '__builtin__')
 end
 
+local pydoclibs = 'pydoclibs' .. python_version
+
 -- Add pydoc libs
-if util.isPathFile('pydoc_libs') then
-    local content = util.readTextFile('pydoc_libs')
+if util.isPathFile(pydoclibs) then
+    local content = util.readTextFile(pydoclibs)
     local libs = util.strSplit(content, '\n')
     for _, v in ipairs(libs) do
         local lib = util.strTrim(v)
@@ -347,7 +349,7 @@ if util.strContains(util.platformInfo(), 'windows', false) then
     pydoc_gen_cmd = 'python -m pydoc'
 end
 
-local gen_root_dir = util.currentPath() .. '/' .. 'pydoc_gen'
+local gen_root_dir = util.currentPath() .. '/' .. 'pydoc_gen' .. python_version
 if not util.isPathDir(gen_root_dir) then
     util.mkDir(gen_root_dir)
 end
@@ -375,7 +377,8 @@ for _, v in ipairs(gen_docs) do
 end
 table.sort(tb)
 
-print('\nGenerate pydoc_index.api')
-util.writeTextFile('./pydoc_index.api', util.strJoin(tb, '\n'))
+local pydoc_index = string.format('pydoc_index%s.api', python_version)
+print('\nGenerate ' .. pydoc_index)
+util.writeTextFile(gen_root_dir .. '/' .. pydoc_index, util.strJoin(tb, '\n'))
 
 print('\nDone!')

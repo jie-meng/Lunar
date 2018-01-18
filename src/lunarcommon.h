@@ -61,7 +61,7 @@ public:
     SINGLETON(LunarGlobal)
     void init(int argc, char* argv[]);
     void quit();
-    void readCfg();
+    void readCfg(bool read_all = true);
     void writeCfg();
     inline std::string getAppPath() const { return app_path_; }
     inline std::string getAppName() const { return app_name_; }

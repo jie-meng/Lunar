@@ -208,7 +208,7 @@ function parseFileType(filename)
                 -- python3
                 type = "python",
                 auto_complete_type = 1,
-                api = "apis/python",
+                api = "apis/python/keywords.api,apis/python/monkeyrunner.api,apis/python/pydoc_gen3",
                 executor =  python3 .. " -u",
                 plugin_goto = "plugins/goto_python3.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
@@ -217,7 +217,7 @@ function parseFileType(filename)
                 -- python2
                 --type = "python",
                 --auto_complete_type = 1,
-                --api = "apis/python",
+                --api = "apis/python/keywords.api,apis/python/monkeyrunner.api,apis/python/pydoc_gen",
                 --executor = "python -u",
                 --plugin_goto = "plugins/goto_python.lua",
                 --plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
