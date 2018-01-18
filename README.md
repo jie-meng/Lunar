@@ -16,7 +16,7 @@ Download Qt5 and QScintilla 2.10.
 
 Install Qt, add Qt compiler directory to environment variable.
 
-### Build step ###
+### Build steps ###
 
 #### Build luaexec ####
 
@@ -38,7 +38,7 @@ Install Qt, add Qt compiler directory to environment variable.
 
 Run `./luaexec remake_lunar.lua`
 
-### Release ###
+### Release steps ###
 
 On Linux and Windows 
 
@@ -66,11 +66,13 @@ Final step of all platforms
 
 - Enjoy it!
 
+[Download Link](https://github.com/jie-meng/Lunar/releases)
+
 ### Notes ###
 
 - 2018.01.18
 
-    V1.9.2 Fix cannot edit and save lunar.cfg in Lunar bug. Support goto Lunar path from menu.
+    V1.9.2 Fix cannot edit and save lunar.cfg in Lunar bug. Support goto Lunar settings.
 
 - 2018.01.12
 
