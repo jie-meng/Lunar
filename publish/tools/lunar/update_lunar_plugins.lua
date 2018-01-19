@@ -25,7 +25,6 @@ print('Are you sure to replace extension.lua which may change your current setti
 local is_update_exetension_lua = io.read()
 
 local fpath, _ = util.splitPathname(util.appPath())
-
 util.setCurrentPath(fpath)
 
 print('Make directory download_tmp')

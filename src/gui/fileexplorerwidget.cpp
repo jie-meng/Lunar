@@ -597,10 +597,10 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
     QAction* act_rename = menu->addAction(tr("Rename"));
     QAction* act_delete = menu->addAction(tr("Delete"));
 
-    string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionToolsPath();
+    string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getToolsPath();
     if (isPathDir(extension_tools_path))
     {
-        showExtensionTools(menu->addMenu("Extension Tools"), extension_tools_path);
+        showExtensionTools(menu->addMenu("Tools"), extension_tools_path);
     }
 
     connect(act_refresh, SIGNAL(triggered()), this, SLOT(loadRoot()));

@@ -87,7 +87,7 @@ public:
     inline std::string getExtensionFuncIsLegalFile() const { return extension_func_is_legal_file_; }
     inline std::string getExtensionFuncFindFiles() const { return extension_func_find_files_; }
     inline std::string getFileFilter() const { return file_filter_; }
-    inline std::string getExtensionToolsPath() const { return extension_tools_path_; }
+    inline std::string getToolsPath() const { return tools_path_; }
     inline std::string getLastFindFileText() const { return last_find_file_text_; }
     inline unsigned short getLogSockPort() const { return log_sock_port_; }
     inline bool isLogEnable() const { return is_log_enable_; }
@@ -121,7 +121,7 @@ private:
     std::string extension_func_is_legal_file_;
     std::string extension_func_find_files_;
     std::string file_filter_;
-    std::string extension_tools_path_;
+    std::string tools_path_;
     unsigned short log_sock_port_;
     bool is_log_enable_;
     size_t  recent_project_path_cnt_;

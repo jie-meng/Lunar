@@ -253,7 +253,7 @@ void LunarGlobal::readCfg(bool read_all)
     autocompletion_wordtip_ = text_cfg.getValue("AutoCompletion.WordTip", 1);
     extension_func_parsefiletype_ = text_cfg.getValue("Extension.Func.ParseFileType", "parseFileType");
     extension_func_filefilter_ = text_cfg.getValue("Extension.Func.FileFilter", "fileFilter");
-    extension_tools_path_ = text_cfg.getValue("ExtensionToolsPath", "extension_tools");
+    tools_path_ = text_cfg.getValue("ToolsPath", "tools");
     extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     extension_func_find_files_ = text_cfg.getValue("Extension.Func.FindFiles", "findFiles");
     
@@ -284,7 +284,7 @@ void LunarGlobal::writeCfg()
     text_cfg.setValue("Extension.Func.FileFilter", extension_func_filefilter_);
     text_cfg.setValue("Extension.Func.IsLegalFile", extension_func_is_legal_file_);
     text_cfg.setValue("Extension.Func.FindFiles", extension_func_find_files_);
-    text_cfg.setValue("ExtensionToolsPath", extension_tools_path_);
+    text_cfg.setValue("ToolsPath", tools_path_);
     text_cfg.setValue("Log.SockPort", log_sock_port_);
     text_cfg.setValue("Log.Enable", is_log_enable_);
     text_cfg.setValue("Path.RecentProject", recent_project_path_);

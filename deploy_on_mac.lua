@@ -1,4 +1,4 @@
-print("Copy plugins/apis/extension_tools/scripts/config ..")
+print("Copy plugins/assets/apis/tools/scripts/config ..")
 os.execute("cp -r publish/. Lunar.app/Contents/MacOS")
 
 if not util.isPathDir("deploylibs") then

@@ -62,7 +62,7 @@ Final step of all platforms
 
 - Open Lunar from command line. (For Linux and Windows, input `Lunar` then press `Enter`. for MacOS input `luna` then press `Enter`)
 
-- Click Menu: `File -> Lunar settings`. Open script `tools/update_lunar_plugins.lua`. Press F5 to Run it (Make sure you have svn command line installed). It will update all plugins and tools to the latest.
+- Use shortcut `Command + J` on MacOS or `Ctrl + J` on Linux or Windows. Select `Tools/lunar/update_lunar_plugins` to update plugins/api/assets/luaexeclib to the latest. (Make sure you have svn command line installed).
 
 - Enjoy it!
 
@@ -128,7 +128,7 @@ Final step of all platforms
 
 	Support extension_tools, right-click mouse on directory of file explore, you can use extension tools.
 	
-	You can make your extension_tools of you own. The extension_tools can be programmed in any script language you Lunar supported.
+	You can make your tools of you own. The extension_tools can be programmed in any script language you Lunar supported.
     
 - 2015.05.15
 
