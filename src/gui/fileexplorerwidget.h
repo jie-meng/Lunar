@@ -49,7 +49,7 @@ private:
     QString getNodeRelativePath(QTreeWidgetItem* item);
     void onClickExtensionTool(const std::string& str);
     void showContextMenu(const QPoint &pos);
-    void showExtensionTools(QMenu* pmenu, const std::string& dst_dir);
+    void showTools(QMenu* pmenu, const std::string& dst_dir);
 private Q_SLOTS:
     void newFolder();
     void setAsProjectPath();

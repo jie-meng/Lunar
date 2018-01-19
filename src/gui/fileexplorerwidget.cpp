@@ -590,18 +590,17 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
 {
     QMenu* menu = new QMenu();
 
+    string tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getToolsPath();
+    if (isPathDir(tools_path))
+        showTools(menu->addMenu("Tools"), tools_path);
     QAction* act_refresh = menu->addAction(tr("Refresh"));
     QAction* act_set_path = menu->addAction(tr("Set as project path"));
+
     menu->addSeparator();
+
     QAction* act_new_folder = menu->addAction(tr("New folder"));
     QAction* act_rename = menu->addAction(tr("Rename"));
     QAction* act_delete = menu->addAction(tr("Delete"));
-
-    string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getToolsPath();
-    if (isPathDir(extension_tools_path))
-    {
-        showExtensionTools(menu->addMenu("Tools"), extension_tools_path);
-    }
 
     connect(act_refresh, SIGNAL(triggered()), this, SLOT(loadRoot()));
     connect(act_set_path, SIGNAL(triggered()), this, SLOT(setAsProjectPath()));
@@ -613,7 +612,7 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
     delete menu;
 }
 
-void FileExplorerWidget::showExtensionTools(QMenu* pmenu, const std::string& dst_dir)
+void FileExplorerWidget::showTools(QMenu* pmenu, const std::string& dst_dir)
 {
     DirFilter df;
     vector<string> dirs;
@@ -623,7 +622,7 @@ void FileExplorerWidget::showExtensionTools(QMenu* pmenu, const std::string& dst
         for (vector<string>::iterator it = dirs.begin(); it != dirs.end(); ++it)
         {
             QMenu* psubmenu = pmenu->addMenu(StdStringToQString(fileBaseName(*it)));
-            showExtensionTools(psubmenu, *it);
+            showTools(psubmenu, *it);
         }
     }
     
