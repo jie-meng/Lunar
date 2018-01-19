@@ -62,7 +62,7 @@ Final step of all platforms
 
 - Open Lunar from command line. (For Linux and Windows, input `Lunar` then press `Enter`. for MacOS input `luna` then press `Enter`)
 
-- Use shortcut `Command + J` on MacOS or `Ctrl + J` on Linux or Windows. Select `Tools/lunar/update_lunar_plugins` to update plugins/api/assets/luaexeclib to the latest. (Make sure you have svn command line installed).
+- Open File Explorer with shortcut key `CTRL (COMMAND on MacOS) + SHIFT + E`, then `CTRL (COMMAND on MacOS) + J` open Context Menu. Select `Tools/lunar/update_lunar_plugins` to update packages (apis / assets / plugins / tools / luaexeclib / extension.lua) to the latest. (Make sure you have svn command line installed).
 
 - Enjoy it!
 
