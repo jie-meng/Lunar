@@ -19,8 +19,8 @@ def extractTarMFile(file, output_path):
     tar.close()
 
 # extract octave mfiles
-files = getTarFiles("./src")
+files = getTarFiles(os.getcwd())
 for f in files:
     extractTarMFile(f, './mfiles')
 
-print('ok')
+print('\ndone!')

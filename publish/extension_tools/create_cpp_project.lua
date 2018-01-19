@@ -1,11 +1,7 @@
-local model_path = util.currentPath() .. '/proj'
+local app_dir, _ = util.splitPathname(util.appPath())
+local model_path = app_dir .. '/assets/templates/create_cpp_project/proj'
 
-print('Please input project directory:')
-local dst_dir = io.read()
-if not util.isPathDir(dst_dir) then
-    print(string.format('Error: Invalid directory "%s".', dst_dir))
-    os.exit(0)
-end
+local dst_dir = util.currentPath()
 
 print('Please input app name:')
 local app_name = io.read()
