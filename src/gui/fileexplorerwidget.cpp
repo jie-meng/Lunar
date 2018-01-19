@@ -600,18 +600,7 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
     string extension_tools_path = LunarGlobal::getInstance().getAppPath() + "/" + LunarGlobal::getInstance().getExtensionToolsPath();
     if (isPathDir(extension_tools_path))
     {
-        FileFilter ff;
-        vector<string> extension_tools_files;
-        if (listFiles(extension_tools_path, extension_tools_files, &ff) > 0)
-        {
-            sort(extension_tools_files.begin(), extension_tools_files.end());
-            QMenu* extension_tool_menu = menu->addMenu("Extension Tools");
-            for (vector<string>::iterator it = extension_tools_files.begin(); it != extension_tools_files.end(); ++it)
-            {
-                QAction* act = extension_tool_menu->addAction(StdStringToQString(fileBaseName(*it)));
-                connect(act, &QAction::triggered, UtilBind(&FileExplorerWidget::onClickExtensionTool, this, *it));
-            }
-        }
+        showExtensionTools(menu->addMenu("Extension Tools"), extension_tools_path);
     }
 
     connect(act_refresh, SIGNAL(triggered()), this, SLOT(loadRoot()));
@@ -622,6 +611,33 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
 
     menu->exec(pos);
     delete menu;
+}
+
+void FileExplorerWidget::showExtensionTools(QMenu* pmenu, const std::string& dst_dir)
+{
+    DirFilter df;
+    vector<string> dirs;
+    if (listFiles(dst_dir, dirs, &df) > 0)
+    {
+        sort(dirs.begin(), dirs.end());
+        for (vector<string>::iterator it = dirs.begin(); it != dirs.end(); ++it)
+        {
+            QMenu* psubmenu = pmenu->addMenu(StdStringToQString(fileBaseName(*it)));
+            showExtensionTools(psubmenu, *it);
+        }
+    }
+    
+    FileFilter ff;
+    vector<string> files;
+    if (listFiles(dst_dir, files, &ff) > 0)
+    {
+        sort(files.begin(), files.end());
+        for (vector<string>::iterator it = files.begin(); it != files.end(); ++it)
+        {
+            QAction* act = pmenu->addAction(StdStringToQString(fileBaseName(*it)));
+            connect(act, &QAction::triggered, UtilBind(&FileExplorerWidget::onClickExtensionTool, this, *it));
+        }
+    }
 }
 
 }
