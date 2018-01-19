@@ -27,6 +27,7 @@ signals:
     void removeFile(const QString&);
     void removeDir(const QString&);
     void widthChanged(int width);
+    void setProjectPath(const QString&);
 public slots:
     void loadRoot();
     void onFileSaved(const QString& file);
@@ -49,6 +50,7 @@ private:
     void showContextMenu(const QPoint &pos);
 private Q_SLOTS:
     void newFolder();
+    void setAsProjectPath();
     void newFolderOk(const QString& folder_name);
     void deleteCurrentItem();
     void renameCurrentItem();

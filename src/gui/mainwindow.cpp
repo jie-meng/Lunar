@@ -527,6 +527,7 @@ void MainWindow::initConnections()
             this, SLOT(replaceAll(const QString&, const QString&, Qt::CaseSensitivity, bool, bool, bool)));
     //file explorer
     connect(pfile_explorer_widget_, SIGNAL(openFile(const QString&)), this, SLOT(openDoc(const QString&)));
+    connect(pfile_explorer_widget_, SIGNAL(setProjectPath(const QString&)), this, SLOT(resetCurrentPath(const QString&)));
     connect(this, SIGNAL(fileSaved(const QString&)), pfile_explorer_widget_, SLOT(onFileSaved(const QString&)));
             connect(this, SIGNAL(allFilesSaved()), pfile_explorer_widget_, SLOT(onAllFilesSaved()));
     connect(pfile_explorer_widget_, SIGNAL(executeExtensionTool(QString,QString,QString)), this, SLOT(executeScriptInPath(QString,QString,QString)));

@@ -394,6 +394,15 @@ void FileExplorerWidget::newFolder()
     }
 }
 
+void FileExplorerWidget::setAsProjectPath()
+{
+    QString path = getNodeAbsolutePath(currentItem());
+    if (isPathDir(QStringToStdString(path)))
+    {
+        emit setProjectPath(path);
+    }
+}
+
 void FileExplorerWidget::newFolderOk(const QString& folder_name)
 {
     if (folder_name.length() == 0)
@@ -582,8 +591,9 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
     QMenu* menu = new QMenu();
 
     QAction* act_refresh = menu->addAction(tr("Refresh"));
+    QAction* act_set_path = menu->addAction(tr("Set as project path"));
     menu->addSeparator();
-    QAction* act_new_folder = menu->addAction(tr("New Folder"));
+    QAction* act_new_folder = menu->addAction(tr("New folder"));
     QAction* act_rename = menu->addAction(tr("Rename"));
     QAction* act_delete = menu->addAction(tr("Delete"));
 
@@ -604,10 +614,11 @@ void FileExplorerWidget::showContextMenu(const QPoint &pos)
         }
     }
 
-    connect(act_refresh, SIGNAL(triggered()),this,SLOT(loadRoot()));
+    connect(act_refresh, SIGNAL(triggered()), this, SLOT(loadRoot()));
+    connect(act_set_path, SIGNAL(triggered()), this, SLOT(setAsProjectPath()));
     connect(act_new_folder, SIGNAL(triggered()), this, SLOT(newFolder()));
-    connect(act_rename, SIGNAL(triggered()),this, SLOT(renameCurrentItem()));
-    connect(act_delete, SIGNAL(triggered()),this, SLOT(deleteCurrentItem()));
+    connect(act_rename, SIGNAL(triggered()), this, SLOT(renameCurrentItem()));
+    connect(act_delete, SIGNAL(triggered()), this, SLOT(deleteCurrentItem()));
 
     menu->exec(pos);
     delete menu;
