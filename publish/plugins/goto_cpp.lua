@@ -187,7 +187,7 @@ function getProjectSrcAbsoluteDir(project_src_dir)
     end
 end
 
-function parseFile(coll, parsed_files, project_src_dir, filename, current_line_index, text, inc_path, recuresive)
+function parseFile(coll, parsed_files, project_src_dir, filename, current_line_index, text, inc_path, recursive, exclude_inc)
     if parsed_files[filename] then
         return false
     end
@@ -211,8 +211,8 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 
                 local matched = false
                 local inc, directive = isInclude(trimmed_line)
-                if inc then
-                    if not recuresive and current_line_index == line_index then
+                if not exclude_inc and inc then
+                    if not recursive and current_line_index == line_index then
                         --goto include file directly
                         if util.isPathFile(current_file_path .. "/" .. inc) then
                             local item = string.format("%s\n%d\n%s", current_file_path .. "/" .. inc, 1, inc)
@@ -261,7 +261,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 end                
                 
                 if matched then
-                    local item = string.format("%s\n%d\n%s", filename, line_index, readline)
+                    local item = string.format("%s\n%d\n%s", filename, line_index, trimmed_line)
                     coll[item] = true
                     found = true
                 end
@@ -360,6 +360,20 @@ function gotoDefinition(text, line, filename, project_src_dir)
     local coll = {}
     local parsed_files = {}
     parseFile(coll, parsed_files, project_src_dir, filename, line, text, inc_path)
+
+    local fpath, fname = util.splitPathname(filename)
+    local current_path_files = util.findFilesInDir(fpath)
+    for _, v in ipairs(current_path_files) do
+        if string.lower(v) ~= string.lower(filename) and util.fileBaseName(string.lower(filename)) == util.fileBaseName(string.lower(v)) and
+            (util.fileExtension(string.lower(v)) == 'h'
+            or util.fileExtension(string.lower(v)) == 'hpp'
+            or util.fileExtension(string.lower(v)) == 'hxx'
+            or util.fileExtension(string.lower(v)) == 'c'
+            or util.fileExtension(string.lower(v)) == 'cpp'
+            or util.fileExtension(string.lower(v)) == 'cxx') then
+            parseFile(coll, parsed_files, project_src_dir, v, line, text, inc_path, nil, true)
+        end
+    end
     
     local results = {}
     for k, v in pairs(coll) do
