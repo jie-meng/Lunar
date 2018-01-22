@@ -91,11 +91,12 @@ MainWindow::MainWindow(QWidget* parent)
 }
 
 MainWindow::~MainWindow()
-{}
+{
+}
 
 void MainWindow::processCmdParam()
 {
-    if (LunarGlobal::getInstance().getArgCnt()>1)
+    if (LunarGlobal::getInstance().getArgCnt() > 1)
     {
         for (int i=1; i<LunarGlobal::getInstance().getArgCnt(); i++)
         {
@@ -334,12 +335,12 @@ void MainWindow::initActions()
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
-    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT  + Qt::Key_E);
+    pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_E);
     pview_file_explorer_action_->setIcon(QIcon(tr(":/res/file_explorer.png")));
 
     pview_search_results_action_ = new QAction(tr("Search results"), this);
     pview_search_results_action_->setStatusTip((tr("Go to search results.")));
-    pview_search_results_action_->setShortcut(Qt::CTRL + Qt::Key_R);
+    pview_search_results_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_R);
     pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
     
     pview_locate_current_file_ = new QAction(tr("Locate current file"), this);

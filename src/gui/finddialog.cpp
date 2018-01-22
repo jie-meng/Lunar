@@ -38,6 +38,8 @@ void FindDialog::init()
 
 void FindDialog::initGui()
 {
+    setWindowFlags(Qt::Tool);
+    
     ptab_widget_ = new QTabWidget;
     pfind_tab_ = new FindTab;
     preplace_tab_ = new ReplaceTab;
