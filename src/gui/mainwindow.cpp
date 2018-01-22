@@ -56,6 +56,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_settings_action_(NULL),
     pedit_select_cursor_word_action_(NULL),
     pedit_find_action_(NULL),
+    pedit_replace_action_(NULL),
     pedit_search_action_(NULL),
     pedit_font_action_(NULL),
     pedit_comment_action_(NULL),
@@ -295,6 +296,10 @@ void MainWindow::initActions()
     pedit_find_action_->setShortcut(QKeySequence::Find);
     pedit_find_action_->setIcon(QIcon(tr(":/res/find.png")));
 
+    pedit_replace_action_ = new QAction(tr("Replace"), this);
+    pedit_replace_action_->setStatusTip(tr("Replace."));
+    pedit_replace_action_->setShortcut(Qt::CTRL + Qt::Key_R);
+
     pedit_search_action_ = new QAction(tr("Search"), this);
     pedit_search_action_->setStatusTip(tr("Search in files."));
     pedit_search_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_F);
@@ -398,6 +403,7 @@ void MainWindow::initMenubar()
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
     pedit_menu->addAction(pedit_select_cursor_word_action_);
     pedit_menu->addAction(pedit_find_action_);
+    pedit_menu->addAction(pedit_replace_action_);
     pedit_menu->addAction(pedit_search_action_);
     pedit_menu->addAction(pedit_font_action_);
     pedit_menu->addAction(pedit_comment_action_);
@@ -496,6 +502,7 @@ void MainWindow::initConnections()
 
     connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
+    connect(pedit_replace_action_, SIGNAL(triggered()), this, SLOT(editReplace()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
     connect(pedit_font_action_, SIGNAL(triggered()), this, SLOT(editSetFont()));
     connect(pedit_comment_action_, SIGNAL(triggered()), this, SLOT(editComment()));
@@ -703,6 +710,12 @@ void MainWindow::editFind()
 {
     pfind_dlg_->show();
     pfind_dlg_->setFocusOnFindInput();
+}
+
+void MainWindow::editReplace()
+{
+    pfind_dlg_->show();
+    pfind_dlg_->setFocusOnReplaceInput();
 }
 
 void MainWindow::editSearch()

@@ -27,6 +27,7 @@ public:
     explicit FindDialog(QWidget *parent = 0);
     virtual ~FindDialog();
     void setFocusOnFindInput();
+    void setFocusOnReplaceInput();
 Q_SIGNALS:
     void find(const QString &str, bool first_find, Qt::CaseSensitivity cs, bool find_previous, bool whole_word, bool wrap, bool find_in_output);
     void replace(const QString& replace_with_text, bool find_in_output);
@@ -113,6 +114,7 @@ public:
     virtual ~ReplaceTab();
     QString getFindText() { return  pfind_edit_->text(); }
     void setFindText(const QString& text) { pfind_edit_->setText(text); }
+    void setFocusOnFindInput();
 Q_SIGNALS:
     void findTextChangeSignal(const QString& text);
     void cmdFind(const QString& text);

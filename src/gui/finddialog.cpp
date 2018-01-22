@@ -69,7 +69,14 @@ void FindDialog::initGui()
 
 void FindDialog::setFocusOnFindInput()
 {
+    ptab_widget_->setCurrentIndex(0);
     pfind_tab_->setFocusOnFindInput();
+}
+
+void FindDialog::setFocusOnReplaceInput()
+{
+    ptab_widget_->setCurrentIndex(1);
+    preplace_tab_->setFocusOnFindInput();
 }
 
 void FindDialog::initConnections()
@@ -333,6 +340,11 @@ void ReplaceTab::initConnections()
     connect(pfind_button_, SIGNAL(clicked()), this, SLOT(findClicked()));
     connect(preplace_button_, SIGNAL(clicked()), this, SLOT(replaceClicked()));
     connect(preplace_all_button_, SIGNAL(clicked()), this, SLOT(replaceAllClicked()));
+}
+
+void ReplaceTab::setFocusOnFindInput()
+{
+    pfind_edit_->setFocus();
 }
 
 void ReplaceTab::textChanged()

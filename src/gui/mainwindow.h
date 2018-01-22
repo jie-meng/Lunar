@@ -58,6 +58,7 @@ private Q_SLOTS:
     void recentDocs();
     void editSelectCursorWord();
     void editFind();
+    void editReplace();
     void editSearch();
     void editSetFont();
     void editComment();
@@ -118,6 +119,7 @@ private:
     QAction* pfile_settings_action_;
     QAction* pedit_select_cursor_word_action_;
     QAction* pedit_find_action_;
+    QAction* pedit_replace_action_;
     QAction* pedit_search_action_;
     QAction* pedit_font_action_;
     QAction* pedit_comment_action_;
