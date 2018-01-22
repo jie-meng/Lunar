@@ -315,10 +315,6 @@ table.insert(modules, 'email')
 table.insert(modules, 'http')
 table.insert(modules, '_io')
 
--- Reset execute path
-local app_path, _ = util.splitPathname(util.appPath())
-util.setCurrentPath(app_path .. '/apis/python')
-
 -- Check python version on unix. If on windows, just set appropriate python version to environment path
 local python_version = ''
 print('Is python 3.x? (y/n)')
@@ -326,15 +322,9 @@ if util.strStartWith(io.read(), 'y', false) then
     python_version = '3'
     print("Parse python 3 ...")
     table.insert(modules, 'builtins')
-    if util.strContains(util.platformInfo(), 'win') then
-        os.execute('pip list > pydoclibs3')
-    else
-        os.execute('pip3 list > pydoclibs3')
-    end
 else
     print("Parse python 2 ...")
     table.insert(modules, '__builtin__')
-    os.execute('pip list > pydoclibs')
 end
 
 local pydoclibs = 'pydoclibs' .. python_version
@@ -344,7 +334,7 @@ if util.isPathFile(pydoclibs) then
     local content = util.readTextFile(pydoclibs)
     local libs = util.strSplit(content, '\n')
     for _, v in ipairs(libs) do
-        local lib = string.match(v, '([%w_-]+)')
+        local lib = util.strTrim(v)
         if string.len(lib) > 0 then
             print('Add pydoc lib: ' .. lib)
             table.insert(modules, lib)
