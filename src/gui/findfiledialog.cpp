@@ -1,4 +1,4 @@
-#include "FindFiledialog.h"
+#include "findfiledialog.h"
 #include <list>
 #include <QVBoxLayout>
 #include <QLineEdit>
@@ -128,6 +128,7 @@ FindFileDialog::FindFileDialog(QWidget* parent) :
 
 FindFileDialog::~FindFileDialog()
 {
+    find_file_thread_.wait();
 }
 
 void FindFileDialog::init()
