@@ -456,11 +456,15 @@ function findPathInDir(dir, func)
     return ret
 end
 
-function findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit)
+function findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit, stop_flag_address)
     if #path_deque > 0 then
         local dir = table.remove(path_deque, 1)
         local files = findFilesInDir(dir, file_filter)
         for _, v in ipairs(files) do
+            if util.memGetUInt32(stop_flag_address) == 1 then
+                return
+            end
+
             table.insert(output, v)
             if limit and #output >= limit then
                 return
@@ -468,22 +472,26 @@ function findFilesFlatRecursively(path_deque, path_filter, file_filter, output, 
         end
         local dirs = findPathInDir(dir, path_filter)
         for _, v in ipairs(dirs) do
+            if util.memGetUInt32(stop_flag_address) == 1 then
+                return
+            end
+
             table.insert(path_deque, v)
         end
         
-        findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit)
+        findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit, stop_flag_address)
     end
 end
 
-function findFilesFlat(dir, path_filter, file_filter, limit)
+function findFilesFlat(dir, path_filter, file_filter, limit, stop_flag_address)
     local output = {}
     local deque = {}
     table.insert(deque, dir)
-    findFilesFlatRecursively(deque, path_filter, file_filter, output, limit)
+    findFilesFlatRecursively(deque, path_filter, file_filter, output, limit, stop_flag_address)
     return output
 end
 
-function findFiles(find_with_text)
+function findFiles(find_with_text, stop_flag_address)
     find_with_text = string.lower(find_with_text)
     local files = findFilesFlat(util.currentPath(), 
         function(d)
@@ -494,7 +502,7 @@ function findFiles(find_with_text)
             local path, name = util.splitPathname(f)
             return string.match(string.lower(name), find_with_text)
         end,
-        100)
+        100, stop_flag_address)
     
     files = sortFoundFiles(files, find_with_text)
 

@@ -18,6 +18,7 @@ public:
     FindFileThread(QObject *parent = 0);
     virtual ~FindFileThread();
     void start(const QString& find_with_text);
+    inline void setStopFlag(int flag) { stop_flag_ = flag; }
 signals:
     void found(const QStringList&);
 protected:
@@ -31,6 +32,7 @@ private:
     bool lua_state_ok_;
     std::string error_information_;
     std::vector<std::string> files_found_;
+    int stop_flag_;
 private:
     DISALLOW_COPY_AND_ASSIGN(FindFileThread)
 };

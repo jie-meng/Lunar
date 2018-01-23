@@ -16,7 +16,8 @@ namespace gui {
 
 FindFileThread::FindFileThread(QObject *parent) : 
     QThread(parent),
-    lua_state_ok_(false)
+    lua_state_ok_(false),
+    stop_flag_(0)
 {
 }
 
@@ -92,8 +93,9 @@ void FindFileThread::findFiles(const string& find_with_text)
     
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncFindFiles());
     luaPushString(lua_state_.getState(), find_with_text);
+    luaPushLightUserData(lua_state_.getState(), (void*)(&stop_flag_));
     
-    int err = luaCallFunc(lua_state_.getState(), 1, 1);
+    int err = luaCallFunc(lua_state_.getState(), 2, 1);
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -128,6 +130,10 @@ FindFileDialog::FindFileDialog(QWidget* parent) :
 
 FindFileDialog::~FindFileDialog()
 {
+    disconnect(&find_file_thread_, SIGNAL(found(const QStringList&)), ptree_view_, SLOT(addItem(const QStringList&)));
+    disconnect(&find_file_thread_, SIGNAL(finished()), this, SLOT(findFinish()));
+
+    find_file_thread_.setStopFlag(1);
     find_file_thread_.wait();
 }
 
@@ -135,7 +141,7 @@ void FindFileDialog::init()
 {
     initGui();
     initConnections();
-    
+
     if (!pfile_name_->text().isEmpty())
         startFinding(pfile_name_->text());
 }
