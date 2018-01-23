@@ -328,6 +328,10 @@ else
 end
 
 local pydoclibs = 'pydoclibs' .. python_version
+if not util.isPathFile(pydoclibs) then
+    local content = '# List the libraries in "pip' .. python_version .. ' list" like the following lines in comment:\n\n# PIL\n# PyQt5\n# openpyxl\n# numpy'
+    util.writeTextFile(pydoclibs, content)
+end
 
 -- Add pydoc libs
 if util.isPathFile(pydoclibs) then
@@ -335,7 +339,7 @@ if util.isPathFile(pydoclibs) then
     local libs = util.strSplit(content, '\n')
     for _, v in ipairs(libs) do
         local lib = util.strTrim(v)
-        if string.len(lib) > 0 then
+        if string.len(lib) > 0 and not util.strStartWith(lib, '#') then
             print('Add pydoc lib: ' .. lib)
             table.insert(modules, lib)
         end
