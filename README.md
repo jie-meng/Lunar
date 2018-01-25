@@ -38,6 +38,10 @@ Install Qt, add Qt compiler directory to environment variable.
 
 Run `./luaexec remake_lunar.lua`
 
+If you already built it and then made some change and just want an incremental build, run `./luaexec make_lunar.lua`
+
+If you want to clear everything and start from begginning (When you add a new icon or add a new source file, you always need to start from begginning), run `./luaexec clear_lunar.lua`, and then `./luaexec remake_lunar.lua`.
+
 ### Release steps ###
 
 On Linux and Windows 
