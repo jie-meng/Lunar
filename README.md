@@ -55,18 +55,36 @@ On windows extras (You can find all the dlls in Qt installation directory):
 On MacOS
 
 - Run `./luaexec deploy_on_mac.lua` on terminal to make Lunar.dmg (Follow command tips to give correct information)
-- Install Lunar from Lunar.dmg to `/Applications`
-- Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
 
-Final step of all platforms
+### Install Lunar ###
+
+For Linux users, you should build Lunar following the Release steps.
+
+For MacOS or Windows users, you can download installation-package from the following link:
+
+[Download Link](https://github.com/jie-meng/Lunar/releases)
+
+- MacOS
+
+    - Install Lunar from Lunar.dmg to `/Applications`
+    - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
+    
+- Windows
+
+    - Just unzip lunar_win.zip
+    - Add lunar_win directory to your environment PATH.
+    
+- Linux
+
+    - After Lunar is built and everything in a folder, add the folder directory to environment: `export PATH=$PATH:{LUNAR_HOME}`
+    
+After installation, you should update plugins at once.
+
+### Update plugins ###
 
 - Open Lunar from command line. (For Linux and Windows, input `Lunar` then press `Enter`. for MacOS input `luna` then press `Enter`)
 
 - Open File Explorer with shortcut key `CTRL (COMMAND on MacOS) + SHIFT + E`, then `CTRL (COMMAND on MacOS) + J` open Context Menu. Select `Tools/lunar/update_lunar_plugins` to update packages (apis / assets / plugins / tools / luaexeclib / extension.lua) to the latest. (Make sure you have svn command line installed).
-
-- Enjoy it!
-
-[Download Link](https://github.com/jie-meng/Lunar/releases)
 
 ### Notes ###
 
