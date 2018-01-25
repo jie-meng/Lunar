@@ -5,7 +5,7 @@
 A cross-platform (MacOS, Linux, Windows) script editor
 
 - Customize your script api, auto-completion & goto-definition plugins.
-- Currently supported: lua with extensions, cocos2dx_lua, cocos2dx_js, python2 & 3, cpp, octave 
+- Currently supported: lua, python, cpp, octave, cocos2dx_lua, cocos2dx_js
 
 ### Preparations ###
 
@@ -20,9 +20,9 @@ Install Qt, add Qt compiler directory to environment variable.
 
 #### Build luaexec ####
 
-1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util)
+1. Get Util project from [Util: Cross-platform C++ library](https://github.com/jie-meng/Util).
 
-2. Run `python3 install_build_tool_here.py`
+2. Run `python3 install_build_tool_here.py`. You would be ask `Please input Util project dir:`, then input Util absolute directory you justed cloned/downloaded above. Something like: `/Users/XXX/projects/Util`.
  
 #### Build Qscintilla ####
 
@@ -57,7 +57,15 @@ On windows extras (You can find all the dlls in Qt installation directory):
 
 On MacOS
 
-- Run `./luaexec deploy_on_mac.lua` on terminal to make Lunar.dmg (Follow command tips to give correct information)
+- Run `./luaexec deploy_on_mac.lua` on terminal to make Lunar.dmg
+
+- In the making-dmg step, you'll need to give some information:
+
+    - `Please input libqscintilla2_qt5.13.dylib dir:` You need to input the ibqscintilla2_qt5.13.dylib installed directory, something like `/Users/XXX/programs/Qt5.7.1/5.7/clang_64/lib`
+    
+    - `Deploy as dmg? (y/n)` 
+        - Type `y` for generate dmg. Then you got Lunar.dmg.
+        - Type `n` for not generate dmg, then you only got a Lunar.app, you can run `./luaexec replace_current_lunar_on_mac.lua` to replace /Applications/Lunar.app with this one. This is very useful when you want perform a quick-test after some modification and build.
 
 ### Install Lunar ###
 
@@ -87,7 +95,13 @@ After installation, you should update plugins at once.
 
 - Open Lunar from command line. (For Linux and Windows, input `Lunar` then press `Enter`. for MacOS input `luna` then press `Enter`)
 
-- Open File Explorer with shortcut key `CTRL (COMMAND on MacOS) + SHIFT + E`, then `CTRL (COMMAND on MacOS) + J` open Context Menu. Select `Tools/lunar/update_lunar_plugins` to update packages (apis / assets / plugins / tools / luaexeclib / extension.lua) to the latest. (Make sure you have svn command line installed).
+- Open File Explorer with shortcut key `CTRL (COMMAND on MacOS) + SHIFT + E`, then `CTRL (COMMAND on MacOS) + J` open Context Menu. Select `Tools/lunar/update_lunar_plugins` to update packages (apis / assets / plugins / tools / luaexeclib / extension.lua) to the latest. (Make sure you have svn command line installed). 
+
+- When execute the update, you would be asked `Are you sure to replace extension.lua which may change your current settings? (y/n)`.
+    
+    - Type `y` and click `input` button (or press `Enter`): you would use new `extension.lua` from the download. Your old `extension.lua` would be kept as `extension_backup.lua`.
+    
+    - Type `n` and click `input` button (or press `Enter`): you would keep your old `extension.lua`. New-downloaded `extension.lua` would be saved as `/extension_latest.lua`.
 
 ### Notes ###
 
