@@ -36,11 +36,11 @@ Install Qt, add Qt compiler directory to environment variable.
 
 #### Build Lunar ####
 
-Run `./luaexec remake_lunar.lua`
+Run `./luaexec remake_lunar.lua`.
 
-If you already built it and then made some change and just want an incremental build, run `./luaexec make_lunar.lua`
+If you already built it then made some changes and just want an incremental build, run `./luaexec make_lunar.lua`.
 
-If you want to clear everything and start from begginning (When you add a new icon or add a new source file, you always need to start from begginning), run `./luaexec clear_lunar.lua`, and then `./luaexec remake_lunar.lua`.
+When you add/remove an icon or add/remove a source file which need to regenerate Lunar.pro, you should always clear everything and start from the begginning, run `./luaexec clear_lunar.lua`, and then `./luaexec remake_lunar.lua`.
 
 ### Release steps ###
 
@@ -53,7 +53,6 @@ On Linux and Windows
 On windows extras (You can find all the dlls in Qt installation directory):
 
 - Put libstdc++-6.dll(mingw), libgcc_s_dw2-1.dll(mingw), libwinpthread-1.dll(mingw), Qt5Core.dll, Qt5Gui.dll,  Qt5PrintSupport.dll, Qt5Widgets.dll, qscintilla2_qt5.dll, icudt54, icuin54.dll, icuuc54.dll to LUNAR_HOME.
-- Put qtaccessiblewidgets.dll to LUNAR_HOME/accessible (No need now)
 - Put qwindows.dll to LUNAR_HOME/platforms
 
 On MacOS
