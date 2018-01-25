@@ -64,8 +64,8 @@ On MacOS
     - `Please input libqscintilla2_qt5.13.dylib dir:` You need to input the ibqscintilla2_qt5.13.dylib installed directory, something like `/Users/XXX/programs/Qt5.7.1/5.7/clang_64/lib`
     
     - `Deploy as dmg? (y/n)` 
-        - Type `y` for generate dmg. Then you got Lunar.dmg.
-        - Type `n` for not generate dmg, then you only got a Lunar.app, you can run `./luaexec replace_current_lunar_on_mac.lua` to replace /Applications/Lunar.app with this one. This is very useful when you want perform a quick-test after some modification and build.
+        - Type `y` for generating dmg. Then you got Lunar.dmg.
+        - Type `n` for not generating dmg, then you only got a Lunar.app, you can run `./luaexec replace_current_lunar_on_mac.lua` to replace /Applications/Lunar.app with this one. This is very useful when you want perform a quick-test after some modification and build.
 
 ### Install Lunar ###
 
@@ -78,7 +78,7 @@ For MacOS or Windows users, you can download installation-package from the follo
 - MacOS
 
     - Install Lunar from Lunar.dmg to `/Applications`
-    - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command 'luna')
+    - Add `export PATH=$PATH:/Applications/Lunar.app/Contents/MacOS` to your environment. (Then you can start Lunar from your terminal in current directory by typing command `luna`)
     
 - Windows
 
@@ -99,9 +99,9 @@ After installation, you should update plugins at once.
 
 - When execute the update, you would be asked `Are you sure to replace extension.lua which may change your current settings? (y/n)`.
     
-    - Type `y` and click `input` button (or press `Enter`): you would use new `extension.lua` from the download. Your old `extension.lua` would be kept as `extension_backup.lua`.
+    - Type `y` and click `input` button (or press `Enter`): you would use new `extension.lua` from the download. Your old `extension.lua` would be kept as `extension_backup.lua`. For a new-install-user, just type `y`.
     
-    - Type `n` and click `input` button (or press `Enter`): you would keep your old `extension.lua`. New-downloaded `extension.lua` would be saved as `/extension_latest.lua`.
+    - Type `n` and click `input` button (or press `Enter`): you would keep your old `extension.lua`. New-downloaded `extension.lua` would be saved as `extension_latest.lua`. If you made some changes to your `extension.lua` and want to keep the changes, select `n` to keep your old `extension.lua`, you can compare it with the newest one `extension_latest.lua` after update.
 
 ### Notes ###
 
