@@ -70,53 +70,63 @@ Final step of all platforms
 
 ### Notes ###
 
-- 2018.01.18
+- V1.9.3 (2018.01.25)
 
-    V1.9.2 Fix cannot edit and save lunar.cfg in Lunar bug. Support goto Lunar settings.
+    - Add 'inspect' to python default lib in pydoc_gen.lua
+    - Solve findfiles sometimes crash bug
+    - CPP goto-definition plugin enhancement
+    - Make shortcut key CTRL+R Replace
+    - Fix finddialog sometimes hide by mainwindow bug
+    - Merge extension_tools to tools
+    - Support set project path to sub dir in FileExplorer
 
-- 2018.01.12
+- V1.9.2 (2018.01.18)
 
-    V1.9.1 Support plugins and tools auto update: Use tools/update_lunar_plugins.lua
+    Fix cannot edit and save lunar.cfg in Lunar bug. Support goto Lunar settings.
 
-- 2018.01.11
+- V1.9.1 (2018.01.12)
 
-    V1.9.0 Update Qscintilla version to 2.10.2; python2/3 plugins make greatly enhancement. (use pydoc_gen.lua in apis/python to generate api first)
+    Support plugins and tools auto update: Use tools/update_lunar_plugins.lua
 
-- 2017.11.14
+- V1.9.0 (2018.01.11)
+
+    Update Qscintilla version to 2.10.2; python2/3 plugins make greatly enhancement. (use pydoc_gen.lua in apis/python to generate api first)
+
+- V1.8.8 (2017.11.14)
     
-    V1.8.8 Support locate current file in file explorer.
+    Support locate current file in file explorer.
 
-- 2017.11.12
+- V1.8.7 (2017.11.12)
     
-    V1.8.7 Support find files.
+    Support find files.
     
-- 2017.11.08
+- V1.8.6 (2017.11.08)
 	
-	V1.8.6 Support start from MAC terminal with command 'luna'
+    Support start from MAC terminal with command 'luna'
 
-- 2017.08.17
+- V1.8.3 (2017.08.17)
 
-	V1.8.3 Support run recent script with F6.
+    Support run recent script with F6.
     
-- 2017.05.21
+- V1.8.1 (2017.05.21)
     
-    V1.8.1 Support cocos2dx-js.
+    Support cocos2dx-js.
     
-- 2017.03.01
+- V1.7.7 (2017.03.01)
 
-    V1.7.7 Update QScintilla2 to 2.10. Support Markdown & JSON.
+    Update QScintilla2 to 2.10. Support Markdown & JSON.
 
-- 2016.12.29
+- V1.7.2 (2016.12.29)
 	
-    V1.7.2 Update util to V1.0.5. All util extend api reformed.
+    Update util to V1.0.5. All util extend api reformed.
     
-- 2016.6.28
+- V1.5.8 (2016.06.28)
     
-    V1.5.8 Support cpp plugins.
+    Support cpp plugins.
 
-- 2016.05.20
+- V1.5.3 (2016.05.20)
 
-    V1.5.3 Support MacOS. 
+    Support MacOS.
     
 - 2016.01.10
     
