@@ -33,11 +33,19 @@ util.mkDir('download_tmp')
 
 print('Download latest plugins and tools from github ...')
 util.setCurrentPath(fpath .. '/download_tmp')
-os.execute('svn checkout https://github.com/jie-meng/Lunar/trunk/publish')
+local ret = os.execute('svn checkout https://github.com/jie-meng/Lunar/trunk/publish')
+if not ret then
+    print('\nError: Fetch data failed.')
+    return
+end
 util.pathRemoveAll('publish/.svn')
 
 print('Download latest luaexeclib from github ...')
-os.execute('svn checkout https://github.com/jie-meng/Util/trunk/luaexeclib')
+ret = os.execute('svn checkout https://github.com/jie-meng/Util/trunk/luaexeclib')
+if not ret then
+    print('\nError: Fetch data failed.')
+    return
+end
 util.pathRemoveAll('luaexeclib/.svn')
 
 util.setCurrentPath(fpath)
@@ -67,7 +75,11 @@ for _, v in ipairs(files) do
 end
 
 print('Download latest install_luaexeclib.lua from github ...')
-os.execute('svn export --force https://github.com/jie-meng/Util/trunk/install_luaexeclib.lua')
+ret = os.execute('svn export --force https://github.com/jie-meng/Util/trunk/install_luaexeclib.lua')
+if not ret then
+    print('\nError: Fetch data failed.')
+    return
+end
 
 print('Install luaexeclib ...')
 if util.strContains(util.platformInfo(), 'win', false) then
