@@ -152,9 +152,9 @@ bool overwriteBinaryFile(const std::string& file, char* pbuf, size_t write_len, 
     }
 }
 
-bool fileCopy(const std::string& src_path, const std::string& dest_path, bool fail_if_exitst)
+bool fileCopy(const std::string& src_path, const std::string& dest_path, bool fail_if_exist)
 {
-    if (fail_if_exitst && isPathExists(dest_path)) return false;
+    if (fail_if_exist && isPathExists(dest_path)) return false;
 
     std::ifstream ifs(src_path.c_str(), std::ios::binary);
     if (!ifs.is_open()) return false;
@@ -461,14 +461,46 @@ bool pathRename(const std::string& src_path, const std::string& dest_path)
     return 0 == rename(src_path.c_str(), dest_path.c_str());
 }
 
-bool mkDir(const std::string& path)
+bool mkDir(const std::string& path, bool fail_if_exist)
 {
+    if (!fail_if_exist && isPathDir(path))
+    {
+        return true;
+    }
+
 #ifdef _PLATFORM_WINDOWS_
         return 0 == ::mkdir(path.c_str());
 #endif
 #ifdef _PLATFORM_UNIX_
         return 0 == ::mkdir(path.c_str(), S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH);
 #endif
+}
+
+bool mkFullDir(const std::string& path)
+{
+    if (isPathDir(path))
+    {
+        return true;
+    }
+    else
+    {
+        if (mkDir(path, false))
+        {
+            return true;
+        }
+        else
+        {
+            auto path_name = splitPathname(path);
+            if (path_name.first != path)
+            {
+                return mkFullDir(path_name.first) ? mkDir(path, false) : false;
+            }
+            else
+            {
+                return false;
+            }
+        }
+    }
 }
 
 template <class Coll>

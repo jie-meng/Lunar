@@ -1,5 +1,5 @@
 local kRegexFunctionLua = [[function\s+(?<api>\w+((\.|:)\w+)*)\s*(?<args>\(.*\))]]
-local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?require\s*[\(\s]\s*[\"\'](?<path>.+)[\"\']\)?]]
+local kRegexRequireLua = [[((local\s+)?(?<module>\w+)\s*=\s*)?((require)|(import))\s*[\(\s]\s*[\"\'](?<path>.+)[\"\']\)?]]
 local kRegexReturnModuleLua = [[return\s+(?<module>\w+)]]
 
 local re_func = util.newRegex(kRegexFunctionLua)

@@ -21,7 +21,8 @@ util.pathRemoveAll(path)
 util.pathRemove(path) -> boolean
 util.pathRename(oldname, newname) -> boolean
 util.splitPathname(file) -> string (directory), string (file)
-util.mkDir(path) -> boolean
+util.mkDir(path, fail_if_exist) -> boolean
+util.mkFullDir(path) -> boolean
 util.findFilesInDir(path, [ext = ""]) -> table
 util.findPathInDir(path) -> table
 util.findFilesInDirRecursively(path, [ext = ""]) -> table

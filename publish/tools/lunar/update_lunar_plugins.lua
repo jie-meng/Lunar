@@ -1,21 +1,11 @@
 --[[ To run this script, you should have svn command line installed on your system. For windows, 
     you can install tortoisesvn with its command line]]
 
-function makeDirRecursively(dir)
-    if not util.isPathDir(dir) then
-        if not util.mkDir(dir) then
-            local parent_path, _ = util.splitPathname(dir)
-            makeDirRecursively(parent_path)
-            util.mkDir(dir)
-        end
-    end
-end
-
 function forceCopyFile(src, dst)
     local path, _ = util.splitPathname(dst)
     if not (util.strEndWith(path, '.svn') or util.strEndWith(path, '.git')) then
         if not util.isPathDir(path) then
-            makeDirRecursively(path)
+            util.mkFullDir(path)
         end
         util.fileCopy(src, dst, false)    
     end
