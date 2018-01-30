@@ -42,7 +42,7 @@ function parseSupplementApiMain(filename, dir, apis, re_func, re_require, re_ret
                     local api = re_func:getMatchedGroupByName("api")
                     local args = re_func:getMatchedGroupByName("args")
                     if api ~= "" and args ~= "" then
-                        table.insert(apis, api .. args)
+                        table.insert(apis, util.strReplace(api .. args, ':', '.'))
                     end
                     break
                 end
@@ -96,7 +96,7 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
                     local api = re_func:getMatchedGroupByName("api")
                     local args = re_func:getMatchedGroupByName("args")
                     if api ~= "" and args ~= "" then
-                        table.insert(tmp_t, api .. args)
+                        table.insert(tmp_t, util.strReplace(api .. args, ':', '.'))
                     end
                     break
                 end   
@@ -144,8 +144,3 @@ function parseSupplementApiRequire(dir, module_name, require_name, api_t, re_fun
         io.close(f)
     end
 end
-
---local apiss = parseSupplementApi("./test.lua", 0, "")
---for _, v in ipairs(apiss) do
---    print(v)
---end
