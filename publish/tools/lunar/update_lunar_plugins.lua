@@ -37,8 +37,14 @@ for _, v in ipairs(files) do
             util.pathRemove(fpath .. '/extension_backup.lua')
             util.pathRename(fpath .. '/extension.lua', fpath .. '/extension_backup.lua')
             util.fileCopyFullPath(v, fpath .. '/extension.lua')
+            if util.readTextFile(fpath .. '/extension.lua') == util.readTextFile(fpath .. '/extension_backup.lua') then
+                util.pathRemove(fpath .. '/extension_backup.lua')
+            end
         else
             util.fileCopyFullPath(v, fpath .. '/extension_latest.lua')
+            if util.readTextFile(fpath .. '/extension.lua') == util.readTextFile(fpath .. '/extension_latest.lua') then
+                util.pathRemove(fpath .. '/extension_latest.lua')
+            end
         end
     else
         util.fileCopyFullPath(v, util.strReplace(v, 'download_tmp/publish/', ''))
