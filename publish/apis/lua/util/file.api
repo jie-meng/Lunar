@@ -4,7 +4,9 @@ util.createBinaryFile(file, size, bval) -> boolean
 util.readBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
 util.writeBinaryFile(file, buf, size, [append = false]) -> boolean
 util.overwriteBinaryFile(file, buf, size, [streamoff = 0], [seekdir = 0]) -> boolean
-util.fileCopy(srcfile, destfile, [fail_if_exist = true]) -> boolean
+util.fileCopy(src, dst, [fail_if_exist = true]) -> boolean
+util.fileCopyFullPath(src, dst, [fail_if_exist = true]) -> boolean
+util.copyTree(src, dst, [overwrite_if_exist = true]) -> boolean
 util.fileSize(file) -> number 
 util.fileExtension(file) -> string
 util.fileBaseName(file) -> string
