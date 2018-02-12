@@ -1,16 +1,6 @@
 --[[ To run this script, you should have svn command line installed on your system. For windows, 
     you can install tortoisesvn with its command line]]
 
-function forceCopyFile(src, dst)
-    local path, _ = util.splitPathname(dst)
-    if not (util.strEndWith(path, '.svn') or util.strEndWith(path, '.git')) then
-        if not util.isPathDir(path) then
-            util.mkFullDir(path)
-        end
-        util.fileCopy(src, dst, false)    
-    end
-end
-
 print('Are you sure to replace extension.lua which may change your current settings? (y/n)\n')
 local is_update_exetension_lua = io.read()
 
@@ -46,23 +36,17 @@ for _, v in ipairs(files) do
         if util.strStartWith(is_update_exetension_lua, 'y', false) then
             util.pathRemove(fpath .. '/extension_backup.lua')
             util.pathRename(fpath .. '/extension.lua', fpath .. '/extension_backup.lua')
-            forceCopyFile(v, fpath .. '/extension.lua')
+            util.fileCopyFullPath(v, fpath .. '/extension.lua')
         else
-            forceCopyFile(v, fpath .. '/extension_latest.lua')
+            util.fileCopyFullPath(v, fpath .. '/extension_latest.lua')
         end
     else
-        forceCopyFile(v, util.strReplace(v, 'download_tmp/publish/', ''))
+        util.fileCopyFullPath(v, util.strReplace(v, 'download_tmp/publish/', ''))
     end
 end
 
 print('Update local luaexeclib ...')
-if not util.isPathDir('luaexeclib') then
-    util.mkDir('luaexeclib')
-end
-local files = util.findFilesInDirRecursively(fpath .. '/download_tmp/luaexeclib')
-for _, v in ipairs(files) do
-    forceCopyFile(v, util.strReplace(v, 'download_tmp/', ''))
-end
+util.copyTree(fpath .. '/download_tmp/luaexeclib', fpath .. '/luaexeclib')
 
 print('Download latest install_luaexeclib.lua from github ...')
 ret = os.execute('svn export --force https://github.com/jie-meng/Util/trunk/install_luaexeclib.lua')
