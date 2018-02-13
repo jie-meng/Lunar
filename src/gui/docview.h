@@ -57,7 +57,7 @@ public:
     void gotoLine(int line);
     void focusOnEdit();
     bool getDefinitions(std::vector<std::string>& out_results);
-    void selectCursorWord();
+    void intelligentSelection();
     void gotoLineBeginOrEnd();
 Q_SIGNALS:
     void updateTitle(DocView*);
@@ -78,7 +78,7 @@ private:
     bool testFileFilter(const std::string& file_filter);
     void resetLexer();
     void refreshSupplementApi();
-    QString removeTextReturn(const QString& text) const;
+    QString formatContent(const QString& text, bool trim_empty_line = false) const;
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
     size_t getStartSpaceCount(const QString& str);

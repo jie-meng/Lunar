@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget* parent)
     pfile_recent_docs_action_(NULL),
     pfile_recent_project_path_action_(NULL),
     pfile_settings_action_(NULL),
-    pedit_select_cursor_word_action_(NULL),
+    pedit_intelligent_selection_action_(NULL),
     pedit_find_action_(NULL),
     pedit_replace_action_(NULL),
     pedit_search_action_(NULL),
@@ -287,10 +287,10 @@ void MainWindow::initActions()
     pfile_settings_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Y);
     pfile_settings_action_->setIcon(QIcon(tr(":/res/settings.png")));
 
-    pedit_select_cursor_word_action_ = new QAction(tr("Intelligent selection"), this);
-    pedit_select_cursor_word_action_->setStatusTip(tr("Select word or line on cursor position."));
-    pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_M);
-    pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
+    pedit_intelligent_selection_action_ = new QAction(tr("Intelligent selection"), this);
+    pedit_intelligent_selection_action_->setStatusTip(tr("Select word or line on cursor position."));
+    pedit_intelligent_selection_action_->setShortcut(Qt::CTRL + Qt::Key_M);
+    pedit_intelligent_selection_action_->setIcon(QIcon(tr(":res/intelligent_selection.png")));
 
     pedit_find_action_ = new QAction(tr("Find"), this);
     pedit_find_action_->setStatusTip(tr("Find."));
@@ -406,7 +406,7 @@ void MainWindow::initMenubar()
     pfile_menu->addAction(pfile_settings_action_);
 
     QMenu* pedit_menu = menuBar()->addMenu(tr("&Edit"));
-    pedit_menu->addAction(pedit_select_cursor_word_action_);
+    pedit_menu->addAction(pedit_intelligent_selection_action_);
     pedit_menu->addAction(pedit_find_action_);
     pedit_menu->addAction(pedit_replace_action_);
     pedit_menu->addAction(pedit_search_action_);
@@ -450,7 +450,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(prun_run_action_);
     ptoolbar->addAction(prun_run_recent_action_);
     ptoolbar->addAction(prun_stop_action_);
-    ptoolbar->addAction(pedit_select_cursor_word_action_);
+    ptoolbar->addAction(pedit_intelligent_selection_action_);
     ptoolbar->addAction(pedit_find_action_);
     ptoolbar->addAction(pedit_search_action_);
 	ptoolbar->addAction(pedit_comment_action_);
@@ -506,7 +506,7 @@ void MainWindow::initConnections()
         viewFileExplorer();
     });
 
-    connect(pedit_select_cursor_word_action_, SIGNAL(triggered()), this, SLOT(editSelectCursorWord()));
+    connect(pedit_intelligent_selection_action_, SIGNAL(triggered()), this, SLOT(editIntelligentSelection()));
     connect(pedit_find_action_, SIGNAL(triggered()), this, SLOT(editFind()));
     connect(pedit_replace_action_, SIGNAL(triggered()), this, SLOT(editReplace()));
     connect(pedit_search_action_, SIGNAL(triggered()), this, SLOT(editSearch()));
@@ -711,11 +711,11 @@ void MainWindow::recentDocs()
     dlg.exec();
 }
 
-void MainWindow::editSelectCursorWord()
+void MainWindow::editIntelligentSelection()
 {
     auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
     if (pdocview)
-        pdocview->selectCursorWord();
+        pdocview->intelligentSelection();
 }
 
 void MainWindow::editFind()

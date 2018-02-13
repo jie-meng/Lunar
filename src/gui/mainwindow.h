@@ -56,7 +56,7 @@ private Q_SLOTS:
     void resetCurrentPath(const QString& path);
     void recentProjectPath();
     void recentDocs();
-    void editSelectCursorWord();
+    void editIntelligentSelection();
     void editFind();
     void editReplace();
     void editSearch();
@@ -117,7 +117,7 @@ private:
     QAction* pfile_recent_docs_action_;
     QAction* pfile_recent_project_path_action_;
     QAction* pfile_settings_action_;
-    QAction* pedit_select_cursor_word_action_;
+    QAction* pedit_intelligent_selection_action_;
     QAction* pedit_find_action_;
     QAction* pedit_replace_action_;
     QAction* pedit_search_action_;

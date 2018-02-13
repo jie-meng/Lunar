@@ -290,12 +290,11 @@ void DocView::initConnections()
     connect(getTextEdit(), SIGNAL(textChanged()), this, SLOT(textChanged()));
     connect(ptext_edit_, SIGNAL(linesChanged()), this, SLOT(linesChanged()));
     connect(ptext_edit_, SIGNAL(selectionChanged()), this, SLOT(selectionChanged()));
-    //connect(ptext_edit_, SIGNAL(cursorPositionChanged(int, int)), this, SLOT(cursorPositionChanged(int, int)))
 }
 
 bool DocView::doSave(bool reset_lexer, const QString& pathname)
 {
-    bool ret = qtWriteFile(pathname, removeTextReturn(ptext_edit_->text()));
+    bool ret = qtWriteFile(pathname, formatContent(ptext_edit_->text(), true));
     if (ret)
     {
         setPathname(pathname);
@@ -704,7 +703,7 @@ void DocView::commentSelectionLine()
         final_line_to = line_to;
     }
 
-    QStringList list = removeTextReturn(ptext_edit_->selectedText()).split('\n');
+    QStringList list = formatContent(ptext_edit_->selectedText()).split('\n');
 
     //check is commented
     bool is_commented = true;
@@ -800,7 +799,7 @@ bool DocView::getDefinitions(vector<string>& out_results)
         out_results);
 }
 
-void DocView::selectCursorWord()
+void DocView::intelligentSelection()
 {
     int line;
     int index;
@@ -866,7 +865,7 @@ void DocView::selectionChanged()
             int index_to = 0;
             ptext_edit_->getSelection(&line_from, &index_from, &line_to, &index_to);
 
-            QStringList list = removeTextReturn(ptext_edit_->text()).split('\n');
+            QStringList list = formatContent(ptext_edit_->text()).split('\n');
             for (int i=0; i<list.size(); ++i)
             {
                 int pos = 0;
@@ -881,10 +880,15 @@ void DocView::selectionChanged()
     }
 }
 
-QString DocView::removeTextReturn(const QString& text) const
+QString DocView::formatContent(const QString& text, bool trim_empty_line) const
 {
     QString txt = text;
     txt.replace("\r\n", "\n").replace("\r", "\n");
+    if (!trim_empty_line)
+    {
+        return txt;
+    }
+
     auto list = txt.split('\n');
     for (int i = 0; i < list.size(); ++i)
     {
