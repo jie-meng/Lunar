@@ -863,7 +863,17 @@ void DocView::selectionChanged()
 QString DocView::removeTextReturn(const QString& text) const
 {
     QString txt = text;
-    return txt.replace("\r\n", "\n").replace("\r", "\n");
+    txt.replace("\r\n", "\n").replace("\r", "\n");
+    auto list = txt.split('\n');
+    for (int i = 0; i < list.size(); ++i)
+    {
+        if (list.at(i).trimmed().isEmpty())
+        {
+            list.replace(i, list.at(i).trimmed());
+        }
+    }
+
+    return list.join('\n');
 }
 
 } // namespace gui
