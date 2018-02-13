@@ -58,6 +58,7 @@ public:
     void focusOnEdit();
     bool getDefinitions(std::vector<std::string>& out_results);
     void selectCursorWord();
+    void gotoLineBeginOrEnd();
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
@@ -81,7 +82,7 @@ private:
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
     size_t getStartSpaceCount(const QString& str);
-    
+
     QString save_dialog_init_dir_;
     QString pathname_;
     QString title_;

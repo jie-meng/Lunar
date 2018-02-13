@@ -128,6 +128,7 @@ private:
     QAction* pedit_jump_back_action_;
     QAction* pedit_jump_forward_action_;
     QAction* pedit_file_explorer_context_menu_action_;
+    QAction* pedit_goto_line_begin_end_;
     QAction* pview_file_explorer_action_;
     QAction* pview_search_results_action_;
     QAction* pview_locate_current_file_;

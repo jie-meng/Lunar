@@ -65,6 +65,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_jump_back_action_(NULL),
     pedit_jump_forward_action_(NULL),
     pedit_file_explorer_context_menu_action_(NULL),
+    pedit_goto_line_begin_end_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
     pview_locate_current_file_(NULL),
@@ -196,7 +197,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
         e->accept();
         return;
     }
-    
+
     if(pmain_tabwidget_->hasUnsavedFiles())
     {
        int ret = QMessageBox::question(this, "question", "Quit without save?", QMessageBox::Yes | QMessageBox::No, QMessageBox::No);
@@ -210,7 +211,7 @@ void MainWindow::closeEvent(QCloseEvent* e)
         LunarGlobal::getInstance().setMainwindowHeight(this->height());
     }
     LunarGlobal::getInstance().quit();
-    
+
     is_closing_ = true;
     e->accept();
 }
@@ -237,7 +238,7 @@ void MainWindow::initActions()
 
     pfile_save_all_action_ = new QAction(tr("Save all"), this);
     pfile_save_all_action_->setStatusTip(tr("Save all files."));
-    
+
     pfile_find_action_ = new QAction(tr("Find files"), this);
     pfile_find_action_->setStatusTip(tr("Find files."));
     pfile_find_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_O);
@@ -285,7 +286,7 @@ void MainWindow::initActions()
     pfile_settings_action_->setStatusTip(tr("Go to Lunar config directory. You can edit config, make use of tools or create new plugins."));
     pfile_settings_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Y);
     pfile_settings_action_->setIcon(QIcon(tr(":/res/settings.png")));
-    
+
     pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
     pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
     pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_M);
@@ -338,6 +339,10 @@ void MainWindow::initActions()
     pedit_file_explorer_context_menu_action_->setStatusTip(tr("Show File Explorer context menu."));
     pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_J);
 
+    pedit_goto_line_begin_end_ = new QAction(tr("Goto line begin or end"), this);
+    pedit_goto_line_begin_end_->setStatusTip(tr("Goto line begin or end."));
+    pedit_goto_line_begin_end_->setShortcut(Qt::CTRL + Qt::Key_K);
+
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_E);
@@ -347,7 +352,7 @@ void MainWindow::initActions()
     pview_search_results_action_->setStatusTip((tr("Go to search results.")));
     pview_search_results_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_R);
     pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
-    
+
     pview_locate_current_file_ = new QAction(tr("Locate current file"), this);
     pview_locate_current_file_->setStatusTip((tr("Locate current file.")));
     pview_locate_current_file_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_K);
@@ -412,6 +417,7 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_jump_back_action_);
     pedit_menu->addAction(pedit_jump_forward_action_);
     pedit_menu->addAction(pedit_file_explorer_context_menu_action_);
+    pedit_menu->addAction(pedit_goto_line_begin_end_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -516,6 +522,12 @@ void MainWindow::initConnections()
             return;
 
         pfile_explorer_widget_->showContextMenu();
+    });
+    connect(pedit_goto_line_begin_end_, &QAction::triggered, [this]()
+    {
+        auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+        if (pdocview)
+            pdocview->gotoLineBeginOrEnd();
     });
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
@@ -752,7 +764,7 @@ void MainWindow::gotoSearchResult(const QString& file, int line)
 {
     //take a record
     auto record_pos = getCurrentPosition();
-	
+
     QString doc_path = (file.startsWith("/") || (file.length()> 2 && file.at(1) == ':')) ?
             file :
             StdStringToQString(currentPath())+ "/" + file;
@@ -828,7 +840,7 @@ void MainWindow::editGotoDefinition()
                         }
                     }
                 }
-                
+
                 psearch_results_widget_->findFinish();
 
                 if (result_count == 1)
@@ -1033,9 +1045,9 @@ bool MainWindow::openDoc(const std::string& file_path, bool is_record_position)
         if (!record_pos.first.empty() && record_pos.second > 0)
             JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
     }
-    
+
     pmain_tabwidget_->addDocViewTab(StdStringToQString(file_path));
-    
+
     if (this->isMinimized())
         this->showNormal();
     this->activateWindow();
@@ -1177,7 +1189,7 @@ void MainWindow::runDoc(const QString& doc)
     string executor;
     if (Extension::getInstance().parseFilename(script, dict)) 
         executor = getValueFromMap<string>(dict, "executor", "");
-    
+
     if (executor.empty())
     {
         addOutput("Cannot find support executor.");
@@ -1185,7 +1197,7 @@ void MainWindow::runDoc(const QString& doc)
     }
 
     bool ret = plua_executor_->execute(script, "", runPath, executor);
-    
+
     LunarGlobal::getInstance().addRecentRunDoc(script);
 
     if (!ret)

@@ -112,7 +112,7 @@ int DocView::getCurrentLine()
     int line;
     int index;
     ptext_edit_->getCursorPosition(&line, &index);
-    return line+1;
+    return line + 1;
 }
 
 void DocView::focusOnText()
@@ -808,14 +808,35 @@ void DocView::selectCursorWord()
     if (line < 0 || index < 0)
         return;
 
-    int position = ptext_edit_->positionFromLineIndex(line, index);
-    long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
-    long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
-    long word_len = end_pos - start_pos;
-    if (word_len <= 0)
-        return;
+    if (getSelectedText().isEmpty())
+    {
+        int position = ptext_edit_->positionFromLineIndex(line, index);
+        long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
+        long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
+        long word_len = end_pos - start_pos;
+        if (word_len > 0)
+        {
+            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
+            return;
+        }
+    }
 
-    ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
+    QString lineStr = ptext_edit_->text(line);
+    QString trimmedLineStr = lineStr.trimmed();
+    int start = lineStr.indexOf(trimmedLineStr);
+    ptext_edit_->setSelection(line, start, line, start + trimmedLineStr.length());
+}
+
+void DocView::gotoLineBeginOrEnd()
+{
+    int line;
+    int index;
+    ptext_edit_->getCursorPosition(&line, &index);
+
+    QString lineStr = ptext_edit_->text(line);
+    QString trimmedLineStr = lineStr.trimmed();
+    int start = lineStr.indexOf(trimmedLineStr);
+    ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);  
 }
 
 void DocView::setEditTextFont(const QFont& font)
