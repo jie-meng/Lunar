@@ -287,8 +287,8 @@ void MainWindow::initActions()
     pfile_settings_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_Y);
     pfile_settings_action_->setIcon(QIcon(tr(":/res/settings.png")));
 
-    pedit_select_cursor_word_action_ = new QAction(tr("Select cursor word"), this);
-    pedit_select_cursor_word_action_->setStatusTip(tr("Select cursor word of current document."));
+    pedit_select_cursor_word_action_ = new QAction(tr("Intelligent selection"), this);
+    pedit_select_cursor_word_action_->setStatusTip(tr("Select word or line on cursor position."));
     pedit_select_cursor_word_action_->setShortcut(Qt::CTRL + Qt::Key_M);
     pedit_select_cursor_word_action_->setIcon(QIcon(tr(":res/select_cursor_word.png")));
 
