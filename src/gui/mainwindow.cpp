@@ -289,7 +289,7 @@ void MainWindow::initActions()
 
     pedit_intelligent_selection_action_ = new QAction(tr("Intelligent selection"), this);
     pedit_intelligent_selection_action_->setStatusTip(tr("Select word or line on cursor position."));
-    pedit_intelligent_selection_action_->setShortcut(Qt::CTRL + Qt::Key_M);
+    pedit_intelligent_selection_action_->setShortcut(Qt::ALT + Qt::Key_Up);
     pedit_intelligent_selection_action_->setIcon(QIcon(tr(":res/intelligent_selection.png")));
 
     pedit_find_action_ = new QAction(tr("Find"), this);
@@ -341,7 +341,7 @@ void MainWindow::initActions()
 
     pedit_goto_line_begin_end_ = new QAction(tr("Goto line begin or end"), this);
     pedit_goto_line_begin_end_->setStatusTip(tr("Goto line begin or end."));
-    pedit_goto_line_begin_end_->setShortcut(Qt::CTRL + Qt::Key_K);
+    pedit_goto_line_begin_end_->setShortcut(Qt::ALT + Qt::Key_Down);
 
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
