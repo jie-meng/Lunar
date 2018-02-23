@@ -111,6 +111,13 @@ void MainWindow::processCmdParam()
             }
         }
     }
+    else
+    {
+        if (currentPath() != "/")
+        {
+            addNewRecentProjectPath(currentPath());
+        }
+    }
 }
 
 void MainWindow::initLeftDockWidget()
