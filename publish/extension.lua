@@ -2,14 +2,14 @@ function checkJavaScriptType(filename)
     if string.lower(util.fileExtension(fileBaseName)) == "jsx" then
         return "react"
     end
-    
+
     local content = util.readTextFile(filename)
     local path = util.splitPathname(filename)
-    
+
     if util.strContains(content, "phantom.exit()") then
         return "phantom"
     end
-    
+
     if util.strContains(content, "</")
         or util.strContains(content, "/>")
         or util.strContains(content, "React.")
@@ -26,7 +26,7 @@ function checkJavaScriptType(filename)
         or util.strContains(content, ".getElementsByTagName(") then
         return "web"
     end
-    
+
     return "node"
 end
 
@@ -48,7 +48,7 @@ function parseFileType(filename)
                 }
 		end
 	end
-    
+
     --cocos2dx project
     if util.isPathFile('.cocos-project.json') then
         if string.lower(util.fileExtension(name)) == "lua" then
@@ -66,7 +66,7 @@ function parseFileType(filename)
                     comment_block_end = "]]"
                 }
         end
-        
+
         if string.lower(util.fileExtension(name)) == "js" then
             local conf = {
                     type = "javascript",
@@ -80,16 +80,16 @@ function parseFileType(filename)
                     comment_block_begin = "/*",
                     comment_block_end = "*/"
                 }
-            
+
             if util.isPathFile('webpack.config.js') then
                 conf.plugin_goto = "plugins/goto_cocos_js_webpack.lua"
                 conf.plugin_parse_api = "plugins/parse_supplement_api_cocos_js_webpack.lua"
             end
-            
+
             return conf
         end
     end
-    
+
 	if string.lower(util.fileExtension(name)) == "lua" then
 		return 
             {
@@ -104,7 +104,7 @@ function parseFileType(filename)
 				comment_block_end = "]]"
             }
 	end
-    
+
 	if string.lower(util.fileExtension(name)) == "m" then
 		return 
             {
@@ -116,7 +116,7 @@ function parseFileType(filename)
                 comment_line = "%"
             }
 	end
-	
+
 	if string.lower(util.fileExtension(name)) == "js" or
         string.lower(util.fileExtension(name)) == "jsx" then
         local js_type = checkJavaScriptType(filename)
@@ -128,28 +128,28 @@ function parseFileType(filename)
             comment_block_begin = "/*",
             comment_block_end = "*/"
         }
-        
+
         if js_type == "phantom" then
             js_tb.api = js_tb.api .. ',apis/javascript/node'
             js_tb.executor = 'phantomjs'
         end
-        
+
         if js_type == "react" then
             js_tb.api = js_tb.api .. ',apis/javascript/react,apis/javascript/node,apis/javascript/web'
         end
-        
+
         if js_type == "web" then
             js_tb.api = js_tb.api .. ',apis/javascript/web'
         end
-        
+
         if js_type == "node" then
             js_tb.api = js_tb.api .. ',apis/javascript/node'
             js_tb.executor = 'node'
         end
-        
+
         return js_tb
 	end
-	
+
 	if string.lower(util.fileExtension(name)) == "html" or
         string.lower(util.fileExtension(name)) == "htm" then
 		return 
@@ -162,7 +162,7 @@ function parseFileType(filename)
 				comment_block_end = "-->"
             }
 	end
-	
+
 	if string.lower(util.fileExtension(name)) == "css" or
         string.lower(util.fileExtension(name)) == "scss" then
 		return 
@@ -174,15 +174,15 @@ function parseFileType(filename)
 				comment_block_end = "*/"
             }
 	end
-    
+
     if string.lower(util.fileExtension(name)) == "sh" then
         return { type = "bash", comment_line = "#", api = "apis/bash", executor = "sh" }
     end
-    
+
 	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
 		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
 	end
-    
+
     if string.lower(util.fileExtension(name)) == "py" then
         local content = util.readTextFile(filename)
         if util.strContains(content, 'monkeyrunner', false) then
@@ -197,12 +197,12 @@ function parseFileType(filename)
                 comment_line = "#"
             }
         end
-        
+
         local python3 = "python3"
         if util.strContains(util.platformInfo(), "win", false) then
             python3 = "python"
         end
-        
+
         return 
             {
                 -- python3
@@ -213,7 +213,7 @@ function parseFileType(filename)
                 plugin_goto = "plugins/goto_python3.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
                 comment_line = "#"
-                
+
                 -- python2
                 --type = "python",
                 --auto_complete_type = 1,
@@ -238,12 +238,12 @@ function parseFileType(filename)
 				comment_block_end = "\n=end"
             }
     end
- 
-    
+
+
     if string.lower(util.fileExtension(name)) == "tcl" then
         return { type = "tcl", comment_line = "#" }
     end
-    
+
     if string.lower(util.fileExtension(name)) == "java" then
         return 
 			{ 
@@ -254,7 +254,7 @@ function parseFileType(filename)
 				comment_block_end = "*/"
 			}
     end
-    
+
     if string.lower(util.fileExtension(name)) == "cs" then
         return 
 			{ 
@@ -264,7 +264,7 @@ function parseFileType(filename)
 				comment_block_end = "*/"
 			}
     end
-    
+
     if string.lower(util.fileExtension(name)) == "xml" or
         string.lower(util.fileExtension(name)) == "axml" or
         string.lower(util.fileExtension(name)) == "xaml" or
@@ -282,7 +282,7 @@ function parseFileType(filename)
 				comment_block_end = "-->"
 			}
     end
-    
+
     if string.lower(util.fileExtension(name)) == "c" or
         string.lower(util.fileExtension(name)) == "h" or
         string.lower(util.fileExtension(name)) == "cpp" or
@@ -340,7 +340,7 @@ function fileFilter()
 	table.insert(filter, "C# Files(*.csharp)")
 	table.insert(filter, "Java Files(*.java)")
     table.insert(filter, "Xml Files(*.xml)")
-    
+
 	return filter
 end
 
@@ -397,6 +397,10 @@ function isLegalFile(filename)
         return true
     end
 
+    if util.fileSize(filename) == 0 then
+        return true
+    end
+
     return util.isTextFile(filename)
 end
 
@@ -415,7 +419,7 @@ function sortFoundFiles(files, find_with_text)
     local result2 = {}
     for _, v in ipairs(files) do
         v = util.strReplaceAll(v, '\\', '/')
-        
+
         local path, name = util.splitPathname(v)        
         if util.strStartWith(string.lower(name), find_with_text) then
             table.insert(result1, v)
@@ -423,14 +427,14 @@ function sortFoundFiles(files, find_with_text)
             table.insert(result2, v)
         end
     end
-    
+
     table.sort(result1, compareFileWithLength)
     table.sort(result2, compareFileWithLength)
-    
+
     for i, v in ipairs(result2) do
         table.insert(result1, v)
     end
-    
+
     return result1
 end
 
@@ -478,7 +482,7 @@ function findFilesFlatRecursively(path_deque, path_filter, file_filter, output, 
 
             table.insert(path_deque, v)
         end
-        
+
         findFilesFlatRecursively(path_deque, path_filter, file_filter, output, limit, stop_flag_address)
     end
 end
@@ -503,7 +507,7 @@ function findFiles(find_with_text, stop_flag_address)
             return string.match(string.lower(name), find_with_text)
         end,
         100, stop_flag_address)
-    
+
     files = sortFoundFiles(files, find_with_text)
 
     local result_files = {}
@@ -515,10 +519,10 @@ function findFiles(find_with_text, stop_flag_address)
             table.insert(non_legal_files, v)
         end
     end    
-    
+
     for _, v in ipairs(non_legal_files) do
         table.insert(result_files, v)
     end
-    
+
     return result_files
 end
