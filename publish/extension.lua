@@ -504,7 +504,7 @@ function findFiles(find_with_text, stop_flag_address)
         end,
         function(f)
             local path, name = util.splitPathname(f)
-            return string.match(string.lower(name), find_with_text)
+            return util.strContains(name, find_with_text, false)
         end,
         100, stop_flag_address)
 
