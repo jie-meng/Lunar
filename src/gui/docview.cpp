@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qsciscintilla.h>
+#include <Qsci/qscilexer.h>
 #include <Qsci/qscilexeravs.h>
 #include <Qsci/qscilexerbash.h>
 #include <Qsci/qscilexerbatch.h>
@@ -46,6 +47,7 @@
 #include <Qsci/qscilexervhdl.h>
 #include <Qsci/qscilexerxml.h>
 #include <Qsci/qscilexeryaml.h>
+#include "lexernone.h"
 #include "util/file.hpp"
 #include "util/regex.hpp"
 #include "util/cfg.hpp"
@@ -331,7 +333,9 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
 {
     std::string name_trimmed = util::strTrim(type_name);
     if ("" == name_trimmed)
-        return NULL;
+    {
+        return new LexerNone(ptext_edit_);
+    }
 
     if (util::strAreEqual(name_trimmed, "avs", false))
     {
@@ -565,7 +569,7 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
     {
         if (NULL != pout_filetype)
             *pout_filetype = Unknown;
-        return NULL;
+        return new LexerNone(ptext_edit_);
     }
 }
 
