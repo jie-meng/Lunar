@@ -183,6 +183,10 @@ function parseFileType(filename)
 		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
 	end
 
+    if name == "Dockerfile" then
+		return { type = "", comment_line = "#", api = "apis/dockerfile", executor = "" }
+	end
+
     if string.lower(util.fileExtension(name)) == "py" then
         local content = util.readTextFile(filename)
         if util.strContains(content, 'monkeyrunner', false) then
