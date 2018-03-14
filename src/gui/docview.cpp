@@ -805,41 +805,55 @@ bool DocView::getDefinitions(vector<string>& out_results)
 
 void DocView::intelligentSelection()
 {
-    int line;
-    int index;
-    ptext_edit_->getCursorPosition(&line, &index);
-    if (line < 0 || index < 0)
-        return;
-
-    if (getSelectedText().isEmpty())
+    if (ptext_edit_->isCallTipActive())
     {
-        int position = ptext_edit_->positionFromLineIndex(line, index);
-        long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
-        long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
-        long word_len = end_pos - start_pos;
-        if (word_len > 0)
-        {
-            ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
-            return;
-        }
+        ptext_edit_->SCN_CALLTIPCLICK(1);
     }
+    else
+    {
+        int line;
+        int index;
+        ptext_edit_->getCursorPosition(&line, &index);
+        if (line < 0 || index < 0)
+            return;
 
-    QString lineStr = ptext_edit_->text(line);
-    QString trimmedLineStr = lineStr.trimmed();
-    int start = lineStr.indexOf(trimmedLineStr);
-    ptext_edit_->setSelection(line, start, line, start + trimmedLineStr.length());
+        if (getSelectedText().isEmpty())
+        {
+            int position = ptext_edit_->positionFromLineIndex(line, index);
+            long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
+            long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
+            long word_len = end_pos - start_pos;
+            if (word_len > 0)
+            {
+                ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
+                return;
+            }
+        }
+
+        QString lineStr = ptext_edit_->text(line);
+        QString trimmedLineStr = lineStr.trimmed();
+        int start = lineStr.indexOf(trimmedLineStr);
+        ptext_edit_->setSelection(line, start, line, start + trimmedLineStr.length());
+    }
 }
 
 void DocView::gotoLineBeginOrEnd()
 {
-    int line;
-    int index;
-    ptext_edit_->getCursorPosition(&line, &index);
+    if (ptext_edit_->isCallTipActive())
+    {
+        ptext_edit_->SCN_CALLTIPCLICK(2);        
+    }
+    else
+    {
+        int line;
+        int index;
+        ptext_edit_->getCursorPosition(&line, &index);
 
-    QString lineStr = ptext_edit_->text(line);
-    QString trimmedLineStr = lineStr.trimmed();
-    int start = lineStr.indexOf(trimmedLineStr);
-    ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);  
+        QString lineStr = ptext_edit_->text(line);
+        QString trimmedLineStr = lineStr.trimmed();
+        int start = lineStr.indexOf(trimmedLineStr);
+        ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);      
+    }    
 }
 
 void DocView::setEditTextFont(const QFont& font)
