@@ -917,6 +917,24 @@ void DocView::codeTemplate()
     }
 }
 
+void DocView::zoomIn()
+{
+    ptext_edit_->zoomIn();
+    resetMarginLineNumberWidth();
+}
+
+void DocView::zoomOut()
+{
+    ptext_edit_->zoomOut();
+    resetMarginLineNumberWidth();
+}
+
+void DocView::zoomToOrigin()
+{
+    ptext_edit_->zoomTo(0);
+    resetMarginLineNumberWidth();
+}
+
 void DocView::setEditTextFont(const QFont& font)
 {
     LunarGlobal::getInstance().setFont(font);

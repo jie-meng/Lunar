@@ -135,6 +135,9 @@ private:
     QAction* pview_locate_current_file_;
     QAction* pview_documents_action_;
     QAction* pview_close_docks_action_;
+    QAction* pview_zoom_in_;
+    QAction* pview_zoom_out_;
+    QAction* pview_zoom_to_origin_;
     QAction* prun_run_action_;
     QAction* prun_run_recent_action_;
     QAction* prun_stop_action_;

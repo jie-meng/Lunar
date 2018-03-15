@@ -72,6 +72,9 @@ MainWindow::MainWindow(QWidget* parent)
     pview_locate_current_file_(NULL),
     pview_documents_action_(NULL),
     pview_close_docks_action_(NULL),
+    pview_zoom_in_(NULL),
+    pview_zoom_out_(NULL),
+    pview_zoom_to_origin_(NULL),
     prun_run_action_(NULL),
     prun_run_recent_action_(NULL),
     prun_stop_action_(NULL),
@@ -381,6 +384,18 @@ void MainWindow::initActions()
     pview_close_docks_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_D);
     pview_close_docks_action_->setIcon(QIcon(tr(":/res/close_docks.png")));
 
+    pview_zoom_in_ = new QAction(tr("Zoom in"), this);
+    pview_zoom_in_->setStatusTip(tr("Zoom in."));
+    pview_zoom_in_->setShortcut(Qt::CTRL + Qt::Key_Plus);
+
+    pview_zoom_out_ = new QAction(tr("Zoom out"), this);
+    pview_zoom_out_->setStatusTip(tr("Zoom out."));
+    pview_zoom_out_->setShortcut(Qt::CTRL + Qt::Key_Minus);
+
+    pview_zoom_to_origin_ = new QAction(tr("Zoom to origin"), this);
+    pview_zoom_to_origin_->setStatusTip(tr("Zoom to origin."));
+    pview_zoom_to_origin_->setShortcut(Qt::CTRL + Qt::Key_Equal);
+
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
     prun_run_action_->setIcon(QIcon(tr(":/res/run.png")));
@@ -439,6 +454,9 @@ void MainWindow::initMenubar()
     pview_menu->addAction(pview_locate_current_file_);
     pview_menu->addAction(pview_documents_action_);
     pview_menu->addAction(pview_close_docks_action_);
+    pview_menu->addAction(pview_zoom_in_);
+    pview_menu->addAction(pview_zoom_out_);
+    pview_menu->addAction(pview_zoom_to_origin_);
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
@@ -556,6 +574,25 @@ void MainWindow::initConnections()
     connect(pview_locate_current_file_, SIGNAL(triggered()), this, SLOT(viewLocateCurrentFile()));
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
     connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
+    connect(pview_zoom_in_, &QAction::triggered, [this]()
+    {
+        auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+        if (pdocview)
+            pdocview->zoomIn();
+    });
+    connect(pview_zoom_out_, &QAction::triggered, [this]()
+    {
+        auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+        if (pdocview)
+            pdocview->zoomOut();
+    });
+    connect(pview_zoom_to_origin_, &QAction::triggered, [this]()
+    {
+        auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+        if (pdocview)
+            pdocview->zoomToOrigin();
+    });    
+
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_run_recent_action_, SIGNAL(triggered()), this, SLOT(runRecent()));
     connect(prun_stop_action_, SIGNAL(triggered()), this, SLOT(stop()));

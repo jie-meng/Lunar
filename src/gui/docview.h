@@ -86,6 +86,9 @@ public:
     void intelligentSelection();
     void gotoLineBeginOrEnd();
     void codeTemplate();
+    void zoomIn();
+    void zoomOut();
+    void zoomToOrigin();
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
