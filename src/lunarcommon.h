@@ -11,7 +11,7 @@
 #include "util/net.hpp"
 
 struct lua_State;
-    
+
 const std::string kParseSupplementApi = "parseSupplementApi";
 const std::string kGotoDefinition = "gotoDefinition";
 
@@ -86,6 +86,7 @@ public:
     inline std::string getExtensionFuncFilefilter() const { return extension_func_filefilter_; }
     inline std::string getExtensionFuncIsLegalFile() const { return extension_func_is_legal_file_; }
     inline std::string getExtensionFuncFindFiles() const { return extension_func_find_files_; }
+    inline std::string getExtensionTemplateFileInfo() const { return extension_func_template_file_info_; }
     inline std::string getFileFilter() const { return file_filter_; }
     inline std::string getToolsPath() const { return tools_path_; }
     inline std::string getLastFindFileText() const { return last_find_file_text_; }
@@ -120,6 +121,7 @@ private:
     std::string extension_func_filefilter_;
     std::string extension_func_is_legal_file_;
     std::string extension_func_find_files_;
+    std::string extension_func_template_file_info_;
     std::string file_filter_;
     std::string tools_path_;
     unsigned short log_sock_port_;

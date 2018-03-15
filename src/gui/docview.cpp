@@ -6,6 +6,7 @@
 #include <QHBoxLayout>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QContextMenuEvent>
 #include <Qsci/qsciabstractapis.h>
 #include <Qsci/qsciscintilla.h>
 #include <Qsci/qscilexer.h>
@@ -164,26 +165,27 @@ void DocView::setLexerApi()
 
             FileType filetype = Unknown;
             plexer_ = getLexerFromTypeName(getValueFromMap<string>(dict, "type", ""), &filetype);
-            if (NULL != plexer_)
-            {
-                ptext_edit_->setLexer(plexer_);
-                plexer_->setFont(LunarGlobal::getInstance().getFont());
-                if (0 == auto_complete_type_)
-                    papis_ = new QsciAPIsEx(plexer_);
-                else
-                    papis_ = new LunarApi(plexer_);
-                plexer_->setAPIs(papis_);
-                ptext_edit_->setLexer(plexer_);
+            ptext_edit_->setLexer(plexer_);
+            plexer_->setFont(LunarGlobal::getInstance().getFont());
+            if (0 == auto_complete_type_)
+                papis_ = new QsciAPIsEx(plexer_);
+            else
+                papis_ = new LunarApi(plexer_);
+            plexer_->setAPIs(papis_);
+            ptext_edit_->setLexer(plexer_);
 
-                //api
-                papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
-                papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
-                //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
+            //api
+            papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
+            papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
+            //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
 
-                //parse success
-                file_type_ = filetype;
-                return;
-            }
+            //templates
+            loadTemplates(getValueFromMap<string>(dict, "templates", ""));
+
+            //parse success
+            file_type_ = filetype;
+
+            return;
         }
         else
         {
@@ -194,6 +196,35 @@ void DocView::setLexerApi()
     ptext_edit_->setLexer(NULL);
     ptext_edit_->setAutoCompletionCaseSensitivity(false);
     file_type_ = Unknown;
+}
+
+void DocView::loadTemplates(const std::string& template_str)
+{
+    if (template_str.empty())
+        return;
+
+    vector<string> vec;
+    strSplit(template_str, ",", vec);
+    for (auto it = vec.begin(); it != vec.end(); ++it)
+    {
+        string path = LunarGlobal::getInstance().getAppPath() + "/" + *it;
+        if (isPathDir(path))
+        {
+            vector<string> files;
+            FileFilter ff("");
+            listFiles(path, files, &ff);
+            for (auto itf = files.begin(); itf != files.end(); ++itf)
+            {
+                string template_content;
+                int begin = 0;
+                int end = 0;
+                if (Extension::getInstance().templateFileInfo(*itf, template_content, begin, end))
+                {
+                    templates_[fileBaseName(*itf)] = TemplateInfo(template_content, begin, end);
+                }
+            }
+        }
+    }
 }
 
 void DocView::refreshSupplementApi()
@@ -854,6 +885,30 @@ void DocView::gotoLineBeginOrEnd()
         int start = lineStr.indexOf(trimmedLineStr);
         ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);      
     }    
+}
+
+void DocView::codeTemplate()
+{
+    int line;
+    int index;
+    ptext_edit_->getCursorPosition(&line, &index);
+    if (line < 0 || index < 0)
+        return;
+
+    int position = ptext_edit_->positionFromLineIndex(line, index);
+    long start_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDSTARTPOSITION, position, true);
+    long end_pos = ptext_edit_->SendScintilla(QsciScintilla::SCI_WORDENDPOSITION, position, true);
+    long word_len = end_pos - start_pos;
+    if (word_len > 0)
+    {
+        ptext_edit_->SendScintilla(QsciScintilla::SCI_SETSEL, start_pos, end_pos);
+        auto it = templates_.find(QStringToStdString(ptext_edit_->selectedText()));
+        if (it != templates_.end())
+        {
+            ptext_edit_->replaceSelectedText(StdStringToQString(it->second.templateContent()));
+            ptext_edit_->setSelection(0, start_pos + it->second.begin(), 0, start_pos + it->second.end());
+        }
+    }
 }
 
 void DocView::setEditTextFont(const QFont& font)

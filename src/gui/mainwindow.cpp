@@ -66,6 +66,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_jump_forward_action_(NULL),
     pedit_file_explorer_context_menu_action_(NULL),
     pedit_goto_line_begin_end_(NULL),
+    pedit_template_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
     pview_locate_current_file_(NULL),
@@ -350,6 +351,10 @@ void MainWindow::initActions()
     pedit_goto_line_begin_end_->setStatusTip(tr("Goto line begin or end."));
     pedit_goto_line_begin_end_->setShortcut(Qt::ALT + Qt::Key_Down);
 
+    pedit_template_ = new QAction(tr("Template"), this);
+    pedit_template_->setStatusTip(tr("Complete code template."));
+    pedit_template_->setShortcut(Qt::CTRL + Qt::Key_K);
+
     pview_file_explorer_action_ = new QAction(tr("File Explorer"), this);
     pview_file_explorer_action_->setStatusTip(tr("File Explorer."));
     pview_file_explorer_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_E);
@@ -425,6 +430,7 @@ void MainWindow::initMenubar()
     pedit_menu->addAction(pedit_jump_forward_action_);
     pedit_menu->addAction(pedit_file_explorer_context_menu_action_);
     pedit_menu->addAction(pedit_goto_line_begin_end_);
+    pedit_menu->addAction(pedit_template_);
 
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
@@ -535,6 +541,12 @@ void MainWindow::initConnections()
         auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
         if (pdocview)
             pdocview->gotoLineBeginOrEnd();
+    });
+    connect(pedit_template_, &QAction::triggered, [this]()
+    {
+        auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
+        if (pdocview)
+            pdocview->codeTemplate();
     });
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
@@ -1043,7 +1055,9 @@ bool MainWindow::openDoc(const std::string& file_path, bool is_record_position)
         return false;
 
     if (!Extension::getInstance().isLegalFile(file_path))
+    {
         return false;
+    }
 
     addCurrentDocToRecent();
     if (is_record_position)

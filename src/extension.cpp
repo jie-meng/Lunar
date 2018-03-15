@@ -179,15 +179,15 @@ bool Extension::isLegalFile(const std::string& filename)
 void Extension::findFiles(const string& find_with_text, vector<string>& out_files_found)
 {
     out_files_found.clear();
-    
+
     if (!lua_state_ok_)
         return;
-    
+
     error_information_ = "";
-    
+
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionFuncFindFiles());
     luaPushString(lua_state_.getState(), find_with_text);
-    
+
     int err = luaCallFunc(lua_state_.getState(), 1, 1);
     if (0 != err)
     {
@@ -210,6 +210,59 @@ void Extension::findFiles(const string& find_with_text, vector<string>& out_file
             }   
         }
     }
-    
+
     luaPop(lua_state_.getState(), -1);
+}
+
+bool Extension::templateFileInfo(const std::string& template_file, std::string& template_content, int& begin, int& end)
+{
+    if (!lua_state_ok_)
+        return false;
+
+    error_information_ = "";
+
+    luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionTemplateFileInfo());
+    luaPushString(lua_state_.getState(), template_file);
+
+    int err = luaCallFunc(lua_state_.getState(), 1, 3);
+    if (0 != err)
+    {
+        error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());
+        LunarMsgBox(error_information_);
+    }
+    else
+    {
+        int ret_cnt = luaGetTop(lua_state_.getState());
+        if (ret_cnt > 0)
+        {
+            if (luaGetType(lua_state_.getState(), 1) == LuaString)
+            {
+                template_content = luaToString(lua_state_.getState(), 1);
+            }
+        }
+
+        if (ret_cnt > 1)
+        {
+            if (luaGetType(lua_state_.getState(), 2) == LuaNumber)
+            {
+                begin = luaToInteger(lua_state_.getState(), 2);
+            }
+        }
+
+        if (ret_cnt > 2)
+        {
+            if (luaGetType(lua_state_.getState(), 3) == LuaNumber)
+            {
+                end = luaToInteger(lua_state_.getState(), 3);
+            }
+        }
+
+        luaPop(lua_state_.getState(), -1);
+
+        return true;
+    }
+
+    luaPop(lua_state_.getState(), -1);
+
+    return false;
 }

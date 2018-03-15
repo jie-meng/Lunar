@@ -133,7 +133,7 @@ void FileExplorerWidget::locateFile(const QString& file)
                     if (pnode->childCount() == 0)
                         onItemReturn(pnode, currentColumn());
                     pnode->setExpanded(true);
-                    
+
                     found = true;
                     break;
                 }
@@ -149,7 +149,7 @@ void FileExplorerWidget::locateFile(const QString& file)
             break;
         }
     }
-    
+
     if (pnode != NULL && pnode->childCount() > 0)
     {
         for (int i=0; i<pnode->childCount(); ++i)
@@ -477,7 +477,7 @@ void FileExplorerWidget::onDeleteItems(QTreeWidgetItem* item, int column)
         if (QMessageBox::No == QMessageBox::question(this, "question", "Are you sure to delete " + filename + "?",
                                         QMessageBox::Yes | QMessageBox::No, QMessageBox::No))
             return;
-        
+
 
         //emit this signal before remove file, because slot hoster would check the files in dir
         emit removeDir(StdStringToQString(fullpathname));
@@ -625,7 +625,7 @@ void FileExplorerWidget::showTools(QMenu* pmenu, const std::string& dst_dir)
             showTools(psubmenu, *it);
         }
     }
-    
+
     FileFilter ff;
     vector<string> files;
     if (listFiles(dst_dir, files, &ff) > 0)

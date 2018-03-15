@@ -18,6 +18,7 @@ public:
     std::string fileFilter();
     bool isLegalFile(const std::string& filename);
     void findFiles(const std::string& find_with_text, std::vector<std::string>& out_files_found);
+    bool templateFileInfo(const std::string& template_file, std::string& template_content, int& begin, int& end);
 private:
     bool initLuaState();
 private:

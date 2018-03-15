@@ -11,12 +11,38 @@ class QsciLexer;
 class QsciScintilla;
 class QsciAbstractAPIs;
 class QsciAPIsEx;
+class QContextMenuEvent;
 
 namespace gui
 {
 
 class QsciAPIsEx;
 class ApiLoader;
+
+class TemplateInfo
+{
+public:
+    TemplateInfo() :
+        template_content_(""),
+        begin_(0),
+        end_(0)
+    {}
+
+    TemplateInfo(const std::string& template_content, int begin, int end) :
+        template_content_(template_content),
+        begin_(begin),
+        end_(end)
+    {}
+
+    inline std::string templateContent() const { return template_content_; }
+    inline int begin() const { return begin_; }
+    inline int end() const { return end_; }
+
+    std::string template_content_;
+    int begin_;
+    int end_;
+};
+
 
 class DocView : public QWidget
 {
@@ -59,6 +85,7 @@ public:
     bool getDefinitions(std::vector<std::string>& out_results);
     void intelligentSelection();
     void gotoLineBeginOrEnd();
+    void codeTemplate();
 Q_SIGNALS:
     void updateTitle(DocView*);
     void textModified(DocView*);
@@ -82,6 +109,7 @@ private:
     QString getTitleFromPath(const QString& path) const;
     QsciLexer* getLexerFromTypeName(const std::string& type_name, FileType* pout_filetype);
     size_t getStartSpaceCount(const QString& str);
+    void loadTemplates(const std::string& template_str);
 
     QString save_dialog_init_dir_;
     QString pathname_;
@@ -100,6 +128,7 @@ private:
     QString comment_line_symbol_;
     QString comment_block_symbol_begin_;
     QString comment_block_symbol_end_;
+    std::map<std::string, TemplateInfo> templates_;
     int selection_match_indicator_;
     int new_file_sequence_no_ = 0;
 private:

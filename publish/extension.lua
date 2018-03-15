@@ -310,7 +310,8 @@ function parseFileType(filename)
         return
             {
                 type = "markdown",
-                auto_complete_type = 0
+                auto_complete_type = 0,
+                templates = "templates/markdown"
             }
     end
 
@@ -392,7 +393,7 @@ legalFileExtTable["log"] = true
 legalFileExtTable["svg"] = true
 
 function isLegalFile(filename)
-    if (legalFileExtTable[string.lower(util.fileExtension(filename))]) then
+    if legalFileExtTable[string.lower(util.fileExtension(filename))] then
         return true
     end
 
@@ -529,4 +530,17 @@ function findFiles(find_with_text, stop_flag_address)
     end
 
     return result_files
+end
+
+function templateFileInfo(template_file)
+    local flag_begin = '{{BEGIN}}'
+    local flag_end = '{{END}}'
+
+    local content =  util.strTrimRight(util.readTextFile(template_file))
+    local begin_pos = string.find(content, flag_begin)
+    content = util.strReplace(content, flag_begin, '')
+    local end_pos = string.find(content, flag_end)
+    content = util.strReplace(content, flag_end)
+
+    return content, begin_pos - 1, end_pos - 1
 end
