@@ -306,6 +306,18 @@ function parseFileType(filename)
             }
     end
 
+    -- github pages (jekyll) project
+    if util.isPathFile('_config.yml') and util.isPathFile('Gemfile') and util.isPathDir('_posts') then
+        if string.lower(util.fileExtension(name)) == "md" and util.isPathDir() then
+            return
+                {
+                    type = "markdown",
+                    auto_complete_type = 0,
+                    templates = "templates/markdown,templates/gh_pages"
+                }
+        end
+    end
+
     if string.lower(util.fileExtension(name)) == "md" then
         return
             {
@@ -538,9 +550,20 @@ function templateFileInfo(template_file)
 
     local content =  util.strTrimRight(util.readTextFile(template_file))
     local begin_pos = string.find(content, flag_begin)
-    content = util.strReplace(content, flag_begin, '')
+
+    if begin_pos then
+        content = util.strReplace(content, flag_begin, '')
+    end
+
     local end_pos = string.find(content, flag_end)
-    content = util.strReplace(content, flag_end)
+    if end_pos then
+        content = util.strReplace(content, flag_end)
+    end
+
+    if not begin_pos or not end_pos then
+        begin_pos = string.len(content) + 1
+        end_pos = string.len(content) + 1
+    end
 
     return content, begin_pos - 1, end_pos - 1
 end

@@ -174,13 +174,19 @@ void DocView::setLexerApi()
             plexer_->setAPIs(papis_);
             ptext_edit_->setLexer(plexer_);
 
-            //api
-            papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
-            papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
-            //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
-
             //templates
             loadTemplates(getValueFromMap<string>(dict, "templates", ""));
+
+            //api
+            papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
+            //add templates keys first
+            for (auto it = templates_.begin(); it != templates_.end(); ++it)
+            {
+                papi_loader_->getApis()->add(StdStringToQString(it->first));
+            }
+            papi_loader_->getApis()->prepare();
+            papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
+            //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
 
             //parse success
             file_type_ = filetype;
@@ -207,7 +213,7 @@ void DocView::loadTemplates(const std::string& template_str)
     strSplit(template_str, ",", vec);
     for (auto it = vec.begin(); it != vec.end(); ++it)
     {
-        string path = LunarGlobal::getInstance().getAppPath() + "/" + *it;
+        string path = LunarGlobal::getInstance().getAppPath() + "/" + strTrim(*it);
         if (isPathDir(path))
         {
             vector<string> files;

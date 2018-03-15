@@ -1,0 +1,9 @@
+<div class="mermaid">
+
+graph TD;
+    A-->B;{{BEGIN}}{{END}}
+    A-->C;
+    B-->D;
+    C-->D;
+
+</div>

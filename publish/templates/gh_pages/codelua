@@ -1,0 +1,6 @@
+{% highlight lua %}
+
+{{BEGIN}}{{END}}
+
+{% endhighlight %}
+

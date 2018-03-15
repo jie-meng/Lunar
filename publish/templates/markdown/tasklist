@@ -1,0 +1,4 @@
+- [x] {{BEGIN}}this is a complete item{{END}}
+- [ ] this is an incomplete item
+- [x] @mentions, #refs, [links](),**formatting**, and <del>tags</del>supported
+- [x] list syntax required (any 

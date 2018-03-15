@@ -1,0 +1,5 @@
+{% highlight javascript %}
+
+{{BEGIN}}{{END}}
+
+{% endhighlight %}

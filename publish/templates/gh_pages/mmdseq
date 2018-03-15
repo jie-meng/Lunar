@@ -1,0 +1,11 @@
+<div class="mermaid">
+
+sequenceDiagram
+    participant A{{BEGIN}}{{END}}
+    participant B
+    participant C
+    A ->> B: forward
+    B ->> C: forward
+    C -->> A: backward
+
+</div>

@@ -1,0 +1,5 @@
+| Tables        | Are           | Cool  |
+| ------------- |:-------------:| -----:|
+| {{BEGIN}}col 3 is{{END}}      | right-aligned | $1600 |
+| col 2 is      | centered      |   $12 |
+| zebra stripes | are neat      |    $1 |
