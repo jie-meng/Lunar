@@ -1,0 +1,1 @@
+super({{BEGIN}}subClass{{END}}, self).method(args)

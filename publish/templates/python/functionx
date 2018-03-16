@@ -1,0 +1,2 @@
+def {{BEGIN}}function{{END}}(a, b = 0, *args, **kw):
+    pass

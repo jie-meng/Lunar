@@ -1,0 +1,1 @@
+with open({{BEGIN}}filepath{{END}}, 'r') as f:

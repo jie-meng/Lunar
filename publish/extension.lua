@@ -218,7 +218,7 @@ function parseFileType(filename)
                 plugin_goto = "plugins/goto_python3.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
                 comment_line = "#",
-                templates = "templates/python"
+                templates = "templates/python,templates/python/3"
 
                 -- python2
                 --type = "python",
@@ -227,7 +227,8 @@ function parseFileType(filename)
                 --executor = "python -u",
                 --plugin_goto = "plugins/goto_python.lua",
                 --plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
-                --comment_line = "#"
+                --comment_line = "#",
+                --templates = "templates/python,templates/python/2"
             }
     end
 

@@ -1,0 +1,1 @@
+super().{{BEGIN}}method{{END}}(args)

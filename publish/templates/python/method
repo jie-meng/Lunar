@@ -1,0 +1,2 @@
+def {{BEGIN}}method{{END}}(self):
+    pass

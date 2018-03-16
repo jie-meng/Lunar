@@ -1,0 +1,6 @@
+try:
+    {{BEGIN}}do_something{{END}}
+except BaseException as e:
+    print('except:', e)
+finally:
+    pass
