@@ -345,6 +345,7 @@ end
 function fileFilter()
 	local filter = {}
 
+    table.insert(filter, "All Files(*.*)")
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Python Files(*.py)")
     table.insert(filter, "Bash Files(*.sh)")

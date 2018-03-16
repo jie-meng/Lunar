@@ -1,2 +1,1 @@
 def {{BEGIN}}method{{END}}(self, a, b = 0, *args, **kw):
-    pass

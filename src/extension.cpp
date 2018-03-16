@@ -118,10 +118,10 @@ std::string Extension::fileFilter()
             {
                 vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
                 vector< pair<any, any> >::iterator it;
+                vector<string> str_vec;
                 for (it=vec.begin(); it != vec.end(); ++it)
-                {
-                    result += it->second.toString() + ";;";
-                }
+                    str_vec.push_back(it->second.toString());
+                result = strJoin(str_vec, ";;");
             }
             else if (luaGetType(lua_state_.getState(), 1) == LuaString)
             {

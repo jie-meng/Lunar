@@ -161,7 +161,7 @@ void LogSocket::sendLog(const std::string& log, const std::string& ip, unsigned 
 const string kCfg = "lunar.cfg";
 
 LunarGlobal::LunarGlobal() :
-    file_filter_("Lua Files(*.lua);;")
+    file_filter_("All Files(*.*)")
 {
 }
 
@@ -189,7 +189,6 @@ void LunarGlobal::parseExtensionFileFilter()
     string str = Extension::getInstance().fileFilter();
     if ("" != str)
         file_filter_ = str;
-    file_filter_ += "All Files(*.*)";
 }
 
 void LunarGlobal::addRecentDoc(const std::string& doc)
