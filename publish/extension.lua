@@ -102,7 +102,8 @@ function parseFileType(filename)
                 plugin_parse_api = "plugins/parse_supplement_api_lua.lua", 
                 comment_line = "--",
 				comment_block_begin = "--[[",
-				comment_block_end = "]]"
+				comment_block_end = "]]",
+                templates = "templates/lua"
             }
 	end
 
