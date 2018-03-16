@@ -176,7 +176,7 @@ function parseFileType(filename)
 	end
 
     if string.lower(util.fileExtension(name)) == "sh" then
-        return { type = "bash", comment_line = "#", api = "apis/bash", executor = "sh" }
+        return { type = "bash", comment_line = "#", api = "apis/bash", executor = "sh", templates = "templates/bash" }
     end
 
 	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
@@ -198,7 +198,8 @@ function parseFileType(filename)
                 executor = "monkeyrunner",
                 plugin_goto = "plugins/goto_python.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
-                comment_line = "#"
+                comment_line = "#",
+                templates = "templates/python"
             }
         end
 
@@ -216,7 +217,8 @@ function parseFileType(filename)
                 executor =  python3 .. " -u",
                 plugin_goto = "plugins/goto_python3.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
-                comment_line = "#"
+                comment_line = "#",
+                templates = "templates/python"
 
                 -- python2
                 --type = "python",
@@ -232,7 +234,6 @@ function parseFileType(filename)
     if string.lower(util.fileExtension(name)) == "rb" then
         return 
             {
-                -- python3
                 type = "ruby",
                 auto_complete_type = 0,
                 api = "apis/ruby",
@@ -341,22 +342,23 @@ function parseFileType(filename)
 end
 
 function fileFilter()
-	filter = {}
+	local filter = {}
+
 	table.insert(filter, "Lua Files(*.lua)")
     table.insert(filter, "Python Files(*.py)")
-	table.insert(filter, "JavaScript Files(*.js;*.jsx)")
-	table.insert(filter, "CSS Files(*.css;*.scss)")
-    table.insert(filter, "JSON Files(*.json)")
-    table.insert(filter, "Html Files(*.html;*.htm)")
-    table.insert(filter, "Ruby Files(*.rb)")
-	table.insert(filter, "Bash Files(*.sh)")
-	table.insert(filter, "Octave Files(*.m)")
-    table.insert(filter, "Tcl Files(*.tcl)")
+    table.insert(filter, "Bash Files(*.sh)")
+	table.insert(filter, "JSON Files(*.json)")
     table.insert(filter, "Markdown Files(*.md)")
     table.insert(filter, "C/C++ Files(*.cpp;*.hpp;*.cxx;*.hxx;*.c;*.h)")
+    table.insert(filter, "JavaScript Files(*.js;*.jsx)")
+	table.insert(filter, "CSS Files(*.css;*.scss)")
+    table.insert(filter, "Html Files(*.html;*.htm)")
+    table.insert(filter, "Ruby Files(*.rb)")
+    table.insert(filter, "Tcl Files(*.tcl)")
 	table.insert(filter, "C# Files(*.csharp)")
 	table.insert(filter, "Java Files(*.java)")
     table.insert(filter, "Xml Files(*.xml)")
+    table.insert(filter, "Octave Files(*.m)")
 
 	return filter
 end
@@ -548,7 +550,7 @@ function templateFileInfo(template_file)
     local flag_begin = '{{BEGIN}}'
     local flag_end = '{{END}}'
 
-    local content =  util.strTrimRight(util.readTextFile(template_file))
+    local content =  util.strTrim(util.readTextFile(template_file))
     local begin_pos = string.find(content, flag_begin)
 
     if begin_pos then
