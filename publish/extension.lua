@@ -199,7 +199,7 @@ function parseFileType(filename)
                 plugin_goto = "plugins/goto_python.lua",
                 plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
                 comment_line = "#",
-                templates = "templates/python"
+                templates = "templates/python,templates/python/2"
             }
         end
 
