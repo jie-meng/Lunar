@@ -1,0 +1,13 @@
+local f = io.open({{BEGIN}}filename{{END}}, "r")
+if f then
+    local line = f:read("*line")
+
+    while line do
+        repeat
+
+        until true
+        line = f:read("*line")
+    end
+
+    io.close(f)
+end

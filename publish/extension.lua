@@ -44,7 +44,8 @@ function parseFileType(filename)
                     api = "apis/lua/standard,apis/lua/util" ,
                     comment_line = "--",
 					comment_block_begin = "--[[",
-					comment_block_end = "]]"
+					comment_block_end = "]]",
+                    templates = "templates/lua"
                 }
 		end
 	end

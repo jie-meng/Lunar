@@ -1,0 +1,32 @@
+local {{BEGIN}}Class{{END}} = {
+    __a = nil,
+    __b = nil
+}
+
+function Class:new(a)
+    local o = {}
+    setmetatable(o, self)
+    self.__index = self
+
+    o.__a = a
+
+    return o
+end
+
+function Class:getA()
+    return self.__a
+end
+
+function Class:setA(a)
+    self.__a = a
+    return self
+end
+
+function Class:getB()
+    return self.__b
+end
+
+function Class:setB(b)
+    self.__b = b
+    return self
+end
