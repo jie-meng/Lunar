@@ -1,0 +1,4 @@
+while [ {{BEGIN}}condition{{END}} ]
+do
+    command
+done
