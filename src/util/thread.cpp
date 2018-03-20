@@ -26,7 +26,6 @@ void msleep(size_t ms)
     ::Sleep(ms);
 }
 
-
 unsigned long getCurrentThreadId()
 {
     return ::GetCurrentThreadId();
@@ -168,7 +167,7 @@ void timedwait_notify_tdfunc(sem_t* sem, size_t ms, int* ptimeout)
     *ptimeout = -1;
     ::sem_post(sem);
 }
-    
+
 int sem_timedwait(sem_t* sem, size_t ms)
 {    
     int timeout = 0;
@@ -180,7 +179,7 @@ int sem_timedwait(sem_t* sem, size_t ms)
 }
 
 #endif    
-    
+
 void sleep(size_t s)
 {
     ::sleep(s);
@@ -285,8 +284,13 @@ void Lock::wait(bool reset)
 bool Lock::timedWait(size_t ms, bool reset)
 {
     struct timespec ts;
-    ts.tv_sec = time(0) + ms / 1000;
-    ts.tv_nsec = (ms % 1000) * 1000 * 1000;
+    if (clock_gettime(CLOCK_REALTIME, &ts) < 0)
+        return false;
+
+    ts.tv_sec += (ms / 1000);
+    ts.tv_nsec += ((ms % 1000) * 1000 * 1000);
+    ts.tv_sec += ts.tv_nsec / 1e+9; // Nanoseconds [0 .. 999999999]
+    ts.tv_nsec = ts.tv_nsec % (int)1e+9;
 
     pdata_->notify_ = false;
     if (reset)
