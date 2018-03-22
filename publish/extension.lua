@@ -185,7 +185,7 @@ function parseFileType(filename)
 		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
 	end
 
-    if name == "Dockerfile" then
+    if util.fileBaseName(name) == "Dockerfile" then
 		return { type = "", comment_line = "#", api = "apis/dockerfile", executor = "" }
 	end
 
