@@ -1,9 +1,0 @@
-{
-    "auto_complete_type": 1,
-    "api": "apis/python/keywords.api,apis/python/monkeyrunner.api,apis/python/pydoc_gen,./testp.api", 
-    "executor": "python -u",
-    "project_src_dir": "src/app",
-    "plugin_goto": "./goto_python.lua",
-    "plugin_parse_api": "./parse_python.lua",
-    "templates": "templates/python,templates/python/2"
-}

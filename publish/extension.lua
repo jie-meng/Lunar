@@ -57,7 +57,7 @@ function parseFileType(filename)
                 {
                     type = "lua", 
                     auto_complete_type = 1,
-                    api = "apis/lua/standard,cocos.api", 
+                    api = "apis/lua/standard,./cocos.api",
                     executor = "luaexec",
                     project_src_dir = "src/app",
                     plugin_goto = "plugins/goto_cocos_lua.lua",
@@ -72,7 +72,7 @@ function parseFileType(filename)
             local conf = {
                     type = "javascript",
                     auto_complete_type = 1,
-                    api = "apis/javascript/js,cocos.api",
+                    api = "apis/javascript/js,./cocos.api",
                     executor = "luaexec",
                     project_src_dir = "src",
                     plugin_goto = "plugins/goto_cocos_js.lua",
