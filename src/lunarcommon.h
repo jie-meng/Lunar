@@ -18,6 +18,8 @@ const std::string kGotoDefinition = "gotoDefinition";
 QString StdStringToQString(const std::string &s);
 std::string QStringToStdString(const QString &s);
 
+std::string getExtensionAbsolutePath(const std::string& pathname);
+
 template<typename T>
 T getValueFromMap(const std::map<std::string, std::string>& from_map, const std::string& key, T default_value)
 {

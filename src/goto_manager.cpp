@@ -22,13 +22,13 @@ bool GotoManager::getDefinitions(
         const std::string& project_dir,
         std::vector< std::string >& out_result)
 {
-    if (!isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + script))
+    if (!isPathFile(getExtensionAbsolutePath(script)))
     {
-        LunarMsgBox(strFormat("Error<GotoManager::gotoDefinition> Script %s does not exist.", script.c_str()));
+        LunarMsgBox(strFormat("Error<GotoManager::gotoDefinition> Script %s does not exist.", getExtensionAbsolutePath(script).c_str()));
         return false;
     }
 
-    int err = lua_state_.parseFile(LunarGlobal::getInstance().getAppPath() + "/" + script);
+    int err = lua_state_.parseFile(getExtensionAbsolutePath(script));
     if (0 != err)
     {
         LunarMsgBox(strFormat("Error<GotoManager::gotoDefinition> Parse script failed: %s.", luaGetError(lua_state_.getState(), err).c_str()));

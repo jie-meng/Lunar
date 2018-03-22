@@ -34,7 +34,6 @@ ApiLoadThread::ApiLoadThread(ApiLoader* papi_loader, QObject *parent) :
 
 ApiLoadThread::~ApiLoadThread()
 {
-
 }
 
 void ApiLoadThread::startLoadCommonApi(const std::string& api_dirs)
@@ -153,18 +152,18 @@ bool ApiLoader::initLuaState(const std::string& parse_supplement_api_script)
     if (lua_state_ok_)
         return true;
 
-    if (!isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + parse_supplement_api_script))
+    if (!isPathFile(getExtensionAbsolutePath(parse_supplement_api_script)))
     {
         error_information_ =
             strFormat("ApiLoader.initLuaState: extension file %s not exist",
-                      (LunarGlobal::getInstance().getAppPath() + "/" + parse_supplement_api_script).c_str());
+                      getExtensionAbsolutePath(parse_supplement_api_script).c_str());
         lua_state_ok_ = false;
         return false;
     }
 
     openUtilExtendLibs(lua_state_.getState());
 
-    int err = lua_state_.parseFile(LunarGlobal::getInstance().getAppPath() + "/" + parse_supplement_api_script);
+    int err = lua_state_.parseFile(getExtensionAbsolutePath(parse_supplement_api_script));
     if (0 != err)
     {
         error_information_ = strFormat("ApiLoader.initLuaState: %s", luaGetError(lua_state_.getState(), err).c_str());
@@ -194,55 +193,21 @@ void ApiLoader::loadCommonApi(const std::string& api_paths)
     vector<string>::iterator it;
     for (it = paths.begin(); it != paths.end(); ++it)
     {
-        std::string path = strTrim(*it);
-
-        if (isPathDir(splitPathname(file_).first + "/" + path))
+        if (isPathDir(getExtensionAbsolutePath(*it)))
         {
             vector<string> api_vec;
-            findFilesInDirRecursively(splitPathname(file_).first + "/" + path,
+            findFilesInDirRecursively(getExtensionAbsolutePath(*it),
                                       api_vec,
                                       kApisExt);
-            if (api_vec.size()>0)
+            if (api_vec.size() > 0)
             {
                 for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
                     api_files_.push_back(*it1);
             }
         }
-        else if (isPathFile(splitPathname(file_).first + "/" + path))
+        else if (isPathFile(getExtensionAbsolutePath(*it)))
         {
-            api_files_.push_back(splitPathname(file_).first + "/" + path);
-        }
-        else if (isPathDir(currentPath() + "/" + path))
-        {
-            vector<string> api_vec;
-            findFilesInDirRecursively(currentPath() + "/" + path,
-                                      api_vec,
-                                      kApisExt);
-            if (api_vec.size()>0)
-            {
-                for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
-                    api_files_.push_back(*it1);
-            }
-        }
-        else if (isPathFile(currentPath() + "/" + path))
-        {
-            api_files_.push_back(currentPath() + "/" + path);
-        }
-        else if (isPathDir(LunarGlobal::getInstance().getAppPath() + "/" + path))
-        {
-            vector<string> api_vec;
-            findFilesInDirRecursively(LunarGlobal::getInstance().getAppPath() + "/" + path,
-                                      api_vec,
-                                      kApisExt);
-            if (api_vec.size()>0)
-            {
-                for (vector<string>::iterator it1 = api_vec.begin(); it1 != api_vec.end(); ++it1)
-                    api_files_.push_back(*it1);
-            }
-        }
-        else if (isPathFile(LunarGlobal::getInstance().getAppPath() + "/" + path))
-        {
-            api_files_.push_back(LunarGlobal::getInstance().getAppPath() + "/" + path);
+            api_files_.push_back(getExtensionAbsolutePath(*it));
         }
     }
 }

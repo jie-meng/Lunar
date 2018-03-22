@@ -21,6 +21,14 @@ std::string QStringToStdString(const QString &s)
     return s.toStdString();
 }
 
+std::string getExtensionAbsolutePath(const std::string& pathname)
+{
+    auto trimmed_pathname = strTrim(pathname);
+    return strStartWith(trimmed_pathname, "./") ?
+        currentPath() + strRight(trimmed_pathname, trimmed_pathname.size() - 1) :
+        LunarGlobal::getInstance().getAppPath() + "/" + trimmed_pathname;
+}
+
 QString qtReadFile(const QString& filename, const char* codec)
 {
     QFile f(filename);

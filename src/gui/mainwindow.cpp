@@ -1202,8 +1202,11 @@ void MainWindow::run()
         if (strEndWith(runPath, ":"))
             runPath += "/";
 
-        bool ret = plua_executor_->execute(script, addtional_args,
-                                    runPath, pdoc_view->getExecutor());
+        auto executor = pdoc_view->getExecutor();
+        if (strStartWith(executor, "./"))
+            executor = currentPath() + strRight(executor, executor.size() - 1);
+
+        bool ret = plua_executor_->execute(script, addtional_args, runPath, executor);
 
         LunarGlobal::getInstance().addRecentRunDoc(script);
 

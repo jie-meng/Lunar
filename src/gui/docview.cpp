@@ -52,6 +52,7 @@
 #include "util/file.hpp"
 #include "util/regex.hpp"
 #include "util/cfg.hpp"
+#include "util/json.hpp"
 #include "lunarapi.h"
 #include "lunarcommon.h"
 #include "extension.h"
@@ -154,17 +155,63 @@ void DocView::setLexerApi()
         map<string, string> dict;
         if (Extension::getInstance().parseFilename(filename, dict))
         {
+            FileType filetype = Unknown;
+            string type = getValueFromMap<string>(dict, "type", "");
+            plexer_ = getLexerFromTypeName(type, &filetype);
+
             size_t auto_complete_type_ = getValueFromMap<size_t>(dict, "auto_complete_type", 0);
             executor_ = getValueFromMap<string>(dict, "executor", "");
+            string apis = getValueFromMap<string>(dict, "api", "");
+            string templates = getValueFromMap<string>(dict, "templates", "");
             parse_api_script_ = getValueFromMap<string>(dict, "plugin_parse_api", "");
-            project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", "");
             goto_script_ = getValueFromMap<string>(dict, "plugin_goto", "");
+            project_src_dir_ = getValueFromMap<string>(dict, "project_src_dir", "");
             comment_line_symbol_ = StdStringToQString(getValueFromMap<string>(dict, "comment_line", ""));
             comment_block_symbol_begin_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_begin", ""));
             comment_block_symbol_end_ = StdStringToQString(getValueFromMap<string>(dict, "comment_block_end", ""));
 
-            FileType filetype = Unknown;
-            plexer_ = getLexerFromTypeName(getValueFromMap<string>(dict, "type", ""), &filetype);
+            string override_file = currentPath() + "/luna_ext_" + type + ".json";
+            if (isPathFile(override_file))
+            {
+                try
+                {
+                    auto override = util::Json::parse(readTextFile(override_file));
+                    if (!override.get("auto_complete_type").isNull())
+                        auto_complete_type_ = override.get("auto_complete_type").toInt();
+
+                    if (!override.get("executor").isNull())
+                        executor_ = override.get("executor").toString();
+
+                    if (!override.get("api").isNull())
+                        apis = override.get("api").toString();
+
+                    if (!override.get("templates").isNull())
+                        templates = override.get("templates").toString();
+
+                    if (!override.get("plugin_parse_api").isNull())
+                        parse_api_script_ = override.get("plugin_parse_api").toString();
+
+                    if (!override.get("plugin_goto").isNull())
+                        goto_script_ = override.get("plugin_goto").toString();
+
+                    if (!override.get("project_src_dir").isNull())
+                        project_src_dir_ = override.get("project_src_dir").toString();
+
+                    if (!override.get("comment_line").isNull())
+                        comment_line_symbol_ = StdStringToQString(override.get("comment_line").toString());
+
+                    if (!override.get("comment_block_begin").isNull())
+                        comment_block_symbol_begin_ = StdStringToQString(override.get("comment_block_begin").toString());
+
+                    if (!override.get("comment_block_end").isNull())
+                        comment_block_symbol_end_ = StdStringToQString(override.get("comment_block_end").toString());
+                }
+                catch (std::exception& e)
+                {
+                    LunarMsgBox(strFormat("Parse %s failed: %s", override_file.c_str(), e.what()));
+                }
+            }
+
             ptext_edit_->setLexer(plexer_);
             plexer_->setFont(LunarGlobal::getInstance().getFont());
             if (0 == auto_complete_type_)
@@ -175,7 +222,7 @@ void DocView::setLexerApi()
             ptext_edit_->setLexer(plexer_);
 
             //templates
-            loadTemplates(getValueFromMap<string>(dict, "templates", ""));
+            loadTemplates(templates);
 
             //api
             papi_loader_ = new ApiLoader(papis_, QStringToStdString(pathname_));
@@ -185,7 +232,7 @@ void DocView::setLexerApi()
                 papi_loader_->getApis()->add(StdStringToQString(it->first));
             }
             papi_loader_->getApis()->prepare();
-            papi_loader_->loadCommonApiAsync(getValueFromMap<string>(dict, "api", ""));
+            papi_loader_->loadCommonApiAsync(apis);
             //do not load supplement api when first load, because it'll not work until loadCommonApiAsync ended.
 
             //parse success
@@ -210,10 +257,10 @@ void DocView::loadTemplates(const std::string& template_str)
         return;
 
     vector<string> vec;
-    strSplit(template_str, ",", vec);
+    strSplitEx(template_str, ",", "\"", "\"", vec);
     for (auto it = vec.begin(); it != vec.end(); ++it)
     {
-        string path = LunarGlobal::getInstance().getAppPath() + "/" + strTrim(*it);
+        string path = getExtensionAbsolutePath(*it);
         if (isPathDir(path))
         {
             vector<string> files;
@@ -473,7 +520,7 @@ QsciLexer* DocView::getLexerFromTypeName(const std::string& type_name, FileType*
     else if (util::strAreEqual(name_trimmed, "json", false))
     {
         if (NULL != pout_filetype)
-            *pout_filetype = Json;
+            *pout_filetype = FileType::Json;
         return new QsciLexerJSON(ptext_edit_);
     }
     else if (util::strAreEqual(name_trimmed, "lua", false))
