@@ -18,6 +18,8 @@ const std::string kGotoDefinition = "gotoDefinition";
 QString StdStringToQString(const std::string &s);
 std::string QStringToStdString(const QString &s);
 
+QString QStringTrimRight(const QString& str);
+
 std::string getExtensionAbsolutePath(const std::string& pathname);
 
 template<typename T>

@@ -21,6 +21,17 @@ std::string QStringToStdString(const QString &s)
     return s.toStdString();
 }
 
+QString QStringTrimRight(const QString& str) {
+    int n = str.size() - 1;
+    for (; n >= 0; --n) {
+        if (!str.at(n).isSpace()) {
+            return str.left(n + 1);
+        }
+    }
+
+    return "";
+}
+
 std::string getExtensionAbsolutePath(const std::string& pathname)
 {
     auto trimmed_pathname = strTrim(pathname);

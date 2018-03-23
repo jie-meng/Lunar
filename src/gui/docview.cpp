@@ -1029,18 +1029,11 @@ QString DocView::formatContent(const QString& text, bool trim_empty_line) const
     QString txt = text;
     txt.replace("\r\n", "\n").replace("\r", "\n");
     if (!trim_empty_line)
-    {
         return txt;
-    }
 
     auto list = txt.split('\n');
     for (int i = 0; i < list.size(); ++i)
-    {
-        if (list.at(i).trimmed().isEmpty())
-        {
-            list.replace(i, list.at(i).trimmed());
-        }
-    }
+        list.replace(i, QStringTrimRight(list.at(i)));
 
     return list.join('\n');
 }
