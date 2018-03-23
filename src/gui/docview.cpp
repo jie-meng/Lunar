@@ -925,7 +925,7 @@ void DocView::gotoLineBeginOrEnd()
 {
     if (ptext_edit_->isCallTipActive())
     {
-        ptext_edit_->SCN_CALLTIPCLICK(2);        
+        ptext_edit_->SCN_CALLTIPCLICK(2);
     }
     else
     {
@@ -936,8 +936,8 @@ void DocView::gotoLineBeginOrEnd()
         QString lineStr = ptext_edit_->text(line);
         QString trimmedLineStr = lineStr.trimmed();
         int start = lineStr.indexOf(trimmedLineStr);
-        ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);      
-    }    
+        ptext_edit_->setCursorPosition(line, index == start? start + trimmedLineStr.length() : start);
+    }
 }
 
 void DocView::codeTemplate()
