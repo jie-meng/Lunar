@@ -126,7 +126,7 @@ void MainWindow::processCmdParam()
 
 void MainWindow::initLeftDockWidget()
 {
-    pleft_widget_ = new QDockWidget(tr("Management"), this);
+    pleft_widget_ = new QDockWidget(tr(""), this);
     pfile_explorer_widget_ = new FileExplorerWidget();
     pleft_widget_->setWidget(pfile_explorer_widget_);
     pleft_widget_->setAllowedAreas(Qt::LeftDockWidgetArea);
@@ -138,7 +138,7 @@ void MainWindow::initLeftDockWidget()
 
 void MainWindow::initBottomDockWidget()
 {
-    pbottom_widget_ = new QDockWidget(tr("Logs and others"), this);
+    pbottom_widget_ = new QDockWidget(tr(""), this);
     pbottom_tab_widget_ = new QTabWidget;
     //pbottom_tab_widget_->setTabPosition(QTabWidget::South);
     pbottom_widget_->setWidget(pbottom_tab_widget_);
@@ -253,7 +253,7 @@ void MainWindow::initActions()
     pfile_find_action_ = new QAction(tr("Find files"), this);
     pfile_find_action_->setStatusTip(tr("Find files."));
     pfile_find_action_->setShortcut(Qt::CTRL + Qt::SHIFT +  Qt::Key_O);
-    pfile_find_action_->setIcon(QIcon(tr(":/res/find_files.png")));    
+    pfile_find_action_->setIcon(QIcon(tr(":/res/find_files.png")));
 
     pfile_close_action_ = new QAction(tr("Close"), this);
     pfile_close_action_->setStatusTip(tr("Close current file."));
@@ -591,7 +591,7 @@ void MainWindow::initConnections()
         auto pdocview = dynamic_cast<DocView*>(pmain_tabwidget_->currentWidget());
         if (pdocview)
             pdocview->zoomToOrigin();
-    });    
+    });
 
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_run_recent_action_, SIGNAL(triggered()), this, SLOT(runRecent()));
@@ -1100,8 +1100,8 @@ bool MainWindow::openDoc(const std::string& file_path, bool is_record_position)
 
     addCurrentDocToRecent();
     if (is_record_position)
-    {        
-        auto record_pos = getCurrentPosition();      
+    {
+        auto record_pos = getCurrentPosition();
         if (!record_pos.first.empty() && record_pos.second > 0)
             JumpManager::getInstance().recordPosition(record_pos.first, record_pos.second);
     }
@@ -1250,7 +1250,7 @@ void MainWindow::runDoc(const QString& doc)
 
     map<string, string> dict;
     string executor;
-    if (Extension::getInstance().parseFilename(script, dict)) 
+    if (Extension::getInstance().parseFilename(script, dict))
         executor = getValueFromMap<string>(dict, "executor", "");
 
     if (executor.empty())
