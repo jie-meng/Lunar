@@ -19,10 +19,10 @@ function checkJavaScriptType(filename)
     end
 
     if util.strContains(content, "document.")
-        or util.strContains(content, "alert(") 
-        or util.strContains(content, ".getElementById(") 
-        or util.strContains(content, ".getElementsByClassName(") 
-        or util.strContains(content, ".getElementsByName(") 
+        or util.strContains(content, "alert(")
+        or util.strContains(content, ".getElementById(")
+        or util.strContains(content, ".getElementsByClassName(")
+        or util.strContains(content, ".getElementsByName(")
         or util.strContains(content, ".getElementsByTagName(") then
         return "web"
     end
@@ -37,10 +37,10 @@ function parseFileType(filename)
 	-- Lunar extension
 	if name == "extension.lua" then
 		if util.isPathFile(path .. "/Lunar") or util.isPathFile(path .. "/Lunar.exe") then
-			return 
+			return
                 {
-                    type = "lua", 
-                    auto_complete_type = 1, 
+                    type = "lua",
+                    auto_complete_type = 1,
                     api = "apis/lua/standard,apis/lua/util" ,
                     comment_line = "--",
 					comment_block_begin = "--[[",
@@ -53,15 +53,15 @@ function parseFileType(filename)
     --cocos2dx project
     if util.isPathFile('.cocos-project.json') then
         if string.lower(util.fileExtension(name)) == "lua" then
-            return 
+            return
                 {
-                    type = "lua", 
+                    type = "lua",
                     auto_complete_type = 1,
                     api = "apis/lua/standard,./cocos.api",
                     executor = "luaexec",
                     project_src_dir = "src/app",
                     plugin_goto = "plugins/goto_cocos_lua.lua",
-                    plugin_parse_api = "plugins/parse_supplement_api_cocos_lua.lua", 
+                    plugin_parse_api = "plugins/parse_supplement_api_cocos_lua.lua",
                     comment_line = "--",
                     comment_block_begin = "--[[",
                     comment_block_end = "]]"
@@ -76,7 +76,7 @@ function parseFileType(filename)
                     executor = "luaexec",
                     project_src_dir = "src",
                     plugin_goto = "plugins/goto_cocos_js.lua",
-                    plugin_parse_api = "plugins/parse_supplement_api_cocos_js.lua", 
+                    plugin_parse_api = "plugins/parse_supplement_api_cocos_js.lua",
                     comment_line = "//",
                     comment_block_begin = "/*",
                     comment_block_end = "*/"
@@ -92,14 +92,14 @@ function parseFileType(filename)
     end
 
 	if string.lower(util.fileExtension(name)) == "lua" then
-		return 
+		return
             {
-                type = "lua", 
-                auto_complete_type = 1, 
-                api = "apis/lua", 
+                type = "lua",
+                auto_complete_type = 1,
+                api = "apis/lua",
                 executor = "luaexec",
                 plugin_goto = "plugins/goto_lua.lua",
-                plugin_parse_api = "plugins/parse_supplement_api_lua.lua", 
+                plugin_parse_api = "plugins/parse_supplement_api_lua.lua",
                 comment_line = "--",
 				comment_block_begin = "--[[",
 				comment_block_end = "]]",
@@ -108,13 +108,13 @@ function parseFileType(filename)
 	end
 
 	if string.lower(util.fileExtension(name)) == "m" then
-		return 
+		return
             {
-                type = "octave", 
+                type = "octave",
                 auto_complete_type = 0,
-                api = "apis/octave", 
-                executor = "octave", 
-                plugin_parse_api = "plugins/parse_supplement_api_octave.lua", 
+                api = "apis/octave",
+                executor = "octave",
+                plugin_parse_api = "plugins/parse_supplement_api_octave.lua",
                 comment_line = "%"
             }
 	end
@@ -123,7 +123,7 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "jsx" then
         local js_type = checkJavaScriptType(filename)
         local js_tb = {
-            type = "javascript", 
+            type = "javascript",
             auto_complete_type = 1,
             api = "apis/javascript/js",
             comment_line = "//",
@@ -154,11 +154,11 @@ function parseFileType(filename)
 
 	if string.lower(util.fileExtension(name)) == "html" or
         string.lower(util.fileExtension(name)) == "htm" then
-		return 
+		return
             {
-                type = "html", 
+                type = "html",
                 auto_complete_type = 0,
-				api = "apis/html", 
+				api = "apis/html",
                 executor = "w3m",
 				comment_block_begin = "<!--",
 				comment_block_end = "-->"
@@ -167,9 +167,9 @@ function parseFileType(filename)
 
 	if string.lower(util.fileExtension(name)) == "css" or
         string.lower(util.fileExtension(name)) == "scss" then
-		return 
+		return
             {
-                type = "css", 
+                type = "css",
                 auto_complete_type = 0,
 				api = "apis/css",
 				comment_block_begin = "/*",
@@ -199,7 +199,7 @@ function parseFileType(filename)
                 api = "apis/python",
                 executor = "monkeyrunner",
                 plugin_goto = "plugins/goto_python.lua",
-                plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
+                plugin_parse_api = "plugins/parse_supplement_api_python.lua",
                 comment_line = "#",
                 templates = "templates/python,templates/python/2"
             }
@@ -210,7 +210,7 @@ function parseFileType(filename)
             python3 = "python"
         end
 
-        return 
+        return
             {
                 -- python3
                 type = "python",
@@ -218,7 +218,7 @@ function parseFileType(filename)
                 api = "apis/python/keywords.api,apis/python/monkeyrunner.api,apis/python/pydoc_gen3",
                 executor =  python3 .. " -u",
                 plugin_goto = "plugins/goto_python3.lua",
-                plugin_parse_api = "plugins/parse_supplement_api_python3.lua", 
+                plugin_parse_api = "plugins/parse_supplement_api_python3.lua",
                 comment_line = "#",
                 templates = "templates/python,templates/python/3"
 
@@ -228,14 +228,14 @@ function parseFileType(filename)
                 --api = "apis/python/keywords.api,apis/python/monkeyrunner.api,apis/python/pydoc_gen",
                 --executor = "python -u",
                 --plugin_goto = "plugins/goto_python.lua",
-                --plugin_parse_api = "plugins/parse_supplement_api_python.lua", 
+                --plugin_parse_api = "plugins/parse_supplement_api_python.lua",
                 --comment_line = "#",
                 --templates = "templates/python,templates/python/2"
             }
     end
 
     if string.lower(util.fileExtension(name)) == "rb" then
-        return 
+        return
             {
                 type = "ruby",
                 auto_complete_type = 0,
@@ -253,10 +253,10 @@ function parseFileType(filename)
     end
 
     if string.lower(util.fileExtension(name)) == "java" then
-        return 
-			{ 
+        return
+			{
 				type = "java",
-				api = "apis/java", 
+				api = "apis/java",
 				comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
@@ -264,9 +264,9 @@ function parseFileType(filename)
     end
 
     if string.lower(util.fileExtension(name)) == "cs" then
-        return 
-			{ 
-				type = "csharp", 
+        return
+			{
+				type = "csharp",
 				comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
@@ -283,8 +283,8 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "svg" or
         string.lower(util.fileExtension(name)) == "iml" or
         string.lower(util.fileExtension(name)) == "project" then
-        return 
-			{ 
+        return
+			{
 				type = "xml",
 				comment_block_begin = "<!--",
 				comment_block_end = "-->"
@@ -297,13 +297,14 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "hpp" or
         string.lower(util.fileExtension(name)) == "cxx" or
         string.lower(util.fileExtension(name)) == "hxx" then
-        return 
-            { 
+        return
+            {
                 type = "cpp",
                 api = "apis/cpp",
                 auto_complete_type = 1,
+                templates = "templates/cpp",
 				plugin_goto = "plugins/goto_cpp.lua",
-				plugin_parse_api = "plugins/parse_supplement_api_cpp.lua", 
+				plugin_parse_api = "plugins/parse_supplement_api_cpp.lua",
                 comment_line = "//",
 				comment_block_begin = "/*",
 				comment_block_end = "*/"
@@ -443,7 +444,7 @@ function sortFoundFiles(files, find_with_text)
     for _, v in ipairs(files) do
         v = util.strReplaceAll(v, '\\', '/')
 
-        local path, name = util.splitPathname(v)        
+        local path, name = util.splitPathname(v)
         if util.strStartWith(string.lower(name), find_with_text) then
             table.insert(result1, v)
         else
@@ -478,7 +479,7 @@ function findPathInDir(dir, func)
     for _, v in ipairs(paths) do
         if not func or func(v) then
             table.insert(ret, v)
-        end    
+        end
     end
     return ret
 end
@@ -520,10 +521,10 @@ end
 
 function findFiles(find_with_text, stop_flag_address)
     find_with_text = string.lower(find_with_text)
-    local files = findFilesFlat(util.currentPath(), 
+    local files = findFilesFlat(util.currentPath(),
         function(d)
             local path, name = util.splitPathname(d)
-            return not util.strStartWith(b, '.') 
+            return not util.strStartWith(b, '.')
         end,
         function(f)
             local path, name = util.splitPathname(f)
@@ -541,7 +542,7 @@ function findFiles(find_with_text, stop_flag_address)
         else
             table.insert(non_legal_files, v)
         end
-    end    
+    end
 
     for _, v in ipairs(non_legal_files) do
         table.insert(result_files, v)

@@ -1,0 +1,2 @@
+do {}
+while ({{BEGIN}}condition{{END}});

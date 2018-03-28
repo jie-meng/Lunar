@@ -1,0 +1,7 @@
+class {{BEGIN}}Name{{END}}
+{
+public:
+    Name();
+    ~Name();
+private:
+};

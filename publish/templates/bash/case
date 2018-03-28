@@ -1,0 +1,11 @@
+case "${{BEGIN}}input{{END}}" in
+    "A")
+        echo "A matched"
+        ;;
+    "B")
+        echo "B matched"
+        ;;
+    *)
+        echo "None matched"
+        ;;
+esac

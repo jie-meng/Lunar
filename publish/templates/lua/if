@@ -1,0 +1,3 @@
+if {{BEGIN}}condition{{END}} then
+    task
+end

@@ -348,7 +348,7 @@ void MainWindow::initActions()
 
     pedit_file_explorer_context_menu_action_ = new QAction(tr("Show File Explorer context menu"), this);
     pedit_file_explorer_context_menu_action_->setStatusTip(tr("Show File Explorer context menu."));
-    pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_J);
+    pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_U);
 
     pedit_goto_line_begin_end_ = new QAction(tr("Goto line begin or end"), this);
     pedit_goto_line_begin_end_->setStatusTip(tr("Goto line begin or end."));
@@ -376,7 +376,7 @@ void MainWindow::initActions()
 
     pview_documents_action_ = new QAction(tr("Documents"), this);
     pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
-    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_U);
+    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_J);
     pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
     pview_close_docks_action_ = new QAction(tr("Close docks"), this);

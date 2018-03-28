@@ -1,0 +1,6 @@
+if {{BEGIN}}condition1{{END}}:
+    pass
+elif condition2
+    pass
+else:
+    pass

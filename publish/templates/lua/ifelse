@@ -1,0 +1,7 @@
+if {{BEGIN}}condition1{{END}} then
+    task1
+elseif condition2 then
+    task2
+else
+    task3
+end

@@ -1,0 +1,3 @@
+#ifndef {{BEGIN}}MACRO{{END}}
+#else
+#endif

@@ -1,7 +1,7 @@
 if [ {{BEGIN}}condition1{{END}} ]; then
-  command1
-elif [ condition2 ]; then 
-   command2
+    command1
+elif [ condition2 ]; then
+    command2
 else
-  command3
+    command3
 fi

@@ -2,5 +2,7 @@ try:
     {{BEGIN}}do_something{{END}}
 except BaseException as e:
     print('except:', e)
+else:
+    print('all except blocks')
 finally:
     pass

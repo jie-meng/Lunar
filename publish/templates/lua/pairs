@@ -1,0 +1,3 @@
+for k, v in pairs({{BEGIN}}tb{{END}}) do
+    task
+end

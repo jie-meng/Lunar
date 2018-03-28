@@ -1,0 +1,9 @@
+if ({{BEGIN}}condition1{{END}})
+{
+}
+else if (condition2)
+{
+}
+else
+{
+}
