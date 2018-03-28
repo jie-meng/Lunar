@@ -1,1 +1,3 @@
-for ({{BEGIN}}{{END}}) {}
+for ({{BEGIN}}{{END}})
+{
+}

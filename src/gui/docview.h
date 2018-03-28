@@ -19,31 +19,6 @@ namespace gui
 class QsciAPIsEx;
 class ApiLoader;
 
-class TemplateInfo
-{
-public:
-    TemplateInfo() :
-        template_content_(""),
-        begin_(0),
-        end_(0)
-    {}
-
-    TemplateInfo(const std::string& template_content, int begin, int end) :
-        template_content_(template_content),
-        begin_(begin),
-        end_(end)
-    {}
-
-    inline std::string templateContent() const { return template_content_; }
-    inline int begin() const { return begin_; }
-    inline int end() const { return end_; }
-
-    std::string template_content_;
-    int begin_;
-    int end_;
-};
-
-
 class DocView : public QWidget
 {
     Q_OBJECT
@@ -131,7 +106,7 @@ private:
     QString comment_line_symbol_;
     QString comment_block_symbol_begin_;
     QString comment_block_symbol_end_;
-    std::map<std::string, TemplateInfo> templates_;
+    std::map<std::string, std::string> templates_;
     int selection_match_indicator_;
     int new_file_sequence_no_ = 0;
 private:

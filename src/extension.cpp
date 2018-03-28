@@ -200,21 +200,21 @@ void Extension::findFiles(const string& find_with_text, vector<string>& out_file
         if (ret_cnt > 0)
         {
             if (luaGetType(lua_state_.getState(), 1) == LuaTable)
-            {   
+            {
                 vector< pair<any, any> > vec = luaToArray(lua_state_.getState(), 1);
                 vector< pair<any, any> >::iterator it;
                 for (it=vec.begin(); it != vec.end(); ++it)
                 {
                     out_files_found.push_back(it->second.toString());
                 }
-            }   
+            }
         }
     }
 
     luaPop(lua_state_.getState(), -1);
 }
 
-bool Extension::templateFileInfo(const std::string& template_file, std::string& template_content, int& begin, int& end)
+bool Extension::templateFileInfo(const std::string& template_file, int indent, std::string& template_content, int& begin, int& end)
 {
     if (!lua_state_ok_)
         return false;
@@ -223,8 +223,9 @@ bool Extension::templateFileInfo(const std::string& template_file, std::string& 
 
     luaGetGlobal(lua_state_.getState(), LunarGlobal::getInstance().getExtensionTemplateFileInfo());
     luaPushString(lua_state_.getState(), template_file);
+    luaPushInteger(lua_state_.getState(), indent);
 
-    int err = luaCallFunc(lua_state_.getState(), 1, 3);
+    int err = luaCallFunc(lua_state_.getState(), 2, 3);
     if (0 != err)
     {
         error_information_ = strFormat("Extension: %s", luaGetError(lua_state_.getState(), err).c_str());

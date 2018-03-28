@@ -1,1 +1,3 @@
-if ({{BEGIN}}condition{{END}}) {}
+if ({{BEGIN}}condition{{END}})
+{
+}

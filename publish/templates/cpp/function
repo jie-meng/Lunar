@@ -1,1 +1,3 @@
-void {{BEGIN}}func_name{{END}}() {}
+void {{BEGIN}}func_name{{END}}()
+{
+}

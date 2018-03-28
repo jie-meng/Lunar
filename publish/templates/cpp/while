@@ -1,1 +1,3 @@
-while ({{BEGIN}}condition{{END}}) {}
+while ({{BEGIN}}condition{{END}})
+{
+}

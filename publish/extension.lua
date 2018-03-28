@@ -551,11 +551,39 @@ function findFiles(find_with_text, stop_flag_address)
     return result_files
 end
 
-function templateFileInfo(template_file)
+function buildIndentStr(indent)
+    local t = {}
+    for i = 1, indent do
+        table.insert(t, ' ')
+    end
+    return table.concat(t, '')
+end
+
+function templateFileInfo(template_file, indent)
     local flag_begin = '{{BEGIN}}'
     local flag_end = '{{END}}'
+    local indent_str = buildIndentStr(indent)
 
-    local content =  util.strTrim(util.readTextFile(template_file))
+    local lines = {}
+    local f = io.open(template_file, "r")
+    if f then
+        local line = f:read("*line")
+
+        while line do
+            repeat
+                if #lines == 0 then
+                    table.insert(lines, line)
+                else
+                    table.insert(lines, indent_str .. line)
+                end
+            until true
+            line = f:read("*line")
+        end
+
+        io.close(f)
+    end
+
+    local content =  util.strTrim(table.concat(lines, '\n'))
     local begin_pos = string.find(content, flag_begin)
 
     if begin_pos then

@@ -267,15 +267,7 @@ void DocView::loadTemplates(const std::string& template_str)
             FileFilter ff("");
             listFiles(path, files, &ff);
             for (auto itf = files.begin(); itf != files.end(); ++itf)
-            {
-                string template_content;
-                int begin = 0;
-                int end = 0;
-                if (Extension::getInstance().templateFileInfo(*itf, template_content, begin, end))
-                {
-                    templates_[fileBaseName(*itf)] = TemplateInfo(template_content, begin, end);
-                }
-            }
+                templates_[fileBaseName(*itf)] = *itf;
         }
     }
 }
@@ -958,8 +950,14 @@ void DocView::codeTemplate()
         auto it = templates_.find(QStringToStdString(ptext_edit_->selectedText()));
         if (it != templates_.end())
         {
-            ptext_edit_->replaceSelectedText(StdStringToQString(it->second.templateContent()));
-            ptext_edit_->setSelection(0, start_pos + it->second.begin(), 0, start_pos + it->second.end());
+            string template_content;
+            int begin = 0;
+            int end = 0;
+            if (Extension::getInstance().templateFileInfo(it->second, index - (end_pos - start_pos), template_content, begin, end))
+            {
+                ptext_edit_->replaceSelectedText(StdStringToQString(template_content));
+                ptext_edit_->setSelection(0, start_pos + begin, 0, start_pos + end);
+            }
         }
     }
 }
