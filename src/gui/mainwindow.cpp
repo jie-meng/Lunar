@@ -420,6 +420,7 @@ void MainWindow::initActions()
     phelp_about_action_ = new QAction(tr("Information"), this);
     phelp_about_action_->setStatusTip(tr("Information."));
     phelp_about_action_->setIcon(QIcon(tr(":/res/about.png")));
+    phelp_about_action_->setShortcut(Qt::Key_F1);
 }
 
 void MainWindow::initMenubar()
@@ -506,6 +507,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pview_close_docks_action_);
     ptoolbar->addAction(pfile_close_action_);
     ptoolbar->addAction(pfile_close_all_action_);
+    ptoolbar->addAction(phelp_about_action_);
 }
 
 void MainWindow::InitStatusBar()

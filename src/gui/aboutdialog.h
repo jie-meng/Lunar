@@ -18,6 +18,8 @@ public:
     void init();
     void initGui();
 private:
+    QLabel* createLinkLabel(const QString& name, const QString& link);
+private:
     QLabel *plabel_email_;
     QLabel *plabel_github_;
     QLabel *plabel_wiki_;
