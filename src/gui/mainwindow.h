@@ -68,6 +68,7 @@ private Q_SLOTS:
     void editJumpForward();
     void viewFileExplorer();
     void viewSearchResultsWidget();
+    void viewOutput();
     void viewLocateCurrentFile();
     void viewDocuments();
     void viewCloseDocks();
@@ -132,6 +133,7 @@ private:
     QAction* pedit_goto_line_begin_end_;
     QAction* pview_file_explorer_action_;
     QAction* pview_search_results_action_;
+    QAction* pview_output_action_;
     QAction* pview_locate_current_file_;
     QAction* pview_documents_action_;
     QAction* pview_close_docks_action_;

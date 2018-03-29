@@ -36,6 +36,7 @@
     <file>res/locate.png</file>
     <file>res/settings.png</file>
     <file>res/template.png</file>
+    <file>res/output.png</file>
     <file>res/app.ico</file>
 </qresource>
 </RCC>

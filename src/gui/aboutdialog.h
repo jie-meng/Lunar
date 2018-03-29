@@ -19,6 +19,8 @@ public:
     void initGui();
 private:
     QLabel *plabel_email_;
+    QLabel *plabel_github_;
+    QLabel *plabel_wiki_;
     QLabel *plabel_version_;
     QLabel *plabel_platform_;
 private:

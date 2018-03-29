@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget* parent)
     pedit_goto_line_begin_end_(NULL),
     pview_file_explorer_action_(NULL),
     pview_search_results_action_(NULL),
+    pview_output_action_(NULL),
     pview_locate_current_file_(NULL),
     pview_documents_action_(NULL),
     pview_close_docks_action_(NULL),
@@ -348,7 +349,7 @@ void MainWindow::initActions()
 
     pedit_file_explorer_context_menu_action_ = new QAction(tr("Show File Explorer context menu"), this);
     pedit_file_explorer_context_menu_action_->setStatusTip(tr("Show File Explorer context menu."));
-    pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_U);
+    pedit_file_explorer_context_menu_action_->setShortcut(Qt::CTRL + Qt::Key_J);
 
     pedit_goto_line_begin_end_ = new QAction(tr("Goto line begin or end"), this);
     pedit_goto_line_begin_end_->setStatusTip(tr("Goto line begin or end."));
@@ -369,6 +370,11 @@ void MainWindow::initActions()
     pview_search_results_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_R);
     pview_search_results_action_->setIcon(QIcon(tr(":/res/search_results.png")));
 
+    pview_output_action_ = new QAction(tr("Output"), this);
+    pview_output_action_->setStatusTip((tr("Go to output.")));
+    pview_output_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_U);
+    pview_output_action_->setIcon(QIcon(tr(":/res/output.png")));
+
     pview_locate_current_file_ = new QAction(tr("Locate current file"), this);
     pview_locate_current_file_->setStatusTip((tr("Locate current file.")));
     pview_locate_current_file_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_K);
@@ -376,7 +382,7 @@ void MainWindow::initActions()
 
     pview_documents_action_ = new QAction(tr("Documents"), this);
     pview_documents_action_->setStatusTip((tr("Go to documents edit.")));
-    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_J);
+    pview_documents_action_->setShortcut(Qt::CTRL + Qt::Key_U);
     pview_documents_action_->setIcon(QIcon(tr(":/res/document_edit.png")));
 
     pview_close_docks_action_ = new QAction(tr("Close docks"), this);
@@ -451,6 +457,7 @@ void MainWindow::initMenubar()
     QMenu* pview_menu = menuBar()->addMenu(tr("&View"));
     pview_menu->addAction(pview_file_explorer_action_);
     pview_menu->addAction(pview_search_results_action_);
+    pview_menu->addAction(pview_output_action_);
     pview_menu->addAction(pview_locate_current_file_);
     pview_menu->addAction(pview_documents_action_);
     pview_menu->addAction(pview_close_docks_action_);
@@ -493,6 +500,7 @@ void MainWindow::initToolbar()
     ptoolbar->addAction(pedit_jump_forward_action_);
     ptoolbar->addAction(pview_file_explorer_action_);
     ptoolbar->addAction(pview_search_results_action_);
+    ptoolbar->addAction(pview_output_action_);
     ptoolbar->addAction(pview_locate_current_file_);
     ptoolbar->addAction(pview_documents_action_);
     ptoolbar->addAction(pview_close_docks_action_);
@@ -551,9 +559,7 @@ void MainWindow::initConnections()
     connect(pedit_jump_forward_action_, SIGNAL(triggered()), this, SLOT(editJumpForward()));
     connect(pedit_file_explorer_context_menu_action_, &QAction::triggered, [this]()
     {
-        if (pleft_widget_->isHidden())
-            return;
-
+        viewFileExplorer();
         pfile_explorer_widget_->showContextMenu();
     });
     connect(pedit_goto_line_begin_end_, &QAction::triggered, [this]()
@@ -571,6 +577,7 @@ void MainWindow::initConnections()
 
     connect(pview_file_explorer_action_, SIGNAL(triggered()), this, SLOT(viewFileExplorer()));
     connect(pview_search_results_action_, SIGNAL(triggered()), this, SLOT(viewSearchResultsWidget()));
+    connect(pview_output_action_, SIGNAL(triggered()), this, SLOT(viewOutput()));
     connect(pview_locate_current_file_, SIGNAL(triggered()), this, SLOT(viewLocateCurrentFile()));
     connect(pview_documents_action_, SIGNAL(triggered()), this, SLOT(viewDocuments()));
     connect(pview_close_docks_action_, SIGNAL(triggered()), this, SLOT(viewCloseDocks()));
@@ -994,6 +1001,14 @@ void MainWindow::viewSearchResultsWidget()
         pbottom_widget_->show();
     pbottom_tab_widget_->setCurrentWidget(psearch_results_widget_);
     psearch_results_widget_->setFocus();
+}
+
+void MainWindow::viewOutput()
+{
+    if (pbottom_widget_->isHidden())
+        pbottom_widget_->show();
+    pbottom_tab_widget_->setCurrentWidget(poutput_widget_);
+    poutput_widget_->setFocusOnOutput();
 }
 
 void MainWindow::viewLocateCurrentFile()

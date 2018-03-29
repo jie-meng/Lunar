@@ -32,6 +32,7 @@ public:
                                bool from_start = false
                                );
     void setFocusOnInput();
+    void setFocusOnOutput();
 Q_SIGNALS:
     void sendInput(const QString&);
 public Q_SLOTS:

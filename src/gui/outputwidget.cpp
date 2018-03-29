@@ -89,6 +89,11 @@ void OutputWidget::setFocusOnInput()
     pinput_line_->setFocus();
 }
 
+void OutputWidget::setFocusOnOutput()
+{
+    poutput_->setFocus();
+}
+
 void OutputWidget::input()
 {
     emit sendInput(pinput_line_->text() + "\n");
