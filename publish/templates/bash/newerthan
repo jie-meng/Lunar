@@ -1,0 +1,1 @@
+"${{BEGIN}}file1{{END}}" -nt "$file2"
