@@ -1,1 +1,1 @@
-for i in {{BEGIN}}range(0, 10, 1){{END}}:
+for {{BEGIN}}i{{END}} in range(0, 10, 1):

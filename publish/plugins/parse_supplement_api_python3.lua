@@ -13,7 +13,7 @@ local Class = {
     class_name_ = nil,
     module_name_ = nil,
     indent_ = nil,
-    
+
     extends_ = {},
     functions_ = {},
     static_fields_ = {}
@@ -23,31 +23,31 @@ function Class:new(name, module_name, indent)
     local o = {}
     setmetatable(o, self)
     self.__index = self
-        
+
     o.name_ = name
     o.class_name_ = name
     o.module_name_ = module_name
     o.indent_ = indent
-    
+
     o.ctor_ = nil
     o.extends_ = {}
     o.functions_ = {}
     o.static_fields_ = {}
-    
+
     return o
 end
 
 function Class:clone()
     local c = Class:new(self:getName(), self:getModuleName(), self:getIndent())
-    
+
     for i, v in ipairs(self:getExtends()) do
         c:addExtend(v)
     end
-    
+
     for i, v in ipairs(self:getFunctions()) do
         c:addFunction(v)
     end
-    
+
     return c
 end
 
@@ -120,7 +120,7 @@ function Class:removeExtends(super_class)
             break
         end
     end
-    
+
     return self
 end
 
@@ -147,10 +147,10 @@ function Import:new(name, is_from_import)
     local o = {}
     setmetatable(o, self)
     self.__index = self
-    
+
     o.name_ = name
     o.is_from_import_ = is_from_import
-    
+
     return o
 end
 
@@ -253,42 +253,69 @@ function parsePydocGenApi(apis, imports)
     end
 end
 
+function processImportAs(apis, imports)
+    local import_as_map = {}
+    local import_as_map_not_empty = false
+    for _, v in pairs(imports) do
+        if v:getImportAs() then
+            import_as_map[v:getName()] = v:getImportAs()
+            import_as_map_not_empty = true
+        end
+    end
+    if import_as_map_not_empty then
+        local import_as_apis = {}
+        for _, api in ipairs(apis) do
+            for k, v in pairs(import_as_map) do
+                if util.strStartWith(api, k) then
+                    table.insert(import_as_apis, util.strReplace(api, k, v))
+                end
+            end
+        end
+
+        for _, v in ipairs(import_as_apis) do
+            table.insert(apis, v)
+        end
+    end
+end
+
 function parseSupplementApi(filename, cursor_line, project_src_dir)
     local apis = {}
-    
+
     local path, name = util.splitPathname(filename)
     local base = util.fileBaseName(name)
-    
+
     local search_path = util.currentPath()
     if util.strTrim(project_src_dir) ~= "" then
         search_path = search_path .. "/" .. project_src_dir
     end
-    
+
     local imports = parseImports(filename)
     --current file api is exactly same as from import * format
     imports[""] = Import:new("", true)
     local functions = parseFunctions("." .. base, path, search_path, false, true)
     local classes = parseClasses("." .. base, path, search_path, true)
-    
+
     for _, v in pairs(functions) do
         table.insert(apis, v)
     end
-    
+
     -- ctors
     for _, v in pairs(classes) do
         if imports[v:getModuleName()] then
             parseCtorApis(apis, imports, v)
         end
     end
-    
+
     for _, v in pairs(classes) do
         if imports[v:getModuleName()] then
             parseClassesApis(apis, imports, v, v, false)
         end
     end
-    
+
+    processImportAs(apis, imports)
+
     parsePydocGenApi(apis, imports)
-    
+
     return apis
 end
 
@@ -296,14 +323,14 @@ function findCtorInClass(cls)
     if cls:getCtor() then
         return cls:getCtor()
     end
-    
+
     for _, v in ipairs(cls:getExtends()) do
         local ctor = findCtorInClass(v)
         if ctor then
             return ctor
         end
     end
-    
+
     return nil
 end
 
@@ -358,7 +385,7 @@ function parseClassesApis(apis, imports, derived, cls, is_object)
     for _, v in pairs(cls:getExtends()) do
         parseClassesApis(apis, imports, derived, v, is_object)
     end
-    
+
     for _, v in pairs(cls:getFunctions()) do
         if is_object or imports[derived:getModuleName()]:isFromImport() then
             table.insert(apis, string.format("%s.%s", derived:getName(), v))
@@ -366,7 +393,7 @@ function parseClassesApis(apis, imports, derived, cls, is_object)
             table.insert(apis, string.format("%s.%s", derived:getModuleName() .. "." .. derived:getName(), v))
         end
     end
-    
+
     for _, v in pairs(cls:getStaticFields()) do
         if is_object or imports[derived:getModuleName()]:isFromImport() then
             table.insert(apis, string.format("%s.%s", derived:getName(), v))
@@ -382,13 +409,13 @@ function findClass(class_desc, classes)
             return v
         end
     end
-    
+
     for _, v in pairs(classes) do
         if class_desc == v:getName() then
             return v
         end
     end
-    
+
     return nil
 end
 
@@ -415,13 +442,13 @@ function getModuleFile(module_name, path, search_path)
             return filename
         end
     end
-    
+
     return nil
 end
 
 function parseImports(filename)
     local imports = {}
-    
+
     local f = io.open(filename, "r")
     if f then
         local line = f:read("*line")
@@ -430,15 +457,15 @@ function parseImports(filename)
                 if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
-                
+
                 if getStartSpaceCount(line) > 0 then
                     break
                 end
-                
+
                 if (not util.strStartWith(line, "import")) and (not util.strStartWith(line, "from")) then
                     break
                 end
-                
+
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
                     local _, stop = string.find(line, pattern_from_import)
@@ -446,7 +473,7 @@ function parseImports(filename)
                     imports[from_import_module]:setFromImportComponent(string.sub(line, stop + 1))
                     break
                 end
-                
+
                 local import_module = string.match(line, pattern_import)
                 if import_module then
                     imports[import_module] = Import:new(import_module, false)
@@ -458,25 +485,25 @@ function parseImports(filename)
                     end
                     break
                 end
-            
+
             until true
             line = f:read("*line")
         end
         io.close()
     end
-    
+
     return imports
 end
 
 function parseFunctions(module_name, path, search_path, add_module_prefix, recursive, function_coll)
 
     local functions = function_coll or {}
-    
+
     local filename = getModuleFile(module_name, path, search_path)
     if not filename then
         return functions
     end
-    
+
     local f = io.open(filename, "r")
     if f then
         local filepath = util.splitPathname(filename)
@@ -486,11 +513,11 @@ function parseFunctions(module_name, path, search_path, add_module_prefix, recur
                 if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
-                
+
                 if getStartSpaceCount(line) > 0 then
                     break
                 end
-                
+
                 local func, param = string.match(line, pattern_func)
                 if func and param then
                     if add_module_prefix then
@@ -498,49 +525,49 @@ function parseFunctions(module_name, path, search_path, add_module_prefix, recur
                     else
                         table.insert(functions, string.format("%s(%s)", func, param))
                     end
-                    
+
                     break
                 end
-                
+
                 if recursive then
                     local from_import_module = string.match(line, pattern_from_import)
                     if from_import_module then
                         parseFunctions(from_import_module, filepath, search_path, false, false, functions)
                         break
                     end
-                    
+
                     local import_module = string.match(line, pattern_import)
                     if import_module then
                         parseFunctions(import_module, filepath, search_path, true, false, functions)
                         break
                     end
                 end
-                
+
             until true
             line = f:read("*line")
         end
         io.close(f)
     end
-    
+
     return functions
 end
 
 function parseClasses(module_name, path, search_path, is_current_file, class_coll)
-    
+
     local classes = class_coll or {}
     local class_scope_stack = {}
-    
+
     local filename = getModuleFile(module_name, path, search_path)
     if not filename then
         return classes
     end
-    
+
     local f = io.open(filename, "r")
     if f then
         if is_current_file then
             module_name = ""
         end
-    
+
         local filepath = util.splitPathname(filename)
         local line = f:read("*line")
         while line do
@@ -548,7 +575,7 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                 if util.strTrim(line) == "" or util.strStartWith(util.strTrimLeft(line), "#") then
                     break
                 end
-                
+
                 local current_class = getCurrentClassInScopeStack(class_scope_stack)
                 if current_class then
                     if getStartSpaceCount(line) == current_class:getIndent() then
@@ -559,15 +586,15 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                         -- do not break here
                     end
                 end
-                
+
                 local class_name1 = string.match(line, pattern_class)
                 if class_name1 then
                     local c = Class:new(class_name1, module_name, getStartSpaceCount(line))
                     table.insert(class_scope_stack, c)
-                    
+
                     break
                 end
-                
+
                 local class_name2, extends = string.match(line, pattern_class_extend)
                 if class_name2 and extends then
                     local c = Class:new(class_name2, module_name, getStartSpaceCount(line))
@@ -582,19 +609,19 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                         end
                     end
                     table.insert(class_scope_stack, c)
-                    
+
                     break
                 end
-                
+
                 if #class_scope_stack > 0 then
                     local param_init = string.match(line, pattern_func_init)
-                    if param_init then                        
+                    if param_init then
                         local current_class = getCurrentClassInScopeStack(class_scope_stack)
                         current_class:setCtor(string.format("(%s)", removeSelfFromParams(param_init)))
-                        
+
                         break
                     end
-                    
+
                     local func, param = string.match(line, pattern_func)
                     if func and param then
                         if not util.strStartWith(func, "__") then
@@ -603,7 +630,7 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                         end
                         break
                     end
-                    
+
                     local field = string.match(line, pattern_class_static_field)
                     -- do not consider inner class's fields
                     if field and getStartSpaceCount(line) == 4 then
@@ -612,25 +639,25 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
                         break
                     end
                 end
-                
+
                 local from_import_module = string.match(line, pattern_from_import)
                 if from_import_module then
                     parseClasses(from_import_module, filepath, search_path, false, classes)
                     break
                 end
-                        
+
                 local import_module = string.match(line, pattern_import)
                 if import_module then
                     parseClasses(import_module, filepath, search_path, false, classes)
                     break
                 end
-                
+
             until true
             line = f:read("*line")
         end
         io.close(f)
     end
-    
+
     while #class_scope_stack > 0 do
         local current_class = getCurrentClassInScopeStack(class_scope_stack)
         if current_class then
@@ -640,6 +667,6 @@ function parseClasses(module_name, path, search_path, is_current_file, class_col
             table.remove(class_scope_stack)
         end
     end
-    
+
     return classes
 end
