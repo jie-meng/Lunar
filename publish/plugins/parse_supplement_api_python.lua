@@ -1,3 +1,8 @@
+local file_ext = nil
+if pcall(require, 'file_ext') then
+    file_ext = require('file_ext')
+end
+
 local pattern_func = [[def%s+([%w_]+)%s*%((.*)%)%s*:]]
 local pattern_func_init = [[def%s+__init__%s*%((.*)%)%s*:]]
 local pattern_class = [[class%s+([%w_]+)%s*:]]
@@ -278,6 +283,36 @@ function processImportAs(apis, imports)
     end
 end
 
+function pathToModule(path, search_path)
+    local relative_path = util.strReplace(path, search_path .. '/', '')
+    local formated_path = util.strReplaceAll(relative_path, '/', '.')
+    return util.strLeft(formated_path, string.len(formated_path) - 3)
+end
+
+function processLocalImports(apis, filename, search_path)
+    if not file_ext then
+        return
+    end
+
+    local modules = file_ext.findFilesFlat(
+        search_path,
+        function (p)
+            local basename = util.fileBaseName(p)
+            return not util.strStartWith(basename, '.') and basename ~= 'node_modules'
+        end,
+        function (f)
+            return util.fileExtension(f) == 'py'
+        end)
+
+    for i, v in ipairs(modules) do
+        table.insert(apis, pathToModule(v, search_path))
+        local path = util.splitPathname(filename)
+        if util.strStartWith(v, path) then
+            table.insert(apis, pathToModule(v, path))
+        end
+    end
+end
+
 function parseSupplementApi(filename, cursor_line, project_src_dir)
 
     local apis = {}
@@ -333,6 +368,8 @@ function parseSupplementApi(filename, cursor_line, project_src_dir)
     end
 
     processImportAs(apis, imports)
+
+    processLocalImports(apis, filename, search_path)
 
     parsePydocGenApi(apis, imports)
 
