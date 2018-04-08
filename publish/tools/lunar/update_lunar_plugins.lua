@@ -1,4 +1,4 @@
---[[ To run this script, you should have svn command line installed on your system. For windows, 
+--[[ To run this script, you should have svn command line installed on your system. For windows,
     you can install tortoisesvn with its command line]]
 
 print('Are you sure to replace extension.lua which may change your current settings? (y/n)\n')
@@ -36,18 +36,18 @@ for _, v in ipairs(files) do
         if util.strStartWith(is_update_exetension_lua, 'y', false) then
             util.pathRemove(fpath .. '/extension_backup.lua')
             util.pathRename(fpath .. '/extension.lua', fpath .. '/extension_backup.lua')
-            util.fileCopyFullPath(v, fpath .. '/extension.lua')
+            util.fileCopyFullPath(v, fpath .. '/extension.lua', false)
             if util.readTextFile(fpath .. '/extension.lua') == util.readTextFile(fpath .. '/extension_backup.lua') then
                 util.pathRemove(fpath .. '/extension_backup.lua')
             end
         else
-            util.fileCopyFullPath(v, fpath .. '/extension_latest.lua')
+            util.fileCopyFullPath(v, fpath .. '/extension_latest.lua', false)
             if util.readTextFile(fpath .. '/extension.lua') == util.readTextFile(fpath .. '/extension_latest.lua') then
                 util.pathRemove(fpath .. '/extension_latest.lua')
             end
         end
     else
-        util.fileCopyFullPath(v, util.strReplace(v, 'download_tmp/publish/', ''))
+        util.fileCopyFullPath(v, util.strReplace(v, 'download_tmp/publish/', ''), false)
     end
 end
 
