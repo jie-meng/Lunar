@@ -584,7 +584,7 @@ function templateFileInfo(template_file, indent)
     end
 
     local line_sep = '\n'
-    if strContains(util.platformInfo(), 'win', false) then
+    if util.strContains(util.platformInfo(), 'win', false) then
         line_sep = '\r\n'
     end
 
