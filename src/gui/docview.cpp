@@ -955,11 +955,8 @@ void DocView::codeTemplate()
             int end = 0;
             if (Extension::getInstance().templateFileInfo(it->second, index - (end_pos - start_pos), template_content, begin, end))
             {
-                int offset = 0;
-                if (platformInfo() == kPlatformWindows) {
-                    //On windows start_pos is not same as Unix, might caused by end of line '\r\n' not '\n'.
-                    offset = line;
-                }
+                //On windows start_pos is not same as Unix, might caused by end of line '\r\n' not '\n'.
+                int offset = platformInfo() == kPlatformWindows ? line : 0;
 
                 ptext_edit_->replaceSelectedText(StdStringToQString(template_content));
                 ptext_edit_->setSelection(0, start_pos - offset + begin, 0, start_pos - offset + end);

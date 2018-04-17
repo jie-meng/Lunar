@@ -49,8 +49,12 @@ QString qtReadFile(const QString& filename, const char* codec)
     QTextStream in(&f);
     in.setCodec(codec);
     QString str;
+
+    //On windows start_pos is not same as Unix, might caused by end of line '\r\n' not '\n'.
+    QString lineSep = platformInfo() == kPlatformWindows ? "\r\n" : "\n";
+
     while(!in.atEnd())
-        str.append(in.readLine() + "\n");
+        str.append(in.readLine() + lineSep);
 
     return str;
 }
@@ -276,7 +280,7 @@ void LunarGlobal::readCfg(bool read_all)
     extension_func_is_legal_file_ = text_cfg.getValue("Extension.Func.IsLegalFile", "isLegalFile");
     extension_func_find_files_ = text_cfg.getValue("Extension.Func.FindFiles", "findFiles");
 
-    if (read_all) 
+    if (read_all)
     {
         //These files can be changed in App
         string font_type = text_cfg.getValue("Font.Type", string("Monaco"));
