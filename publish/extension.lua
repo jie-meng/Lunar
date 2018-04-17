@@ -583,7 +583,12 @@ function templateFileInfo(template_file, indent)
         io.close(f)
     end
 
-    local content =  util.strTrim(table.concat(lines, '\n'))
+    local line_sep = '\n'
+    if strContains(util.platformInfo(), 'win', false) then
+        line_sep = '\r\n'
+    end
+
+    local content =  util.strTrim(table.concat(lines, line_sep))
     local begin_pos = string.find(content, flag_begin)
 
     if begin_pos then
