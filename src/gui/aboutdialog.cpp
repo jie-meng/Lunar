@@ -28,7 +28,7 @@ void AboutDialog::init()
 
 void AboutDialog::initGui()
 {
-    plabel_version_ = new QLabel(tr("Version: 1.10.3"));
+    plabel_version_ = new QLabel(tr("Version: 1.10.4"));
     plabel_email_ = new QLabel(tr("Email: jmengxy@gmail.com"));
     plabel_github_ = createLinkLabel("Lunar on Github", "https://github.com/jie-meng/Lunar");
     plabel_wiki_ = createLinkLabel("Lunar Wiki", "https://github.com/jie-meng/Lunar/wiki");

@@ -38,8 +38,10 @@ void FindDialog::init()
 
 void FindDialog::initGui()
 {
+#ifdef __APPLE__
     setWindowFlags(Qt::Tool);
-    
+#endif
+
     ptab_widget_ = new QTabWidget;
     pfind_tab_ = new FindTab;
     preplace_tab_ = new ReplaceTab;
