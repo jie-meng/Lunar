@@ -182,7 +182,7 @@ function parseFileType(filename)
     end
 
 	if string.lower(name) == "cmakelists.txt" or string.lower(util.fileExtension(name)) == "cmake" then
-		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake" }
+		return { type = "cmake", comment_line = "#", api = "apis/cmake", executor = "cmake", templates = "templates/cmake" }
 	end
 
     if util.strContains(util.fileBaseName(name), "Dockerfile") then
