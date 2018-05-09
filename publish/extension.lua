@@ -296,7 +296,8 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "cpp" or
         string.lower(util.fileExtension(name)) == "hpp" or
         string.lower(util.fileExtension(name)) == "cxx" or
-        string.lower(util.fileExtension(name)) == "hxx" then
+        string.lower(util.fileExtension(name)) == "hxx" or
+        string.lower(util.fileExtension(name)) == "mm" then
         return
             {
                 type = "cpp",
@@ -374,6 +375,7 @@ legalFileExtTable["py"] = true
 legalFileExtTable["rb"] = true
 legalFileExtTable["sh"] = true
 legalFileExtTable["m"] = true
+legalFileExtTable["mm"] = true
 legalFileExtTable["bat"] = true
 legalFileExtTable["cmd"] = true
 legalFileExtTable["txt"] = true
