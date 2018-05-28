@@ -314,7 +314,7 @@ function parseFileType(filename)
 
     -- github pages (jekyll) project
     if util.isPathFile('_config.yml') and util.isPathFile('Gemfile') and util.isPathDir('_posts') then
-        if string.lower(util.fileExtension(name)) == "md" and util.isPathDir() then
+        if string.lower(util.fileExtension(name)) == "md" then
             return
                 {
                     type = "markdown",
