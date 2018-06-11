@@ -372,7 +372,7 @@ void MainWindow::initActions()
 
     pview_output_action_ = new QAction(tr("Output"), this);
     pview_output_action_->setStatusTip((tr("Go to output.")));
-    pview_output_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_U);
+    pview_output_action_->setShortcut(Qt::CTRL + Qt::SHIFT + Qt::Key_M);
     pview_output_action_->setIcon(QIcon(tr(":/res/output.png")));
 
     pview_locate_current_file_ = new QAction(tr("Locate current file"), this);
