@@ -76,6 +76,7 @@ MainWindow::MainWindow(QWidget* parent)
     pview_zoom_in_(NULL),
     pview_zoom_out_(NULL),
     pview_zoom_to_origin_(NULL),
+    pview_goto_tabs_(9),
     prun_run_action_(NULL),
     prun_run_recent_action_(NULL),
     prun_stop_action_(NULL),
@@ -402,6 +403,13 @@ void MainWindow::initActions()
     pview_zoom_to_origin_->setStatusTip(tr("Zoom to origin."));
     pview_zoom_to_origin_->setShortcut(Qt::CTRL + Qt::Key_Equal);
 
+    for (int i = 0; i < 9; ++i)
+    {
+        pview_goto_tabs_[i] = new QAction(QString("Go to tab %1").arg(i + 1), this);
+        pview_goto_tabs_[i]->setStatusTip(QString("Go to tab %1.").arg(i + 1));
+        pview_goto_tabs_[i]->setShortcut(Qt::CTRL + Qt::Key_1 + i);
+    }
+
     prun_run_action_ = new QAction(tr("Run"), this);
     prun_run_action_->setStatusTip(tr("Run."));
     prun_run_action_->setIcon(QIcon(tr(":/res/run.png")));
@@ -465,6 +473,8 @@ void MainWindow::initMenubar()
     pview_menu->addAction(pview_zoom_in_);
     pview_menu->addAction(pview_zoom_out_);
     pview_menu->addAction(pview_zoom_to_origin_);
+    for (int i = 0; i < 9; ++i)
+        pview_menu->addAction(pview_goto_tabs_[i]);
 
     QMenu* prun_menu = menuBar()->addMenu(tr("&Run"));
     prun_menu->addAction(prun_run_action_);
@@ -601,6 +611,23 @@ void MainWindow::initConnections()
         if (pdocview)
             pdocview->zoomToOrigin();
     });
+
+    for (int i = 0; i < 9; ++i)
+    {
+        connect(pview_goto_tabs_[i], &QAction::triggered, [i, this]()
+        {
+            if (i == 8)
+            {
+                if (pmain_tabwidget_->count() > 0)
+                    pmain_tabwidget_->setCurrentIndex(pmain_tabwidget_->count() - 1);
+            }
+            else
+            {
+                if (pmain_tabwidget_->count() > i)
+                    pmain_tabwidget_->setCurrentIndex(i);
+            }
+        });
+    }
 
     connect(prun_run_action_, SIGNAL(triggered()), this, SLOT(run()));
     connect(prun_run_recent_action_, SIGNAL(triggered()), this, SLOT(runRecent()));

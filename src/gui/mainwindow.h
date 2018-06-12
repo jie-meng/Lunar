@@ -140,6 +140,7 @@ private:
     QAction* pview_zoom_in_;
     QAction* pview_zoom_out_;
     QAction* pview_zoom_to_origin_;
+    std::vector<QAction*> pview_goto_tabs_;
     QAction* prun_run_action_;
     QAction* prun_run_recent_action_;
     QAction* prun_stop_action_;
