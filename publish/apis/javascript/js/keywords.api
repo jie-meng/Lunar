@@ -56,3 +56,5 @@ void
 volatile
 while
 with
+async
+await
