@@ -21,12 +21,12 @@ function isFuncWithReturnType(line_str, text)
     if not isKeyWord(return_type) and func_name then
         return true
     end
-    
+
     return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
-    
+
     return false
 end
 
@@ -35,12 +35,12 @@ function isMethodWithReturnType(line_str, text)
     if not isKeyWord(return_type) and func_name then
         return true
     end
-    
+
     return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
-    
+
     return false
 end
 
@@ -64,34 +64,34 @@ function isTypedef(line_str, text)
 end
 
 function isFunc(line_str, previous_line_str, text)
-    if string.match(line_str, '(' .. text .. ')%s*%(') ~= nil 
+    if string.match(line_str, '(' .. text .. ')%s*%(') ~= nil
         and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
-    
-    if string.match(line_str, '(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(') ~= nil 
+
+    if string.match(line_str, '(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(') ~= nil
         and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
-    
+
     return false
 end
 
 function isMethod(line_str, previous_line_str, text)
-    if string.match(line_str, '[%w_]+%s*::%s*(' .. text .. ')%s*%(') ~= nil 
+    if string.match(line_str, '[%w_]+%s*::%s*(' .. text .. ')%s*%(') ~= nil
         and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
-    
-    if string.match(line_str, '[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::%s*(' .. text .. ')%s*%(') ~= nil 
+
+    if string.match(line_str, '[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::%s*(' .. text .. ')%s*%(') ~= nil
         and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
-    
+
     return false
 end
 
@@ -106,7 +106,7 @@ function tryGetFuncWithReturnType(line_str)
     if not isKeyWord(return_type) and func_name then
         return func_name
     end
-    
+
     return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return func_name
@@ -123,17 +123,17 @@ function tryGetClassOrStruct(line_str)
     if class_name then
         return class_name
     end
-    
+
     class_name = string.match(line_str, 'enum%s+[%w_%(%)]+%s+([%w_]+)')
     if class_name then
         return class_name
     end
-    
+
     class_name = string.match(line_str, 'union%s+[%w_%(%)]+%s+([%w_]+)')
     if class_name then
         return class_name
     end
-    
+
     class_name = string.match(line_str, 'class%s+([%w_]+)')
     if class_name then
         return class_name
@@ -143,12 +143,12 @@ function tryGetClassOrStruct(line_str)
     if class_name then
         return class_name
     end
-    
+
     class_name = string.match(line_str, 'enum%s+([%w_]+)')
     if class_name then
         return class_name
     end
-    
+
     class_name = string.match(line_str, 'union%s+([%w_]+)')
     if class_name then
         return class_name
@@ -170,7 +170,7 @@ function tryGetFunc(line_str, previous_line_str)
         and not isKeyWord(previous_line_str) then
         return func_name
     end
-    
+
     func_name = string.match(line_str, '([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
     if func_name
         and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
@@ -192,7 +192,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
         return false
     end
     parsed_files[filename] = true
-    
+
     local found = false
     local f = io.open(filename, "r")
     if f then
@@ -208,7 +208,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 if trimmed_line == "" or util.strStartWith(trimmed_line, "//") then
                     break
                 end
-                
+
                 local matched = false
                 local inc, directive = isInclude(trimmed_line)
                 if not exclude_inc and inc then
@@ -222,7 +222,7 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                             local item = string.format("%s\n%d\n%s", project_dir_absolute .. "/" .. inc, 1, inc)
                             coll[item] = true
                             found = true
-                        else                            
+                        else
                             for _, v in ipairs(inc_path) do
                                 if v.find == directive then
                                     if directive then
@@ -258,8 +258,8 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                     matched = true
                 elseif isMethod(trimmed_line, previous_line_str, text) then
                     matched = true
-                end                
-                
+                end
+
                 if matched then
                     local item = string.format("%s\n%d\n%s", filename, line_index, trimmed_line)
                     coll[item] = true
@@ -267,25 +267,25 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 end
                 previous_line_str = trimmed_line
             until true
-            
+
             readline = f:read("*line")
             line_index = line_index + 1
         end
-        
+
         if not found then
             -- cannot find text in current file, then parse include files
             for _, inc in ipairs(inc_coll) do
                 if found then
                     break
                 end
-                
+
                 if inc.find then
-                    -- directive path <>                    
+                    -- directive path <>
                     for _, v in ipairs(inc_path) do
                         if found then
                             break
                         end
-                        
+
                         if v.find then
                             if parseFile(coll, parsed_files, project_src_dir, v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                 found = true
@@ -302,12 +302,12 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                         if parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                             found = true
                         end
-                    else                        
+                    else
                         for _, v in ipairs(inc_path) do
                             if found then
                                 break
                             end
-                            
+
                             if not v.find then
                                 if parseFile(coll, parsed_files, project_src_dir, project_dir_absolute .. "/" .. v.path .. "/" .. inc.file, current_line_index, text, inc_path, true) then
                                     found = true
@@ -318,10 +318,10 @@ function parseFile(coll, parsed_files, project_src_dir, filename, current_line_i
                 end
             end
         end
-        
+
         io.close(f)
     end
-    
+
     return found
 end
 
@@ -337,8 +337,8 @@ function gotoDefinition(text, line, filename, project_src_dir)
                 local trimmed_line = util.strTrim(readline)
                 if trimmed_line == "" or util.strStartWith(trimmed_line, "#") then
                     break
-                end 
-                
+                end
+
                 if trimmed_line == "INCLUDEPATH:" then
                     region = "INCLUDEPATH"
                 else
@@ -351,12 +351,12 @@ function gotoDefinition(text, line, filename, project_src_dir)
                     end
                 end
             until true
-            
+
             readline = cfg:read("*line")
         end
         io.close(cfg)
     end
-    
+
     local coll = {}
     local parsed_files = {}
     parseFile(coll, parsed_files, project_src_dir, filename, line, text, inc_path)
@@ -370,26 +370,29 @@ function gotoDefinition(text, line, filename, project_src_dir)
             or util.fileExtension(string.lower(v)) == 'hxx'
             or util.fileExtension(string.lower(v)) == 'c'
             or util.fileExtension(string.lower(v)) == 'cpp'
-            or util.fileExtension(string.lower(v)) == 'cxx') then
+            or util.fileExtension(string.lower(v)) == 'cxx'
+            or util.fileExtension(string.lower(v)) == 'ino'
+            or util.fileExtension(string.lower(v)) == 'cc'
+            or util.fileExtension(string.lower(v)) == 'mm') then
             parseFile(coll, parsed_files, project_src_dir, v, line, text, inc_path, nil, true)
         end
     end
-    
+
     local results = {}
     for k, v in pairs(coll) do
         table.insert(results, k)
     end
-    table.sort(results, 
+    table.sort(results,
         function (a, b)
             local array_a = util.strSplit(a, "\n")
             local array_b = util.strSplit(b, "\n")
-            
+
             if array_a[1] == array_b[1] then
                 return  tonumber(array_a[2]) < tonumber(array_b[2])
             else
                 return array_a[1] < array_b[1]
             end
         end)
-    
+
     return results
 end
