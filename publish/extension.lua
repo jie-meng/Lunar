@@ -297,6 +297,8 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "hpp" or
         string.lower(util.fileExtension(name)) == "cxx" or
         string.lower(util.fileExtension(name)) == "hxx" or
+        string.lower(util.fileExtension(name)) == "ido" or
+        string.lower(util.fileExtension(name)) == "cc" or
         string.lower(util.fileExtension(name)) == "mm" then
         return
             {
@@ -396,6 +398,8 @@ legalFileExtTable["cpp"] = true
 legalFileExtTable["hpp"] = true
 legalFileExtTable["cxx"] = true
 legalFileExtTable["hxx"] = true
+legalFileExtTable["ino"] = true
+legalFileExtTable["cc"] = true
 legalFileExtTable["js"] = true
 legalFileExtTable["jsx"] = true
 legalFileExtTable["css"] = true
