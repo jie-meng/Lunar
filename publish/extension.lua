@@ -297,7 +297,7 @@ function parseFileType(filename)
         string.lower(util.fileExtension(name)) == "hpp" or
         string.lower(util.fileExtension(name)) == "cxx" or
         string.lower(util.fileExtension(name)) == "hxx" or
-        string.lower(util.fileExtension(name)) == "ido" or
+        string.lower(util.fileExtension(name)) == "ino" or
         string.lower(util.fileExtension(name)) == "cc" or
         string.lower(util.fileExtension(name)) == "mm" then
         return
