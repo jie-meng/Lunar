@@ -59,9 +59,9 @@ function parseDoc(results, search_path, filename, text, depth)
                 if depth < 2 and not matched and string.match(trimmed_line, "def%s+" .. text .. "%s*%(") then
                     matched = true
                 end
-                
+
                 if matched then
-                    local _, j = string.find(filename, search_path)
+                    local _, j = string.find(filename, search_path, 1, true)
                     if j then
                         table.insert(results, string.format("%s\n%d\n%s", string.sub(filename, j+2), line_index, readline))
                     end
@@ -85,7 +85,7 @@ function gotoDefinition(text, line, filename, project_src_dir)
 
     parseDoc(results, search_path, filename, text, 0)
 
-    table.sort(results, 
+    table.sort(results,
         function (a, b)
             local at = util.strSplit(a, '\n')
             local bt = util.strSplit(b, '\n')
