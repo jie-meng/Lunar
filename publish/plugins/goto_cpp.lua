@@ -17,12 +17,12 @@ function isKeyWord(str)
 end
 
 function isFuncWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+(' .. text .. ')%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
 
-    return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
@@ -31,12 +31,12 @@ function isFuncWithReturnType(line_str, text)
 end
 
 function isMethodWithReturnType(line_str, text)
-    local return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+[%w_]+%s*::%s*(' .. text .. ')%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+[%w_]+%s*::%s*(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
 
-    return_type, func_name = string.match(line_str, '([%w_&%*:]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::(' .. text .. ')%s*%(')
     if not isKeyWord(return_type) and func_name then
         return true
     end
@@ -65,13 +65,13 @@ end
 
 function isFunc(line_str, previous_line_str, text)
     if string.match(line_str, '(' .. text .. ')%s*%(') ~= nil
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
 
     if string.match(line_str, '(' .. text .. ')%s*(<[%w_:%s&%*,]*>)%s*%(') ~= nil
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
@@ -81,13 +81,13 @@ end
 
 function isMethod(line_str, previous_line_str, text)
     if string.match(line_str, '[%w_]+%s*::%s*(' .. text .. ')%s*%(') ~= nil
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
 
     if string.match(line_str, '[%w_]+%s*(<[%w_:%s&%*,]*>)%s*::%s*(' .. text .. ')%s*%(') ~= nil
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return true
     end
@@ -102,12 +102,12 @@ function isInclude(line_str)
 end
 
 function tryGetFuncWithReturnType(line_str)
-    local return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*%(')
+    local return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+([%w_:]+)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return func_name
     end
 
-    return_type, func_name = string.match(line_str, '([%w_&%*]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
+    return_type, func_name = string.match(line_str, '([%w_&%*:%<%>]+)%s+([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
     if not isKeyWord(return_type) and func_name then
         return func_name
     end
@@ -160,20 +160,20 @@ function tryGetMacro(line_str)
 end
 
 function tryGetTypedef(line_str)
-    return util.strTrim(string.match(line_str, 'typedef%s+[%w_<>:%(%)%s]+(%s+[%w_]+)%s*;'))
+    return util.strTrim(string.match(line_str, 'typedef%s+[%w_%<%>:%(%)%s]+(%s+[%w_]+)%s*;'))
 end
 
 function tryGetFunc(line_str, previous_line_str)
     local func_name = string.match(line_str, '([%w_:]+)%s*%(')
     if func_name
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return func_name
     end
 
     func_name = string.match(line_str, '([%w_:]+)%s*(<[%w_:%s&%*,]*>)%s*%(')
     if func_name
-        and string.match(previous_line_str, '([%w_&%*]+)') == previous_line_str
+        and string.match(previous_line_str, '([%w_&%*:%<%>]+)') == previous_line_str
         and not isKeyWord(previous_line_str) then
         return func_name
     end

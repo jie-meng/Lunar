@@ -1,0 +1,5 @@
+{% highlight kotlin %}
+
+{{BEGIN}}{{END}}
+
+{% endhighlight %}
