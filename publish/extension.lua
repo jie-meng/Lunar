@@ -346,6 +346,13 @@ function parseFileType(filename)
             comment_block_end = "*/"
         }
     end
+
+    if string.lower(util.fileExtension(name)) == "" then
+        local content = util.strTrimLeft(util.readTextFile(filename))
+        if util.strStartWith(content, '#!/bin/sh') or util.strStartWith(content, '#!/bin/bash') or util.strStartWith(content, '#!/usr/bin/expect') then
+            return { type = "bash", comment_line = "#", api = "apis/bash", executor = "sh", templates = "templates/bash" }
+        end
+    end
 end
 
 function fileFilter()
